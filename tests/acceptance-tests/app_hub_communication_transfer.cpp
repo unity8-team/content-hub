@@ -26,8 +26,8 @@
 #include <com/ubuntu/content/store.h>
 #include <com/ubuntu/content/type.h>
 
-#include "com/ubuntu/content/peer_registry.h"
-#include "com/ubuntu/content/service.h"
+#include "com/ubuntu/content/detail/peer_registry.h"
+#include "com/ubuntu/content/detail/service.h"
 #include "com/ubuntu/content/serviceadaptor.h"
 
 #include <gmock/gmock.h>

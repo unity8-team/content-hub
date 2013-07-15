@@ -16,8 +16,11 @@
 
 include_directories(${CMAKE_CURRENT_BINARY_DIR})
 
-qt5_add_dbus_interface(CONTENT_SERVICE_STUB ${CMAKE_CURRENT_SOURCE_DIR}/com.ubuntu.content.Service.xml ContentServiceInterface)
-qt5_add_dbus_adaptor(CONTENT_SERVICE_SKELETON ${CMAKE_CURRENT_SOURCE_DIR}/com.ubuntu.content.Service.xml service.h com::ubuntu::content::detail::Service)
+qt5_add_dbus_interface(CONTENT_SERVICE_STUB ${CMAKE_CURRENT_SOURCE_DIR}/detail/com.ubuntu.content.Service.xml ContentServiceInterface)
+qt5_add_dbus_adaptor(
+  CONTENT_SERVICE_SKELETON ${CMAKE_CURRENT_SOURCE_DIR}/detail/com.ubuntu.content.Service.xml 
+  detail/service.h com::ubuntu::content::detail::Service
+)
 
 qt5_wrap_cpp(CONTENT_HUB_MOCS ${CMAKE_SOURCE_DIR}/include/com/ubuntu/content/hub.h)
 qt5_wrap_cpp(CONTENT_HUB_MOCS ${CMAKE_SOURCE_DIR}/include/com/ubuntu/content/import_export_handler.h)
@@ -33,10 +36,11 @@ add_library(
   hub.cpp
   item.cpp
   peer.cpp
-  service.cpp
   store.cpp
   transfer.cpp
   type.cpp
+
+  detail/service.cpp
 
   ${CONTENT_HUB_MOCS}
   ${CONTENT_SERVICE_STUB}

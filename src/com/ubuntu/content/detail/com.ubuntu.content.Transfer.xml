@@ -1,5 +1,8 @@
 <node>
   <interface name="com.ubuntu.content.Transfer">
+    <method name="State">
+      <arg name="state" type="i" direction="out" />
+    </method>
     <method name="Start">
     </method>
     <method name="Abort">

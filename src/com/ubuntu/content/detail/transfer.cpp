@@ -32,6 +32,11 @@ cucd::Transfer::~Transfer()
 {
 }
 
+int cucd::Transfer::State()
+{
+    return -1;
+}
+
 void cucd::Transfer::Abort()
 {
 }

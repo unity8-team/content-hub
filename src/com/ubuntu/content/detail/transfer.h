@@ -40,6 +40,7 @@ class Transfer : public QObject
     Transfer& operator=(const Transfer&) = delete;
 
   public Q_SLOTS:
+    int State();
     void Abort();
     void Start();
     void Charge(const QStringList&);

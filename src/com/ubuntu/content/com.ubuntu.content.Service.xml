@@ -1,0 +1,15 @@
+<node>
+  <interface name="com.ubuntu.content.Service">
+    <method name="Quit">
+    </method>
+    <method name="DefaultPeerForType">
+      <annotation name="com.trolltech.QtDBus.QtTypeName.In1" value="QVariantMap"/>
+      <arg name="type_id" type="s" direction="in" />
+      <arg name="peer_id" type="s" direction="out" />
+    </method>
+    <method name="KnownPeersForType">
+      <arg name="type_id" type="s" direction="in" />
+      <arg name="peer_ids" type="as" direction="out" />
+    </method>
+ </interface>
+</node>

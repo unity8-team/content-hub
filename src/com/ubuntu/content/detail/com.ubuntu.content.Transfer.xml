@@ -1,0 +1,14 @@
+<node>
+  <interface name="com.ubuntu.content.Transfer">
+    <method name="Start">
+    </method>
+    <method name="Abort">
+    </method>
+    <method name="Charge">
+      <arg name="items" type="as" direction="in" />
+    </method>
+    <method name="Collect">
+      <arg name="items" type="as" direction="out" />
+    </method>
+ </interface>
+</node>

@@ -16,11 +16,19 @@
 
 include_directories(${CMAKE_CURRENT_BINARY_DIR})
 
-qt5_add_dbus_interface(CONTENT_SERVICE_STUB ${CMAKE_CURRENT_SOURCE_DIR}/detail/com.ubuntu.content.Service.xml ContentServiceInterface)
+qt5_add_dbus_interface(
+  CONTENT_SERVICE_STUB ${CMAKE_CURRENT_SOURCE_DIR}/detail/com.ubuntu.content.Service.xml 
+  ContentServiceInterface)
 qt5_add_dbus_adaptor(
   CONTENT_SERVICE_SKELETON ${CMAKE_CURRENT_SOURCE_DIR}/detail/com.ubuntu.content.Service.xml 
-  detail/service.h com::ubuntu::content::detail::Service
-)
+  detail/service.h com::ubuntu::content::detail::Service)
+
+qt5_add_dbus_interface(
+  CONTENT_TRANSFER_STUB ${CMAKE_CURRENT_SOURCE_DIR}/detail/com.ubuntu.content.Transfer.xml 
+  ContentTransferInterface)
+qt5_add_dbus_adaptor(
+  CONTENT_TRANSFER_SKELETON ${CMAKE_CURRENT_SOURCE_DIR}/detail/com.ubuntu.content.Transfer.xml 
+  detail/transfer.h com::ubuntu::content::detail::Transfer)
 
 qt5_wrap_cpp(CONTENT_HUB_MOCS ${CMAKE_SOURCE_DIR}/include/com/ubuntu/content/hub.h)
 qt5_wrap_cpp(CONTENT_HUB_MOCS ${CMAKE_SOURCE_DIR}/include/com/ubuntu/content/import_export_handler.h)
@@ -41,10 +49,13 @@ add_library(
   type.cpp
 
   detail/service.cpp
+  detail/transfer.cpp
 
   ${CONTENT_HUB_MOCS}
   ${CONTENT_SERVICE_STUB}
   ${CONTENT_SERVICE_SKELETON}
+  ${CONTENT_TRANSFER_STUB}
+  ${CONTENT_TRANSFER_SKELETON}
 )
 
 set_target_properties(

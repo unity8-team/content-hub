@@ -18,13 +18,13 @@
 
 #include <com/ubuntu/content/transfer.h>
 
+#include "transfer_p.h"
+
 namespace cuc = com::ubuntu::content;
 
-struct cuc::Transfer::Private
-{
-};
-
-cuc::Transfer::Transfer(QObject* parent) : QObject(parent), d{new cuc::Transfer::Private{}}
+cuc::Transfer::Transfer(const QSharedPointer<cuc::Transfer::Private>& d, QObject* parent)
+        : QObject(parent),
+          d(d)
 {
 }
 
@@ -34,25 +34,25 @@ cuc::Transfer::~Transfer()
 
 cuc::Transfer::State cuc::Transfer::state() const
 {
-    return cuc::Transfer::initiated;
+    return d->state();
 }
 
 bool cuc::Transfer::start()
 {
-    return false;
+    return d->start();
 }
 
 bool cuc::Transfer::abort()
 {
-    return false;
+    return d->abort();
 }
 
-bool cuc::Transfer::charge(const QVector<cuc::Item*>&)
+bool cuc::Transfer::charge(const QVector<cuc::Item>& items)
 {
-    return false;
+    return d->charge(items);
 }
 
-QVector<cuc::Item*> cuc::Transfer::collect()
+QVector<cuc::Item> cuc::Transfer::collect()
 {
-    return QVector<cuc::Item*>{};
+    return d->collect();
 }

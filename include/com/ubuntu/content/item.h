@@ -19,6 +19,7 @@
 #define COM_UBUNTU_CONTENT_ITEM_H_
 
 #include <QObject>
+#include <QSharedPointer>
 #include <QUrl>
 
 namespace com
@@ -30,20 +31,21 @@ namespace content
 class Item : public QObject
 {
     Q_OBJECT
-    Q_PROPERTY(QUrl url READ url)
+    Q_PROPERTY(QUrl url READ url())
 
   public:
-    explicit Item(const QUrl& = QUrl(), QObject* = nullptr);
-    Item(const Item&) = delete;
+    Item(const QUrl& = QUrl(), QObject* = nullptr);
+    Item(const Item&);
     virtual ~Item();
 
-    Item& operator=(const Item&) = delete;
+    Item& operator=(const Item&);
+    bool operator==(const Item&) const;
 
     Q_INVOKABLE const QUrl& url() const;
 
   private:
     struct Private;
-    QScopedPointer<Private> d;
+    QSharedPointer<Private> d;
 };
 }
 }

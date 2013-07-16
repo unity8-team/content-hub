@@ -34,7 +34,7 @@ class Service;
 class Type : public QObject
 {
     Q_OBJECT
-    Q_PROPERTY(QString id READ id)
+    Q_PROPERTY(QString id READ id())
   public:
     
     static const Type& unknown();

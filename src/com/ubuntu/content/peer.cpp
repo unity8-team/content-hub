@@ -45,8 +45,7 @@ cuc::Peer::~Peer()
 
 cuc::Peer& cuc::Peer::operator=(const cuc::Peer& rhs)
 {
-    d = rhs.d;
-    
+    d = rhs.d;    
     return *this;
 }
 

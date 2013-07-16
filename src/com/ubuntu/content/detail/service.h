@@ -20,6 +20,8 @@
 
 #include <QObject>
 #include <QStringList>
+#include <QtDBus/QDBusConnection>
+#include <QtDBus/QDBusObjectPath>
 
 namespace com
 {
@@ -35,7 +37,9 @@ class Service : public QObject
 {
     Q_OBJECT
   public:
-    Service(const QSharedPointer<PeerRegistry>& registry, QObject* parent = nullptr);
+    Service(QDBusConnection connection,
+            const QSharedPointer<PeerRegistry>& registry, 
+            QObject* parent = nullptr);
     Service(const Service&) = delete;
     ~Service();
 
@@ -44,6 +48,7 @@ class Service : public QObject
   public Q_SLOTS:
     QString DefaultPeerForType(const QString &type_id);
     QStringList KnownPeersForType(const QString &type_id);
+    QDBusObjectPath CreateImportForTypeFromPeer(const QString&, const QString&);
     void Quit();
 
   private:

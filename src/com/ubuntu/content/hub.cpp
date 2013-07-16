@@ -17,6 +17,7 @@
  */
 
 #include "ContentServiceInterface.h"
+#include "transfer_p.h"
 
 #include <com/ubuntu/content/hub.h>
 #include <com/ubuntu/content/import_export_handler.h>
@@ -34,15 +35,15 @@ namespace cuc = com::ubuntu::content;
 struct cuc::Hub::Private
 {
     Private(QObject* parent) : service(
-        new com::ubuntu::content::Service(
-            "com.ubuntu.content.Service",
+        new com::ubuntu::content::dbus::Service(
+            "com.ubuntu.content.dbus.Service",
             "/",
             QDBusConnection::sessionBus(),
             parent))
     {
     }
 
-    com::ubuntu::content::Service* service;
+    com::ubuntu::content::dbus::Service* service;
 };
 
 cuc::Hub::Hub(QObject* parent) : QObject(parent), d{new cuc::Hub::Private{this}}
@@ -117,9 +118,15 @@ QVector<cuc::Peer> cuc::Hub::known_peers_for_type(cuc::Type t)
     return result;
 }
 
-cuc::Transfer* cuc::Hub::create_import_for_type_from_peer(cuc::Type, cuc::Peer)
+cuc::Transfer* cuc::Hub::create_import_for_type_from_peer(cuc::Type type, cuc::Peer peer)
 {
-    return nullptr;
+    auto reply = d->service->CreateImportForTypeFromPeer(type.id(), peer.id());
+    reply.waitForFinished();
+
+    if (reply.isError())
+        return nullptr;
+
+    return cuc::Transfer::Private::make_transfer(reply.value(), this);
 }
 
 void cuc::Hub::quit()

@@ -18,14 +18,26 @@
 
 #include "transfer.h"
 
+#include <com/ubuntu/content/transfer.h>
+
+#include <QDebug>
+
+namespace cuc = com::ubuntu::content;
 namespace cucd = com::ubuntu::content::detail;
 
 struct cucd::Transfer::Private
 {
+    Private() : state(cuc::Transfer::initiated)
+    {
+    }
+    
+    cuc::Transfer::State state;
+    QStringList items;
 };
 
 cucd::Transfer::Transfer(QObject* parent) : QObject(parent), d(new Private())
 {
+    qDebug() << __PRETTY_FUNCTION__;
 }
 
 cucd::Transfer::~Transfer()
@@ -34,22 +46,32 @@ cucd::Transfer::~Transfer()
 
 int cucd::Transfer::State()
 {
-    return -1;
+    qDebug() << __PRETTY_FUNCTION__;
+    return d->state;
 }
 
 void cucd::Transfer::Abort()
 {
+    qDebug() << __PRETTY_FUNCTION__;
+    d->state = cuc::Transfer::aborted;
 }
 
 void cucd::Transfer::Start()
 {
+    qDebug() << __PRETTY_FUNCTION__;
+    d->state = cuc::Transfer::in_progress;
 }
 
-void cucd::Transfer::Charge(const QStringList&)
+void cucd::Transfer::Charge(const QStringList& items)
 {
+    qDebug() << __PRETTY_FUNCTION__;
+    d->items = items;
+    d->state = cuc::Transfer::charged;
 }
 
 QStringList cucd::Transfer::Collect()
 {
-    return QStringList{};
+    qDebug() << __PRETTY_FUNCTION__;
+    d->state = cuc::Transfer::collected;
+    return d->items;
 }

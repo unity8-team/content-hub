@@ -121,7 +121,8 @@ TEST(Hub, transfer_creation_and_states_work)
             expected_items << cuc::Item(QUrl("file:///tmp/test1"));
             expected_items << cuc::Item(QUrl("file:///tmp/test2"));
             expected_items << cuc::Item(QUrl("file:///tmp/test3"));
-
+            
+            /** [Importing pictures] */
             auto hub = cuc::Hub::Client::instance();
             auto transfer = hub->create_import_for_type_from_peer(
                 cuc::Type::Known::pictures(),
@@ -132,7 +133,7 @@ TEST(Hub, transfer_creation_and_states_work)
             EXPECT_TRUE(transfer->charge(expected_items));
             EXPECT_EQ(cuc::Transfer::charged, transfer->state());
             EXPECT_EQ(expected_items, transfer->collect());
-
+            /** [Importing pictures] */
             hub->quit();
         });
         EXPECT_EQ(0, QTest::qExec(std::addressof(harness)));

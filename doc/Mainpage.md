@@ -56,3 +56,8 @@ to exchange content are running at the same time, a system-level
 component needs to mediate and control the content exchange operation,
 making sure that neither app instance assumes the existence of the
 other one. We refer to this component as the content hub. \sa com::ubuntu::content::Hub
+
+Example usage - Importing Pictures
+----------------------------------
+
+\snippet acceptance-tests/app_hub_communication_transfer.cpp Importing pictures

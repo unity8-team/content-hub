@@ -59,6 +59,8 @@ add_subdirectory(doc)
 add_subdirectory(src)
 add_subdirectory(tests)
 
+install(DIRECTORY include DESTINATION ${CMAKE_INSTALL_PREFIX})
+
 # There's no nice way to format this. Thanks CMake.
 add_test(LGPL-required
   /bin/sh -c "! grep -rl 'GNU General' ${PROJECT_SOURCE_DIR}/src/client ${PROJECT_SOURCE_DIR}/include/client ${PROJECT_SOURCE_DIR}/src/shared ${PROJECT_SOURCE_DIR}/include/shared"

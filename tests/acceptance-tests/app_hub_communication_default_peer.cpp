@@ -50,7 +50,7 @@ void PrintTo(const QString& s, ::std::ostream* os) {
 
 namespace
 {
-QString service_name{"com.ubuntu.content.Service"};
+QString service_name{"com.ubuntu.content.dbus.Service"};
 
 struct MockedPeerRegistry : public cucd::PeerRegistry
 {
@@ -93,7 +93,7 @@ TEST(Hub, querying_default_peer_returns_correct_value)
 
         QSharedPointer<cucd::PeerRegistry> registry{mock};
         
-        auto implementation = new cucd::Service(registry, &app);
+        auto implementation = new cucd::Service(connection, registry, &app);
         new ServiceAdaptor(implementation);
 
         ASSERT_TRUE(connection.registerService(service_name));

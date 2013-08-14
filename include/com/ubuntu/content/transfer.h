@@ -18,7 +18,10 @@
 #ifndef COM_UBUNTU_CONTENT_TRANSFER_H_
 #define COM_UBUNTU_CONTENT_TRANSFER_H_
 
+#include <com/ubuntu/content/item.h>
+
 #include <QObject>
+#include <QSharedPointer>
 #include <QVector>
 
 namespace com
@@ -34,7 +37,8 @@ class Transfer : public QObject
     Q_OBJECT
     Q_ENUMS(State)
     Q_PROPERTY(State state READ state NOTIFY stateChanged)
-    Q_PROPERTY(QVector<Item*> items READ collect WRITE charge)
+    Q_PROPERTY(QVector<Item> items READ collect WRITE charge)
+
   public:
     enum State
     {
@@ -45,23 +49,27 @@ class Transfer : public QObject
         aborted
     };
 
-    Transfer(QObject* parent = nullptr);
     Transfer(const Transfer&) = delete;
     virtual ~Transfer();
 
     Transfer& operator=(const Transfer&) = delete;
-    
+
     Q_INVOKABLE virtual State state() const;
 
     Q_INVOKABLE virtual bool start();
     Q_INVOKABLE virtual bool abort();
-    Q_INVOKABLE virtual bool charge(const QVector<Item*>& items);
-    Q_INVOKABLE virtual QVector<Item*> collect();
-    
+    Q_INVOKABLE virtual bool charge(const QVector<Item>& items);
+    Q_INVOKABLE virtual QVector<Item> collect();
+
     Q_SIGNAL void stateChanged();
+
   private:
     struct Private;
-    QScopedPointer<Private> d;
+    friend struct Private;
+    friend class Hub;
+    QSharedPointer<Private> d;
+
+    Transfer(const QSharedPointer<Private>&, QObject* parent = nullptr);    
 };
 }
 }

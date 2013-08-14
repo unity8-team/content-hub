@@ -1,5 +1,5 @@
 <node>
-  <interface name="com.ubuntu.content.Transfer">
+  <interface name="com.ubuntu.content.dbus.Transfer">
     <method name="State">
       <arg name="state" type="i" direction="out" />
     </method>

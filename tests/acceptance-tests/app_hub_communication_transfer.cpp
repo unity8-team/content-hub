@@ -21,9 +21,11 @@
 #include "../fork_and_run.h"
 
 #include <com/ubuntu/content/hub.h>
+#include <com/ubuntu/content/item.h>
 #include <com/ubuntu/content/peer.h>
 #include <com/ubuntu/content/scope.h>
 #include <com/ubuntu/content/store.h>
+#include <com/ubuntu/content/transfer.h>
 #include <com/ubuntu/content/type.h>
 
 #include "com/ubuntu/content/detail/peer_registry.h"
@@ -49,7 +51,7 @@ void PrintTo(const QString& s, ::std::ostream* os) {
 
 namespace
 {
-QString service_name{"com.ubuntu.content.Service"};
+QString service_name{"com.ubuntu.content.dbus.Service"};
 
 struct MockedPeerRegistry : public cucd::PeerRegistry
 {
@@ -72,6 +74,8 @@ struct MockedPeerRegistry : public cucd::PeerRegistry
 
 TEST(Hub, transfer_creation_and_states_work)
 {
+    using namespace ::testing;
+
     test::CrossProcessSync sync;
     
     auto parent = [&sync]()
@@ -79,14 +83,21 @@ TEST(Hub, transfer_creation_and_states_work)
         int argc = 0;
         QCoreApplication app{argc, nullptr};
 
-        QDBusConnection connection = QDBusConnection::sessionBus();        
+        QString default_peer_id{"com.does.not.exist.anywhere.application"};
 
-        QSharedPointer<cucd::PeerRegistry> registry{new ::testing::NiceMock<MockedPeerRegistry>{}};
-        auto implementation = new cucd::Service(registry, &app);
-        new ServiceAdaptor(implementation);
+        QDBusConnection connection = QDBusConnection::sessionBus();        
+        
+        auto mock = new ::testing::NiceMock<MockedPeerRegistry>{};
+        EXPECT_CALL(*mock, default_peer_for_type(_)).
+        Times(Exactly(1)).
+        WillRepeatedly(Return(cuc::Peer{default_peer_id}));
+        
+        QSharedPointer<cucd::PeerRegistry> registry{mock};
+        cucd::Service implementation(connection, registry, &app);
+        new ServiceAdaptor(std::addressof(implementation));
 
         ASSERT_TRUE(connection.registerService(service_name));
-        ASSERT_TRUE(connection.registerObject("/", implementation));
+        ASSERT_TRUE(connection.registerObject("/", std::addressof(implementation)));
 
         sync.signal_ready();
 
@@ -94,22 +105,35 @@ TEST(Hub, transfer_creation_and_states_work)
 
         connection.unregisterObject("/");
         connection.unregisterService(service_name);
-
-        delete implementation;
     };
 
     auto child = [&sync]()
-    {        
+    {
+        int argc = 0;
+        QCoreApplication app(argc, nullptr);
+
         sync.wait_for_signal_ready();
         
         test::TestHarness harness;
         harness.add_test_case([]()
         {
+            QVector<cuc::Item> expected_items;
+            expected_items << cuc::Item(QUrl("file:///tmp/test1"));
+            expected_items << cuc::Item(QUrl("file:///tmp/test2"));
+            expected_items << cuc::Item(QUrl("file:///tmp/test3"));
+            
+            /** [Importing pictures] */
             auto hub = cuc::Hub::Client::instance();
             auto transfer = hub->create_import_for_type_from_peer(
                 cuc::Type::Known::pictures(),
                 hub->default_peer_for_type(cuc::Type::Known::pictures()));
-            EXPECT_TRUE(transfer != nullptr);
+            ASSERT_TRUE(transfer != nullptr);
+            EXPECT_TRUE(transfer->start());
+            EXPECT_EQ(cuc::Transfer::in_progress, transfer->state());
+            EXPECT_TRUE(transfer->charge(expected_items));
+            EXPECT_EQ(cuc::Transfer::charged, transfer->state());
+            EXPECT_EQ(expected_items, transfer->collect());
+            /** [Importing pictures] */
             hub->quit();
         });
         EXPECT_EQ(0, QTest::qExec(std::addressof(harness)));

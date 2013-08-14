@@ -32,6 +32,7 @@ namespace detail
 class Transfer : public QObject
 {
     Q_OBJECT
+
   public:
     Transfer(QObject* parent = nullptr);
     Transfer(const Transfer&) = delete;

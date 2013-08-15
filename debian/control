@@ -4,6 +4,8 @@ Maintainer: Ken VanDine <ken.vandine@canonical.com>
 Build-Depends: cmake,
                debhelper (>= 9),
                dbus-test-runner,
+               doxygen,
+               lcov,
                qt5-default,
                qtbase5-dev,
 Standards-Version: 3.9.4

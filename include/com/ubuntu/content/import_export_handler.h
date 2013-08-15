@@ -40,7 +40,7 @@ class ImportExportHandler : public QObject
     Q_INVOKABLE virtual void handle_export(Transfer*) = 0;
 
   protected:
-    ImportExportHandler(QObject* = nullptr); 
+    ImportExportHandler(QObject* parent = nullptr); 
 };
 }
 }

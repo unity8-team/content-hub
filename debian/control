@@ -2,8 +2,13 @@ Source: content-hub
 Priority: extra
 Maintainer: Ken VanDine <ken.vandine@canonical.com>
 Build-Depends: cmake,
-               debhelper (>= 9), 
+               debhelper (>= 9),
                dbus-test-runner,
+               doxygen,
+               google-mock,
+               lcov,
+               qt5-default,
+               qtbase5-dev,
 Standards-Version: 3.9.4
 Section: libs
 Homepage: https://launchpad.net/content-hub

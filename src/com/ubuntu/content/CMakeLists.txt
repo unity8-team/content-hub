@@ -42,6 +42,7 @@ add_library(
   content-hub SHARED
 
   hub.cpp
+  import_export_handler.cpp
   item.cpp
   peer.cpp
   store.cpp

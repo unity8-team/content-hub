@@ -14,6 +14,8 @@
 #
 # Authored by: Thomas Voss <thomas.voss@canonical.com>
 
+add_subdirectory(service)
+
 include_directories(${CMAKE_CURRENT_BINARY_DIR})
 
 qt5_add_dbus_interface(

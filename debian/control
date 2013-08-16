@@ -15,27 +15,31 @@ Homepage: https://launchpad.net/content-hub
 
 Package: content-hub
 Architecture: any
-Depends: ${shlibs:Depends}, ${misc:Depends}
+Depends: ${misc:Depends},
+         ${shlibs:Depends},
 Description: <insert up to 60 chars description>
  <insert long description, indented with spaces>
 
 Package: libcontent-hub-dev
 Section: libdevel
 Architecture: any
-Depends: libcontent-hub0 (= ${binary:Version})
+Depends: ${misc:Depends},
+         ${shlibs:Depends},
+         libcontent-hub0 (= ${binary:Version}),
 Description: <insert up to 60 chars description>
  <insert long description, indented with spaces>
 
 Package: libcontent-hub0
 Section: libs
 Architecture: any
-Depends: ${shlibs:Depends}, ${misc:Depends}
+Depends: ${misc:Depends},
+         ${shlibs:Depends},
 Description: <insert up to 60 chars description>
  <insert long description, indented with spaces>
 
 Package: libcontent-hub-doc
 Section: doc
 Architecture: all
-Depends: ${shlibs:Depends}, ${misc:Depends}
+Depends: ${misc:Depends},
 Description: <insert up to 60 chars description>
  <insert long description, indented with spaces>

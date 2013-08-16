@@ -13,6 +13,12 @@ Standards-Version: 3.9.4
 Section: libs
 Homepage: https://launchpad.net/content-hub
 
+Package: content-hub
+Architecture: any
+Depends: ${shlibs:Depends}, ${misc:Depends}
+Description: <insert up to 60 chars description>
+ <insert long description, indented with spaces>
+
 Package: libcontent-hub-dev
 Section: libdevel
 Architecture: any

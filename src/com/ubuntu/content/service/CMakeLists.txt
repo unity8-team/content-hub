@@ -42,3 +42,8 @@ install(
   TARGETS content-hub-service
   RUNTIME DESTINATION ${CMAKE_INSTALL_BINDIR}
 )
+
+install(
+  FILES com.ubuntu.content.dbus.Service.service 
+  DESTINATION ${CMAKE_INSTALL_DATADIR}/dbus-1/services
+)

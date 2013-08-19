@@ -26,7 +26,7 @@ add_executable(
   content-hub-service
 
   main.cpp
-
+  serviceregistry.cpp
   ${CONTENT_SERVICE_SKELETON}
 )
 

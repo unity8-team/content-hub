@@ -19,11 +19,13 @@
 #include <QCoreApplication>
 #include <QDebug>
 
+#include "serviceregistry.h"
 #include "detail/service.h"
 #include "detail/peer_registry.h"
 #include "serviceadaptor.h"
 
 namespace cucd = com::ubuntu::content::detail;
+namespace cuc = com::ubuntu::content;
 
 int main(int argc, char** argv)
 {
@@ -31,9 +33,10 @@ int main(int argc, char** argv)
     const QString name = "com.ubuntu.content.dbus.Service";
     const QString path = "/";
 
-    QDBusConnection connection = QDBusConnection::sessionBus();
+    auto connection = QDBusConnection::sessionBus();
 
-    QSharedPointer<cucd::PeerRegistry> registry = QSharedPointer<cucd::PeerRegistry>(registry);
+    auto registry = QSharedPointer<cucd::PeerRegistry>(new ServiceRegistry());
+    auto peer = cuc::Peer("com.example.pictures");
 
     auto server = new cucd::Service(connection, registry, app->parent());
     new ServiceAdaptor(server);
@@ -41,6 +44,7 @@ int main(int argc, char** argv)
     connection.registerService(name);
     connection.registerObject(path, server, QDBusConnection::ExportAdaptors);
 
+    registry->install_default_peer_for_type(cuc::Type::Known::pictures(), peer);
     return app->exec();
 }
 

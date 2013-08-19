@@ -19,13 +19,38 @@
 #include <QCoreApplication>
 #include <QDebug>
 
-#include "serviceregistry.h"
+#include "registry.h"
 #include "detail/service.h"
 #include "detail/peer_registry.h"
 #include "serviceadaptor.h"
 
 namespace cucd = com::ubuntu::content::detail;
 namespace cuc = com::ubuntu::content;
+
+void list(QSharedPointer<cucd::PeerRegistry> registry)
+{
+    /* list known peers for pictures */
+    QStringList result;
+    registry->enumerate_known_peers_for_type(
+        cuc::Type::Known::pictures(),
+        [&result](const cuc::Peer& peer)
+        {
+            result.append(peer.id());
+        });
+
+    foreach (QString r, result) {
+        qDebug() << "RESULT: " << r;
+    }
+}
+
+void populate(QSharedPointer<cucd::PeerRegistry> registry)
+{
+    registry->install_default_peer_for_type(cuc::Type::Known::pictures(), cuc::Peer("com.example.pictures"));
+    registry->install_peer_for_type(cuc::Type::Known::pictures(), cuc::Peer("com.example.pictures2"));
+    registry->install_peer_for_type(cuc::Type::Known::pictures(), cuc::Peer("com.example.pictures3"));
+    registry->install_peer_for_type(cuc::Type::Known::pictures(), cuc::Peer("com.example.pictures2"));
+    list(registry);
+}
 
 int main(int argc, char** argv)
 {
@@ -35,7 +60,7 @@ int main(int argc, char** argv)
 
     auto connection = QDBusConnection::sessionBus();
 
-    auto registry = QSharedPointer<cucd::PeerRegistry>(new ServiceRegistry());
+    auto registry = QSharedPointer<cucd::PeerRegistry>(new Registry());
     auto peer = cuc::Peer("com.example.pictures");
 
     auto server = new cucd::Service(connection, registry, app->parent());
@@ -44,7 +69,9 @@ int main(int argc, char** argv)
     connection.registerService(name);
     connection.registerObject(path, server, QDBusConnection::ExportAdaptors);
 
-    registry->install_default_peer_for_type(cuc::Type::Known::pictures(), peer);
+    /* Populate registry with dummy peers */
+    populate(registry);
+
     return app->exec();
 }
 

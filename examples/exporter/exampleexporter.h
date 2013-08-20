@@ -31,8 +31,7 @@ class ExampleExporter : public cuc::ImportExportHandler
     Q_OBJECT
 
 public:
-    ExampleExporter() = default;
-    //~ExampleExporter ();
+    ExampleExporter();
     Q_INVOKABLE void handle_import(cuc::Transfer*);
     Q_INVOKABLE void handle_export(cuc::Transfer*);
     

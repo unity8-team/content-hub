@@ -32,12 +32,11 @@ public:
 signals:
     
 public slots:
-    cuc::Transfer *create_import();
+    void create_import();
     void import();
 
 private:
     ExampleImporter *m_importer;
-    cuc::Hub *m_hub;
 };
 
 #endif // EXAMPLE_H

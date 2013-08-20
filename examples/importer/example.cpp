@@ -25,17 +25,16 @@
 Example::Example(QObject *parent) :
     QObject(parent)
 {
-    m_hub = cuc::Hub::Client::instance();
     m_importer = new ExampleImporter();
-    m_hub->register_import_export_handler(m_importer);
 }
 
-cuc::Transfer* Example::create_import()
+void Example::create_import()
 {
-    auto peer = m_hub->default_peer_for_type(cuc::Type::Known::pictures());
-    qDebug() << "PEER: " << peer.id();
+    auto hub = cuc::Hub::Client::instance();
+    auto peer = hub->default_peer_for_type(cuc::Type::Known::pictures());
+    qDebug() << Q_FUNC_INFO << "PEER: " << peer.id();
 
-    cuc::Transfer *transfer = m_hub->create_import_for_type_from_peer(
+    cuc::Transfer *transfer = hub->create_import_for_type_from_peer(
         cuc::Type::Known::pictures(),
         peer);
 
@@ -43,15 +42,13 @@ cuc::Transfer* Example::create_import()
         SIGNAL(stateChanged()),
         this,
         SLOT (import()));
-
-    return transfer;
 }
 
 void Example::import()
 {
     cuc::Transfer *transfer = dynamic_cast<cuc::Transfer*>(sender());
 
-    qDebug() << "STATE:" << transfer->state();
+    qDebug() << Q_FUNC_INFO << "State changed:" << transfer->state();
     if (transfer->state() == cuc::Transfer::charged)
         m_importer->handle_import(transfer);
 }

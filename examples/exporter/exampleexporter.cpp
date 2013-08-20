@@ -18,17 +18,23 @@
 
 #include "exampleexporter.h"
 
+ExampleExporter::ExampleExporter()
+{
+    auto hub = cuc::Hub::Client::instance();
+    hub->register_import_export_handler(this);
+}
+
 void ExampleExporter::handle_export(cuc::Transfer *transfer)
 {
     QVector<cuc::Item> items;
     items << cuc::Item(QUrl("file:///tmp/test1"));
     items << cuc::Item(QUrl("file:///tmp/test2"));
     transfer->charge(items);
-    qDebug() << "handle_export for:" << transfer->collect().count() << "items";
+    qDebug() << Q_FUNC_INFO << "Items:" << transfer->collect().count();
 }
 
 void ExampleExporter::handle_import(cuc::Transfer *transfer)
 {
-    qDebug() << "handle_import not implemented";
-    transfer->state();
+    qDebug() << Q_FUNC_INFO << "not implemented";
+    Q_UNUSED(transfer);
 }

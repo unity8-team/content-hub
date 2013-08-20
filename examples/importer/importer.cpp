@@ -25,23 +25,9 @@ int main(int argc, char *argv[])
 {
     QCoreApplication a(argc, argv);
 
-    //a.setApplicationName("com.example.pictures");
     Example *e = new Example();
 
-    cuc::Transfer *transfer = e->create_import();
-
-        transfer->start();
-
-    if (transfer->state() == cuc::Transfer::charged)
-    {
-        qDebug() << "CHARGED";
-        //e->import(transfer);
-    }
-    //qDebug() << "STATE: " << transfer->state();
-
-    transfer->abort();
-
-    //e->import(transfer);
+    e->create_import();
 
     return a.exec();
 }

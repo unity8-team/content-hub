@@ -19,13 +19,19 @@
 #include "exampleimporter.h"
 
 
+ExampleImporter::ExampleImporter()
+{
+    auto hub = cuc::Hub::Client::instance();
+    hub->register_import_export_handler(this);
+}
+
 void ExampleImporter::handle_export(cuc::Transfer *transfer)
 {
-    qDebug() << "handle_export not implemented";
-    transfer->state();
+    qDebug() << Q_FUNC_INFO << "not implemented";
+    Q_UNUSED(transfer);
 }
 
 void ExampleImporter::handle_import(cuc::Transfer *transfer)
 {
-    qDebug() << "handle_import for:" << transfer->collect().count() << "items";
+    qDebug() << Q_FUNC_INFO << "Items:" << transfer->collect().count();
 }

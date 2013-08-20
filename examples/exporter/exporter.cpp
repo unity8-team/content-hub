@@ -31,6 +31,5 @@ int main(int argc, char *argv[])
     auto exporter = new ExampleExporter();
     hub->register_import_export_handler(exporter);
 
-
     return a.exec();
 }

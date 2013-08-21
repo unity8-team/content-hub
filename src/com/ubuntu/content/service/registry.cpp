@@ -17,19 +17,16 @@
  */
 
 #include "registry.h"
-#include <QDebug>
 
 Registry::Registry()
 {
-    m_defaultPeers = new QMap<cuc::Type, cuc::Peer>();
-    m_peers = new QMap<cuc::Type, cuc::Peer>();
 }
 
 cuc::Peer Registry::default_peer_for_type(cuc::Type type)
 {
-    qDebug() << "default_peer_for_type" << type.id();
-    if (m_defaultPeers->contains(type))
-        return m_defaultPeers->find(type).value();
+    qDebug() << Q_FUNC_INFO << type.id();
+    if (m_defaultPeers.contains(type))
+        return m_defaultPeers.find(type).value();
     else
         return cuc::Peer();
 }
@@ -37,8 +34,8 @@ cuc::Peer Registry::default_peer_for_type(cuc::Type type)
 
 void Registry::enumerate_known_peers_for_type(cuc::Type type, const std::function<void(const cuc::Peer&)>&for_each)
 {
-    qDebug() << "enumerate_known_peers_for_type:" << type.id();
-    for(QMap<cuc::Type,cuc::Peer>::iterator i = m_peers->begin(); i != m_peers->end(); )
+    qDebug() << Q_FUNC_INFO << type.id();
+    for(QMap<cuc::Type,cuc::Peer>::iterator i = m_peers.begin(); i != m_peers.end(); )
     {
         if(i.key() == type)
         {
@@ -50,20 +47,20 @@ void Registry::enumerate_known_peers_for_type(cuc::Type type, const std::functio
 
 bool Registry::install_default_peer_for_type(cuc::Type type, cuc::Peer peer)
 {
-    qDebug() << "install_default_peer_for_type, type:" << type.id() << "peer:" << peer.id();
-    if (m_defaultPeers->contains(type))
+    qDebug() << Q_FUNC_INFO << "type:" << type.id() << "peer:" << peer.id();
+    if (m_defaultPeers.contains(type))
     {
-        qDebug() << "Default peer for" << type.id() << "already installed.";
+        qDebug() << Q_FUNC_INFO << "Default peer for" << type.id() << "already installed.";
         return false;
     }
-    m_defaultPeers->insert(type, peer);
+    m_defaultPeers.insert(type, peer);
     this->install_peer_for_type(type, peer);
     return true;
 }
 
 bool Registry::install_peer_for_type(cuc::Type type, cuc::Peer peer)
 {
-    qDebug() << "install_peer_for_type, type:" << type.id() << "peer:" << peer.id();
-    m_peers->insertMulti(type, peer);
+    qDebug() << Q_FUNC_INFO << "type:" << type.id() << "peer:" << peer.id();
+    m_peers.insertMulti(type, peer);
     return true;
 }

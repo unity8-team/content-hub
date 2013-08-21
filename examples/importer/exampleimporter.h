@@ -34,12 +34,7 @@ class ExampleImporter : public cuc::ImportExportHandler
 public:
     ExampleImporter();
     Q_INVOKABLE void handle_import(cuc::Transfer*);
-    Q_INVOKABLE void handle_export(cuc::Transfer*);
-    
-signals:
-    
-public slots:
-    
+    Q_INVOKABLE void handle_export(cuc::Transfer*);    
 };
 
 #endif // EXAMPLEIMPORTER_H

@@ -20,6 +20,7 @@
 #define EXAMPLE_H
 
 #include <QObject>
+#include <QDebug>
 #include "exampleimporter.h"
 
 
@@ -28,11 +29,9 @@ class Example : public QObject
     Q_OBJECT
 public:
     explicit Example(QObject *parent = 0);
-
-signals:
-    
-public slots:
     void create_import();
+
+public slots:
     void import();
 
 private:

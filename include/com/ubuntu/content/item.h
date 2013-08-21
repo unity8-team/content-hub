@@ -28,6 +28,7 @@ namespace ubuntu
 {
 namespace content
 {
+
 class Item : public QObject
 {
     Q_OBJECT
@@ -47,6 +48,7 @@ class Item : public QObject
     struct Private;
     QSharedPointer<Private> d;
 };
+
 }
 }
 }

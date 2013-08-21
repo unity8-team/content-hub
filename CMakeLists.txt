@@ -56,6 +56,7 @@ set(CONTENT_HUB_VERSION_PATCH 1)
 include_directories(include)
 
 add_subdirectory(doc)
+add_subdirectory(import)
 add_subdirectory(src)
 add_subdirectory(tests)
 

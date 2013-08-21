@@ -9,6 +9,7 @@ Build-Depends: cmake,
                lcov,
                qt5-default,
                qtbase5-dev,
+               qtdeclarative5-dev,
 Standards-Version: 3.9.4
 Section: libs
 Homepage: https://launchpad.net/content-hub

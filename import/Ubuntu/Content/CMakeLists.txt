@@ -53,3 +53,10 @@ target_link_libraries(${PLUGIN} content-hub)
 
 install(TARGETS ${PLUGIN} DESTINATION ${CONTENT_HUB_IMPORTS_DIR})
 install(FILES ${CMAKE_CURRENT_SOURCE_DIR}/qmldir DESTINATION ${CONTENT_HUB_IMPORTS_DIR})
+
+# for the qml-tests
+add_custom_command(OUTPUT ${CMAKE_CURRENT_BINARY_DIR}/qmldir
+                   DEPENDS ${CMAKE_CURRENT_SOURCE_DIR}/qmldir
+                   COMMAND ${CMAKE_COMMAND} -E copy_if_different ${CMAKE_CURRENT_SOURCE_DIR}/qmldir ${CMAKE_CURRENT_BINARY_DIR}/qmldir)
+add_custom_target(copy_qmldir_file_to_build_dir DEPENDS qmldir)
+add_dependencies(${PLUGIN} copy_qmldir_file_to_build_dir)

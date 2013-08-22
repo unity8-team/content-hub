@@ -48,6 +48,6 @@ void ContentHubPlugin::initializeEngine(QQmlEngine *engine, const char *uri)
     QQmlExtensionPlugin::initializeEngine(engine, uri);
     QQmlContext* context = engine->rootContext();
 
-    m_contentHub = new ContentHub(0);
+    m_contentHub = new ContentHub(this);
     context->setContextProperty("ContentHub", m_contentHub);
 }

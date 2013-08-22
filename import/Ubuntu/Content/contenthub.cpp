@@ -15,6 +15,13 @@
  */
 
 #include "contenthub.h"
+#include <contentpeer.h>
+#include <contenttransfer.h>
+#include <contenttype.h>
+
+#include <com/ubuntu/content/hub.h>
+#include <com/ubuntu/content/peer.h>
+#include <com/ubuntu/content/type.h>
 
 #include <QDebug>
 
@@ -46,56 +53,95 @@
  *
  */
 
+namespace cuc = com::ubuntu::content;
+
 ContentHub::ContentHub(QObject *parent)
-    : QObject(parent)
+    : QObject(parent),
+      m_hub(0)
 {
+    m_hub = cuc::Hub::Client::instance();
+//    FIXME write the import export handler
+//    m_hub->register_import_export_handler(handler);
 }
 
 /*!
  * \qmlmethod ContentHub::defaultSourceForType()
  *
- *  FIXME add documentation
+ *  Returns the default peer for the given content \a type
  */
 ContentPeer *ContentHub::defaultSourceForType(int type)
 {
     qDebug() << Q_FUNC_INFO;
-    Q_UNUSED(type);
-    return new ContentPeer(this);
+
+    const cuc::Type &hubType = contentType2HubType(type);
+    cuc::Peer hubPeer = m_hub->default_peer_for_type(hubType);
+
+    ContentPeer *qmlPeer = new ContentPeer(this);
+    qmlPeer->setName(hubPeer.id());
+//    FIXME set the proper type
+//    contentPeer->setType(hubPeer.id());
+
+    return qmlPeer;
 }
 
 /*!
  * \qmlmethod ContentHub::knownSourcesForType()
  *
- *  FIXME add documentation
+ *  Returns all possible peers for the given content \a type
  */
 QList<ContentPeer *> ContentHub::knownSourcesForType(int type)
 {
     qDebug() << Q_FUNC_INFO;
-    Q_UNUSED(type);
-    QList<ContentPeer *> list;
-    return list;
+
+    const cuc::Type &hubType = contentType2HubType(type);
+    QVector<cuc::Peer> hubPeers = m_hub->known_peers_for_type(hubType);
+
+    QList<ContentPeer *> qmlPeers;
+    foreach (const cuc::Peer &hubPeer, hubPeers) {
+        ContentPeer *qmlPeer = new ContentPeer(this);
+        qmlPeer->setName(hubPeer.id());
+        //    FIXME set the proper type
+        //    contentPeer->setType(hubPeer.id());
+        qmlPeers.append(qmlPeer);
+    }
+
+    return qmlPeers;
 }
 
 /*!
  * \qmlmethod ContentHub::importContent()
  *
- *  FIXME add documentation
+ * Start a request to import data of \a type from a peer, the user needs to select
  */
 ContentTransfer *ContentHub::importContent(int type)
 {
     qDebug() << Q_FUNC_INFO << (ContentType::Type)type;
-    return new ContentTransfer(this);
+
+    const cuc::Type &hubType = contentType2HubType(type);
+//    FIXME show user a selection of possible peers
+    cuc::Peer hubPeer = m_hub->default_peer_for_type(hubType);
+    cuc::Transfer *hubTransfer = m_hub->create_import_for_type_from_peer(hubType, hubPeer);
+    ContentTransfer *qmlTransfer = new ContentTransfer(this);
+    qmlTransfer->setTransfer(hubTransfer);
+    return qmlTransfer;
 }
 
 /*!
  * \qmlmethod ContentHub::importContent()
  *
- *  FIXME add documentation
+ * Start a request to import data of \a type from the given \peer
  */
 ContentTransfer *ContentHub::importContent(int type, ContentPeer *peer)
 {
     qDebug() << Q_FUNC_INFO << (ContentType::Type)type << peer;
-    return new ContentTransfer(this);
+
+    const cuc::Type &hubType = contentType2HubType(type);
+//    FIXME convert from peer, instead of using the default
+    cuc::Peer hubPeer = m_hub->default_peer_for_type(hubType);
+    cuc::Transfer *hubTransfer = m_hub->create_import_for_type_from_peer(hubType, hubPeer);
+    ContentTransfer *qmlTransfer = new ContentTransfer(this);
+    qmlTransfer->setTransfer(hubTransfer);
+    return qmlTransfer;
 }
 
 /*!
@@ -117,4 +163,20 @@ QQmlListProperty<ContentTransfer> ContentHub::finishedImports()
 {
     qDebug() << Q_FUNC_INFO;
     return QQmlListProperty<ContentTransfer>(this, m_finishedImports);
+}
+
+/*!
+ * \brief ContentHub::conentType2HubType converts a ContentType::Type to a
+ * com::ubuntu::content::Type
+ * \param type integer representing a ContentType::Type
+ * \return
+ */
+const com::ubuntu::content::Type &ContentHub::contentType2HubType(int type) const
+{
+    switch(type) {
+    case 1: return cuc::Type::Known::documents();
+    case 2: return cuc::Type::Known::pictures();
+    case 3: return cuc::Type::Known::music();
+    default: return cuc::Type::unknown();
+    }
 }

@@ -15,6 +15,9 @@
  */
 
 #include "contenttransfer.h"
+#include <contentitem.h>
+
+#include <com/ubuntu/content/transfer.h>
 
 #include <QDebug>
 
@@ -47,7 +50,8 @@
  */
 
 ContentTransfer::ContentTransfer(QObject *parent)
-    : QObject(parent)
+    : QObject(parent),
+      m_transfer(0)
 {
     qDebug() << Q_FUNC_INFO;
 }
@@ -74,8 +78,50 @@ QQmlListProperty<ContentItem> ContentTransfer::items()
     return QQmlListProperty<ContentItem>(this, m_items);
 }
 
+/*!
+ * \qmlmethod ContentTransfer::start()
+ *
+ *  FIXME add documentation
+ */
 bool ContentTransfer::start()
 {
+    if (!m_transfer) {
+        qWarning() << Q_FUNC_INFO << "no valid transfer object available";
+        return false;
+    }
+
     qDebug() << Q_FUNC_INFO;
-    return false;
+    return m_transfer->start();
+}
+
+/*!
+ * \brief ContentTransfer::transfer
+ * \return
+ */
+com::ubuntu::content::Transfer *ContentTransfer::transfer() const
+{
+    qDebug() << Q_FUNC_INFO;
+    return m_transfer;
+}
+
+/*!
+ * \brief ContentTransfer::setTransfer
+ * \param transfer
+ */
+void ContentTransfer::setTransfer(com::ubuntu::content::Transfer *transfer)
+{
+    if (m_transfer) {
+        qWarning() << Q_FUNC_INFO << "the transfer object was already set";
+        return;
+    }
+
+    if (!transfer) {
+        qWarning() << Q_FUNC_INFO << "No valid transfer object passed:" << transfer;
+        return;
+    }
+
+    qDebug() << Q_FUNC_INFO;
+
+    m_transfer = transfer;
+    connect(m_transfer, SIGNAL(stateChanged()), this, SIGNAL(stateChanged()));
 }

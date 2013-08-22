@@ -17,15 +17,21 @@
 #ifndef COM_UBUNTU_CONTENTTRANSFER_H_
 #define COM_UBUNTU_CONTENTTRANSFER_H_
 
-#include <contentitem.h>
-
 #include <com/ubuntu/content/transfer.h>
 
 #include <QList>
 #include <QObject>
 #include <QQmlListProperty>
 
-namespace cuc = com::ubuntu::content;
+namespace com {
+namespace ubuntu {
+namespace content {
+class Transfer;
+}
+}
+}
+
+class ContentItem;
 
 class ContentTransfer : public QObject
 {
@@ -36,11 +42,11 @@ class ContentTransfer : public QObject
 
 public:
     enum State {
-        Initiated = cuc::Transfer::initiated,
-        InProgress = cuc::Transfer::in_progress,
-        Charged = cuc::Transfer::charged,
-        Collected = cuc::Transfer::collected,
-        Aborted = cuc::Transfer::aborted
+        Initiated = com::ubuntu::content::Transfer::initiated,
+        InProgress = com::ubuntu::content::Transfer::in_progress,
+        Charged = com::ubuntu::content::Transfer::charged,
+        Collected = com::ubuntu::content::Transfer::collected,
+        Aborted = com::ubuntu::content::Transfer::aborted
     };
 
     ContentTransfer(QObject *parent = nullptr);
@@ -51,10 +57,14 @@ public:
 
     Q_INVOKABLE bool start();
 
+    com::ubuntu::content::Transfer *transfer() const;
+    void setTransfer(com::ubuntu::content::Transfer *transfer);
+
 Q_SIGNALS:
     void stateChanged();
 
 private:
+    com::ubuntu::content::Transfer *m_transfer;
     QList<ContentItem *> m_items;
 };
 

@@ -17,13 +17,21 @@
 #ifndef COM_UBUNTU_CONTENTHUB_H_
 #define COM_UBUNTU_CONTENTHUB_H_
 
-#include <contentpeer.h>
-#include <contenttransfer.h>
-#include <contenttype.h>
-
 #include <QList>
 #include <QObject>
 #include <QQmlListProperty>
+
+class ContentPeer;
+class ContentTransfer;
+
+namespace com {
+namespace ubuntu {
+namespace content {
+class Hub;
+class Type;
+}
+}
+}
 
 class ContentHub : public QObject
 {
@@ -48,7 +56,11 @@ Q_SIGNALS:
     void finishedImportsChanged();
 
 private:
+    const com::ubuntu::content::Type &contentType2HubType(int type) const;
+
     QList<ContentTransfer *> m_finishedImports;
+
+    com::ubuntu::content::Hub *m_hub;
 };
 
 #endif // COM_UBUNTU_CONTENTHUB_H_

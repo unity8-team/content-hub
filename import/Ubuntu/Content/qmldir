@@ -1,0 +1,3 @@
+module Ubuntu.Content
+plugin ubuntu-content-hub-plugin
+

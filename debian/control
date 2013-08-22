@@ -9,6 +9,9 @@ Build-Depends: cmake,
                lcov,
                qt5-default,
                qtbase5-dev,
+               qtdeclarative5-dev,
+               qtdeclarative5-qtquick2-plugin,
+               qtdeclarative5-test-plugin,
 Standards-Version: 3.9.4
 Section: libs
 Homepage: https://launchpad.net/content-hub
@@ -36,6 +39,16 @@ Depends: ${misc:Depends},
          ${shlibs:Depends},
 Description: <insert up to 60 chars description>
  <insert long description, indented with spaces>
+
+Package: qtdeclarative5-content-hub-plugin
+Section: libs
+Architecture: any
+Depends: ${shlibs:Depends},
+         ${misc:Depends},
+         libcontent-hub0,
+         qtdeclarative5-qtquick2-plugin,
+Description: QML binding for libcontent-hub
+ QML bindings for libcontent-hub
 
 Package: libcontent-hub-doc
 Section: doc

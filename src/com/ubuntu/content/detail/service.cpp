@@ -22,6 +22,9 @@
 #include "transfer.h"
 #include "transferadaptor.h"
 
+#include "handler.h"
+#include "handleradaptor.h"
+
 #include <com/ubuntu/content/peer.h>
 #include <com/ubuntu/content/type.h>
 
@@ -32,6 +35,21 @@
 #include <QUuid>
 
 #include <cassert>
+
+namespace {
+    /* sanitize the dbus object path */
+    QString sanitize_path(const QString& path)
+    {
+        QString sanitized = path;
+
+        for (int i = 0; i < sanitized.length(); ++i)
+        {
+            if ( !( sanitized[i].isLetter() || sanitized[i].isDigit()))
+                sanitized[i] = QLatin1Char('_');
+        }
+        return sanitized;
+    }
+}
 
 namespace cucd = com::ubuntu::content::detail;
 
@@ -99,8 +117,9 @@ QDBusObjectPath cucd::Service::CreateImportForTypeFromPeer(const QString& /*type
             .arg("ThisShouldBeTheAppIdDeterminedFromThePidOfTheCallingProcess")
             .arg(import_counter);
 
-     QString source = exporter_path_pattern
-            .arg(QString(peer_id).replace(QString("."), QString("_")))
+
+    QString source = exporter_path_pattern
+            .arg(sanitize_path(peer_id))
             .arg(import_counter);
 
     auto transfer = new cucd::Transfer(this);
@@ -114,4 +133,33 @@ QDBusObjectPath cucd::Service::CreateImportForTypeFromPeer(const QString& /*type
     qDebug() << "Created transfer " << source << " -> " << destination;
 
     return QDBusObjectPath{destination};
+}
+
+void cucd::Service::RegisterImportExportHandler(const QString& /*type_id*/, const QString& peer_id, const QString& address, const QDBusObjectPath& handler)
+{
+    qDebug() << Q_FUNC_INFO << peer_id << ":" << address << ":" << handler.path();
+    auto c = QDBusConnection::connectToBus(QDBusConnection::SessionBus, address);
+    qDebug() << Q_FUNC_INFO << "connected:" << c.isConnected() << "foo:" << c.interface()->servicePid(address);
+    cucd::Handler *foo = static_cast<cucd::Handler*>(c.objectRegisteredAt(handler.path()));
+    if (foo == nullptr)
+        qDebug() << Q_FUNC_INFO << "Failed to get object";
+    //cucd::Handler *h = new cucd::Handler(c);
+
+    //auto ha = new cucd::Handler(c, static_cast<com::ubuntu::content::ImportExportHandler*>(c.objectRegisteredAt(handler.path())));
+
+    //com::ubuntu::content::Transfer *transfer = static_cast<com::ubuntu::content::Transfer*>(d->connection.objectRegisteredAt("/transfers/com_example_pictures/export/1"));
+    foo->HandleExport(QDBusObjectPath{"/transfers/com_example_pictures/export/1"});
+
+    /*
+    QDBusMessage f = QDBusMessage::createMethodCall(address, handler.path(), "com.ubuntu.content.dbus.Handler", "HandleExport");
+
+    QList<QVariant> args;
+    args.append(QVariant(QString("/transfers/com_example_pictures/export/1")));
+    f.setArguments(args);
+    c.call(f);
+    */
+    //Q_UNUSED(h);
+    //Q_UNUSED(ha);
+
+    //foo->HandleExport(NULL);
 }

@@ -20,6 +20,7 @@
 
 #include <QObject>
 #include <QStringList>
+#include <com/ubuntu/content/import_export_handler.h>
 #include <QtDBus/QDBusConnection>
 #include <QtDBus/QDBusObjectPath>
 
@@ -37,7 +38,7 @@ class Handler : public QObject
     Q_OBJECT
   public:
     Handler(QDBusConnection connection,
-            QObject* parent = nullptr);
+            com::ubuntu::content::ImportExportHandler *handler = nullptr);
     Handler(const Handler&) = delete;
     ~Handler();
 

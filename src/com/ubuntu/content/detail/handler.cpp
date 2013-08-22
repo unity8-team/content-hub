@@ -34,6 +34,7 @@
 #include <cassert>
 
 namespace cucd = com::ubuntu::content::detail;
+namespace cuc = com::ubuntu::content;
 
 struct cucd::Handler::Private : public QObject
 {
@@ -42,15 +43,17 @@ struct cucd::Handler::Private : public QObject
             : QObject(parent),
               connection(connection)
     {
+        qDebug() << Q_FUNC_INFO;
     }
 
     QDBusConnection connection;
 };
 
-cucd::Handler::Handler(QDBusConnection connection, QObject* parent)
-        : QObject(parent),
-          d(new Private{connection, this})
+cucd::Handler::Handler(QDBusConnection connection, cuc::ImportExportHandler* handler)
+        : d(new Private{connection, this})
 {
+    qDebug() << Q_FUNC_INFO;
+    Q_UNUSED(handler);
 }
 
 cucd::Handler::~Handler() {}

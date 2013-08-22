@@ -33,6 +33,21 @@
 
 #include <cassert>
 
+namespace {
+    /* sanitize the dbus object path */
+    QString sanitize_path(const QString& path)
+    {
+        QString sanitized = path;
+
+        for (int i = 0; i < sanitized.length(); ++i)
+        {
+            if ( !( sanitized[i].isLetter() || sanitized[i].isDigit()))
+                sanitized[i] = QLatin1Char('_');
+        }
+        return sanitized;
+    }
+}
+
 namespace cucd = com::ubuntu::content::detail;
 
 struct cucd::Service::Private : public QObject
@@ -99,8 +114,9 @@ QDBusObjectPath cucd::Service::CreateImportForTypeFromPeer(const QString& /*type
             .arg("ThisShouldBeTheAppIdDeterminedFromThePidOfTheCallingProcess")
             .arg(import_counter);
 
-     QString source = exporter_path_pattern
-            .arg(QString(peer_id).replace(QString("."), QString("_")))
+
+    QString source = exporter_path_pattern
+            .arg(sanitize_path(peer_id))
             .arg(import_counter);
 
     auto transfer = new cucd::Transfer(this);

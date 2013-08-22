@@ -35,13 +35,12 @@ cuc::Peer Registry::default_peer_for_type(cuc::Type type)
 void Registry::enumerate_known_peers_for_type(cuc::Type type, const std::function<void(const cuc::Peer&)>&for_each)
 {
     qDebug() << Q_FUNC_INFO << type.id();
-    for(QMap<cuc::Type,cuc::Peer>::iterator i = m_peers.begin(); i != m_peers.end(); )
+    for (auto it = m_peers.lowerBound(type), itE = m_peers.upperBound(type); it != itE; ++it)
     {
-        if(i.key() == type)
+        if(it.key() == type)
         {
-            for_each(i.value());
+            for_each(it.value());
         }
-        i++;
     }
 }
 

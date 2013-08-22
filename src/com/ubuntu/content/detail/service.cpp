@@ -99,8 +99,8 @@ QDBusObjectPath cucd::Service::CreateImportForTypeFromPeer(const QString& /*type
             .arg("ThisShouldBeTheAppIdDeterminedFromThePidOfTheCallingProcess")
             .arg(import_counter);
 
-    QString source = exporter_path_pattern
-            .arg(peer_id)
+     QString source = exporter_path_pattern
+            .arg(QString(peer_id).replace(QString("."), QString("_")))
             .arg(import_counter);
 
     auto transfer = new cucd::Transfer(this);

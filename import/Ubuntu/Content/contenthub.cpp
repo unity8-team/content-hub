@@ -115,7 +115,7 @@ QList<ContentPeer *> ContentHub::knownSourcesForType(int type)
  */
 ContentTransfer *ContentHub::importContent(int type)
 {
-    qDebug() << Q_FUNC_INFO << (ContentType::Type)type;
+    qDebug() << Q_FUNC_INFO << static_cast<ContentType::Type>(type);
 
     const cuc::Type &hubType = contentType2HubType(type);
 //    FIXME show user a selection of possible peers
@@ -133,7 +133,7 @@ ContentTransfer *ContentHub::importContent(int type)
  */
 ContentTransfer *ContentHub::importContent(int type, ContentPeer *peer)
 {
-    qDebug() << Q_FUNC_INFO << (ContentType::Type)type << peer;
+    qDebug() << Q_FUNC_INFO << static_cast<ContentType::Type>(type) << peer;
 
     const cuc::Type &hubType = contentType2HubType(type);
 //    FIXME convert from peer, instead of using the default

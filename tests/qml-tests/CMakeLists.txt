@@ -16,8 +16,7 @@ set(TEST tst_QmlTests)
 add_executable(${TEST} tst_QmlTests.cpp)
 qt5_use_modules(${TEST} Core Qml Quick Test QuickTest)
 add_test(${TEST} ${CMAKE_CURRENT_BINARY_DIR}/${TEST})
-set_tests_properties(${TEST} PROPERTIES ENVIRONMENT "QT_QPA_PLATFORM=minimal")
-set_tests_properties(${TEST} PROPERTIES ENVIRONMENT "QML2_IMPORT_PATH=${CMAKE_BINARY_DIR}/import")
+set_tests_properties(${TEST} PROPERTIES ENVIRONMENT "QT_QPA_PLATFORM=minimal;QML2_IMPORT_PATH=${CMAKE_BINARY_DIR}/import")
 
 # copy qml files under test to build dir
 set(out_qml_files)

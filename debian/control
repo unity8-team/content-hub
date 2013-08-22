@@ -30,6 +30,16 @@ Depends: ${shlibs:Depends}, ${misc:Depends}
 Description: <insert up to 60 chars description>
  <insert long description, indented with spaces>
 
+Package: qtdeclarative5-content-hub-plugin
+Section: libs
+Architecture: any
+Depends: ${shlibs:Depends},
+         ${misc:Depends},
+         libcontent-hub0,
+         qtdeclarative5-qtquick2-plugin,
+Description: QML binding for libcontent-hub
+ QML bindings for libcontent-hub
+
 Package: libcontent-hub-doc
 Section: doc
 Architecture: all

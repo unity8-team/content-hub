@@ -30,3 +30,4 @@ include_directories (
 )
 
 add_subdirectory(acceptance-tests)
+add_subdirectory(qml-tests)

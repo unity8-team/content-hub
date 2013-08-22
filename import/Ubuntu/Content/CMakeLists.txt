@@ -35,6 +35,7 @@ set(PLUGIN_HDRS
     contentpeer.h
     contenttransfer.h
     contenttype.h
+    qmlimportexporthandler.h
     )
 
 set(PLUGIN_SRC
@@ -44,6 +45,7 @@ set(PLUGIN_SRC
     contentpeer.cpp
     contenttransfer.cpp
     contenttype.cpp
+    qmlimportexporthandler.cpp
     )
 
 add_library(${PLUGIN} MODULE ${PLUGIN_SRC} ${PLUGIN_HDRS})

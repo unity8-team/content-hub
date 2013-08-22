@@ -18,6 +18,7 @@
 #include <contentpeer.h>
 #include <contenttransfer.h>
 #include <contenttype.h>
+#include <qmlimportexporthandler.h>
 
 #include <com/ubuntu/content/hub.h>
 #include <com/ubuntu/content/peer.h>
@@ -60,8 +61,8 @@ ContentHub::ContentHub(QObject *parent)
       m_hub(0)
 {
     m_hub = cuc::Hub::Client::instance();
-//    FIXME write the import export handler
-//    m_hub->register_import_export_handler(handler);
+    m_handler = new QmlImportExportHandler(this);
+    m_hub->register_import_export_handler(m_handler);
 }
 
 /*!

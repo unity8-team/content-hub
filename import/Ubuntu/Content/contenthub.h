@@ -23,6 +23,7 @@
 
 class ContentPeer;
 class ContentTransfer;
+class QmlImportExportHandler;
 
 namespace com {
 namespace ubuntu {
@@ -61,6 +62,7 @@ private:
     QList<ContentTransfer *> m_finishedImports;
 
     com::ubuntu::content::Hub *m_hub;
+    QmlImportExportHandler *m_handler;
 };
 
 #endif // COM_UBUNTU_CONTENTHUB_H_

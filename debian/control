@@ -1,5 +1,5 @@
 Source: content-hub
-Priority: extra
+Priority: optional
 Maintainer: Ken VanDine <ken.vandine@canonical.com>
 Build-Depends: cmake,
                debhelper (>= 9),
@@ -15,9 +15,25 @@ Build-Depends: cmake,
 Standards-Version: 3.9.4
 Section: libs
 Homepage: https://launchpad.net/content-hub
+# If you aren't a member of ~phablet-team but need to upload packaging changes,
+# just go ahead. ~phablet-team will notice and sync up the code again.
+Vcs-Bzr: https://code.launchpad.net/~phablet-team/content-hub/trunk
+Vcs-Browser: https://bazaar.launchpad.net/~phablet-team/content-hub/trunk/files
 
 Package: content-hub
 Architecture: any
+Depends: ${misc:Depends},
+         ${shlibs:Depends},
+Description: content sharing/picking service
+ Content sharing/picking infrastructure and service, designed to allow apps to
+ securely and efficiently exchange content.
+ This package includes the content sharing service.
+
+Package: libcontent-hub0
+Section: libs
+Architecture: any
+Multi-Arch: same
+Pre-Depends: ${misc:Pre-Depends}
 Depends: ${misc:Depends},
          ${shlibs:Depends},
 Description: <insert up to 60 chars description>
@@ -26,21 +42,15 @@ Description: <insert up to 60 chars description>
 Package: libcontent-hub-dev
 Section: libdevel
 Architecture: any
+Multi-Arch: same
+Pre-Depends: ${misc:Pre-Depends}
 Depends: ${misc:Depends},
          ${shlibs:Depends},
          libcontent-hub0 (= ${binary:Version}),
 Description: <insert up to 60 chars description>
  <insert long description, indented with spaces>
 
-Package: libcontent-hub0
-Section: libs
-Architecture: any
-Depends: ${misc:Depends},
-         ${shlibs:Depends},
-Description: <insert up to 60 chars description>
- <insert long description, indented with spaces>
-
-Package: qtdeclarative5-content-hub-plugin
+Package: qtdeclarative5-content-hub-0.0
 Section: libs
 Architecture: any
 Depends: ${shlibs:Depends},
@@ -54,5 +64,6 @@ Package: libcontent-hub-doc
 Section: doc
 Architecture: all
 Depends: ${misc:Depends},
-Description: <insert up to 60 chars description>
- <insert long description, indented with spaces>
+         libcontent-hub-dev (>= ${source:Version}),
+Description: Documentation files for libcontent-hub-dev
+ Documentation files for libcontent-hub-dev

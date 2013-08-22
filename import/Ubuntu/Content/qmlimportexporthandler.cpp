@@ -35,18 +35,18 @@ QmlImportExportHandler::QmlImportExportHandler(QObject *parent)
 /*!
  * \brief QmlImportExportHandler::handle_import
  */
-void QmlImportExportHandler::handle_import(com::ubuntu::content::Transfer *)
+void QmlImportExportHandler::handle_import(com::ubuntu::content::Transfer *transfer)
 {
     qDebug() << Q_FUNC_INFO;
-    Q_EMIT importReqested();
+    Q_EMIT importReqested(transfer);
 }
 
 /*!
  * \brief QmlImportExportHandler::handle_export
  */
-void QmlImportExportHandler::handle_export(com::ubuntu::content::Transfer *)
+void QmlImportExportHandler::handle_export(com::ubuntu::content::Transfer *transfer)
 {
     qDebug() << Q_FUNC_INFO;
-    Q_EMIT exportRequested();
+    Q_EMIT exportRequested(transfer);
 }
 

@@ -34,12 +34,12 @@ class QmlImportExportHandler : public com::ubuntu::content::ImportExportHandler
 public:
     QmlImportExportHandler(QObject *parent = nullptr);
 
-    Q_INVOKABLE virtual void handle_import(com::ubuntu::content::Transfer*);
-    Q_INVOKABLE virtual void handle_export(com::ubuntu::content::Transfer*);
+    Q_INVOKABLE virtual void handle_import(com::ubuntu::content::Transfer *transfer);
+    Q_INVOKABLE virtual void handle_export(com::ubuntu::content::Transfer *transfer);
 
 Q_SIGNALS:
-    void importReqested();
-    void exportRequested();
+    void importReqested(com::ubuntu::content::Transfer*);
+    void exportRequested(com::ubuntu::content::Transfer*);
 };
 
 #endif // COM_UBUNTU_QMLIMPORTEXPORTHANDLER_H_

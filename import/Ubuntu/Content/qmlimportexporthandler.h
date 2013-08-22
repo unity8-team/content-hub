@@ -15,7 +15,7 @@
  */
 
 #ifndef COM_UBUNTU_QMLIMPORTEXPORTHANDLER_H_
-#define COM_UBUNTU_CONTENTTYPE_H_
+#define COM_UBUNTU_QMLIMPORTEXPORTHANDLER_H_
 
 #include <com/ubuntu/content/import_export_handler.h>
 
@@ -42,4 +42,4 @@ Q_SIGNALS:
     void exportRequested();
 };
 
-#endif // COM_UBUNTU_CONTENTTYPE_H_
+#endif // COM_UBUNTU_QMLIMPORTEXPORTHANDLER_H_

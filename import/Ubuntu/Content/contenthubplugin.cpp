@@ -27,6 +27,9 @@
 #include <QQmlEngine>
 #include <QDebug>
 
+/*!
+ * \reimp
+ */
 void ContentHubPlugin::registerTypes(const char *uri)
 {
     qDebug() << Q_FUNC_INFO;
@@ -42,6 +45,9 @@ void ContentHubPlugin::registerTypes(const char *uri)
     qmlRegisterUncreatableType<ContentType>(uri, versionMajor, versionMinor, "ContentType", "Use only the type");
 }
 
+/*!
+ * \reimp
+ */
 void ContentHubPlugin::initializeEngine(QQmlEngine *engine, const char *uri)
 {
     qDebug() << Q_FUNC_INFO;

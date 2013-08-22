@@ -40,18 +40,28 @@
  * import Ubuntu.Content 0.1
  *
  * Rectangle {
- *     width: units.gu(40)
- *     height: units.gu(20)
- *
  *     Button {
- *         text: "Import"
+ *         text: "Import from default"
+ *          onClicked: {
+ *              var peer = ContentHub.defaultSourceForType(ContentType.Pictures)
+ *              var transfer = ContentHub.importContent(ContentType.Pictures, peer)
+ *         }
+ *     Button {
+ *         text: "Import from a selectable list"
  *          onClicked: {
  *              var transfer = ContentHub.importContent(ContentType.Pictures)
  *         }
  *     }
+ *     Connections {
+ *         target: ContentHub
+ *         onExportRequested: {
+ *             // show content picker
+ *             transfer.items = selectedItems
+ *             transfer.state = ContentTransfer.Charged
+ *         }
+ *     }
  * }
  * \endqml
- *
  */
 
 namespace cuc = com::ubuntu::content;

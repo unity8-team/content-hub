@@ -17,6 +17,8 @@
  */
 
 #include "ContentServiceInterface.h"
+#include "ContentHandlerInterface.h"
+#include "handleradaptor.h"
 #include "transfer_p.h"
 
 #include <com/ubuntu/content/hub.h>
@@ -60,8 +62,23 @@ cuc::Hub* cuc::Hub::Client::instance()
     return hub;
 }
 
-void cuc::Hub::register_import_export_handler(cuc::ImportExportHandler*)
+void cuc::Hub::register_import_export_handler(cuc::ImportExportHandler* handler)
 {
+    qDebug() << Q_FUNC_INFO;
+    auto *h =
+        new com::ubuntu::content::dbus::Handler(
+            "com.ubuntu.content.dbus.Handler",
+            "/",
+            QDBusConnection::sessionBus());
+
+    //cuc::Transfer* transfer = dynamic_cast<cuc::Transfer*>(d->service->connection().objectRegisteredAt("/transfers/comexamplepictures/export/1"));
+    //auto *foo = d->service->connection().objectRegisteredAt("/transfers/comexamplepictures/export/1");
+    //qDebug() << "OBJECT: " << foo->objectName();
+    Q_UNUSED(handler);
+    //h->connection().registerObject("/foobar", handler, QDBusConnection::ExportAllContents);
+    h->HandleExport(QDBusObjectPath{"/transfers/comexamplepictures/export/1"});
+    //handler->handle_export(transfer);
+
 }
 
 const cuc::Store* cuc::Hub::store_for_scope_and_type(cuc::Scope scope, cuc::Type type)

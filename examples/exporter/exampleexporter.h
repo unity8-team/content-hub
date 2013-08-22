@@ -29,15 +29,16 @@ namespace cuc = com::ubuntu::content;
 class ExampleExporter : public cuc::ImportExportHandler
 {
     Q_OBJECT
+    Q_CLASSINFO("D-Bus Interface", "demo.Chat")
 
 public:
     ExampleExporter();
-    Q_INVOKABLE void handle_import(cuc::Transfer*);
-    Q_INVOKABLE void handle_export(cuc::Transfer*);
     
 signals:
     
 public slots:
+    Q_INVOKABLE void handle_import(cuc::Transfer*);
+    Q_INVOKABLE void handle_export(cuc::Transfer*);
     
 };
 

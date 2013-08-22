@@ -1,0 +1,10 @@
+<node>
+  <interface name="com.ubuntu.content.dbus.Handler">
+    <method name="HandleImport">
+      <arg name="transfer" type="o" direction="in"/>
+    </method>
+    <method name="HandleExport">
+      <arg name="transfer" type="o" direction="in"/>
+    </method>
+  </interface>
+</node>

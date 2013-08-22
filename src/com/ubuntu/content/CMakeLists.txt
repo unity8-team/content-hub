@@ -32,6 +32,13 @@ qt5_add_dbus_adaptor(
   CONTENT_TRANSFER_SKELETON ${CMAKE_CURRENT_SOURCE_DIR}/detail/com.ubuntu.content.Transfer.xml 
   detail/transfer.h com::ubuntu::content::detail::Transfer)
 
+qt5_add_dbus_interface(
+  CONTENT_HANDLER_STUB ${CMAKE_CURRENT_SOURCE_DIR}/detail/com.ubuntu.content.Handler.xml 
+  ContentHandlerInterface)
+qt5_add_dbus_adaptor(
+  CONTENT_HANDLER_SKELETON ${CMAKE_CURRENT_SOURCE_DIR}/detail/com.ubuntu.content.Handler.xml 
+  detail/handler.h com::ubuntu::content::detail::Handler)
+
 qt5_wrap_cpp(CONTENT_HUB_MOCS ${CMAKE_SOURCE_DIR}/include/com/ubuntu/content/hub.h)
 qt5_wrap_cpp(CONTENT_HUB_MOCS ${CMAKE_SOURCE_DIR}/include/com/ubuntu/content/import_export_handler.h)
 qt5_wrap_cpp(CONTENT_HUB_MOCS ${CMAKE_SOURCE_DIR}/include/com/ubuntu/content/item.h)
@@ -53,12 +60,15 @@ add_library(
 
   detail/service.cpp
   detail/transfer.cpp
+  detail/handler.cpp
 
   ${CONTENT_HUB_MOCS}
   ${CONTENT_SERVICE_STUB}
   ${CONTENT_SERVICE_SKELETON}
   ${CONTENT_TRANSFER_STUB}
   ${CONTENT_TRANSFER_SKELETON}
+  ${CONTENT_HANDLER_STUB}
+  ${CONTENT_HANDLER_SKELETON}
 )
 
 set_target_properties(

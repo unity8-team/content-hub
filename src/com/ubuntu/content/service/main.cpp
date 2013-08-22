@@ -45,10 +45,10 @@ void list(QSharedPointer<cucd::PeerRegistry> registry)
 
 void populate(QSharedPointer<cucd::PeerRegistry> registry)
 {
-    registry->install_default_peer_for_type(cuc::Type::Known::pictures(), cuc::Peer("com.example.pictures"));
-    registry->install_peer_for_type(cuc::Type::Known::pictures(), cuc::Peer("com.example.pictures2"));
-    registry->install_peer_for_type(cuc::Type::Known::pictures(), cuc::Peer("com.example.pictures3"));
-    registry->install_peer_for_type(cuc::Type::Known::pictures(), cuc::Peer("com.example.pictures2"));
+    registry->install_default_peer_for_type(cuc::Type::Known::pictures(), cuc::Peer("comexamplepictures"));
+    registry->install_peer_for_type(cuc::Type::Known::pictures(), cuc::Peer("comexamplepictures2"));
+    registry->install_peer_for_type(cuc::Type::Known::pictures(), cuc::Peer("comexamplepictures3"));
+    registry->install_peer_for_type(cuc::Type::Known::pictures(), cuc::Peer("comexamplepictures2"));
     list(registry);
 }
 
@@ -61,7 +61,7 @@ int main(int argc, char** argv)
     auto connection = QDBusConnection::sessionBus();
 
     auto registry = QSharedPointer<cucd::PeerRegistry>(new Registry());
-    auto peer = cuc::Peer("com.example.pictures");
+    auto peer = cuc::Peer("comexamplepictures");
 
     auto server = new cucd::Service(connection, registry, app->parent());
     new ServiceAdaptor(server);

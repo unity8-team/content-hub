@@ -17,6 +17,8 @@
 #ifndef COM_UBUNTU_CONTENTITEM_H_
 #define COM_UBUNTU_CONTENTITEM_H_
 
+#include <com/ubuntu/content/item.h>
+
 #include <QObject>
 #include <QString>
 #include <QUrl>
@@ -36,13 +38,16 @@ public:
     const QUrl &url() const;
     void setUrl(const QUrl &url);
 
+    const com::ubuntu::content::Item &item() const;
+    void setItem(const com::ubuntu::content::Item &item);
+
 Q_SIGNALS:
     void nameChanged();
     void urlChanged();
 
 private:
     QString m_name;
-    QUrl m_url;
+    com::ubuntu::content::Item m_item;
 };
 
 #endif // COM_UBUNTU_CONTENTITEM_H_

@@ -74,13 +74,11 @@ ContentPeer *ContentHub::defaultSourceForType(int type)
 {
     qDebug() << Q_FUNC_INFO;
 
-    const cuc::Type &hubType = contentType2HubType(type);
+    const cuc::Type &hubType = ContentType::contentType2HubType(type);
     cuc::Peer hubPeer = m_hub->default_peer_for_type(hubType);
 
     ContentPeer *qmlPeer = new ContentPeer(this);
-    qmlPeer->setName(hubPeer.id());
-//    FIXME set the proper type
-//    contentPeer->setType(hubPeer.id());
+    qmlPeer->setPeer(hubPeer);
 
     return qmlPeer;
 }
@@ -94,15 +92,13 @@ QList<ContentPeer *> ContentHub::knownSourcesForType(int type)
 {
     qDebug() << Q_FUNC_INFO;
 
-    const cuc::Type &hubType = contentType2HubType(type);
+    const cuc::Type &hubType = ContentType::contentType2HubType(type);
     QVector<cuc::Peer> hubPeers = m_hub->known_peers_for_type(hubType);
 
     QList<ContentPeer *> qmlPeers;
     foreach (const cuc::Peer &hubPeer, hubPeers) {
         ContentPeer *qmlPeer = new ContentPeer(this);
-        qmlPeer->setName(hubPeer.id());
-        //    FIXME set the proper type
-        //    contentPeer->setType(hubPeer.id());
+        qmlPeer->setPeer(hubPeer);
         qmlPeers.append(qmlPeer);
     }
 
@@ -118,7 +114,7 @@ ContentTransfer *ContentHub::importContent(int type)
 {
     qDebug() << Q_FUNC_INFO << static_cast<ContentType::Type>(type);
 
-    const cuc::Type &hubType = contentType2HubType(type);
+    const cuc::Type &hubType = ContentType::contentType2HubType(type);
 //    FIXME show user a selection of possible peers
     cuc::Peer hubPeer = m_hub->default_peer_for_type(hubType);
     cuc::Transfer *hubTransfer = m_hub->create_import_for_type_from_peer(hubType, hubPeer);
@@ -136,10 +132,8 @@ ContentTransfer *ContentHub::importContent(int type, ContentPeer *peer)
 {
     qDebug() << Q_FUNC_INFO << static_cast<ContentType::Type>(type) << peer;
 
-    const cuc::Type &hubType = contentType2HubType(type);
-//    FIXME convert from peer, instead of using the default
-    cuc::Peer hubPeer = m_hub->default_peer_for_type(hubType);
-    cuc::Transfer *hubTransfer = m_hub->create_import_for_type_from_peer(hubType, hubPeer);
+    const cuc::Type &hubType = ContentType::contentType2HubType(type);
+    cuc::Transfer *hubTransfer = m_hub->create_import_for_type_from_peer(hubType, peer->peer());
     ContentTransfer *qmlTransfer = new ContentTransfer(this);
     qmlTransfer->setTransfer(hubTransfer);
     return qmlTransfer;
@@ -164,20 +158,4 @@ QQmlListProperty<ContentTransfer> ContentHub::finishedImports()
 {
     qDebug() << Q_FUNC_INFO;
     return QQmlListProperty<ContentTransfer>(this, m_finishedImports);
-}
-
-/*!
- * \brief ContentHub::conentType2HubType converts a ContentType::Type to a
- * com::ubuntu::content::Type
- * \param type integer representing a ContentType::Type
- * \return
- */
-const com::ubuntu::content::Type &ContentHub::contentType2HubType(int type) const
-{
-    switch(type) {
-    case 1: return cuc::Type::Known::documents();
-    case 2: return cuc::Type::Known::pictures();
-    case 3: return cuc::Type::Known::music();
-    default: return cuc::Type::unknown();
-    }
 }

@@ -17,8 +17,6 @@
 #include "contenttransfer.h"
 #include <contentitem.h>
 
-#include <com/ubuntu/content/transfer.h>
-
 #include <QDebug>
 
 /*!

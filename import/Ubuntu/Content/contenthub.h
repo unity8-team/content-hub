@@ -57,8 +57,6 @@ Q_SIGNALS:
     void finishedImportsChanged();
 
 private:
-    const com::ubuntu::content::Type &contentType2HubType(int type) const;
-
     QList<ContentTransfer *> m_finishedImports;
 
     com::ubuntu::content::Hub *m_hub;

@@ -46,8 +46,26 @@
  *
  */
 
+namespace cuc = com::ubuntu::content;
+
 ContentType::ContentType(QObject *parent)
     : QObject(parent)
 {
     qDebug() << Q_FUNC_INFO;
+}
+
+/*!
+ * \brief ContentType::conentType2HubType converts a ContentType::Type to a
+ * com::ubuntu::content::Type
+ * \param type integer representing a ContentType::Type
+ * \return
+ */
+const com::ubuntu::content::Type &ContentType::contentType2HubType(int type)
+{
+    switch(type) {
+    case Documents: return cuc::Type::Known::documents();
+    case Pictures: return cuc::Type::Known::pictures();
+    case Music: return cuc::Type::Known::music();
+    default: return cuc::Type::unknown();
+    }
 }

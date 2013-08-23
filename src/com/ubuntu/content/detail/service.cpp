@@ -136,7 +136,7 @@ QDBusObjectPath cucd::Service::CreateImportForTypeFromPeer(const QString& /*type
 
 void cucd::Service::RegisterImportExportHandler(const QString& /*type_id*/, const QString& peer_id, const QDBusObjectPath& handler)
 {
-    qDebug() << Q_FUNC_INFO << peer_id << ":" << peer_id << ":" << handler.path();
+    qDebug() << Q_FUNC_INFO << peer_id << ":" << handler.path();
     d->registered_handlers.insert(peer_id, handler);
     qDebug() << Q_FUNC_INFO << "REGISTERED HANDLERS:" << d->registered_handlers.count();
 }

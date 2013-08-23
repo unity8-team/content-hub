@@ -59,7 +59,7 @@ int main(int argc, char** argv)
 {
     QCoreApplication *app = new QCoreApplication(argc, argv);
     const QString name = "com.ubuntu.content.dbus.Service";
-    const QString path = "/com/ubuntu/content/Service";
+    const QString path = "/";
 
     auto connection = QDBusConnection::sessionBus();
 

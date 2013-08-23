@@ -39,7 +39,7 @@ struct cuc::Hub::Private
     Private(QObject* parent) : service(
         new com::ubuntu::content::dbus::Service(
             "com.ubuntu.content.dbus.Service",
-            "/com/ubuntu/content/Service",
+            "/",
             QDBusConnection::sessionBus(),
             parent))
     {
@@ -95,24 +95,22 @@ void cuc::Hub::register_import_export_handler(cuc::ImportExportHandler* handler)
     qDebug() << Q_FUNC_INFO << "BUS_NAME:" << bus_name;
 
     auto c = QDBusConnection::sessionBus();
-    //auto e = QDBusConnection::connectToBus(QDBusConnection::SessionBus, "com.ubuntu.content.dbus.Service");
     auto h = new cuc::detail::Handler(c, handler);
 
     new HandlerAdaptor(h);
-    auto r = c.registerService(bus_name);
-    if ( r )
+    if (c.registerService(bus_name))
         qDebug() << Q_FUNC_INFO << "name success";
     else
         return;
-    qDebug() << Q_FUNC_INFO << "baseService:" << c.baseService();
 
-    auto o = c.registerObject("/com/ubuntu/content/transfer/ImportExportHandler", h);
-    if ( o )
+    if (c.registerObject("/com/ubuntu/content/transfer/ImportExportHandler", h))
         qDebug() << Q_FUNC_INFO << "object success";
 
     qDebug() << Q_FUNC_INFO << "PID: " << c.interface()->servicePid(c.baseService());
-    d->service->RegisterImportExportHandler(QString("foo"), id, QDBusObjectPath{"/com/ubuntu/content/transfer/ImportExportHandler"});
-
+    d->service->RegisterImportExportHandler(
+                QString(""),
+                id,
+                QDBusObjectPath{"/com/ubuntu/content/transfer/ImportExportHandler"});
 }
 
 const cuc::Store* cuc::Hub::store_for_scope_and_type(cuc::Scope scope, cuc::Type type)

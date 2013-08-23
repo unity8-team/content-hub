@@ -26,6 +26,12 @@ ExampleExporter::ExampleExporter()
 
 void ExampleExporter::handle_export(cuc::Transfer *transfer)
 {
+    qDebug() << Q_FUNC_INFO;
+    if (transfer == nullptr)
+    {
+        qDebug() << Q_FUNC_INFO << "Transfer null";
+        return;
+    }
     QVector<cuc::Item> items;
     items << cuc::Item(QUrl("file:///tmp/test1"));
     items << cuc::Item(QUrl("file:///tmp/test2"));

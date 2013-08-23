@@ -80,9 +80,10 @@ void cuc::Hub::register_import_export_handler(cuc::ImportExportHandler* handler)
     qDebug() << Q_FUNC_INFO << "baseService:" << c.baseService();
 
     new HandlerAdaptor(h);
-    //auto r = c.registerService("com.ubuntu.content.dbus.Foo");
-    //if ( r )
-    //    qDebug() << Q_FUNC_INFO << "name success";
+    static const QString ttp = {"com.ubuntu.content.handler.%1"};
+    auto r = c.registerService(ttp.arg("com_example_pictures"));
+    if ( r )
+        qDebug() << Q_FUNC_INFO << "name success";
     //auto o = d->service->connection().registerObject("/com/ubuntu/content/transfer/ImportExportHandler", h);
     auto o = c.registerObject("/com/ubuntu/content/transfer/ImportExportHandler", h);
     if ( o )
@@ -126,7 +127,7 @@ void cuc::Hub::register_import_export_handler(cuc::ImportExportHandler* handler)
     //x.connect(c.baseService(), "/com/ubuntu/content/transfer/ImportExportHandler", "com.ubuntu.content.dbus.Handler", "foo.bar", this);
 
     */
-    d->service->RegisterImportExportHandler(QString("foo"), QString("com.example.pictures"), QString(c.baseService()), QDBusObjectPath{"/com/ubuntu/content/transfer/ImportExportHandler"});
+    d->service->RegisterImportExportHandler(QString("foo"), QString("com.example.pictures"), QDBusObjectPath{"/com/ubuntu/content/transfer/ImportExportHandler"});
 
 }
 

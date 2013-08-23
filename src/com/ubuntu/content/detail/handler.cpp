@@ -24,6 +24,8 @@
 
 #include <com/ubuntu/content/peer.h>
 #include <com/ubuntu/content/type.h>
+#include <com/ubuntu/content/transfer.h>
+
 
 #include <QCache>
 #include <QObject>
@@ -69,6 +71,7 @@ void cucd::Handler::HandleExport(const QDBusObjectPath& transfer)
 {
     qDebug() << Q_FUNC_INFO;
     cuc::dbus::Transfer* client = new cuc::dbus::Transfer("com.ubuntu.content.dbus.Service", transfer.path(), QDBusConnection::sessionBus(), 0);
-    m_handler->handle_export(client);
-    Q_UNUSED(transfer);
+    cuc::Transfer *t = dynamic_cast<cuc::Transfer*>(client->connection().objectRegisteredAt(client->path()));
+    m_handler->handle_export(t);
+    //Q_UNUSED(transfer);
 }

@@ -139,9 +139,11 @@ QDBusObjectPath cucd::Service::CreateImportForTypeFromPeer(const QString& /*type
     return QDBusObjectPath{destination};
 }
 
-void cucd::Service::RegisterImportExportHandler(const QString& /*type_id*/, const QString& peer_id, const QString& address, const QDBusObjectPath& handler)
+void cucd::Service::RegisterImportExportHandler(const QString& /*type_id*/, const QString& peer_id, const QDBusObjectPath& handler)
 {
-    qDebug() << Q_FUNC_INFO << peer_id << ":" << address << ":" << handler.path();
+    qDebug() << Q_FUNC_INFO << peer_id << ":" << peer_id << ":" << handler.path();
+
+    const QString address = "com.ubuntu.content.hander.com_example_pictures";
     auto c = QDBusConnection::connectToBus(QDBusConnection::SessionBus, address);
     qDebug() << Q_FUNC_INFO << "connected:" << c.isConnected() << "foo:" << c.interface()->servicePid(address);
     //cucd::Handler *foo = static_cast<cucd::Handler*>(c.objectRegisteredAt(handler.path()));
@@ -153,10 +155,22 @@ void cucd::Service::RegisterImportExportHandler(const QString& /*type_id*/, cons
 
     //com::ubuntu::content::Transfer *transfer = static_cast<com::ubuntu::content::Transfer*>(d->connection.objectRegisteredAt("/transfers/com_example_pictures/export/1"));
 
-    cuc::dbus::Transfer* client = new cuc::dbus::Transfer("com.ubuntu.content.dbus.Service", "/transfers/com_example_pictures/export/1", QDBusConnection::sessionBus(), 0);
+    cuc::dbus::Transfer* transfer = new cuc::dbus::Transfer(
+                "com.ubuntu.content.dbus.Service",
+                "/transfers/com_example_pictures/export/1",
+                QDBusConnection::sessionBus(),
+                d->connection.objectRegisteredAt("/transfers/com_example_pictures/export/1"));
 
-    cuc::dbus::Handler* hclient = new cuc::dbus::Handler(address, handler.path(), QDBusConnection::sessionBus(), 0);
-    hclient->HandleExport(QDBusObjectPath{client->path()});
+    //qDebug() << Q_FUNC_INFO << "CALLER: " << d-
+    qDebug() << Q_FUNC_INFO << "NAME: " << transfer->connection().name();
+    qDebug() << Q_FUNC_INFO << "PATH: " << transfer->path();
+    //qDebug() << Q_FUNC_INFO << "State: " <<  transfer->;
+    cuc::dbus::Handler* h = new cuc::dbus::Handler(
+                address,
+                handler.path(),
+                QDBusConnection::sessionBus(),
+                0);
+    h->HandleExport(QDBusObjectPath{transfer->path()});
 
     /*
     QDBusMessage f = QDBusMessage::createMethodCall(address, handler.path(), "com.ubuntu.content.dbus.Handler", "HandleExport");

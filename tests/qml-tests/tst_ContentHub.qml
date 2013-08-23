@@ -24,9 +24,29 @@ TestCase {
     function test_default_import() {
         var transfer = ContentHub.importContent(ContentType.Pictures)
         verify(transfer !== null, "No transer Object returned")
-        compare(transfer.start(), false, "Transfer does not work")
+    }
+
+    function test_select_for_import() {
+        var peer = ContentHub.defaultSourceForType(ContentType.Pictures)
+//        compare(peer.name, "com_ubuntu_gallery_app", "Wrong peer as default")
+        var transfer = ContentHub.importContent(ContentType.Pictures, peer)
+        verify(transfer !== null, "No transer Object returned")
+    }
+
+    function test_export_request() {
+        var transfer = ContentHub.importContent(ContentType.Pictures)
+        ContentHub.exportRequested(transfer)
+        compare(test.exportTransfer, transfer, "Transfer object not correcty copied")
     }
 
     Item {
+        id: test
+        property variant exportTransfer
+        Connections {
+            target: ContentHub
+            onExportRequested: {
+                test.exportTransfer = transfer
+            }
+        }
     }
 }

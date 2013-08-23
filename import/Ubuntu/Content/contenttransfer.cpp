@@ -32,6 +32,8 @@
  * See documentation for \ContentHub
  */
 
+namespace cuc = com::ubuntu::content;
+
 ContentTransfer::ContentTransfer(QObject *parent)
     : QObject(parent),
       m_transfer(0)
@@ -47,7 +49,28 @@ ContentTransfer::ContentTransfer(QObject *parent)
 ContentTransfer::State ContentTransfer::state() const
 {
     qDebug() << Q_FUNC_INFO;
-    return Aborted;
+    if (!m_transfer)
+        return Aborted;
+
+    return static_cast<ContentTransfer::State>(m_transfer->state());
+}
+
+void ContentTransfer::setState(ContentTransfer::State state)
+{
+    qDebug() << Q_FUNC_INFO;
+    if (!m_transfer)
+        return;
+
+    if (state == Charged && m_transfer->state() == cuc::Transfer::in_progress) {
+        QVector<cuc::Item> hubItems;
+        hubItems.reserve(m_items.size());
+        foreach (const ContentItem *citem, m_items) {
+//            FIXME wait for peer/item branch to be merged
+            Q_UNUSED(citem);
+//            hubItems.append(citem.item);
+        }
+        m_transfer->charge(hubItems);
+    }
 }
 
 /*!

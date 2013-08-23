@@ -69,6 +69,7 @@
  * import Ubuntu.Content 0.1
  *
  * Rectangle {
+ *     property list<ContentItem> selectedItems
  *     Connections {
  *         target: ContentHub
  *         onExportRequested: {

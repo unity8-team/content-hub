@@ -37,7 +37,7 @@ class ContentTransfer : public QObject
 {
     Q_OBJECT
     Q_ENUMS(State)
-    Q_PROPERTY(State state READ state NOTIFY stateChanged)
+    Q_PROPERTY(State state READ state WRITE setState NOTIFY stateChanged)
     Q_PROPERTY(QQmlListProperty<ContentItem> items READ items)
 
 public:
@@ -52,6 +52,7 @@ public:
     ContentTransfer(QObject *parent = nullptr);
 
     State state() const;
+    void setState(State state);
 
     QQmlListProperty<ContentItem> items();
 

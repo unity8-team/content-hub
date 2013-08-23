@@ -30,6 +30,7 @@ namespace ubuntu {
 namespace content {
 class Hub;
 class Type;
+class Transfer;
 }
 }
 }
@@ -55,6 +56,10 @@ public:
 Q_SIGNALS:
     void exportRequested(ContentTransfer *transfer);
     void finishedImportsChanged();
+
+private Q_SLOTS:
+    void handleImport(com::ubuntu::content::Transfer * transfer);
+    void handleExport(com::ubuntu::content::Transfer * transfer);
 
 private:
     const com::ubuntu::content::Type &contentType2HubType(int type) const;

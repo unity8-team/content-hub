@@ -52,7 +52,7 @@ Depends: ${misc:Depends},
 Description: content sharing development files
  All the development headers and libraries for the content hub
 
-Package: qtdeclarative5-content-hub-0.0
+Package: qtdeclarative5-content-hub0.1
 Section: libs
 Architecture: any
 Depends: ${shlibs:Depends},

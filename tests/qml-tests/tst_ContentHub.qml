@@ -33,19 +33,29 @@ TestCase {
         verify(transfer !== null, "No transer Object returned")
     }
 
+//    function test_import_request() {
+//        test.numImports = 0
+//        // trigger import somehow
+//        compare(test.numImports, 1, "No import handled")
+//    }
+
     function test_export_request() {
         var transfer = ContentHub.importContent(ContentType.Pictures)
-        ContentHub.exportRequested(transfer)
+        ContentHub.exportRequested(transfer) // FIXME find better way to simulate the export request
         compare(test.exportTransfer, transfer, "Transfer object not correcty copied")
     }
 
     Item {
         id: test
         property variant exportTransfer
+        property int numImports: 0
         Connections {
             target: ContentHub
             onExportRequested: {
-                test.exportTransfer = transfer
+                test.exportTransfer = transfer;
+            }
+            onFinishedImportsChanged: {
+                test.numImports++;
             }
         }
     }

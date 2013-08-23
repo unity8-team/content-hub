@@ -17,6 +17,8 @@
 #include "contenttransfer.h"
 #include <contentitem.h>
 
+#include <com/ubuntu/content/item.h>
+
 #include <QDebug>
 
 /*!
@@ -29,6 +31,8 @@
  *
  * See documentation for \ContentHub
  */
+
+namespace cuc = com::ubuntu::content;
 
 ContentTransfer::ContentTransfer(QObject *parent)
     : QObject(parent),
@@ -45,7 +49,26 @@ ContentTransfer::ContentTransfer(QObject *parent)
 ContentTransfer::State ContentTransfer::state() const
 {
     qDebug() << Q_FUNC_INFO;
-    return Aborted;
+    if (!m_transfer)
+        return Aborted;
+
+    return static_cast<ContentTransfer::State>(m_transfer->state());
+}
+
+void ContentTransfer::setState(ContentTransfer::State state)
+{
+    qDebug() << Q_FUNC_INFO;
+    if (!m_transfer)
+        return;
+
+    if (state == Charged && m_transfer->state() == cuc::Transfer::in_progress) {
+        QVector<cuc::Item> hubItems;
+        hubItems.reserve(m_items.size());
+        foreach (const ContentItem *citem, m_items) {
+            hubItems.append(citem->item());
+        }
+        m_transfer->charge(hubItems);
+    }
 }
 
 /*!
@@ -104,5 +127,24 @@ void ContentTransfer::setTransfer(com::ubuntu::content::Transfer *transfer)
     qDebug() << Q_FUNC_INFO;
 
     m_transfer = transfer;
+
+    if (m_transfer->state() == cuc::Transfer::charged)
+        collectItems();
+
     connect(m_transfer, SIGNAL(stateChanged()), this, SIGNAL(stateChanged()));
+}
+
+/*!
+ * \brief ContentTransfer::collectItems gets the items out of the transfer object
+ */
+void ContentTransfer::collectItems()
+{
+    qDebug() << Q_FUNC_INFO;
+    QVector<cuc::Item> transfereditems = m_transfer->collect();
+    foreach (const cuc::Item &hubItem, transfereditems) {
+        ContentItem *qmlItem = new ContentItem(this);
+        qmlItem->setItem(hubItem);
+        m_items.append(qmlItem);
+    }
+    Q_EMIT itemsChanged();
 }

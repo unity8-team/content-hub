@@ -34,7 +34,7 @@
  *
  * FIXME documentation
  *
- * Example usage:
+ * Example usage for importing content:
  * \qml
  * import QtQuick 2.0
  * import Ubuntu.Content 0.1
@@ -43,21 +43,39 @@
  *     Button {
  *         text: "Import from default"
  *          onClicked: {
- *              var peer = ContentHub.defaultSourceForType(ContentType.Pictures)
- *              var transfer = ContentHub.importContent(ContentType.Pictures, peer)
+ *              var peer = ContentHub.defaultSourceForType(ContentType.Pictures);
+ *              var transfer = ContentHub.importContent(ContentType.Pictures, peer);
  *         }
  *     Button {
  *         text: "Import from a selectable list"
  *          onClicked: {
- *              var transfer = ContentHub.importContent(ContentType.Pictures)
+ *              var transfer = ContentHub.importContent(ContentType.Pictures);
  *         }
  *     }
+ *     property list<ContentItem> importItems
+ *     Connections {
+ *         target: ContentHub
+ *         onFinishedImportsChanged: {
+ *             var idx = ContentHub.finishedImports.length - 1;
+ *             importItmes = ContentHub.finishedImports[idx].items;
+ *         }
+ *     }
+ * }
+ * \endqml
+ *
+ * Example usage for providing a content export:
+ * \qml
+ * import QtQuick 2.0
+ * import Ubuntu.Content 0.1
+ *
+ * Rectangle {
+ *     property list<ContentItem> selectedItems
  *     Connections {
  *         target: ContentHub
  *         onExportRequested: {
  *             // show content picker
- *             transfer.items = selectedItems
- *             transfer.state = ContentTransfer.Charged
+ *             transfer.items = selectedItems;
+ *             transfer.state = ContentTransfer.Charged;
  *         }
  *     }
  * }
@@ -73,6 +91,11 @@ ContentHub::ContentHub(QObject *parent)
     m_hub = cuc::Hub::Client::instance();
     m_handler = new QmlImportExportHandler(this);
     m_hub->register_import_export_handler(m_handler);
+
+    connect(m_handler, SIGNAL(importRequested(com::ubuntu::content::Transfer*)),
+            this, SLOT(handleImport(com::ubuntu::content::Transfer*)));
+    connect(m_handler, SIGNAL(exportRequested(com::ubuntu::content::Transfer*)),
+            this, SLOT(handleExport(com::ubuntu::content::Transfer*)));
 }
 
 /*!
@@ -168,4 +191,30 @@ QQmlListProperty<ContentTransfer> ContentHub::finishedImports()
 {
     qDebug() << Q_FUNC_INFO;
     return QQmlListProperty<ContentTransfer>(this, m_finishedImports);
+}
+
+/*!
+ * \brief ContentHub::handleImport handles an incoming request for importing content
+ * \param transfer
+ */
+void ContentHub::handleImport(com::ubuntu::content::Transfer *transfer)
+{
+    qDebug() << Q_FUNC_INFO;
+    ContentTransfer *qmlTransfer = new ContentTransfer(this);
+    qmlTransfer->setTransfer(transfer);
+    m_finishedImports.append(qmlTransfer);
+    Q_EMIT finishedImportsChanged();
+}
+
+/*!
+ * \brief ContentHub::handleExport handles an incoming request for exporting content
+ * \param transfer
+ */
+void ContentHub::handleExport(com::ubuntu::content::Transfer *transfer)
+{
+    qDebug() << Q_FUNC_INFO;
+    ContentTransfer *qmlTransfer = new ContentTransfer(this);
+    qmlTransfer->setTransfer(transfer);
+
+    Q_EMIT exportRequested(qmlTransfer);
 }

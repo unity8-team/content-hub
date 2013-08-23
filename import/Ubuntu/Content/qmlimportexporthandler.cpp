@@ -38,7 +38,7 @@ QmlImportExportHandler::QmlImportExportHandler(QObject *parent)
 void QmlImportExportHandler::handle_import(com::ubuntu::content::Transfer *transfer)
 {
     qDebug() << Q_FUNC_INFO;
-    Q_EMIT importReqested(transfer);
+    Q_EMIT importRequested(transfer);
 }
 
 /*!

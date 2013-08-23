@@ -17,31 +17,32 @@
 #ifndef COM_UBUNTU_CONTENTPEER_H_
 #define COM_UBUNTU_CONTENTPEER_H_
 
+#include <com/ubuntu/content/peer.h>
+
 #include <QObject>
 #include <QString>
 
 class ContentPeer : public QObject
 {
     Q_OBJECT
-    Q_PROPERTY(QString name READ name WRITE setName NOTIFY nameChanged)
-    Q_PROPERTY(QString type READ type WRITE setType NOTIFY typeChanged)
+    Q_PROPERTY(QString name READ name NOTIFY nameChanged)
+    Q_PROPERTY(QString type READ type NOTIFY typeChanged)
 
 public:
     ContentPeer(QObject *parent = nullptr);
 
     const QString &name() const;
-    void setName(const QString &name);
-
     const QString &type() const;
-    void setType(const QString &type);
+
+    const com::ubuntu::content::Peer &peer() const;
+    void setPeer(const com::ubuntu::content::Peer &peer);
 
 Q_SIGNALS:
     void nameChanged();
     void typeChanged();
 
 private:
-    QString m_name;
-    QString m_type;
+    com::ubuntu::content::Peer m_peer;
 };
 
 #endif // COM_UBUNTU_CONTENTPEER_H_

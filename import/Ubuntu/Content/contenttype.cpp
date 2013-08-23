@@ -29,8 +29,39 @@
  * See documentation for \ContentHub
  */
 
+namespace cuc = com::ubuntu::content;
+
 ContentType::ContentType(QObject *parent)
     : QObject(parent)
 {
     qDebug() << Q_FUNC_INFO;
+}
+
+/*!
+ * \brief ContentType::contentType2HubType converts a ContentType::Type to a
+ * com::ubuntu::content::Type
+ * \param type integer representing a ContentType::Type
+ * \return
+ */
+const com::ubuntu::content::Type &ContentType::contentType2HubType(int type)
+{
+    Type ctype = static_cast<Type>(type);
+    qDebug() << Q_FUNC_INFO << ctype;
+    return contentType2HubType(ctype);
+}
+
+/*!
+ * \brief ContentType::contentType2HubType converts a ContentType::Type to a
+ * com::ubuntu::content::Type
+ * \param type type of the content
+ * \return
+ */
+const com::ubuntu::content::Type &ContentType::contentType2HubType(Type type)
+{
+    switch(type) {
+    case Documents: return cuc::Type::Known::documents();
+    case Pictures: return cuc::Type::Known::pictures();
+    case Music: return cuc::Type::Known::music();
+    default: return cuc::Type::unknown();
+    }
 }

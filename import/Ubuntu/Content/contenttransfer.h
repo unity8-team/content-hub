@@ -23,14 +23,6 @@
 #include <QObject>
 #include <QQmlListProperty>
 
-namespace com {
-namespace ubuntu {
-namespace content {
-class Transfer;
-}
-}
-}
-
 class ContentItem;
 
 class ContentTransfer : public QObject

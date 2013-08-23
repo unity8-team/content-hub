@@ -18,7 +18,6 @@
 #include <contentitem.h>
 
 #include <com/ubuntu/content/item.h>
-#include <com/ubuntu/content/transfer.h>
 
 #include <QDebug>
 
@@ -66,9 +65,7 @@ void ContentTransfer::setState(ContentTransfer::State state)
         QVector<cuc::Item> hubItems;
         hubItems.reserve(m_items.size());
         foreach (const ContentItem *citem, m_items) {
-//            FIXME wait for peer/item branch to be merged
-            Q_UNUSED(citem);
-//            hubItems.append(citem.item);
+            hubItems.append(citem.item);
         }
         m_transfer->charge(hubItems);
     }
@@ -146,9 +143,7 @@ void ContentTransfer::collectItems()
     QVector<cuc::Item> transfereditems = m_transfer->collect();
     foreach (const cuc::Item &hubItem, transfereditems) {
         ContentItem *qmlItem = new ContentItem(this);
-//            FIXME wait for peer/item branch to be merged
-        Q_UNUSED(hubItem);
-//        qmlItem->setItem(hubItem);
+        qmlItem->setItem(hubItem);
         m_items.append(qmlItem);
     }
     Q_EMIT itemsChanged();

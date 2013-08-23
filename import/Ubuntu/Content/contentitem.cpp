@@ -29,6 +29,8 @@
  * See documentation for \ContentHub
  */
 
+namespace cuc = com::ubuntu::content;
+
 ContentItem::ContentItem(QObject *parent)
     : QObject(parent)
 {
@@ -59,20 +61,44 @@ void ContentItem::setName(const QString &name)
 /*!
  * \qmlproperty url ContentItem::url
  *
- * FIXME add documentation
+ * URL of the content data
  */
 const QUrl &ContentItem::url() const
 {
     qDebug() << Q_FUNC_INFO;
-    return m_url;
+    return m_item.url();
 }
 
 void ContentItem::setUrl(const QUrl &url)
 {
     qDebug() << Q_FUNC_INFO;
-    if (url == m_url)
+    if (url == this->url())
         return;
 
-    m_url = url;
+    m_item = cuc::Item(url);
+    Q_EMIT urlChanged();
+}
+
+/*!
+ * \brief ContentItem::item
+ * \return
+ */
+const com::ubuntu::content::Item &ContentItem::item() const
+{
+    qDebug() << Q_FUNC_INFO;
+    return m_item;
+}
+
+/*!
+ * \brief ContentItem::setItem
+ * \param item
+ */
+void ContentItem::setItem(const com::ubuntu::content::Item &item)
+{
+    qDebug() << Q_FUNC_INFO;
+    if (item == m_item)
+        return;
+
+    m_item = item;
     Q_EMIT urlChanged();
 }

@@ -16,6 +16,8 @@
 
 #include "contentpeer.h"
 
+#include <com/ubuntu/content/peer.h>
+
 #include <QDebug>
 
 /*!
@@ -29,8 +31,11 @@
  * See documentation for \ContentHub
  */
 
+namespace cuc = com::ubuntu::content;
+
 ContentPeer::ContentPeer(QObject *parent)
-    : QObject(parent)
+    : QObject(parent),
+      m_peer(0)
 {
     qDebug() << Q_FUNC_INFO;
 }
@@ -43,17 +48,7 @@ ContentPeer::ContentPeer(QObject *parent)
 const QString &ContentPeer::name() const
 {
     qDebug() << Q_FUNC_INFO;
-    return m_name;
-}
-
-void ContentPeer::setName(const QString &name)
-{
-    qDebug() << Q_FUNC_INFO;
-    if (name == m_name)
-        return;
-
-    m_name = name;
-    Q_EMIT nameChanged();
+    return m_peer.id();
 }
 
 /*!
@@ -64,15 +59,26 @@ void ContentPeer::setName(const QString &name)
 const QString &ContentPeer::type() const
 {
     qDebug() << Q_FUNC_INFO;
-    return m_type;
+    // FIXME return the type
+    return m_peer.id();
 }
 
-void ContentPeer::setType(const QString &type)
+/*!
+ * \brief ContentPeer::peer
+ * \return
+ */
+const com::ubuntu::content::Peer &ContentPeer::peer() const
 {
-    qDebug() << Q_FUNC_INFO;
-    if (type == m_type)
-        return;
+    return m_peer;
+}
 
-    m_type = type;
+/*!
+ * \brief ContentPeer::setPeer
+ * \param peer
+ */
+void ContentPeer::setPeer(const cuc::Peer &peer)
+{
+    m_peer = peer;
+    Q_EMIT nameChanged();
     Q_EMIT typeChanged();
 }

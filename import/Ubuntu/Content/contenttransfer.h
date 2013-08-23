@@ -38,7 +38,7 @@ class ContentTransfer : public QObject
     Q_OBJECT
     Q_ENUMS(State)
     Q_PROPERTY(State state READ state WRITE setState NOTIFY stateChanged)
-    Q_PROPERTY(QQmlListProperty<ContentItem> items READ items)
+    Q_PROPERTY(QQmlListProperty<ContentItem> items READ items NOTIFY itemsChanged)
 
 public:
     enum State {
@@ -63,8 +63,11 @@ public:
 
 Q_SIGNALS:
     void stateChanged();
+    void itemsChanged();
 
 private:
+    void collectItems();
+
     com::ubuntu::content::Transfer *m_transfer;
     QList<ContentItem *> m_items;
 };

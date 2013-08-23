@@ -17,6 +17,7 @@
 #include "contenttransfer.h"
 #include <contentitem.h>
 
+#include <com/ubuntu/content/item.h>
 #include <com/ubuntu/content/transfer.h>
 
 #include <QDebug>
@@ -129,5 +130,26 @@ void ContentTransfer::setTransfer(com::ubuntu::content::Transfer *transfer)
     qDebug() << Q_FUNC_INFO;
 
     m_transfer = transfer;
+
+    if (m_transfer->state() == cuc::Transfer::charged)
+        collectItems();
+
     connect(m_transfer, SIGNAL(stateChanged()), this, SIGNAL(stateChanged()));
+}
+
+/*!
+ * \brief ContentTransfer::collectItems gets the items out of the transfer object
+ */
+void ContentTransfer::collectItems()
+{
+    qDebug() << Q_FUNC_INFO;
+    QVector<cuc::Item> transfereditems = m_transfer->collect();
+    foreach (const cuc::Item &hubItem, transfereditems) {
+        ContentItem *qmlItem = new ContentItem(this);
+//            FIXME wait for peer/item branch to be merged
+        Q_UNUSED(hubItem);
+//        qmlItem->setItem(hubItem);
+        m_items.append(qmlItem);
+    }
+    Q_EMIT itemsChanged();
 }

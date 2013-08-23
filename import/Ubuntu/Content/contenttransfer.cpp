@@ -27,24 +27,7 @@
  *
  * FIXME add documentation
  *
- * Example usage:
- * \qml
- * import QtQuick 2.0
- * import Ubuntu.Content 0.1
- *
- * Rectangle {
- *     width: units.gu(40)
- *     height: units.gu(20)
- *
- *     Button {
- *         text: "Import"
- *          onClicked: {
- *              var transfer = ContentHub.importContent(ContentType.Pictures)
- *         }
- *     }
- * }
- * \endqml
- *
+ * See documentation for \ContentHub
  */
 
 ContentTransfer::ContentTransfer(QObject *parent)

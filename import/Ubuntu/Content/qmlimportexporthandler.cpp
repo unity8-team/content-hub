@@ -33,7 +33,7 @@ QmlImportExportHandler::QmlImportExportHandler(QObject *parent)
 }
 
 /*!
- * \brief QmlImportExportHandler::handle_import
+ * \reimp
  */
 void QmlImportExportHandler::handle_import(com::ubuntu::content::Transfer *transfer)
 {
@@ -42,7 +42,7 @@ void QmlImportExportHandler::handle_import(com::ubuntu::content::Transfer *trans
 }
 
 /*!
- * \brief QmlImportExportHandler::handle_export
+ * \reimp
  */
 void QmlImportExportHandler::handle_export(com::ubuntu::content::Transfer *transfer)
 {

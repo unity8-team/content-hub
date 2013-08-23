@@ -25,11 +25,10 @@ int main(int argc, char *argv[])
 {
     QCoreApplication a(argc, argv);
     if (qgetenv("APP_ID").isEmpty()) {
-        qputenv("APP_ID", "comexamplepictures");
+        qputenv("APP_ID", "com.example.pictures");
     }
-    auto hub = cuc::Hub::Client::instance();
     auto exporter = new ExampleExporter();
-    hub->register_import_export_handler(exporter);
+    Q_UNUSED(exporter);
 
     return a.exec();
 }

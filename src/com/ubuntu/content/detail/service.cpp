@@ -21,11 +21,6 @@
 #include "peer_registry.h"
 #include "transfer.h"
 #include "transferadaptor.h"
-#include "ContentTransferInterface.h"
-
-#include "handler.h"
-#include "handleradaptor.h"
-#include "ContentHandlerInterface.h"
 
 #include <com/ubuntu/content/peer.h>
 #include <com/ubuntu/content/type.h>
@@ -56,7 +51,6 @@ namespace {
 namespace cucd = com::ubuntu::content::detail;
 namespace cuc = com::ubuntu::content;
 
-
 struct cucd::Service::Private : public QObject
 {
     Private(QDBusConnection connection,
@@ -71,6 +65,7 @@ struct cucd::Service::Private : public QObject
     QDBusConnection connection;
     QSharedPointer<cucd::PeerRegistry> registry;
     QSet<cucd::Transfer*> active_transfers;
+    QMap<QString, QDBusObjectPath> registered_handlers;
 };
 
 cucd::Service::Service(QDBusConnection connection, const QSharedPointer<cucd::PeerRegistry>& peer_registry, QObject* parent)
@@ -142,46 +137,6 @@ QDBusObjectPath cucd::Service::CreateImportForTypeFromPeer(const QString& /*type
 void cucd::Service::RegisterImportExportHandler(const QString& /*type_id*/, const QString& peer_id, const QDBusObjectPath& handler)
 {
     qDebug() << Q_FUNC_INFO << peer_id << ":" << peer_id << ":" << handler.path();
-
-    const QString address = "com.ubuntu.content.hander.com_example_pictures";
-    auto c = QDBusConnection::connectToBus(QDBusConnection::SessionBus, address);
-    qDebug() << Q_FUNC_INFO << "connected:" << c.isConnected() << "foo:" << c.interface()->servicePid(address);
-    //cucd::Handler *foo = static_cast<cucd::Handler*>(c.objectRegisteredAt(handler.path()));
-    //if (foo == nullptr)
-    //    qDebug() << Q_FUNC_INFO << "Failed to get object";
-    //cucd::Handler *h = new cucd::Handler(c);
-
-    //auto ha = new cucd::Handler(c, static_cast<com::ubuntu::content::ImportExportHandler*>(c.objectRegisteredAt(handler.path())));
-
-    //com::ubuntu::content::Transfer *transfer = static_cast<com::ubuntu::content::Transfer*>(d->connection.objectRegisteredAt("/transfers/com_example_pictures/export/1"));
-
-    cuc::dbus::Transfer* transfer = new cuc::dbus::Transfer(
-                "com.ubuntu.content.dbus.Service",
-                "/transfers/com_example_pictures/export/1",
-                QDBusConnection::sessionBus(),
-                d->connection.objectRegisteredAt("/transfers/com_example_pictures/export/1"));
-
-    //qDebug() << Q_FUNC_INFO << "CALLER: " << d-
-    qDebug() << Q_FUNC_INFO << "NAME: " << transfer->connection().name();
-    qDebug() << Q_FUNC_INFO << "PATH: " << transfer->path();
-    //qDebug() << Q_FUNC_INFO << "State: " <<  transfer->;
-    cuc::dbus::Handler* h = new cuc::dbus::Handler(
-                address,
-                handler.path(),
-                QDBusConnection::sessionBus(),
-                0);
-    h->HandleExport(QDBusObjectPath{transfer->path()});
-
-    /*
-    QDBusMessage f = QDBusMessage::createMethodCall(address, handler.path(), "com.ubuntu.content.dbus.Handler", "HandleExport");
-
-    QList<QVariant> args;
-    args.append(QVariant(QString("/transfers/com_example_pictures/export/1")));
-    f.setArguments(args);
-    c.call(f);
-    */
-    //Q_UNUSED(h);
-    //Q_UNUSED(ha);
-
-    //foo->HandleExport(NULL);
+    d->registered_handlers.insert(peer_id, handler);
+    qDebug() << Q_FUNC_INFO << "REGISTERED HANDLERS:" << d->registered_handlers.count();
 }

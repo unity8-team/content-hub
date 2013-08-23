@@ -18,8 +18,6 @@
 
 #include "handler.h"
 
-#include "transfer.h"
-#include "transferadaptor.h"
 #include "ContentTransferInterface.h"
 
 #include <com/ubuntu/content/peer.h>
@@ -70,8 +68,27 @@ void cucd::Handler::HandleImport(const QDBusObjectPath& transfer)
 void cucd::Handler::HandleExport(const QDBusObjectPath& transfer)
 {
     qDebug() << Q_FUNC_INFO;
-    cuc::dbus::Transfer* client = new cuc::dbus::Transfer("com.ubuntu.content.dbus.Service", transfer.path(), QDBusConnection::sessionBus(), 0);
-    cuc::Transfer *t = dynamic_cast<cuc::Transfer*>(client->connection().objectRegisteredAt(client->path()));
-    m_handler->handle_export(t);
-    //Q_UNUSED(transfer);
+    //cuc::dbus::Transfer* client = new cuc::dbus::Transfer("com.ubuntu.content.dbus.Service", transfer.path(), QDBusConnection::sessionBus(), 0);
+    //cuc::Transfer *t = dynamic_cast<cuc::Transfer*>(client->connection().objectRegisteredAt(client->path()));
+
+    //m_handler->handle_export(t);
+
+    /*
+    qDebug() << "Connection connected == "<< QDBusConnection::sessionBus().isConnected();
+    QObject* obj = QDBusConnection::sessionBus().objectRegisteredAt(transfer.path());
+    bool bret = ((obj)?(true):(false));
+    qDebug() << "Agent object found === "<< bret;
+    Q_UNUSED(transfer);
+    */
+    auto c = QDBusConnection::sessionBus();
+    qDebug() << Q_FUNC_INFO << "Connection: " << c.lastError().message();
+    qDebug() << "Connection connected == "<< c.isConnected();
+    auto t = new cuc::dbus::Transfer("com.ubuntu.content.dbus.Service", transfer.path(), c, nullptr);
+    QObject* obj = t->connection().objectRegisteredAt(transfer.path());
+
+    bool res = ((obj)?(true):(false));
+    qDebug() << "transfer object found === "<< res << "lastError:" << c.lastError().message();
+
+
+
 }

@@ -62,72 +62,56 @@ cuc::Hub* cuc::Hub::Client::instance()
     return hub;
 }
 
+QString cuc::Hub::handler_address(QString app_id)
+{
+    /* define a bus_name based on our namespace and the app_id */
+    const QString bus_name{"com.ubuntu.content.handler.%1"};
+    return bus_name.arg(app_id);
+}
+
+QString cuc::Hub::app_id()
+{
+    /* FIXME: rely on APP_ID from env for now,
+     * but we'll use this function as a place to
+     * later use the application manager
+     */
+    QString app_id = qgetenv("APP_ID");
+    return app_id;
+}
+
 void cuc::Hub::register_import_export_handler(cuc::ImportExportHandler* handler)
 {
     qDebug() << Q_FUNC_INFO;
-    /*
-    auto *h =
-        new com::ubuntu::content::dbus::Handler(
-            "com.ubuntu.content.dbus.Foo",
-            "/com/ubuntu/content/transfer/ImportExportHandler",
-            QDBusConnection::sessionBus(),
-            handler);
-    qDebug() << Q_FUNC_INFO << "CONNECTION IS VALID:" << h->isValid();
-    */
+
+    auto id = app_id();
+    qDebug() << Q_FUNC_INFO << "APP_ID:" << id;
+    if (id.isEmpty())
+    {
+        qWarning() << "APP_ID isn't set, the handler can not be registered";
+        return;
+    }
+
+    QString bus_name = handler_address(id);
+    qDebug() << Q_FUNC_INFO << "BUS_NAME:" << bus_name;
+
     auto c = QDBusConnection::sessionBus();
     //auto e = QDBusConnection::connectToBus(QDBusConnection::SessionBus, "com.ubuntu.content.dbus.Service");
     auto h = new cuc::detail::Handler(c, handler);
-    qDebug() << Q_FUNC_INFO << "baseService:" << c.baseService();
 
     new HandlerAdaptor(h);
-    static const QString ttp = {"com.ubuntu.content.handler.%1"};
-    auto r = c.registerService(ttp.arg("com_example_pictures"));
+    auto r = c.registerService(bus_name);
     if ( r )
         qDebug() << Q_FUNC_INFO << "name success";
-    //auto o = d->service->connection().registerObject("/com/ubuntu/content/transfer/ImportExportHandler", h);
+    else
+        return;
+    qDebug() << Q_FUNC_INFO << "baseService:" << c.baseService();
+
     auto o = c.registerObject("/com/ubuntu/content/transfer/ImportExportHandler", h);
     if ( o )
         qDebug() << Q_FUNC_INFO << "object success";
 
-    //auto t = d->service->connection().objectRegisteredAt("/transfers/com_example_pictures/export/1");
-    //cuc::Transfer *transfer = t;
-    //cuc::Transfer *transfer = static_cast<cuc::Transfer*>(d->service->connection().objectRegisteredAt("/transfers/com_example_pictures/export/1"));
-    //if (t == nullptr)
-    //    qDebug() << Q_FUNC_INFO << "Invalid transfer";
-    //else
-    //    qDebug() << Q_FUNC_INFO << "Transfer state:" << transfer->state();
-    //auto *foo = d->service->connection().objectRegisteredAt("/transfers/com_example_pictures/export/1");
-    //qDebug() << "OBJECT: " << foo->objectName();
-    Q_UNUSED(handler);
-    Q_UNUSED(h);
-    //h->connection().registerObject("/foobar", handler, QDBusConnection::ExportAllContents);
-    //h->HandleExport(QDBusObjectPath{"/transfers/com_example_pictures/export/1"});
-    //handler->handle_export(transfer);
-    //cuc::dbus::Transfer t = cuc::dbus::Transfer("com.ubuntu.content.dbus.Service", "/transfers/com_example_pictures/export/1", c, nullptr);
-                //c.objectRegisteredAt("/transfers/com_example_pictures/export/1"));
-
-    cuc::dbus::Transfer* client = new cuc::dbus::Transfer("com.ubuntu.content.dbus.Service", "/transfers/com_example_pictures/export/1", QDBusConnection::sessionBus(), 0);
-    qDebug() << " HERE" << client->State().value();
-
-    //auto r = QSharedPointer<cuc::Transfer*>(client);
-
-
-    //cuc::Transfer *transfer = cuc::Transfer(r);
-    //handler->handle_export(transfer);
-
-    //qDebug() << t.State().value();
-
     qDebug() << Q_FUNC_INFO << "PID: " << c.interface()->servicePid(c.baseService());
-    /*
-    auto x = QDBusConnection::connectToBus(QDBusConnection::SessionBus, c.baseService());
-    qDebug() << Q_FUNC_INFO << x.isConnected();
-    auto foo = x.objectRegisteredAt("/com/ubuntu/content/transfer/ImportExportHandler");
-    if (foo != nullptr)
-        qDebug() << Q_FUNC_INFO << "got valid object";
-    //x.connect(c.baseService(), "/com/ubuntu/content/transfer/ImportExportHandler", "com.ubuntu.content.dbus.Handler", "foo.bar", this);
-
-    */
-    d->service->RegisterImportExportHandler(QString("foo"), QString("com.example.pictures"), QDBusObjectPath{"/com/ubuntu/content/transfer/ImportExportHandler"});
+    d->service->RegisterImportExportHandler(QString("foo"), id, QDBusObjectPath{"/com/ubuntu/content/transfer/ImportExportHandler"});
 
 }
 

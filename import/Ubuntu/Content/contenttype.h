@@ -38,6 +38,7 @@ public:
     ContentType(QObject *parent = nullptr);
 
     static const com::ubuntu::content::Type &contentType2HubType(int type);
+    static const com::ubuntu::content::Type &contentType2HubType(Type type);
 };
 
 #endif // COM_UBUNTU_CONTENTTYPE_H_

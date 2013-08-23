@@ -36,8 +36,10 @@ Multi-Arch: same
 Pre-Depends: ${misc:Pre-Depends}
 Depends: ${misc:Depends},
          ${shlibs:Depends},
-Description: <insert up to 60 chars description>
- <insert long description, indented with spaces>
+Description: content sharing/picking library
+ Content sharing/picking infrastructure and service, designed to allow apps to
+ securely and efficiently exchange content.
+ This package includes the content sharing libraries.
 
 Package: libcontent-hub-dev
 Section: libdevel
@@ -47,8 +49,8 @@ Pre-Depends: ${misc:Pre-Depends}
 Depends: ${misc:Depends},
          ${shlibs:Depends},
          libcontent-hub0 (= ${binary:Version}),
-Description: <insert up to 60 chars description>
- <insert long description, indented with spaces>
+Description: content sharing development files
+ All the development headers and libraries for the content hub
 
 Package: qtdeclarative5-content-hub-0.0
 Section: libs
@@ -66,4 +68,4 @@ Architecture: all
 Depends: ${misc:Depends},
          libcontent-hub-dev (>= ${source:Version}),
 Description: Documentation files for libcontent-hub-dev
- Documentation files for libcontent-hub-dev
+ Documentation files for the libcontent-hub development

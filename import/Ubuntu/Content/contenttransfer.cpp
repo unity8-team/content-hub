@@ -65,7 +65,7 @@ void ContentTransfer::setState(ContentTransfer::State state)
         QVector<cuc::Item> hubItems;
         hubItems.reserve(m_items.size());
         foreach (const ContentItem *citem, m_items) {
-            hubItems.append(citem.item);
+            hubItems.append(citem->item());
         }
         m_transfer->charge(hubItems);
     }

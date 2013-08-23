@@ -92,7 +92,7 @@ ContentHub::ContentHub(QObject *parent)
     m_handler = new QmlImportExportHandler(this);
     m_hub->register_import_export_handler(m_handler);
 
-    connect(m_handler, SIGNAL(importReqested(com::ubuntu::content::Transfer*)),
+    connect(m_handler, SIGNAL(importRequested(com::ubuntu::content::Transfer*)),
             this, SLOT(handleImport(com::ubuntu::content::Transfer*)));
     connect(m_handler, SIGNAL(exportRequested(com::ubuntu::content::Transfer*)),
             this, SLOT(handleExport(com::ubuntu::content::Transfer*)));

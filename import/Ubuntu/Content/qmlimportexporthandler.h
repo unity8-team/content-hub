@@ -38,7 +38,7 @@ public:
     Q_INVOKABLE virtual void handle_export(com::ubuntu::content::Transfer *transfer);
 
 Q_SIGNALS:
-    void importReqested(com::ubuntu::content::Transfer*);
+    void importRequested(com::ubuntu::content::Transfer*);
     void exportRequested(com::ubuntu::content::Transfer*);
 };
 

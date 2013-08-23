@@ -21,9 +21,11 @@
 #include "peer_registry.h"
 #include "transfer.h"
 #include "transferadaptor.h"
+#include "ContentTransferInterface.h"
 
 #include "handler.h"
 #include "handleradaptor.h"
+#include "ContentHandlerInterface.h"
 
 #include <com/ubuntu/content/peer.h>
 #include <com/ubuntu/content/type.h>
@@ -52,6 +54,8 @@ namespace {
 }
 
 namespace cucd = com::ubuntu::content::detail;
+namespace cuc = com::ubuntu::content;
+
 
 struct cucd::Service::Private : public QObject
 {
@@ -140,15 +144,19 @@ void cucd::Service::RegisterImportExportHandler(const QString& /*type_id*/, cons
     qDebug() << Q_FUNC_INFO << peer_id << ":" << address << ":" << handler.path();
     auto c = QDBusConnection::connectToBus(QDBusConnection::SessionBus, address);
     qDebug() << Q_FUNC_INFO << "connected:" << c.isConnected() << "foo:" << c.interface()->servicePid(address);
-    cucd::Handler *foo = static_cast<cucd::Handler*>(c.objectRegisteredAt(handler.path()));
-    if (foo == nullptr)
-        qDebug() << Q_FUNC_INFO << "Failed to get object";
+    //cucd::Handler *foo = static_cast<cucd::Handler*>(c.objectRegisteredAt(handler.path()));
+    //if (foo == nullptr)
+    //    qDebug() << Q_FUNC_INFO << "Failed to get object";
     //cucd::Handler *h = new cucd::Handler(c);
 
     //auto ha = new cucd::Handler(c, static_cast<com::ubuntu::content::ImportExportHandler*>(c.objectRegisteredAt(handler.path())));
 
     //com::ubuntu::content::Transfer *transfer = static_cast<com::ubuntu::content::Transfer*>(d->connection.objectRegisteredAt("/transfers/com_example_pictures/export/1"));
-    foo->HandleExport(QDBusObjectPath{"/transfers/com_example_pictures/export/1"});
+
+    cuc::dbus::Transfer* client = new cuc::dbus::Transfer("com.ubuntu.content.dbus.Service", "/transfers/com_example_pictures/export/1", QDBusConnection::sessionBus(), 0);
+
+    cuc::dbus::Handler* hclient = new cuc::dbus::Handler(address, handler.path(), QDBusConnection::sessionBus(), 0);
+    hclient->HandleExport(QDBusObjectPath{client->path()});
 
     /*
     QDBusMessage f = QDBusMessage::createMethodCall(address, handler.path(), "com.ubuntu.content.dbus.Handler", "HandleExport");

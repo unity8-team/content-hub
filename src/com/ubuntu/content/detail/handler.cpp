@@ -20,6 +20,7 @@
 
 #include "transfer.h"
 #include "transferadaptor.h"
+#include "ContentTransferInterface.h"
 
 #include <com/ubuntu/content/peer.h>
 #include <com/ubuntu/content/type.h>
@@ -53,7 +54,7 @@ cucd::Handler::Handler(QDBusConnection connection, cuc::ImportExportHandler* han
         : d(new Private{connection, this})
 {
     qDebug() << Q_FUNC_INFO;
-    Q_UNUSED(handler);
+    m_handler = handler;
 }
 
 cucd::Handler::~Handler() {}
@@ -67,5 +68,7 @@ void cucd::Handler::HandleImport(const QDBusObjectPath& transfer)
 void cucd::Handler::HandleExport(const QDBusObjectPath& transfer)
 {
     qDebug() << Q_FUNC_INFO;
+    cuc::dbus::Transfer* client = new cuc::dbus::Transfer("com.ubuntu.content.dbus.Service", transfer.path(), QDBusConnection::sessionBus(), 0);
+    m_handler->handle_export(client);
     Q_UNUSED(transfer);
 }

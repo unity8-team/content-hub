@@ -39,7 +39,7 @@ struct cuc::Hub::Private
     Private(QObject* parent) : service(
         new com::ubuntu::content::dbus::Service(
             "com.ubuntu.content.dbus.Service",
-            "/",
+            "/com/ubuntu/content/Service",
             QDBusConnection::sessionBus(),
             parent))
     {
@@ -75,7 +75,7 @@ void cuc::Hub::register_import_export_handler(cuc::ImportExportHandler* handler)
     qDebug() << Q_FUNC_INFO << "CONNECTION IS VALID:" << h->isValid();
     */
     auto c = QDBusConnection::sessionBus();
-    //auto c = QDBusConnection::connectToPeer(QDBusConnection::sessionBus(), "com.ubuntu.content.dbus.Service");
+    //auto e = QDBusConnection::connectToBus(QDBusConnection::SessionBus, "com.ubuntu.content.dbus.Service");
     auto h = new cuc::detail::Handler(c, handler);
     qDebug() << Q_FUNC_INFO << "baseService:" << c.baseService();
 
@@ -83,9 +83,11 @@ void cuc::Hub::register_import_export_handler(cuc::ImportExportHandler* handler)
     //auto r = c.registerService("com.ubuntu.content.dbus.Foo");
     //if ( r )
     //    qDebug() << Q_FUNC_INFO << "name success";
+    //auto o = d->service->connection().registerObject("/com/ubuntu/content/transfer/ImportExportHandler", h);
     auto o = c.registerObject("/com/ubuntu/content/transfer/ImportExportHandler", h);
     if ( o )
         qDebug() << Q_FUNC_INFO << "object success";
+
     //auto t = d->service->connection().objectRegisteredAt("/transfers/com_example_pictures/export/1");
     //cuc::Transfer *transfer = t;
     //cuc::Transfer *transfer = static_cast<cuc::Transfer*>(d->service->connection().objectRegisteredAt("/transfers/com_example_pictures/export/1"));
@@ -100,8 +102,22 @@ void cuc::Hub::register_import_export_handler(cuc::ImportExportHandler* handler)
     //h->connection().registerObject("/foobar", handler, QDBusConnection::ExportAllContents);
     //h->HandleExport(QDBusObjectPath{"/transfers/com_example_pictures/export/1"});
     //handler->handle_export(transfer);
+    //cuc::dbus::Transfer t = cuc::dbus::Transfer("com.ubuntu.content.dbus.Service", "/transfers/com_example_pictures/export/1", c, nullptr);
+                //c.objectRegisteredAt("/transfers/com_example_pictures/export/1"));
+
+    cuc::dbus::Transfer* client = new cuc::dbus::Transfer("com.ubuntu.content.dbus.Service", "/transfers/com_example_pictures/export/1", QDBusConnection::sessionBus(), 0);
+    qDebug() << " HERE" << client->State().value();
+
+    //auto r = QSharedPointer<cuc::Transfer*>(client);
+
+
+    //cuc::Transfer *transfer = cuc::Transfer(r);
+    //handler->handle_export(transfer);
+
+    //qDebug() << t.State().value();
 
     qDebug() << Q_FUNC_INFO << "PID: " << c.interface()->servicePid(c.baseService());
+    /*
     auto x = QDBusConnection::connectToBus(QDBusConnection::SessionBus, c.baseService());
     qDebug() << Q_FUNC_INFO << x.isConnected();
     auto foo = x.objectRegisteredAt("/com/ubuntu/content/transfer/ImportExportHandler");
@@ -109,6 +125,7 @@ void cuc::Hub::register_import_export_handler(cuc::ImportExportHandler* handler)
         qDebug() << Q_FUNC_INFO << "got valid object";
     //x.connect(c.baseService(), "/com/ubuntu/content/transfer/ImportExportHandler", "com.ubuntu.content.dbus.Handler", "foo.bar", this);
 
+    */
     d->service->RegisterImportExportHandler(QString("foo"), QString("com.example.pictures"), QString(c.baseService()), QDBusObjectPath{"/com/ubuntu/content/transfer/ImportExportHandler"});
 
 }

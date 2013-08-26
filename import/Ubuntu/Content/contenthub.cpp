@@ -37,6 +37,7 @@
  * Example usage for importing content:
  * \qml
  * import QtQuick 2.0
+ * import Ubuntu.Components 0.1
  * import Ubuntu.Content 0.1
  *
  * Rectangle {
@@ -46,6 +47,7 @@
  *              var peer = ContentHub.defaultSourceForType(ContentType.Pictures);
  *              var transfer = ContentHub.importContent(ContentType.Pictures, peer);
  *         }
+ *     }
  *     Button {
  *         text: "Import from a selectable list"
  *          onClicked: {

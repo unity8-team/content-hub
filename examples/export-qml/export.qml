@@ -7,7 +7,7 @@ Rectangle {
     width: 300
     height: 200
 
-    property bool pickMode: true
+    property bool pickMode: false
     property list<ContentItem> selectedItems
     property var activeTransfer
 

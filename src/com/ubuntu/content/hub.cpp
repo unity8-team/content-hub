@@ -27,6 +27,7 @@
 #include <com/ubuntu/content/scope.h>
 #include <com/ubuntu/content/store.h>
 #include <com/ubuntu/content/type.h>
+#include "utils.cpp"
 
 #include <QStandardPaths>
 
@@ -60,23 +61,6 @@ cuc::Hub* cuc::Hub::Client::instance()
 {
     static cuc::Hub* hub = new cuc::Hub(nullptr);
     return hub;
-}
-
-QString cuc::Hub::handler_address(QString app_id)
-{
-    /* define a bus_name based on our namespace and the app_id */
-    const QString bus_name{"com.ubuntu.content.handler.%1"};
-    return bus_name.arg(app_id);
-}
-
-QString cuc::Hub::app_id()
-{
-    /* FIXME: rely on APP_ID from env for now,
-     * but we'll use this function as a place to
-     * later use the application manager
-     */
-    QString app_id = qgetenv("APP_ID");
-    return app_id;
 }
 
 void cuc::Hub::register_import_export_handler(cuc::ImportExportHandler* handler)

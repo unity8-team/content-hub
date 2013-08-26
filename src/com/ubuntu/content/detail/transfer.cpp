@@ -77,7 +77,7 @@ void cucd::Transfer::Charge(const QStringList& items)
     qDebug() << __PRETTY_FUNCTION__;
     d->items = items;
 
-    if (d->state != cuc::Transfer::charged)
+    if (d->state == cuc::Transfer::charged)
         return;
 
     d->state = cuc::Transfer::charged;

@@ -110,7 +110,6 @@ class Transfer::Private : public QObject
         return result;
     }
 
-  private:
     com::ubuntu::content::dbus::Transfer* remote_transfer;
 };
 }

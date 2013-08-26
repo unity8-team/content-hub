@@ -32,13 +32,16 @@ namespace detail
 class Transfer : public QObject
 {
     Q_OBJECT
-
+    Q_PROPERTY(int State READ State NOTIFY StateChanged)
   public:
     Transfer(QObject* parent = nullptr);
     Transfer(const Transfer&) = delete;
     virtual ~Transfer();
 
     Transfer& operator=(const Transfer&) = delete;
+
+  Q_SIGNALS:
+    void StateChanged(int State);
 
   public Q_SLOTS:
     int State();

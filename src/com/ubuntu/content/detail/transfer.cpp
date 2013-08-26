@@ -53,25 +53,46 @@ int cucd::Transfer::State()
 void cucd::Transfer::Abort()
 {
     qDebug() << __PRETTY_FUNCTION__;
+
+    if (d->state != cuc::Transfer::aborted)
+        return;
+
     d->state = cuc::Transfer::aborted;
+    Q_EMIT(StateChanged(d->state));
 }
 
 void cucd::Transfer::Start()
 {
     qDebug() << __PRETTY_FUNCTION__;
+
+    if (d->state != cuc::Transfer::in_progress)
+        return;
+
     d->state = cuc::Transfer::in_progress;
+    Q_EMIT(StateChanged(d->state));
 }
 
 void cucd::Transfer::Charge(const QStringList& items)
 {
     qDebug() << __PRETTY_FUNCTION__;
     d->items = items;
+
+    if (d->state != cuc::Transfer::charged)
+        return;
+
     d->state = cuc::Transfer::charged;
+    Q_EMIT(StateChanged(d->state));
 }
 
 QStringList cucd::Transfer::Collect()
 {
     qDebug() << __PRETTY_FUNCTION__;
-    d->state = cuc::Transfer::collected;
+
+    if (d->state != cuc::Transfer::collected)
+    {
+        d->state = cuc::Transfer::collected;
+        Q_EMIT(StateChanged(d->state));
+    }
+
     return d->items;
 }

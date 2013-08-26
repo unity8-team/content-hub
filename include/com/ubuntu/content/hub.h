@@ -49,11 +49,12 @@ class Hub : public QObject
     virtual ~Hub();
     Hub& operator=(const Hub&) = delete;
 
-    Q_INVOKABLE virtual void register_import_export_handler(ImportExportHandler*);
+    Q_INVOKABLE virtual void register_import_export_handler(ImportExportHandler* handler);
     Q_INVOKABLE virtual const Store* store_for_scope_and_type(Scope scope, Type type);
     Q_INVOKABLE virtual Peer default_peer_for_type(Type type);
     Q_INVOKABLE virtual QVector<Peer> known_peers_for_type(Type type);
     Q_INVOKABLE virtual Transfer* create_import_for_type_from_peer(Type type, Peer peer);
+
     Q_INVOKABLE virtual void quit();
        
   protected:

@@ -17,6 +17,8 @@
  */
 
 #include "ContentServiceInterface.h"
+#include "ContentHandlerInterface.h"
+#include "handleradaptor.h"
 #include "transfer_p.h"
 
 #include <com/ubuntu/content/hub.h>
@@ -25,6 +27,7 @@
 #include <com/ubuntu/content/scope.h>
 #include <com/ubuntu/content/store.h>
 #include <com/ubuntu/content/type.h>
+#include "utils.cpp"
 
 #include <QStandardPaths>
 
@@ -60,8 +63,38 @@ cuc::Hub* cuc::Hub::Client::instance()
     return hub;
 }
 
-void cuc::Hub::register_import_export_handler(cuc::ImportExportHandler*)
+void cuc::Hub::register_import_export_handler(cuc::ImportExportHandler* handler)
 {
+    qDebug() << Q_FUNC_INFO;
+
+    auto id = app_id();
+    qDebug() << Q_FUNC_INFO << "APP_ID:" << id;
+    if (id.isEmpty())
+    {
+        qWarning() << "APP_ID isn't set, the handler can not be registered";
+        return;
+    }
+
+    QString bus_name = handler_address(id);
+    qDebug() << Q_FUNC_INFO << "BUS_NAME:" << bus_name;
+
+    auto c = QDBusConnection::sessionBus();
+    auto h = new cuc::detail::Handler(c, handler);
+
+    new HandlerAdaptor(h);
+    if (c.registerService(bus_name))
+        qDebug() << Q_FUNC_INFO << "name success";
+    else
+        return;
+
+    if (c.registerObject("/com/ubuntu/content/transfer/ImportExportHandler", h))
+        qDebug() << Q_FUNC_INFO << "object success";
+
+    qDebug() << Q_FUNC_INFO << "PID: " << c.interface()->servicePid(c.baseService());
+    d->service->RegisterImportExportHandler(
+                QString(""),
+                id,
+                QDBusObjectPath{"/com/ubuntu/content/transfer/ImportExportHandler"});
 }
 
 const cuc::Store* cuc::Hub::store_for_scope_and_type(cuc::Scope scope, cuc::Type type)

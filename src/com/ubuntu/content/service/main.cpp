@@ -64,7 +64,6 @@ int main(int argc, char** argv)
     auto connection = QDBusConnection::sessionBus();
 
     auto registry = QSharedPointer<cucd::PeerRegistry>(new Registry());
-    auto peer = cuc::Peer("com.example.pictures");
 
     auto server = new cucd::Service(connection, registry, app->parent());
     new ServiceAdaptor(server);

@@ -21,6 +21,7 @@
 #include "peer_registry.h"
 #include "transfer.h"
 #include "transferadaptor.h"
+#include "utils.cpp"
 
 #include <com/ubuntu/content/peer.h>
 #include <com/ubuntu/content/type.h>
@@ -33,22 +34,8 @@
 
 #include <cassert>
 
-namespace {
-    /* sanitize the dbus object path */
-    QString sanitize_path(const QString& path)
-    {
-        QString sanitized = path;
-
-        for (int i = 0; i < sanitized.length(); ++i)
-        {
-            if ( !( sanitized[i].isLetter() || sanitized[i].isDigit()))
-                sanitized[i] = QLatin1Char('_');
-        }
-        return sanitized;
-    }
-}
-
 namespace cucd = com::ubuntu::content::detail;
+namespace cuc = com::ubuntu::content;
 
 struct cucd::Service::Private : public QObject
 {
@@ -64,6 +51,7 @@ struct cucd::Service::Private : public QObject
     QDBusConnection connection;
     QSharedPointer<cucd::PeerRegistry> registry;
     QSet<cucd::Transfer*> active_transfers;
+    QMap<QString, QDBusObjectPath> registered_handlers;
 };
 
 cucd::Service::Service(QDBusConnection connection, const QSharedPointer<cucd::PeerRegistry>& peer_registry, QObject* parent)
@@ -130,4 +118,11 @@ QDBusObjectPath cucd::Service::CreateImportForTypeFromPeer(const QString& /*type
     qDebug() << "Created transfer " << source << " -> " << destination;
 
     return QDBusObjectPath{destination};
+}
+
+void cucd::Service::RegisterImportExportHandler(const QString& /*type_id*/, const QString& peer_id, const QDBusObjectPath& handler)
+{
+    qDebug() << Q_FUNC_INFO << peer_id << ":" << handler.path();
+    d->registered_handlers.insert(peer_id, handler);
+    qDebug() << Q_FUNC_INFO << "Handler address:" << handler_address(peer_id);
 }

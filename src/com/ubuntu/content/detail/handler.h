@@ -15,11 +15,12 @@
  *
  * Authored by: Thomas Voß <thomas.voss@canonical.com>
  */
-#ifndef SERVICE_H_
-#define SERVICE_H_
+#ifndef HANDLER_H_
+#define HANDLER_H_
 
 #include <QObject>
 #include <QStringList>
+#include <com/ubuntu/content/import_export_handler.h>
 #include <QtDBus/QDBusConnection>
 #include <QtDBus/QDBusObjectPath>
 
@@ -31,34 +32,30 @@ namespace content
 {
 namespace detail
 {
-class PeerRegistry;
 
-class Service : public QObject
+class Handler : public QObject
 {
     Q_OBJECT
   public:
-    Service(QDBusConnection connection,
-            const QSharedPointer<PeerRegistry>& registry, 
-            QObject* parent = nullptr);
-    Service(const Service&) = delete;
-    ~Service();
+    Handler(QDBusConnection connection,
+            com::ubuntu::content::ImportExportHandler *handler = nullptr);
+    Handler(const Handler&) = delete;
+    ~Handler();
 
-    Service& operator=(const Service&) = delete;
+    Handler& operator=(const Handler&) = delete;
 
   public Q_SLOTS:
-    QString DefaultPeerForType(const QString &type_id);
-    QStringList KnownPeersForType(const QString &type_id);
-    QDBusObjectPath CreateImportForTypeFromPeer(const QString&, const QString&);
-    void RegisterImportExportHandler(const QString&, const QString&, const QDBusObjectPath& handler);
-    void Quit();
+    void HandleImport(const QDBusObjectPath &transfer);
+    void HandleExport(const QDBusObjectPath &transfer);
 
   private:
     struct Private;
     QScopedPointer<Private> d;
+    com::ubuntu::content::ImportExportHandler *m_handler;
 };
 }
 }
 }
 }
 
-#endif // SERVICE_H_
+#endif // HANDLER_H_

@@ -59,6 +59,7 @@ add_subdirectory(doc)
 add_subdirectory(import)
 add_subdirectory(src)
 add_subdirectory(tests)
+add_subdirectory(examples)
 
 install(DIRECTORY include DESTINATION ${CMAKE_INSTALL_PREFIX})
 

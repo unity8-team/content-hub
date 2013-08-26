@@ -23,6 +23,9 @@
 #include "transferadaptor.h"
 #include "utils.cpp"
 
+#include "handler.h"
+#include "ContentHandlerInterface.h"
+
 #include <com/ubuntu/content/peer.h>
 #include <com/ubuntu/content/type.h>
 
@@ -122,7 +125,15 @@ QDBusObjectPath cucd::Service::CreateImportForTypeFromPeer(const QString& /*type
 
 void cucd::Service::RegisterImportExportHandler(const QString& /*type_id*/, const QString& peer_id, const QDBusObjectPath& handler)
 {
+    QString address = handler_address(peer_id);
     qDebug() << Q_FUNC_INFO << peer_id << ":" << handler.path();
     d->registered_handlers.insert(peer_id, handler);
-    qDebug() << Q_FUNC_INFO << "Handler address:" << handler_address(peer_id);
+    qDebug() << Q_FUNC_INFO << "Handler address:" << address;
+    cuc::dbus::Handler* h = new cuc::dbus::Handler(
+                address,
+                handler.path(),
+                QDBusConnection::sessionBus(),
+                0);
+    h->HandleExport(QDBusObjectPath{"/transfers/com_example_pictures/export/1"});
+
 }

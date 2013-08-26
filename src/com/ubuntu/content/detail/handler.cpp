@@ -16,13 +16,13 @@
  * Authored by: Thomas Voß <thomas.voss@canonical.com>
  */
 
+#include "transfer_p.h"
 #include "handler.h"
-
-#include "ContentTransferInterface.h"
+//#include "transfer.h"
 
 #include <com/ubuntu/content/peer.h>
 #include <com/ubuntu/content/type.h>
-#include <com/ubuntu/content/transfer.h>
+//#include <com/ubuntu/content/transfer.h>
 
 
 #include <QCache>
@@ -68,5 +68,9 @@ void cucd::Handler::HandleImport(const QDBusObjectPath& transfer)
 void cucd::Handler::HandleExport(const QDBusObjectPath& transfer)
 {
     qDebug() << Q_FUNC_INFO;
-    Q_UNUSED(transfer);
+
+    auto t = cuc::Transfer::Private::make_transfer(transfer, this);
+
+    m_handler->handle_export(t);
+
 }

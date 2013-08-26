@@ -30,6 +30,20 @@ namespace ubuntu
 {
 namespace content
 {
+namespace detail
+{
+class Handler;
+}
+}
+}
+}
+
+namespace com
+{
+namespace ubuntu
+{
+namespace content
+{
 class Item;
 
 class Transfer : public QObject
@@ -67,6 +81,7 @@ class Transfer : public QObject
     struct Private;
     friend struct Private;
     friend class Hub;
+    friend class com::ubuntu::content::detail::Handler;
     QSharedPointer<Private> d;
 
     Transfer(const QSharedPointer<Private>&, QObject* parent = nullptr);    

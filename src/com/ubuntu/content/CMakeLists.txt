@@ -57,6 +57,7 @@ add_library(
   store.cpp
   transfer.cpp
   type.cpp
+  utils.cpp
 
   detail/service.cpp
   detail/transfer.cpp

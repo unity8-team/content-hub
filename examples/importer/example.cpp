@@ -32,21 +32,21 @@ void Example::create_import()
     auto peer = hub->default_peer_for_type(cuc::Type::Known::pictures());
     qDebug() << Q_FUNC_INFO << "PEER: " << peer.id();
 
-    cuc::Transfer *transfer = hub->create_import_for_type_from_peer(
+    m_transfer = hub->create_import_for_type_from_peer(
         cuc::Type::Known::pictures(),
         peer);
 
-    QObject::connect(transfer,
+    QObject::connect(m_transfer,
         SIGNAL(stateChanged()),
         this,
         SLOT (import()));
+
+    m_transfer->start();
 }
 
 void Example::import()
 {
-    cuc::Transfer *transfer = dynamic_cast<cuc::Transfer*>(sender());
-
-    qDebug() << Q_FUNC_INFO << "State changed:" << transfer->state();
-    if (transfer->state() == cuc::Transfer::charged)
-        m_importer->handle_import(transfer);
+    qDebug() << Q_FUNC_INFO << "State changed:" << m_transfer->state();
+    if (m_transfer->state() == cuc::Transfer::charged)
+        m_importer->handle_import(m_transfer);
 }

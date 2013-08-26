@@ -33,5 +33,7 @@ void ExampleImporter::handle_export(cuc::Transfer *transfer)
 
 void ExampleImporter::handle_import(cuc::Transfer *transfer)
 {
-    qDebug() << Q_FUNC_INFO << "Items:" << transfer->collect().count();
+    qDebug() << Q_FUNC_INFO;
+    auto items = transfer->collect();
+    qDebug() << Q_FUNC_INFO << "Items:" << items.count();
 }

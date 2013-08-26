@@ -36,7 +36,7 @@ void ExampleExporter::handle_export(cuc::Transfer *transfer)
     items << cuc::Item(QUrl("file:///tmp/test1"));
     items << cuc::Item(QUrl("file:///tmp/test2"));
     transfer->charge(items);
-    qDebug() << Q_FUNC_INFO << "Items:" << transfer->collect().count();
+    qDebug() << Q_FUNC_INFO << "Items:" << items.count();
 }
 
 void ExampleExporter::handle_import(cuc::Transfer *transfer)

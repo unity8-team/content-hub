@@ -36,6 +36,7 @@ public slots:
 
 private:
     ExampleImporter *m_importer;
+    cuc::Transfer *m_transfer;
 };
 
 #endif // EXAMPLE_H

@@ -1,3 +1,14 @@
+content-hub (0.0+13.10.20130827.3-0ubuntu1) saucy; urgency=low
+
+  [ Guenter Schwann ]
+  * Use qmlRegisterSingletonType to register the ContentHub.
+  * Add QML examples for import and export.
+
+  [ Ubuntu daily release ]
+  * Automatic snapshot from revision 22
+
+ -- Ubuntu daily release <ps-jenkins@lists.canonical.com>  Tue, 27 Aug 2013 19:11:23 +0000
+
 content-hub (0.0+13.10.20130827.2-0ubuntu1) saucy; urgency=low
 
   * Automatic snapshot from revision 19

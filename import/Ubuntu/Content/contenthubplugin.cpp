@@ -28,6 +28,20 @@
 #include <QDebug>
 
 /*!
+ * \brief qml_content_hub function to unstatinate the ContentHub as a singleton in QML
+ * \param engine
+ * \param scriptEngine
+ * \return
+ */
+static QObject *qml_content_hub(QQmlEngine *engine, QJSEngine *scriptEngine)
+{
+    Q_UNUSED(engine)
+    Q_UNUSED(scriptEngine)
+    qDebug() << Q_FUNC_INFO;
+    return new ContentHub();
+}
+
+/*!
  * \reimp
  */
 void ContentHubPlugin::registerTypes(const char *uri)
@@ -38,22 +52,9 @@ void ContentHubPlugin::registerTypes(const char *uri)
     const int versionMajor = 0;
     const int versionMinor = 1;
 
-    qmlRegisterUncreatableType<ContentHub>(uri, versionMajor, versionMinor, "CUCContentHub", "Singleton object");
+    qmlRegisterSingletonType<ContentHub>(uri, versionMajor, versionMinor, "ContentHub", qml_content_hub);
     qmlRegisterType<ContentItem>(uri, versionMajor, versionMinor, "ContentItem");
     qmlRegisterUncreatableType<ContentPeer>(uri, versionMajor, versionMinor, "ContentPeer", "created by hub");
     qmlRegisterUncreatableType<ContentTransfer>(uri, versionMajor, versionMinor, "ContentTransfer", "created by hub");
     qmlRegisterUncreatableType<ContentType>(uri, versionMajor, versionMinor, "ContentType", "Use only the type");
-}
-
-/*!
- * \reimp
- */
-void ContentHubPlugin::initializeEngine(QQmlEngine *engine, const char *uri)
-{
-    qDebug() << Q_FUNC_INFO;
-    QQmlExtensionPlugin::initializeEngine(engine, uri);
-    QQmlContext* context = engine->rootContext();
-
-    m_contentHub = new ContentHub(this);
-    context->setContextProperty("ContentHub", m_contentHub);
 }

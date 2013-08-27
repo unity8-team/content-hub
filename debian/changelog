@@ -1,3 +1,9 @@
+content-hub (0.0+13.10.20130827.1-0ubuntu1) saucy; urgency=low
+
+  * Automatic snapshot from revision 18
+
+ -- Ubuntu daily release <ps-jenkins@lists.canonical.com>  Tue, 27 Aug 2013 07:14:13 +0000
+
 content-hub (0.0+13.10.20130827-0ubuntu1) saucy; urgency=low
 
   [ Ken VanDine ]

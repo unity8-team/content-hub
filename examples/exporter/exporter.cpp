@@ -25,7 +25,7 @@ int main(int argc, char *argv[])
 {
     QCoreApplication a(argc, argv);
     if (qgetenv("APP_ID").isEmpty()) {
-        qputenv("APP_ID", "com.example.pictures");
+        qputenv("APP_ID", "gallery-app");
     }
     auto exporter = new ExampleExporter();
     Q_UNUSED(exporter);

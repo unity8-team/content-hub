@@ -1,4 +1,4 @@
-content-hub (0.0-0ubuntu1) UNRELEASED; urgency=low
+content-hub (0.0+13.10.20130827-0ubuntu1) saucy; urgency=low
 
   [ Ken VanDine ]
   * Initial package
@@ -6,4 +6,19 @@ content-hub (0.0-0ubuntu1) UNRELEASED; urgency=low
   [ Łukasz 'sil2100' Zemczak ]
   * Automatic snapshot from revision 10 (bootstrap)
 
- -- Ken VanDine <ken.vandine@canonical.com>  Mon, 12 Aug 2013 15:51:35 -0400
+  [ Ken VanDine ]
+  * replace "." with "_" in the peer_id to create valid object paths .
+
+  [ Michael Terry ]
+  * Some minor packaging cleanup.
+
+  [ Guenter Schwann ]
+  * Add and register an import export handler.
+  * More QML tests, work on QML documentation.
+  * ContentItem and ContentPeer use their service counterpart as member.
+  * Handle import and export requests from hub for QML.
+
+  [ Ubuntu daily release ]
+  * Automatic snapshot from revision 17
+
+ -- Ubuntu daily release <ps-jenkins@lists.canonical.com>  Tue, 27 Aug 2013 02:10:21 +0000

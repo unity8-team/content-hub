@@ -40,7 +40,6 @@ void Example::create_import()
         SIGNAL(stateChanged()),
         this,
         SLOT (import()));
-
     m_transfer->start();
 }
 
@@ -48,5 +47,5 @@ void Example::import()
 {
     qDebug() << Q_FUNC_INFO << "State changed:" << m_transfer->state();
     if (m_transfer->state() == cuc::Transfer::charged)
-        m_importer->handle_import(m_transfer);
+        m_importer->handle_import(m_transfer);      
 }

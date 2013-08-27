@@ -54,7 +54,7 @@ void cucd::Transfer::Abort()
 {
     qDebug() << __PRETTY_FUNCTION__;
 
-    if (d->state != cuc::Transfer::aborted)
+    if (d->state == cuc::Transfer::aborted)
         return;
 
     d->state = cuc::Transfer::aborted;
@@ -65,7 +65,7 @@ void cucd::Transfer::Start()
 {
     qDebug() << __PRETTY_FUNCTION__;
 
-    if (d->state != cuc::Transfer::in_progress)
+    if (d->state == cuc::Transfer::in_progress)
         return;
 
     d->state = cuc::Transfer::in_progress;

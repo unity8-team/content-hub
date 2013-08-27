@@ -68,9 +68,16 @@ void cucd::Handler::HandleImport(const QDBusObjectPath& transfer)
 void cucd::Handler::HandleExport(const QDBusObjectPath& transfer)
 {
     qDebug() << Q_FUNC_INFO;
+    m_transfer = cuc::Transfer::Private::make_transfer(transfer, this);
+    QObject::connect(m_transfer,
+            SIGNAL(stateChanged()),
+            this,
+            SLOT(start_export()));
+}
 
-    auto t = cuc::Transfer::Private::make_transfer(transfer, this);
-
-    m_handler->handle_export(t);
-
+void cucd::Handler::start_export()
+{
+    qDebug() << Q_FUNC_INFO << "State:" << m_transfer->state();
+    if (m_transfer->state() == cuc::Transfer::in_progress)
+        m_handler->handle_export(m_transfer);
 }

@@ -22,6 +22,7 @@
 #include <QStringList>
 #include <QtDBus/QDBusConnection>
 #include <QtDBus/QDBusObjectPath>
+#include "handler.h"
 
 namespace com
 {
@@ -48,13 +49,14 @@ class Service : public QObject
   public Q_SLOTS:
     QString DefaultPeerForType(const QString &type_id);
     QStringList KnownPeersForType(const QString &type_id);
-    QDBusObjectPath CreateImportForTypeFromPeer(const QString&, const QString&);
+    QDBusObjectPath CreateImportForTypeFromPeer(const QString&, const QString&, const QString&);
     void RegisterImportExportHandler(const QString&, const QString&, const QDBusObjectPath& handler);
     void Quit();
 
   private:
     struct Private;
     QScopedPointer<Private> d;
+    void connect_export_handler(QString& address, QString& handler_path, QString& destination);
 };
 }
 }

@@ -52,6 +52,11 @@ class Handler : public QObject
     struct Private;
     QScopedPointer<Private> d;
     com::ubuntu::content::ImportExportHandler *m_handler;
+    com::ubuntu::content::Transfer *m_transfer;
+
+  private Q_SLOTS:
+    void start_export();
+
 };
 }
 }

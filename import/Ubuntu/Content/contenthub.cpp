@@ -46,6 +46,7 @@
  *          onClicked: {
  *              var peer = ContentHub.defaultSourceForType(ContentType.Pictures);
  *              var transfer = ContentHub.importContent(ContentType.Pictures, peer);
+ *              transfer.start()
  *         }
  *     }
  *     Button {

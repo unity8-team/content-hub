@@ -1,9 +1,9 @@
 Source: content-hub
 Priority: optional
-Maintainer: Ken VanDine <ken.vandine@canonical.com>
+Maintainer: Ubuntu Developers <ubuntu-devel-discuss@lists.ubuntu.com>
 Build-Depends: cmake,
-               debhelper (>= 9),
                dbus-test-runner,
+               debhelper (>= 9),
                doxygen,
                google-mock,
                lcov,
@@ -33,7 +33,7 @@ Package: libcontent-hub0
 Section: libs
 Architecture: any
 Multi-Arch: same
-Pre-Depends: ${misc:Pre-Depends}
+Pre-Depends: ${misc:Pre-Depends},
 Depends: ${misc:Depends},
          ${shlibs:Depends},
 Description: content sharing/picking library
@@ -45,27 +45,26 @@ Package: libcontent-hub-dev
 Section: libdevel
 Architecture: any
 Multi-Arch: same
-Pre-Depends: ${misc:Pre-Depends}
-Depends: ${misc:Depends},
-         ${shlibs:Depends},
-         libcontent-hub0 (= ${binary:Version}),
+Depends: libcontent-hub0 (= ${binary:Version}),
+         ${misc:Depends},
 Description: content sharing development files
  All the development headers and libraries for the content hub
 
 Package: qtdeclarative5-ubuntu-content0.1
 Section: libs
 Architecture: any
-Depends: ${shlibs:Depends},
-         ${misc:Depends},
-         libcontent-hub0,
+Pre-Depends: ${misc:Pre-Depends},
+Depends: libcontent-hub0,
          qtdeclarative5-qtquick2-plugin,
+         ${misc:Depends},
+         ${shlibs:Depends},
 Description: QML binding for libcontent-hub
  QML bindings for libcontent-hub
 
 Package: libcontent-hub-doc
 Section: doc
 Architecture: all
-Depends: ${misc:Depends},
-         libcontent-hub-dev (>= ${source:Version}),
+Depends: libcontent-hub-dev (>= ${source:Version}),
+         ${misc:Depends},
 Description: Documentation files for libcontent-hub-dev
  Documentation files for the libcontent-hub development

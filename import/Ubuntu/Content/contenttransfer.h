@@ -29,7 +29,9 @@ class ContentTransfer : public QObject
 {
     Q_OBJECT
     Q_ENUMS(State)
+    Q_ENUMS(Direction)
     Q_PROPERTY(State state READ state WRITE setState NOTIFY stateChanged)
+    Q_PROPERTY(Direction direction READ direction)
     Q_PROPERTY(QQmlListProperty<ContentItem> items READ items NOTIFY itemsChanged)
 
 public:
@@ -40,18 +42,24 @@ public:
         Collected = com::ubuntu::content::Transfer::collected,
         Aborted = com::ubuntu::content::Transfer::aborted
     };
+    enum Direction {
+        Import,
+        Export
+    };
 
     ContentTransfer(QObject *parent = nullptr);
 
     State state() const;
     void setState(State state);
 
+    Direction direction() const;
+
     QQmlListProperty<ContentItem> items();
 
     Q_INVOKABLE bool start();
 
     com::ubuntu::content::Transfer *transfer() const;
-    void setTransfer(com::ubuntu::content::Transfer *transfer);
+    void setTransfer(com::ubuntu::content::Transfer *transfer, Direction direction);
 
     void collectItems();
 
@@ -66,6 +74,7 @@ private:
     com::ubuntu::content::Transfer *m_transfer;
     QList<ContentItem *> m_items;
     State m_state;
+    Direction m_direction;
 };
 
 #endif // COM_UBUNTU_CONTENTTRANSFER_H_

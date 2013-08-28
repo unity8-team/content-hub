@@ -155,7 +155,7 @@ ContentTransfer *ContentHub::importContent(int type)
     cuc::Peer hubPeer = m_hub->default_peer_for_type(hubType);
     cuc::Transfer *hubTransfer = m_hub->create_import_for_type_from_peer(hubType, hubPeer);
     ContentTransfer *qmlTransfer = new ContentTransfer(this);
-    qmlTransfer->setTransfer(hubTransfer);
+    qmlTransfer->setTransfer(hubTransfer, ContentTransfer::Import);
     m_activeImports.insert(hubTransfer, qmlTransfer);
     return qmlTransfer;
 }
@@ -172,7 +172,7 @@ ContentTransfer *ContentHub::importContent(int type, ContentPeer *peer)
     const cuc::Type &hubType = ContentType::contentType2HubType(type);
     cuc::Transfer *hubTransfer = m_hub->create_import_for_type_from_peer(hubType, peer->peer());
     ContentTransfer *qmlTransfer = new ContentTransfer(this);
-    qmlTransfer->setTransfer(hubTransfer);
+    qmlTransfer->setTransfer(hubTransfer, ContentTransfer::Import);
     m_activeImports.insert(hubTransfer, qmlTransfer);
     return qmlTransfer;
 }
@@ -211,7 +211,7 @@ void ContentHub::handleImport(com::ubuntu::content::Transfer *transfer)
         qmlTransfer->collectItems();
     } else {
         qmlTransfer = new ContentTransfer(this);
-        qmlTransfer->setTransfer(transfer);
+        qmlTransfer->setTransfer(transfer, ContentTransfer::Import);
     }
 
     m_finishedImports.append(qmlTransfer);
@@ -226,7 +226,7 @@ void ContentHub::handleExport(com::ubuntu::content::Transfer *transfer)
 {
     qDebug() << Q_FUNC_INFO;
     ContentTransfer *qmlTransfer = new ContentTransfer(this);
-    qmlTransfer->setTransfer(transfer);
+    qmlTransfer->setTransfer(transfer, ContentTransfer::Export);
 
     Q_EMIT exportRequested(qmlTransfer);
 }

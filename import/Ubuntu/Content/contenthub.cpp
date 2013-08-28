@@ -45,22 +45,25 @@
  *         text: "Import from default"
  *          onClicked: {
  *              var peer = ContentHub.defaultSourceForType(ContentType.Pictures);
- *              var transfer = ContentHub.importContent(ContentType.Pictures, peer);
- *              transfer.start()
+ *              activeTransfer = ContentHub.importContent(ContentType.Pictures, peer);
+ *              activeTransfer.start()
  *         }
  *     }
  *     Button {
  *         text: "Import from a selectable list"
  *          onClicked: {
  *              var transfer = ContentHub.importContent(ContentType.Pictures);
+ *              activeTransfer = transfer
+ *              activeTransfer.start()
  *         }
  *     }
  *     property list<ContentItem> importItems
+ *     property var activeTransfer
  *     Connections {
- *         target: ContentHub
- *         onFinishedImportsChanged: {
- *             var idx = ContentHub.finishedImports.length - 1;
- *             importItmes = ContentHub.finishedImports[idx].items;
+ *         target: activeTransfer
+ *         onStateChanged: {
+ *             if (activeTransfer.state === ContentTransfer.Charged)
+ *                 importItmes = activeTransfer.items;
  *         }
  *     }
  * }
@@ -151,12 +154,10 @@ ContentTransfer *ContentHub::importContent(int type)
     qDebug() << Q_FUNC_INFO << static_cast<ContentType::Type>(type);
 
     const cuc::Type &hubType = ContentType::contentType2HubType(type);
-//    FIXME show user a selection of possible peers
+//    FIXME show user a selection of possible peers instead
     cuc::Peer hubPeer = m_hub->default_peer_for_type(hubType);
-    cuc::Transfer *hubTransfer = m_hub->create_import_for_type_from_peer(hubType, hubPeer);
-    ContentTransfer *qmlTransfer = new ContentTransfer(this);
-    qmlTransfer->setTransfer(hubTransfer);
-    return qmlTransfer;
+
+    return importContent(hubType, hubPeer);
 }
 
 /*!
@@ -169,9 +170,26 @@ ContentTransfer *ContentHub::importContent(int type, ContentPeer *peer)
     qDebug() << Q_FUNC_INFO << static_cast<ContentType::Type>(type) << peer;
 
     const cuc::Type &hubType = ContentType::contentType2HubType(type);
-    cuc::Transfer *hubTransfer = m_hub->create_import_for_type_from_peer(hubType, peer->peer());
+    return importContent(hubType, peer->peer());
+}
+
+/*!
+ * \brief ContentHub::importContent creates a ContentTransfer object
+ * \param type
+ * \param peer
+ * \return
+ */
+ContentTransfer* ContentHub::importContent(const com::ubuntu::content::Type &hubType,
+                                           const com::ubuntu::content::Peer &hubPeer)
+{
+    cuc::Transfer *hubTransfer = m_hub->create_import_for_type_from_peer(hubType, hubPeer);
+// FIXME update tests so this can be enabled
+//    if (!hubTransfer)
+//        return nullptr;
+
     ContentTransfer *qmlTransfer = new ContentTransfer(this);
-    qmlTransfer->setTransfer(hubTransfer);
+    qmlTransfer->setTransfer(hubTransfer, ContentTransfer::Import);
+    m_activeImports.insert(hubTransfer, qmlTransfer);
     return qmlTransfer;
 }
 
@@ -203,8 +221,15 @@ QQmlListProperty<ContentTransfer> ContentHub::finishedImports()
 void ContentHub::handleImport(com::ubuntu::content::Transfer *transfer)
 {
     qDebug() << Q_FUNC_INFO;
-    ContentTransfer *qmlTransfer = new ContentTransfer(this);
-    qmlTransfer->setTransfer(transfer);
+    ContentTransfer *qmlTransfer = nullptr;
+    if (m_activeImports.contains(transfer)) {
+        qmlTransfer = m_activeImports.take(transfer);
+        qmlTransfer->collectItems();
+    } else {
+        qmlTransfer = new ContentTransfer(this);
+        qmlTransfer->setTransfer(transfer, ContentTransfer::Import);
+    }
+
     m_finishedImports.append(qmlTransfer);
     Q_EMIT finishedImportsChanged();
 }
@@ -217,7 +242,7 @@ void ContentHub::handleExport(com::ubuntu::content::Transfer *transfer)
 {
     qDebug() << Q_FUNC_INFO;
     ContentTransfer *qmlTransfer = new ContentTransfer(this);
-    qmlTransfer->setTransfer(transfer);
+    qmlTransfer->setTransfer(transfer, ContentTransfer::Export);
 
     Q_EMIT exportRequested(qmlTransfer);
 }

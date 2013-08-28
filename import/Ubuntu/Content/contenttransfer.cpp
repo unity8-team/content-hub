@@ -79,6 +79,9 @@ void ContentTransfer::setState(ContentTransfer::State state)
 QQmlListProperty<ContentItem> ContentTransfer::items()
 {
     qDebug() << Q_FUNC_INFO;
+    if (state() == Charged) {
+        collectItems();
+    }
     return QQmlListProperty<ContentItem>(this, m_items);
 }
 
@@ -140,6 +143,12 @@ void ContentTransfer::setTransfer(com::ubuntu::content::Transfer *transfer)
 void ContentTransfer::collectItems()
 {
     qDebug() << Q_FUNC_INFO;
+    if (m_transfer->state() != cuc::Transfer::charged)
+        return;
+
+    qDeleteAll(m_items);
+    m_items.clear();
+
     QVector<cuc::Item> transfereditems = m_transfer->collect();
     foreach (const cuc::Item &hubItem, transfereditems) {
         ContentItem *qmlItem = new ContentItem(this);

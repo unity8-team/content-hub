@@ -53,13 +53,13 @@ public:
     com::ubuntu::content::Transfer *transfer() const;
     void setTransfer(com::ubuntu::content::Transfer *transfer);
 
+    void collectItems();
+
 Q_SIGNALS:
     void stateChanged();
     void itemsChanged();
 
 private:
-    void collectItems();
-
     com::ubuntu::content::Transfer *m_transfer;
     QList<ContentItem *> m_items;
 };

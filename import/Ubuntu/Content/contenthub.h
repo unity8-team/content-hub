@@ -17,6 +17,7 @@
 #ifndef COM_UBUNTU_CONTENTHUB_H_
 #define COM_UBUNTU_CONTENTHUB_H_
 
+#include <QHash>
 #include <QList>
 #include <QObject>
 #include <QQmlListProperty>
@@ -63,6 +64,7 @@ private Q_SLOTS:
 
 private:
     QList<ContentTransfer *> m_finishedImports;
+    QHash<com::ubuntu::content::Transfer *, ContentTransfer *> m_activeImports;
 
     com::ubuntu::content::Hub *m_hub;
     QmlImportExportHandler *m_handler;

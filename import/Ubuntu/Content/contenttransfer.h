@@ -68,7 +68,7 @@ Q_SIGNALS:
     void itemsChanged();
 
 private Q_SLOTS:
-    void updateSate();
+    void updateState();
 
 private:
     com::ubuntu::content::Transfer *m_transfer;

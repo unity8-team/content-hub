@@ -140,12 +140,12 @@ void ContentTransfer::setTransfer(com::ubuntu::content::Transfer *transfer, Dire
 
     m_direction = direction;
     m_transfer = transfer;
-    updateSate();
+    updateState();
 
     if (m_state == Charged && m_direction == Import)
         collectItems();
 
-    connect(m_transfer, SIGNAL(stateChanged()), this, SLOT(updateSate()));
+    connect(m_transfer, SIGNAL(stateChanged()), this, SLOT(updateState()));
 }
 
 /*!
@@ -170,9 +170,9 @@ void ContentTransfer::collectItems()
 }
 
 /*!
- * \brief ContentTransfer::updateSate update the state from the hub transfer object
+ * \brief ContentTransfer::updateState update the state from the hub transfer object
  */
-void ContentTransfer::updateSate()
+void ContentTransfer::updateState()
 {
     if (!m_transfer)
         return;

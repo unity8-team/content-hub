@@ -30,7 +30,7 @@ Rectangle {
         target: activeTransfer
         onStateChanged: {
             if (activeTransfer.state === ContentTransfer.Charged)
-                importItmes = activeTransfer.items;
+                importItems = activeTransfer.items;
         }
     }
 }

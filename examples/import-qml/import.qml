@@ -9,6 +9,7 @@ Rectangle {
     height: 200
 
     property list<ContentItem> importItems
+    property var activeTransfer
 
     Button {
         id: importButton
@@ -16,7 +17,10 @@ Rectangle {
         onClicked: {
             var peer = ContentHub.defaultSourceForType(ContentType.Pictures);
             var transfer = ContentHub.importContent(ContentType.Pictures, peer);
-            transfer.start()
+            if (transfer !== null) {
+                activeTransfer = transfer
+                transfer.start()
+            }
         }
     }
 
@@ -48,10 +52,10 @@ Rectangle {
     }
 
     Connections {
-        target: ContentHub
-        onFinishedImportsChanged: {
-            var idx = ContentHub.finishedImports.length - 1;
-            importItems = ContentHub.finishedImports[idx].items;
+        target: activeTransfer
+        onStateChanged: {
+            if (activeTransfer.state === ContentTransfer.Charged)
+                importItems = activeTransfer.items;
         }
     }
 }

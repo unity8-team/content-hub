@@ -17,6 +17,7 @@
 #ifndef COM_UBUNTU_CONTENTHUB_H_
 #define COM_UBUNTU_CONTENTHUB_H_
 
+#include <QHash>
 #include <QList>
 #include <QObject>
 #include <QQmlListProperty>
@@ -29,6 +30,7 @@ namespace com {
 namespace ubuntu {
 namespace content {
 class Hub;
+class Peer;
 class Type;
 class Transfer;
 }
@@ -62,7 +64,11 @@ private Q_SLOTS:
     void handleExport(com::ubuntu::content::Transfer * transfer);
 
 private:
+    ContentTransfer* importContent(const com::ubuntu::content::Type &hubType,
+                                   const com::ubuntu::content::Peer &hubPeer);
+
     QList<ContentTransfer *> m_finishedImports;
+    QHash<com::ubuntu::content::Transfer *, ContentTransfer *> m_activeImports;
 
     com::ubuntu::content::Hub *m_hub;
     QmlImportExportHandler *m_handler;

@@ -75,11 +75,11 @@ void cucd::Transfer::Start()
 void cucd::Transfer::Charge(const QStringList& items)
 {
     qDebug() << __PRETTY_FUNCTION__;
-    d->items = items;
 
     if (d->state == cuc::Transfer::charged)
         return;
 
+    d->items = items;
     d->state = cuc::Transfer::charged;
     Q_EMIT(StateChanged(d->state));
 }

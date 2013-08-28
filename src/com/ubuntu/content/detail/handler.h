@@ -19,7 +19,6 @@
 #define HANDLER_H_
 
 #include <QObject>
-#include <QStringList>
 #include <com/ubuntu/content/import_export_handler.h>
 #include <QtDBus/QDBusConnection>
 #include <QtDBus/QDBusObjectPath>

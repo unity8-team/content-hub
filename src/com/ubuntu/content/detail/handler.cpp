@@ -19,14 +19,7 @@
 #include "transfer_p.h"
 #include "handler.h"
 
-#include <QCache>
 #include <QObject>
-#include <QCoreApplication>
-#include <QDebug>
-#include <QSharedPointer>
-#include <QUuid>
-
-#include <cassert>
 
 namespace cucd = com::ubuntu::content::detail;
 namespace cuc = com::ubuntu::content;

@@ -18,12 +18,6 @@
 
 #include "transfer_p.h"
 #include "handler.h"
-//#include "transfer.h"
-
-#include <com/ubuntu/content/peer.h>
-#include <com/ubuntu/content/type.h>
-//#include <com/ubuntu/content/transfer.h>
-
 
 #include <QCache>
 #include <QObject>

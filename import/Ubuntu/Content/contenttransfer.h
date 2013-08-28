@@ -31,7 +31,7 @@ class ContentTransfer : public QObject
     Q_ENUMS(State)
     Q_ENUMS(Direction)
     Q_PROPERTY(State state READ state WRITE setState NOTIFY stateChanged)
-    Q_PROPERTY(Direction direction READ direction)
+    Q_PROPERTY(Direction direction READ direction CONSTANT)
     Q_PROPERTY(QQmlListProperty<ContentItem> items READ items NOTIFY itemsChanged)
 
 public:

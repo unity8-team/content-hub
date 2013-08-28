@@ -59,6 +59,9 @@ Q_SIGNALS:
     void stateChanged();
     void itemsChanged();
 
+private Q_SLOTS:
+    void updateSate();
+
 private:
     com::ubuntu::content::Transfer *m_transfer;
     QList<ContentItem *> m_items;

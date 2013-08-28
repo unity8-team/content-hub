@@ -62,6 +62,7 @@ Q_SIGNALS:
 private:
     com::ubuntu::content::Transfer *m_transfer;
     QList<ContentItem *> m_items;
+    State m_state;
 };
 
 #endif // COM_UBUNTU_CONTENTTRANSFER_H_

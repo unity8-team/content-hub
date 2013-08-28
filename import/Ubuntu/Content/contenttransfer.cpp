@@ -36,7 +36,8 @@ namespace cuc = com::ubuntu::content;
 
 ContentTransfer::ContentTransfer(QObject *parent)
     : QObject(parent),
-      m_transfer(0)
+      m_transfer(0),
+      m_state(Aborted)
 {
     qDebug() << Q_FUNC_INFO;
 }
@@ -49,10 +50,7 @@ ContentTransfer::ContentTransfer(QObject *parent)
 ContentTransfer::State ContentTransfer::state() const
 {
     qDebug() << Q_FUNC_INFO;
-    if (!m_transfer)
-        return Aborted;
-
-    return static_cast<ContentTransfer::State>(m_transfer->state());
+    return m_state;
 }
 
 void ContentTransfer::setState(ContentTransfer::State state)
@@ -79,7 +77,7 @@ void ContentTransfer::setState(ContentTransfer::State state)
 QQmlListProperty<ContentItem> ContentTransfer::items()
 {
     qDebug() << Q_FUNC_INFO;
-    if (state() == Charged) {
+    if (m_state == Charged) {
         collectItems();
     }
     return QQmlListProperty<ContentItem>(this, m_items);
@@ -130,11 +128,12 @@ void ContentTransfer::setTransfer(com::ubuntu::content::Transfer *transfer)
     qDebug() << Q_FUNC_INFO;
 
     m_transfer = transfer;
+    updateSate();
 
-    if (m_transfer->state() == cuc::Transfer::charged)
+    if (m_state == Charged)
         collectItems();
 
-    connect(m_transfer, SIGNAL(stateChanged()), this, SIGNAL(stateChanged()));
+    connect(m_transfer, SIGNAL(stateChanged()), this, SLOT(updateSate()));
 }
 
 /*!
@@ -143,7 +142,7 @@ void ContentTransfer::setTransfer(com::ubuntu::content::Transfer *transfer)
 void ContentTransfer::collectItems()
 {
     qDebug() << Q_FUNC_INFO;
-    if (m_transfer->state() != cuc::Transfer::charged)
+    if (m_state != Charged)
         return;
 
     qDeleteAll(m_items);
@@ -156,4 +155,16 @@ void ContentTransfer::collectItems()
         m_items.append(qmlItem);
     }
     Q_EMIT itemsChanged();
+}
+
+/*!
+ * \brief ContentTransfer::updateSate update the state from the hub transfer object
+ */
+void ContentTransfer::updateSate()
+{
+    if (!m_transfer)
+        return;
+
+    m_state = static_cast<ContentTransfer::State>(m_transfer->state());
+    Q_EMIT stateChanged();
 }

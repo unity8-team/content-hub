@@ -60,7 +60,6 @@ Q_SIGNALS:
 private Q_SLOTS:
     void handleImport(com::ubuntu::content::Transfer * transfer);
     void handleExport(com::ubuntu::content::Transfer * transfer);
-    void startImport();
 
 private:
     QList<ContentTransfer *> m_finishedImports;

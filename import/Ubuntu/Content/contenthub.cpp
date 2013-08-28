@@ -156,24 +156,7 @@ ContentTransfer *ContentHub::importContent(int type)
     cuc::Transfer *hubTransfer = m_hub->create_import_for_type_from_peer(hubType, hubPeer);
     ContentTransfer *qmlTransfer = new ContentTransfer(this);
     qmlTransfer->setTransfer(hubTransfer);
-
-    connect(hubTransfer,
-            SIGNAL(stateChanged()),
-            this,
-            SLOT(startImport()));
-
     return qmlTransfer;
-}
-
-void ContentHub::startImport()
-{
-    qDebug() << Q_FUNC_INFO;
-    auto t = dynamic_cast<cuc::Transfer*>(sender());
-    if (t->state() == cuc::Transfer::charged)
-    {
-        qDebug() << Q_FUNC_INFO << "Transfer in progress";
-        this->handleImport(t);
-    }
 }
 
 /*!
@@ -189,12 +172,6 @@ ContentTransfer *ContentHub::importContent(int type, ContentPeer *peer)
     cuc::Transfer *hubTransfer = m_hub->create_import_for_type_from_peer(hubType, peer->peer());
     ContentTransfer *qmlTransfer = new ContentTransfer(this);
     qmlTransfer->setTransfer(hubTransfer);
-
-    connect(hubTransfer,
-            SIGNAL(stateChanged()),
-            this,
-            SLOT(startImport()));
-
     return qmlTransfer;
 }
 

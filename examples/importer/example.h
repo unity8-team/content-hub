@@ -20,9 +20,7 @@
 #define EXAMPLE_H
 
 #include <QObject>
-#include <QDebug>
 #include "exampleimporter.h"
-
 
 class Example : public QObject
 {

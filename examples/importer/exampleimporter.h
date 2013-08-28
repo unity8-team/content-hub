@@ -23,7 +23,6 @@
 #include <com/ubuntu/content/transfer.h>
 #include <com/ubuntu/content/import_export_handler.h>
 #include <QDebug>
-#include <QSharedPointer>
 
 namespace cuc = com::ubuntu::content;
 

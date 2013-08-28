@@ -16,8 +16,6 @@
  * Authored by: Ken VanDine <ken.vandine@canonical.com>
  */
 
-#include <com/ubuntu/content/hub.h>
-#include <com/ubuntu/content/transfer.h>
 #include "example.h"
 
 Example::Example(QObject *parent) :

@@ -14,7 +14,7 @@ Rectangle {
         onClicked: {
             var peer = ContentHub.defaultSourceForType(ContentType.Pictures);
             var transfer = ContentHub.importContent(ContentType.Pictures, peer);
-            if (transfer !== undefinded) {
+            if (transfer !== null) {
                 activeTransfer = transfer
                 transfer.start()
             }

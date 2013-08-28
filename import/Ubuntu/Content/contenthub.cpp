@@ -157,7 +157,7 @@ ContentTransfer *ContentHub::importContent(int type)
 //    FIXME show user a selection of possible peers instead
     cuc::Peer hubPeer = m_hub->default_peer_for_type(hubType);
 
-    return importContent(type, hubPeer);
+    return importContent(hubType, hubPeer);
 }
 
 /*!
@@ -179,12 +179,13 @@ ContentTransfer *ContentHub::importContent(int type, ContentPeer *peer)
  * \param peer
  * \return
  */
-ContentTransfer* ContentHub::importContent(com::ubuntu::content::Type hubType,
-                                           com::ubuntu::content::Peer *hubPeer)
+ContentTransfer* ContentHub::importContent(const com::ubuntu::content::Type &hubType,
+                                           const com::ubuntu::content::Peer &hubPeer)
 {
     cuc::Transfer *hubTransfer = m_hub->create_import_for_type_from_peer(hubType, hubPeer);
-    if (!hubTransfer)
-        return nullptr;
+// FIXME update tests so this can be enabled
+//    if (!hubTransfer)
+//        return nullptr;
 
     ContentTransfer *qmlTransfer = new ContentTransfer(this);
     qmlTransfer->setTransfer(hubTransfer, ContentTransfer::Import);

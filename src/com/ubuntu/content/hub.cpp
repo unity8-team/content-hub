@@ -66,9 +66,7 @@ cuc::Hub* cuc::Hub::Client::instance()
 void cuc::Hub::register_import_export_handler(cuc::ImportExportHandler* handler)
 {
     qDebug() << Q_FUNC_INFO;
-
     auto id = app_id();
-    qDebug() << Q_FUNC_INFO << "APP_ID:" << id;
     if (id.isEmpty())
     {
         qWarning() << "APP_ID isn't set, the handler can not be registered";
@@ -82,15 +80,18 @@ void cuc::Hub::register_import_export_handler(cuc::ImportExportHandler* handler)
     auto h = new cuc::detail::Handler(c, handler);
 
     new HandlerAdaptor(h);
-    if (c.registerService(bus_name))
-        qDebug() << Q_FUNC_INFO << "name success";
-    else
+    if (not c.registerService(bus_name))
+    {
+        qWarning() << Q_FUNC_INFO << "Failed to register name:" << bus_name;
         return;
+    }
 
-    if (c.registerObject("/com/ubuntu/content/transfer/ImportExportHandler", h))
-        qDebug() << Q_FUNC_INFO << "object success";
+    if (not c.registerObject("/com/ubuntu/content/transfer/ImportExportHandler", h))
+    {
+        qWarning() << Q_FUNC_INFO << "Failed to register object for:" << bus_name;
+        return;
+    }
 
-    qDebug() << Q_FUNC_INFO << "PID: " << c.interface()->servicePid(c.baseService());
     d->service->RegisterImportExportHandler(
                 QString(""),
                 id,

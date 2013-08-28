@@ -7,13 +7,17 @@ Rectangle {
     height: 200
 
     property list<ContentItem> importItems
+    property var activeTransfer
 
     Button {
         text: "Import from default"
         onClicked: {
             var peer = ContentHub.defaultSourceForType(ContentType.Pictures);
             var transfer = ContentHub.importContent(ContentType.Pictures, peer);
-            transfer.start()
+            if (transfer !== undefinded) {
+                activeTransfer = transfer
+                transfer.start()
+            }
         }
     }
     Label {
@@ -23,10 +27,10 @@ Rectangle {
     }
 
     Connections {
-        target: ContentHub
-        onFinishedImportsChanged: {
-            var idx = ContentHub.finishedImports.length - 1;
-            importItmes = ContentHub.finishedImports[idx].items;
+        target: activeTransfer
+        onStateChanged: {
+            if (activeTransfer.state === ContentTransfer.Charged)
+                importItmes = activeTransfer.items;
         }
     }
 }

@@ -30,6 +30,7 @@ namespace com {
 namespace ubuntu {
 namespace content {
 class Hub;
+class Peer;
 class Type;
 class Transfer;
 }
@@ -63,6 +64,9 @@ private Q_SLOTS:
     void handleExport(com::ubuntu::content::Transfer * transfer);
 
 private:
+    ContentTransfer* importContent(com::ubuntu::content::Type hubType,
+                                   com::ubuntu::content::Peer *hubPeer);
+
     QList<ContentTransfer *> m_finishedImports;
     QHash<com::ubuntu::content::Transfer *, ContentTransfer *> m_activeImports;
 

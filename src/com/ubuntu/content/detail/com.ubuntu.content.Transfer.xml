@@ -1,5 +1,8 @@
 <node>
   <interface name="com.ubuntu.content.dbus.Transfer">
+    <signal name="StateChanged">
+      <arg name="state" type="i"/>
+    </signal>
     <method name="State">
       <arg name="state" type="i" direction="out" />
     </method>

@@ -26,6 +26,10 @@ cuc::Transfer::Transfer(const QSharedPointer<cuc::Transfer::Private>& d, QObject
         : QObject(parent),
           d(d)
 {
+    QObject::connect(d->remote_transfer,
+                SIGNAL (StateChanged(int)),
+                this,
+                SIGNAL (stateChanged()));
 }
 
 cuc::Transfer::~Transfer()

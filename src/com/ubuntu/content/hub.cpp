@@ -17,6 +17,8 @@
  */
 
 #include "ContentServiceInterface.h"
+#include "ContentHandlerInterface.h"
+#include "handleradaptor.h"
 #include "transfer_p.h"
 
 #include <com/ubuntu/content/hub.h>
@@ -25,6 +27,7 @@
 #include <com/ubuntu/content/scope.h>
 #include <com/ubuntu/content/store.h>
 #include <com/ubuntu/content/type.h>
+#include "utils.cpp"
 
 #include <QStandardPaths>
 
@@ -60,8 +63,39 @@ cuc::Hub* cuc::Hub::Client::instance()
     return hub;
 }
 
-void cuc::Hub::register_import_export_handler(cuc::ImportExportHandler*)
+void cuc::Hub::register_import_export_handler(cuc::ImportExportHandler* handler)
 {
+    qDebug() << Q_FUNC_INFO;
+    auto id = app_id();
+    if (id.isEmpty())
+    {
+        qWarning() << "APP_ID isn't set, the handler can not be registered";
+        return;
+    }
+
+    QString bus_name = handler_address(id);
+    qDebug() << Q_FUNC_INFO << "BUS_NAME:" << bus_name;
+
+    auto c = QDBusConnection::sessionBus();
+    auto h = new cuc::detail::Handler(c, handler);
+
+    new HandlerAdaptor(h);
+    if (not c.registerService(bus_name))
+    {
+        qWarning() << Q_FUNC_INFO << "Failed to register name:" << bus_name;
+        return;
+    }
+
+    if (not c.registerObject("/com/ubuntu/content/transfer/ImportExportHandler", h))
+    {
+        qWarning() << Q_FUNC_INFO << "Failed to register object for:" << bus_name;
+        return;
+    }
+
+    d->service->RegisterImportExportHandler(
+                QString(""),
+                id,
+                QDBusObjectPath{"/com/ubuntu/content/transfer/ImportExportHandler"});
 }
 
 const cuc::Store* cuc::Hub::store_for_scope_and_type(cuc::Scope scope, cuc::Type type)
@@ -120,7 +154,12 @@ QVector<cuc::Peer> cuc::Hub::known_peers_for_type(cuc::Type t)
 
 cuc::Transfer* cuc::Hub::create_import_for_type_from_peer(cuc::Type type, cuc::Peer peer)
 {
-    auto reply = d->service->CreateImportForTypeFromPeer(type.id(), peer.id());
+    /* This needs to be replaced with a better way to get the APP_ID */
+    QString id = app_id();
+    if (id == "")
+        id = "NoAppId";
+
+    auto reply = d->service->CreateImportForTypeFromPeer(type.id(), peer.id(), id);
     reply.waitForFinished();
 
     if (reply.isError())

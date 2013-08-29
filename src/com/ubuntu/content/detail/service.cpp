@@ -21,6 +21,10 @@
 #include "peer_registry.h"
 #include "transfer.h"
 #include "transferadaptor.h"
+#include "utils.cpp"
+
+#include "handler.h"
+#include "ContentHandlerInterface.h"
 
 #include <com/ubuntu/content/peer.h>
 #include <com/ubuntu/content/type.h>
@@ -33,22 +37,8 @@
 
 #include <cassert>
 
-namespace {
-    /* sanitize the dbus object path */
-    QString sanitize_path(const QString& path)
-    {
-        QString sanitized = path;
-
-        for (int i = 0; i < sanitized.length(); ++i)
-        {
-            if ( !( sanitized[i].isLetter() || sanitized[i].isDigit()))
-                sanitized[i] = QLatin1Char('_');
-        }
-        return sanitized;
-    }
-}
-
 namespace cucd = com::ubuntu::content::detail;
+namespace cuc = com::ubuntu::content;
 
 struct cucd::Service::Private : public QObject
 {
@@ -64,6 +54,7 @@ struct cucd::Service::Private : public QObject
     QDBusConnection connection;
     QSharedPointer<cucd::PeerRegistry> registry;
     QSet<cucd::Transfer*> active_transfers;
+    QMap<QString, QDBusObjectPath> registered_handlers;
 };
 
 cucd::Service::Service(QDBusConnection connection, const QSharedPointer<cucd::PeerRegistry>& peer_registry, QObject* parent)
@@ -101,7 +92,20 @@ QString cucd::Service::DefaultPeerForType(const QString& type_id)
     return peer.id();
 }
 
-QDBusObjectPath cucd::Service::CreateImportForTypeFromPeer(const QString& /*type_id*/, const QString& peer_id)
+void cucd::Service::connect_export_handler(const QString& address, const QString& path, const QString& destination)
+{
+    qDebug() << Q_FUNC_INFO;
+
+    cuc::dbus::Handler* h = new cuc::dbus::Handler(
+                address,
+                path,
+                QDBusConnection::sessionBus(),
+                0);
+
+    h->HandleExport(QDBusObjectPath{destination});
+}
+
+QDBusObjectPath cucd::Service::CreateImportForTypeFromPeer(const QString& type_id, const QString& peer_id, const QString& app_id)
 {
     static size_t import_counter{0}; import_counter++;
 
@@ -111,9 +115,8 @@ QDBusObjectPath cucd::Service::CreateImportForTypeFromPeer(const QString& /*type
     QUuid uuid{QUuid::createUuid()};
 
     QString destination = importer_path_pattern
-            .arg("ThisShouldBeTheAppIdDeterminedFromThePidOfTheCallingProcess")
+            .arg(sanitize_path(app_id))
             .arg(import_counter);
-
 
     QString source = exporter_path_pattern
             .arg(sanitize_path(peer_id))
@@ -129,5 +132,29 @@ QDBusObjectPath cucd::Service::CreateImportForTypeFromPeer(const QString& /*type
 
     qDebug() << "Created transfer " << source << " -> " << destination;
 
+    /* FIXME: Lookup export handler already registered and call handle_export
+     * on it this needs to be replaced with something that listens for the
+     * handler
+     */
+
+    /* iterate registered handlers */
+    QMap<QString, QDBusObjectPath>::iterator i = d->registered_handlers.find(peer_id);
+
+    if (i != d->registered_handlers.end())
+    {
+        QString address = handler_address(peer_id);
+        QString handler_path = i.value().path();
+        this->connect_export_handler(address, handler_path, destination);
+    }
+    /* end export handler hack */
+
+    Q_UNUSED(type_id);
+
     return QDBusObjectPath{destination};
+}
+
+void cucd::Service::RegisterImportExportHandler(const QString& /*type_id*/, const QString& peer_id, const QDBusObjectPath& handler)
+{
+    qDebug() << Q_FUNC_INFO << peer_id << ":" << handler.path();
+    d->registered_handlers.insert(peer_id, handler);
 }

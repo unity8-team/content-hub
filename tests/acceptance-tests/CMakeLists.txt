@@ -40,17 +40,26 @@ add_executable(
   ${MOCS}
 )
 
+add_executable(
+  app_hub_communication_handler
+  app_hub_communication_handler.cpp
+  ${MOCS}
+)
+
 qt5_use_modules(app_hub_communication_default_peer Core Test)
 qt5_use_modules(app_hub_communication_known_peers Core Test)
 qt5_use_modules(app_hub_communication_stores Core Test)
 qt5_use_modules(app_hub_communication_transfer Core Test)
+qt5_use_modules(app_hub_communication_handler Core Test)
 target_link_libraries(app_hub_communication_stores content-hub gmock gtest gtest_main)
 target_link_libraries(app_hub_communication_default_peer content-hub gmock gtest gtest_main)
 target_link_libraries(app_hub_communication_known_peers content-hub gmock gtest gtest_main)
 target_link_libraries(app_hub_communication_stores content-hub gmock gtest gtest_main)
 target_link_libraries(app_hub_communication_transfer content-hub gmock gtest gtest_main)
+target_link_libraries(app_hub_communication_handler content-hub gmock gtest gtest_main)
 
 add_test(app_hub_communication_default_peer app_hub_communication_default_peer)
 add_test(app_hub_communication_known_peers app_hub_communication_known_peers)
 add_test(app_hub_communication_stores app_hub_communication_stores)
 add_test(app_hub_communication_transfer app_hub_communication_transfer)
+add_test(app_hub_communication_handler app_hub_communication_handler)

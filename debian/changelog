@@ -1,3 +1,13 @@
+content-hub (0.0+13.10.20130829-0ubuntu1) saucy; urgency=low
+
+  [ Guenter Schwann ]
+  * More robust handling of charge and collect of the transfer in QML.
+
+  [ Ubuntu daily release ]
+  * Automatic snapshot from revision 24
+
+ -- Ubuntu daily release <ps-jenkins@lists.canonical.com>  Thu, 29 Aug 2013 02:10:14 +0000
+
 content-hub (0.0+13.10.20130827.3-0ubuntu1) saucy; urgency=low
 
   [ Guenter Schwann ]

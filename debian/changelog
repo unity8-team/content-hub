@@ -1,3 +1,23 @@
+content-hub (0.0+13.10.20130829.1-0ubuntu1) saucy; urgency=low
+
+  [ Ken VanDine ]
+  * Adds a Handler interface and adapter which provides get registered
+    on the bus from the Hub client. The service side will look for
+    registered handlers when a new transfer is created. The service then
+    connects to transfer and calls HandleExport on the handler when the
+    transfer state changes to in_progress. There is still no hooks in
+    the service to call HandleImport for registered import handlers, but
+    clients can connect to stateChanged and fire their own import when
+    the state changes to charged. Handler registration requires APP_ID
+    be set in the client's env, which we can drop when we get app
+    manager integration. It also requires the export handler to be
+    registered before the client creates the transfer.
+
+  [ Ubuntu daily release ]
+  * Automatic snapshot from revision 26
+
+ -- Ubuntu daily release <ps-jenkins@lists.canonical.com>  Thu, 29 Aug 2013 19:09:23 +0000
+
 content-hub (0.0+13.10.20130829-0ubuntu1) saucy; urgency=low
 
   [ Guenter Schwann ]

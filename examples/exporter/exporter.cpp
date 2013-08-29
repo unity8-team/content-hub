@@ -17,6 +17,7 @@
  */
 
 #include <QCoreApplication>
+
 #include "exampleexporter.h"
 
 namespace cuc = com::ubuntu::content;
@@ -27,8 +28,8 @@ int main(int argc, char *argv[])
     if (qgetenv("APP_ID").isEmpty()) {
         qputenv("APP_ID", "gallery-app");
     }
-    auto exporter = new ExampleExporter();
-    Q_UNUSED(exporter);
+
+    ExampleExporter exporter;
 
     return a.exec();
 }

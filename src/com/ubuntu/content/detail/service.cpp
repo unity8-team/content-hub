@@ -92,7 +92,7 @@ QString cucd::Service::DefaultPeerForType(const QString& type_id)
     return peer.id();
 }
 
-void cucd::Service::connect_export_handler(QString& address, QString& path, QString& destination)
+void cucd::Service::connect_export_handler(const QString& address, const QString& path, const QString& destination)
 {
     qDebug() << Q_FUNC_INFO;
 
@@ -103,10 +103,9 @@ void cucd::Service::connect_export_handler(QString& address, QString& path, QStr
                 0);
 
     h->HandleExport(QDBusObjectPath{destination});
-
 }
 
-QDBusObjectPath cucd::Service::CreateImportForTypeFromPeer(const QString& /*type_id*/, const QString& peer_id, const QString& app_id)
+QDBusObjectPath cucd::Service::CreateImportForTypeFromPeer(const QString& type_id, const QString& peer_id, const QString& app_id)
 {
     static size_t import_counter{0}; import_counter++;
 
@@ -148,6 +147,8 @@ QDBusObjectPath cucd::Service::CreateImportForTypeFromPeer(const QString& /*type
         this->connect_export_handler(address, handler_path, destination);
     }
     /* end export handler hack */
+
+    Q_UNUSED(type_id);
 
     return QDBusObjectPath{destination};
 }

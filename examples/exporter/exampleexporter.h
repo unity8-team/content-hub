@@ -18,6 +18,7 @@
 
 #ifndef EXAMPLEEXPORTER_H
 #define EXAMPLEEXPORTER_H
+
 #include <QObject>
 #include <com/ubuntu/content/hub.h>
 #include <com/ubuntu/content/transfer.h>
@@ -32,9 +33,7 @@ class ExampleExporter : public cuc::ImportExportHandler
 
 public:
     ExampleExporter();
-    
-signals:
-    
+       
 public slots:
     Q_INVOKABLE void handle_import(cuc::Transfer*);
     Q_INVOKABLE void handle_export(cuc::Transfer*);

@@ -56,7 +56,7 @@ class Service : public QObject
   private:
     struct Private;
     QScopedPointer<Private> d;
-    void connect_export_handler(QString& address, QString& handler_path, QString& destination);
+    void connect_export_handler(const QString&, const QString&, const QString&);
 };
 }
 }

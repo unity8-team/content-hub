@@ -19,9 +19,9 @@
 #include "example.h"
 
 Example::Example(QObject *parent) :
-    QObject(parent)
+    QObject(parent),
+    m_importer(new ExampleImporter())
 {
-    m_importer = new ExampleImporter();
 }
 
 void Example::create_import()

@@ -6,6 +6,4 @@
 #define HANDLER_NAME_TEMPLATE "com.ubuntu.content.handler.%1"
 #define HANDLER_PATH "/com/ubuntu/content/transfer/ImportExportHandler"
 
-
-
 #endif // COMMON_H

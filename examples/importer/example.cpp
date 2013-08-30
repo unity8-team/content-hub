@@ -33,17 +33,4 @@ void Example::create_import()
     m_transfer = hub->create_import_for_type_from_peer(
         cuc::Type::Known::pictures(),
         peer);
-
-    QObject::connect(m_transfer,
-        SIGNAL(stateChanged()),
-        this,
-        SLOT (import()));
-    m_transfer->start();
-}
-
-void Example::import()
-{
-    qDebug() << Q_FUNC_INFO << "State changed:" << m_transfer->state();
-    if (m_transfer->state() == cuc::Transfer::charged)
-        m_importer->handle_import(m_transfer);      
 }

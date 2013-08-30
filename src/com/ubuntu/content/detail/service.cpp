@@ -92,17 +92,18 @@ QString cucd::Service::DefaultPeerForType(const QString& type_id)
     return peer.id();
 }
 
-void cucd::Service::connect_export_handler(const QString& address, const QString& path, const QString& destination)
+void cucd::Service::connect_export_handler(const QString& peer_id, const QString& path, const QString& transfer)
 {
     qDebug() << Q_FUNC_INFO;
 
-    cuc::dbus::Handler* h = new cuc::dbus::Handler(
-                address,
+    cuc::dbus::Handler *h = new cuc::dbus::Handler(
+                handler_address(peer_id),
                 path,
                 QDBusConnection::sessionBus(),
                 0);
 
-    h->HandleExport(QDBusObjectPath{destination});
+    if (not transfer.isEmpty())
+        h->HandleExport(QDBusObjectPath{transfer});
 }
 
 QDBusObjectPath cucd::Service::CreateImportForTypeFromPeer(const QString& type_id, const QString& peer_id, const QString& app_id)
@@ -142,10 +143,10 @@ QDBusObjectPath cucd::Service::CreateImportForTypeFromPeer(const QString& type_i
 
     if (i != d->registered_handlers.end())
     {
-        QString address = handler_address(peer_id);
         QString handler_path = i.value().path();
-        this->connect_export_handler(address, handler_path, destination);
+        this->connect_export_handler(peer_id, handler_path, destination);
     }
+
     /* end export handler hack */
 
     Q_UNUSED(type_id);
@@ -157,4 +158,7 @@ void cucd::Service::RegisterImportExportHandler(const QString& /*type_id*/, cons
 {
     qDebug() << Q_FUNC_INFO << peer_id << ":" << handler.path();
     d->registered_handlers.insert(peer_id, handler);
+    qDebug() << Q_FUNC_INFO << "/transfers/"+sanitize_path(peer_id);
+    this->connect_export_handler(peer_id, HANDLER_PATH, "");
+
 }

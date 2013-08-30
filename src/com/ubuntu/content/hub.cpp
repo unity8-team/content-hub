@@ -67,7 +67,7 @@ cuc::Hub* cuc::Hub::Client::instance()
 void cuc::Hub::register_import_export_handler(cuc::ImportExportHandler* handler)
 {
     qDebug() << Q_FUNC_INFO;
-    auto id = app_id();
+    QString id = app_id();
     if (id.isEmpty())
     {
         qWarning() << "APP_ID isn't set, the handler can not be registered";
@@ -78,7 +78,7 @@ void cuc::Hub::register_import_export_handler(cuc::ImportExportHandler* handler)
     qDebug() << Q_FUNC_INFO << "BUS_NAME:" << bus_name;
 
     auto c = QDBusConnection::sessionBus();
-    auto h = new cuc::detail::Handler(c, handler);
+    auto h = new cuc::detail::Handler(c, id, handler);
 
     new HandlerAdaptor(h);
     if (not c.registerService(bus_name))

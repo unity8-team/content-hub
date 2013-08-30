@@ -22,6 +22,8 @@
 #include <QStringList>
 #include <QtDBus/QDBusConnection>
 #include <QtDBus/QDBusObjectPath>
+#include <QtDBus/QDBusMessage>
+
 #include "handler.h"
 
 namespace com
@@ -56,7 +58,7 @@ class Service : public QObject
   private:
     struct Private;
     QScopedPointer<Private> d;
-    void connect_export_handler(const QString&, const QString&, const QString&);
+    void connect_export_handler(const QString&, const QString&, const QString& transfer);
 };
 }
 }

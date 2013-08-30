@@ -1,3 +1,14 @@
+content-hub (0.0+13.10.20130830-0ubuntu1) saucy; urgency=low
+
+  [ Ken VanDine ]
+  * Moved some common service names and paths to common.h instead of
+    setting them in multiple places. .
+
+  [ Ubuntu daily release ]
+  * Automatic snapshot from revision 28
+
+ -- Ubuntu daily release <ps-jenkins@lists.canonical.com>  Fri, 30 Aug 2013 12:44:22 +0000
+
 content-hub (0.0+13.10.20130829.1-0ubuntu1) saucy; urgency=low
 
   [ Ken VanDine ]

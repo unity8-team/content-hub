@@ -1,3 +1,14 @@
+content-hub (0.0+13.10.20130831-0ubuntu1) saucy; urgency=low
+
+  [ Ken VanDine ]
+  * Don't start a new instance of the service if it fails to register on
+    the bus .
+
+  [ Ubuntu daily release ]
+  * Automatic snapshot from revision 30
+
+ -- Ubuntu daily release <ps-jenkins@lists.canonical.com>  Sat, 31 Aug 2013 06:39:18 +0000
+
 content-hub (0.0+13.10.20130830-0ubuntu1) saucy; urgency=low
 
   [ Ken VanDine ]

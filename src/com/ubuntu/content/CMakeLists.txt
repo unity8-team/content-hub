@@ -91,6 +91,7 @@ qt5_use_modules(content-hub Core DBus)
 #set(UBUNTU_APP_LIB "ubuntu_application_api")
 target_link_libraries(content-hub
     ${UPSTART_LAUNCH_LIBRARIES}
+    ${UPSTART_LAUNCH_LDFLAGS}
 )
 
 install(

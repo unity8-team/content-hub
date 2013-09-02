@@ -18,6 +18,7 @@
 
 #include "service.h"
 
+#include "app_manager.h"
 #include "peer_registry.h"
 #include "transfer.h"
 #include "transferadaptor.h"
@@ -51,11 +52,21 @@ struct cucd::Service::Private : public QObject
     {
     }
 
+    bool LaunchExportPeer(const QString &peer_id);
+
     QDBusConnection connection;
     QSharedPointer<cucd::PeerRegistry> registry;
     QSet<cucd::Transfer*> active_transfers;
     QMap<QString, QDBusObjectPath> registered_handlers;
+    AppManager app_manager;
 };
+
+bool cucd::Service::Private::LaunchExportPeer(const QString &peer_id)
+{
+    qDebug() << Q_FUNC_INFO << "this should start" << peer_id;
+    return app_manager.invoke_application(peer_id.toStdString());
+}
+
 
 cucd::Service::Service(QDBusConnection connection, const QSharedPointer<cucd::PeerRegistry>& peer_registry, QObject* parent)
         : QObject(parent),
@@ -136,6 +147,8 @@ QDBusObjectPath cucd::Service::CreateImportForTypeFromPeer(const QString& type_i
      * on it this needs to be replaced with something that listens for the
      * handler
      */
+
+    d->LaunchExportPeer(peer_id);
 
     /* iterate registered handlers */
     QMap<QString, QDBusObjectPath>::iterator i = d->registered_handlers.find(peer_id);

@@ -110,23 +110,14 @@ QDBusObjectPath cucd::Service::CreateImportForTypeFromPeer(const QString& type_i
 {
     static size_t import_counter{0}; import_counter++;
 
-    static const QString importer_path_pattern{"/transfers/%1/import/%2"};
-    static const QString exporter_path_pattern{"/transfers/%1/export/%2"};
-
     QUuid uuid{QUuid::createUuid()};
 
-    QString destination = importer_path_pattern
-            .arg(sanitize_path(app_id))
-            .arg(import_counter);
-
-    QString source = exporter_path_pattern
-            .arg(sanitize_path(peer_id))
-            .arg(import_counter);
-
-    auto transfer = new cucd::Transfer(this);
+    auto transfer = new cucd::Transfer(import_counter, peer_id, app_id, this);
     new TransferAdaptor(transfer);
     d->active_transfers.insert(transfer);
 
+    auto destination = transfer->import_path();
+    auto source = transfer->export_path();
     if (not d->connection.registerObject(destination, transfer))
         qDebug() << "Problem registering object for path: " << destination;
     d->connection.registerObject(source, transfer);
@@ -144,7 +135,7 @@ QDBusObjectPath cucd::Service::CreateImportForTypeFromPeer(const QString& type_i
     if (i != d->registered_handlers.end())
     {
         QString handler_path = i.value().path();
-        this->connect_export_handler(peer_id, handler_path, destination);
+        this->connect_export_handler(address, handler_path, source);
     }
 
     /* end export handler hack */

@@ -46,16 +46,6 @@ cucd::Handler::Handler(QDBusConnection connection, const QString& peer_id, cuc::
 {
     qDebug() << Q_FUNC_INFO;
     m_handler = handler;
-    Q_FOREACH (QDBusObjectPath p, get_transfers(d->peer_id, "export"))
-    {
-        qDebug() << Q_FUNC_INFO << p.path();
-        this->HandleExport(p);
-    }
-    Q_FOREACH (QDBusObjectPath p, get_transfers(d->peer_id, "import"))
-    {
-        qDebug() << Q_FUNC_INFO << p.path();
-        this->HandleImport(p);
-    }
 }
 
 cucd::Handler::~Handler() {}
@@ -78,31 +68,4 @@ void cucd::Handler::HandleExport(const QDBusObjectPath& transfer)
     qDebug() << Q_FUNC_INFO << "State:" << t->state();
     if (t->state() == cuc::Transfer::initiated)
         m_handler->handle_export(t);
-}
-
-QList<QDBusObjectPath> cucd::Handler::get_transfers(const QString& peer_id, QString type)
-{
-    qDebug() << Q_FUNC_INFO << peer_id;
-    QList<QDBusObjectPath> pending_transfers;
-
-    const QString path_pattern{"/transfers/%1/%2"};
-    const QString path = path_pattern.arg(sanitize_path(peer_id)).arg(type);
-
-    QDBusMessage msg = QDBusMessage::createMethodCall(HUB_SERVICE_NAME, path,
-                                                      "org.freedesktop.DBus.Introspectable",
-                                                      "Introspect");
-    QDBusReply<QString> res = d->connection.call(msg);
-
-    QDomDocument doc;
-    doc.setContent(res);
-    QDomElement node = doc.documentElement();
-    QDomElement child = node.firstChildElement();
-    while (!child.isNull()) {
-        if (child.tagName() == "node") {
-            QString transfer_path = path + "/" + child.attribute("name");
-            pending_transfers.append(QDBusObjectPath{transfer_path});
-        }
-        child = child.nextSiblingElement();
-    }
-    return pending_transfers;
 }

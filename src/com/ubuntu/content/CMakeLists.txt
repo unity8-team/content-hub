@@ -81,7 +81,7 @@ set_target_properties(
   AUTOMOC TRUE
 )
 
-qt5_use_modules(content-hub Core DBus Xml)
+qt5_use_modules(content-hub Core DBus)
 
 install(
   TARGETS content-hub

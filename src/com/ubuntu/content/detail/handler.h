@@ -23,8 +23,6 @@
 #include <QtDBus/QDBusConnection>
 #include <QtDBus/QDBusObjectPath>
 #include <QtDBus/QDBusMessage>
-#include <QtXml/QDomDocument>
-#include <QtXml/QDomElement>
 
 #include <com/ubuntu/content/import_export_handler.h>
 #include <com/ubuntu/content/peer.h>
@@ -58,9 +56,6 @@ class Handler : public QObject
     struct Private;
     QScopedPointer<Private> d;
     com::ubuntu::content::ImportExportHandler *m_handler;
-
-  private Q_SLOTS:
-    QList<QDBusObjectPath> get_transfers(const QString &peer_id, QString type);
 
 };
 }

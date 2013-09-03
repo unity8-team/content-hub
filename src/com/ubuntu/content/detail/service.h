@@ -23,6 +23,7 @@
 #include <QtDBus/QDBusConnection>
 #include <QtDBus/QDBusObjectPath>
 #include <QtDBus/QDBusMessage>
+#include <QtDBus/QDBusServiceWatcher>
 
 #include "handler.h"
 
@@ -58,7 +59,14 @@ class Service : public QObject
   private:
     struct Private;
     QScopedPointer<Private> d;
-    void connect_export_handler(const QString&, const QString&, const QString& transfer);
+    QDBusServiceWatcher *m_watcher;
+    void connect_export_handler(const QString&, const QString&, const QString&);
+    void connect_import_handler(const QString&, const QString&, const QString&);
+
+  private Q_SLOTS:
+    void handle_transfer(int);
+    void handler_registered(const QString&);
+
 };
 }
 }

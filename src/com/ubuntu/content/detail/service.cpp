@@ -57,7 +57,6 @@ struct cucd::Service::Private : public QObject
     QMap<QString, QDBusObjectPath> registered_handlers;
 };
 
-
 cucd::Service::Service(QDBusConnection connection, const QSharedPointer<cucd::PeerRegistry>& peer_registry, QObject* parent)
         : QObject(parent),
           d(new Private{connection, peer_registry, this})

@@ -20,10 +20,6 @@
 
 namespace cucd = com::ubuntu::content::detail;
 
-cucd::AppManager::AppManager()
-{
-}
-
 /*!
  * \reimp
  */

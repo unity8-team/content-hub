@@ -30,10 +30,10 @@ namespace detail
 class AppManager: public com::ubuntu::ApplicationManager::ApplicationManager
 {
   public:
-    AppManager();
-    AppManager(const AppManager&) = delete;
+    AppManager() = default;
+    AppManager(const AppManager&) = default;
     virtual ~AppManager() = default;
-    AppManager& operator=(const AppManager&) = delete;
+    AppManager& operator=(const AppManager&) = default;
 
     /*!
      * \brief invoke_application starts an application, and brings it to foreground

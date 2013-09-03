@@ -28,9 +28,10 @@ namespace ApplicationManager
 class ApplicationManager
 {
   public:
-//    ApplicationManager(const ApplicationManager&) = delete;
+    ApplicationManager() = default;
+    ApplicationManager(const ApplicationManager&) = default;
     virtual ~ApplicationManager() = default;
-    ApplicationManager& operator=(const ApplicationManager&) = delete;
+    ApplicationManager& operator=(const ApplicationManager&) = default;
 
     /*!
      * \brief invoke_application starts an application, and brings it to foreground

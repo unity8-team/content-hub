@@ -16,8 +16,6 @@
 
 #include "app_manager.h"
 
-//#include <ubuntu/ui/ubuntu_ui_session_service.h>
-
 #include <libupstart-app-launch-1/upstart-app-launch.h>
 
 namespace cucd = com::ubuntu::content::detail;
@@ -31,10 +29,7 @@ cucd::AppManager::AppManager()
  */
 bool cucd::AppManager::invoke_application(const std::string &app_id)
 {
-//    ubuntu_ui_session_trigger_switch_to_well_known_application(GALLERY_APP);
-
     gchar ** uris = NULL;
     gboolean ok = upstart_app_launch_start_application(app_id.c_str(), (const gchar * const *)uris);
-
     return static_cast<bool>(ok);
 }

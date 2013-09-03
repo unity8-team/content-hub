@@ -19,6 +19,7 @@ add_subdirectory(service)
 include_directories(
   ${CMAKE_CURRENT_BINARY_DIR}
   ${CMAKE_SOURCE_DIR}/src
+  ${CMAKE_SOURCE_DIR}
   ${GLIB_INCLUDE_DIRS}
 )
 
@@ -88,9 +89,7 @@ set_target_properties(
 
 qt5_use_modules(content-hub Core DBus)
 
-#set(UBUNTU_APP_LIB "ubuntu_application_api")
 target_link_libraries(content-hub
-    ${UPSTART_LAUNCH_LIBRARIES}
     ${UPSTART_LAUNCH_LDFLAGS}
 )
 

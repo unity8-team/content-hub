@@ -46,8 +46,8 @@ struct cucd::Transfer::Private
 };
 
 cucd::Transfer::Transfer(const int id,
-                         const QString source,
-                         const QString destination,
+                         const QString& source,
+                         const QString& destination,
                          QObject* parent) :
     QObject(parent), d(new Private(id, source, destination))
 {

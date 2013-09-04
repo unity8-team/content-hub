@@ -102,7 +102,8 @@ void cucd::Service::handler_registered(const QString& name)
                     HANDLER_PATH,
                     QDBusConnection::sessionBus(),
                     0);
-            h->HandleExport(QDBusObjectPath{t->export_path()});
+            if (h->isValid())
+                h->HandleExport(QDBusObjectPath{t->export_path()});
         }
 
         else if (handler_address(t->destination()) == name)
@@ -113,7 +114,8 @@ void cucd::Service::handler_registered(const QString& name)
                     HANDLER_PATH,
                     QDBusConnection::sessionBus(),
                     0);
-            h->HandleImport(QDBusObjectPath{t->import_path()});
+            if (h->isValid())
+                h->HandleImport(QDBusObjectPath{t->import_path()});
         }
     }
 }
@@ -214,7 +216,7 @@ void cucd::Service::handle_transfer(int state)
 
     if (state == cuc::Transfer::aborted)
     {
-        d->app_manager->invoke_application(transfer->destination().toStdString());
+//        d->app_manager->invoke_application(transfer->destination().toStdString());
         d->clean_up_transfer(transfer);
     }
 
@@ -226,7 +228,7 @@ void cucd::Service::handle_transfer(int state)
     if (state == cuc::Transfer::charged)
     {
         qDebug() << Q_FUNC_INFO << "Charged";
-        d->app_manager->invoke_application(transfer->destination().toStdString());
+//        d->app_manager->invoke_application(transfer->destination().toStdString());
         this->connect_import_handler(transfer->destination(), HANDLER_PATH, transfer->import_path());
     }
 
@@ -239,7 +241,7 @@ void cucd::Service::handle_transfer(int state)
     if (state == cuc::Transfer::in_progress)
     {
         qDebug() << Q_FUNC_INFO << "InProgress";
-        d->app_manager->invoke_application(transfer->source().toStdString());
+//        d->app_manager->invoke_application(transfer->source().toStdString());
     }
 }
 

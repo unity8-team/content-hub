@@ -40,8 +40,8 @@ struct cucd::Transfer::Private
     
     cuc::Transfer::State state;
     const int id;
-    QString source;
-    QString destination;
+    const QString source;
+    const QString destination;
     QStringList items;
 };
 

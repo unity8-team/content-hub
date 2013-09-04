@@ -86,7 +86,8 @@ void cucd::Service::handler_registered(const QString& name)
                     HANDLER_PATH,
                     QDBusConnection::sessionBus(),
                     0);
-            h->HandleExport(QDBusObjectPath{t->export_path()});
+            if (h->isValid())
+                h->HandleExport(QDBusObjectPath{t->export_path()});
         }
 
         else if (handler_address(t->destination()) == name)
@@ -97,7 +98,8 @@ void cucd::Service::handler_registered(const QString& name)
                     HANDLER_PATH,
                     QDBusConnection::sessionBus(),
                     0);
-            h->HandleImport(QDBusObjectPath{t->import_path()});
+            if (h->isValid())
+                h->HandleImport(QDBusObjectPath{t->import_path()});
         }
     }
 }
@@ -210,7 +212,6 @@ void cucd::Service::handle_transfer(int state)
         qDebug() << Q_FUNC_INFO << "Charged";
         this->connect_import_handler(transfer->destination(), HANDLER_PATH, transfer->import_path());
     }
-
 
     if (state == cuc::Transfer::initiated)
     {

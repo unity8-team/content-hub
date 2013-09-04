@@ -20,7 +20,10 @@ qt5_add_dbus_adaptor(
   CONTENT_SERVICE_SKELETON ${CMAKE_SOURCE_DIR}/src/com/ubuntu/content/detail/com.ubuntu.content.Service.xml
   detail/service.h com::ubuntu::content::detail::Service)
 
-include_directories(${CMAKE_SOURCE_DIR}/src/com/ubuntu/content)
+include_directories(
+  ${CMAKE_SOURCE_DIR}/src
+  ${CMAKE_SOURCE_DIR}/src/com/ubuntu/content
+)
 
 add_executable(
   content-hub-service

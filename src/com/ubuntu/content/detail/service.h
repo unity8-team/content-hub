@@ -25,6 +25,7 @@
 #include <QtDBus/QDBusMessage>
 #include <QtDBus/QDBusServiceWatcher>
 
+#include <com/ubuntu/applicationmanager/application_manager.h>
 #include "handler.h"
 
 namespace com
@@ -42,7 +43,8 @@ class Service : public QObject
     Q_OBJECT
   public:
     Service(QDBusConnection connection,
-            const QSharedPointer<PeerRegistry>& registry, 
+            const QSharedPointer<PeerRegistry>& registry,
+            com::ubuntu::ApplicationManager::ApplicationManager *,
             QObject* parent = nullptr);
     Service(const Service&) = delete;
     ~Service();

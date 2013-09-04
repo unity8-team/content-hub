@@ -18,7 +18,6 @@
 
 #include "service.h"
 
-#include "app_manager.h"
 #include "peer_registry.h"
 #include "transfer.h"
 #include "transferadaptor.h"
@@ -39,24 +38,27 @@
 
 #include <cassert>
 
+namespace cua = com::ubuntu::ApplicationManager;
 namespace cucd = com::ubuntu::content::detail;
 namespace cuc = com::ubuntu::content;
 
 struct cucd::Service::Private : public QObject
 {
     Private(QDBusConnection connection,
-            const QSharedPointer<cucd::PeerRegistry>& registry, 
+            const QSharedPointer<cucd::PeerRegistry>& registry,
+            cua::ApplicationManager *application_manager,
             QObject* parent)
             : QObject(parent),
               connection(connection),
-              registry(registry)
+              registry(registry),
+              app_manager(application_manager)
     {
     }
 
     QDBusConnection connection;
     QSharedPointer<cucd::PeerRegistry> registry;
     QSet<cucd::Transfer*> active_transfers;
-    AppManager app_manager;
+    cua::ApplicationManager *app_manager;
 
     /* Removes the given transfer from the list of active transfer and does all the cleanup work */
     void clean_up_transfer(cucd::Transfer *transfer)
@@ -70,9 +72,10 @@ struct cucd::Service::Private : public QObject
 
 };
 
-cucd::Service::Service(QDBusConnection connection, const QSharedPointer<cucd::PeerRegistry>& peer_registry, QObject* parent)
+cucd::Service::Service(QDBusConnection connection, const QSharedPointer<cucd::PeerRegistry>& peer_registry,
+                       cua::ApplicationManager *application_manager, QObject* parent)
         : QObject(parent),
-          d(new Private{connection, peer_registry, this})
+          d(new Private{connection, peer_registry, application_manager, this})
 {
     assert(!peer_registry.isNull());
 
@@ -211,7 +214,7 @@ void cucd::Service::handle_transfer(int state)
 
     if (state == cuc::Transfer::aborted)
     {
-        d->app_manager.invoke_application(transfer->destination().toStdString());
+        d->app_manager->invoke_application(transfer->destination().toStdString());
         d->clean_up_transfer(transfer);
     }
 
@@ -223,7 +226,7 @@ void cucd::Service::handle_transfer(int state)
     if (state == cuc::Transfer::charged)
     {
         qDebug() << Q_FUNC_INFO << "Charged";
-        d->app_manager.invoke_application(transfer->destination().toStdString());
+        d->app_manager->invoke_application(transfer->destination().toStdString());
         this->connect_import_handler(transfer->destination(), HANDLER_PATH, transfer->import_path());
     }
 
@@ -235,7 +238,7 @@ void cucd::Service::handle_transfer(int state)
 
     if (state == cuc::Transfer::in_progress)
     {
-        d->app_manager.invoke_application(transfer->source().toStdString());
+        d->app_manager->invoke_application(transfer->source().toStdString());
     }
 }
 

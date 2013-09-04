@@ -18,6 +18,7 @@
 
 #include <QCoreApplication>
 #include <QDebug>
+#include "detail/app_manager.h"
 #include "common.h"
 #include "registry.h"
 #include "detail/service.h"
@@ -62,7 +63,9 @@ int main(int argc, char** argv)
 
     auto registry = QSharedPointer<cucd::PeerRegistry>(new Registry());
 
-    auto server = new cucd::Service(connection, registry, app->parent());
+    cucd::AppManager app_manager;
+
+    auto server = new cucd::Service(connection, registry, &app_manager, app->parent());
     new ServiceAdaptor(server);
 
     if (not connection.registerService(HUB_SERVICE_NAME))

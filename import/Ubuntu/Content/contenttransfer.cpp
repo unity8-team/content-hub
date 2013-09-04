@@ -101,18 +101,8 @@ QQmlListProperty<ContentItem> ContentTransfer::items()
  */
 bool ContentTransfer::start()
 {
-    if (!m_transfer) {
-        qWarning() << Q_FUNC_INFO << "no valid transfer object available";
-        return false;
-    }
-
-    qDebug() << Q_FUNC_INFO;
-    if (m_state == Initiated) {
-        return m_transfer->start();
-    } else {
-        qDebug() << Q_FUNC_INFO << "Don't start transfer only in Initiated state";
-        return false;
-    }
+    qDebug() << Q_FUNC_INFO << "This function should not be used";
+    return false;
 }
 
 /*!

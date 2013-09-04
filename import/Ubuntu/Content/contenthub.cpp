@@ -46,15 +46,12 @@
  *          onClicked: {
  *              var peer = ContentHub.defaultSourceForType(ContentType.Pictures);
  *              activeTransfer = ContentHub.importContent(ContentType.Pictures, peer);
- *              activeTransfer.start()
  *         }
  *     }
  *     Button {
  *         text: "Import from a selectable list"
  *          onClicked: {
- *              var transfer = ContentHub.importContent(ContentType.Pictures);
- *              activeTransfer = transfer
- *              activeTransfer.start()
+ *              activeTransfer = ContentHub.importContent(ContentType.Pictures);
  *         }
  *     }
  *     property list<ContentItem> importItems

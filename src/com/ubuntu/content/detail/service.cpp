@@ -18,6 +18,7 @@
 
 #include "service.h"
 
+#include "app_manager.h"
 #include "peer_registry.h"
 #include "transfer.h"
 #include "transferadaptor.h"
@@ -55,6 +56,18 @@ struct cucd::Service::Private : public QObject
     QDBusConnection connection;
     QSharedPointer<cucd::PeerRegistry> registry;
     QSet<cucd::Transfer*> active_transfers;
+    AppManager app_manager;
+
+    /* Removes the given transfer from the list of active transfer and does all the cleanup work */
+    void clean_up_transfer(cucd::Transfer *transfer)
+    {
+        qDebug() << Q_FUNC_INFO << "Found aborted or collected transfer, removing";
+        connection.unregisterObject(transfer->export_path());
+        connection.unregisterObject(transfer->import_path());
+        active_transfers.remove(transfer);
+        qDebug() << Q_FUNC_INFO << "ACTIVE TRANSFERS:" << active_transfers.count();
+    }
+
 };
 
 cucd::Service::Service(QDBusConnection connection, const QSharedPointer<cucd::PeerRegistry>& peer_registry, QObject* parent)
@@ -196,26 +209,33 @@ void cucd::Service::handle_transfer(int state)
 
     cucd::Transfer *transfer = static_cast<cucd::Transfer*>(sender());
 
-    if ((state == cuc::Transfer::aborted) || (state == cuc::Transfer::collected))
+    if (state == cuc::Transfer::aborted)
     {
-        qDebug() << Q_FUNC_INFO << "Found aborted or collected transfer, removing";
-        d->connection.unregisterObject(transfer->export_path());
-        d->connection.unregisterObject(transfer->import_path());
-        d->active_transfers.remove(transfer);
-        qDebug() << Q_FUNC_INFO << "ACTIVE TRANSFERS:" << d->active_transfers.count();
+        d->app_manager.invoke_application(transfer->destination().toStdString());
+        d->clean_up_transfer(transfer);
+    }
+
+    if (state == cuc::Transfer::collected)
+    {
+        d->clean_up_transfer(transfer);
     }
 
     if (state == cuc::Transfer::charged)
     {
         qDebug() << Q_FUNC_INFO << "Charged";
+        d->app_manager.invoke_application(transfer->destination().toStdString());
         this->connect_import_handler(transfer->destination(), HANDLER_PATH, transfer->import_path());
     }
-
 
     if (state == cuc::Transfer::initiated)
     {
         qDebug() << Q_FUNC_INFO << "Initiated";
         this->connect_export_handler(transfer->source(), HANDLER_PATH, transfer->export_path());
+    }
+
+    if (state == cuc::Transfer::in_progress)
+    {
+        d->app_manager.invoke_application(transfer->source().toStdString());
     }
 }
 

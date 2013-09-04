@@ -16,6 +16,7 @@
  * Authored by: Thomas Voß <thomas.voss@canonical.com>
  */
 
+#include "app_manager_mock.h"
 #include "test_harness.h"
 #include "../cross_process_sync.h"
 #include "../fork_and_run.h"
@@ -93,7 +94,8 @@ TEST(Hub, transfer_creation_and_states_work)
         WillRepeatedly(Return(cuc::Peer{default_peer_id}));
         
         QSharedPointer<cucd::PeerRegistry> registry{mock};
-        cucd::Service implementation(connection, registry, &app);
+        auto app_manager = new MockedAppManager{};
+        cucd::Service implementation(connection, registry, app_manager, &app);
         new ServiceAdaptor(std::addressof(implementation));
 
         ASSERT_TRUE(connection.registerService(service_name));

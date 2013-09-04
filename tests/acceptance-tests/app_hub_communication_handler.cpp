@@ -16,6 +16,7 @@
  * Authored by: Ken VanDine <ken.vandine@canonical.com>
  */
 
+#include "app_manager_mock.h"
 #include "test_harness.h"
 #include "../cross_process_sync.h"
 #include "../fork_and_run.h"
@@ -99,7 +100,8 @@ TEST(Handler, handler_on_bus)
         QDBusConnection connection = QDBusConnection::sessionBus();
 
         QSharedPointer<cucd::PeerRegistry> registry{new MockedPeerRegistry{}};
-        auto implementation = new cucd::Service(connection, registry, &app);
+        auto app_manager = new MockedAppManager{};
+        auto implementation = new cucd::Service(connection, registry, app_manager, &app);
         new ServiceAdaptor(implementation);
 
         ASSERT_TRUE(connection.registerService(service_name));

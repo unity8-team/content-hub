@@ -238,6 +238,7 @@ void cucd::Service::handle_transfer(int state)
 
     if (state == cuc::Transfer::in_progress)
     {
+        qDebug() << Q_FUNC_INFO << "InProgress";
         d->app_manager->invoke_application(transfer->source().toStdString());
     }
 }

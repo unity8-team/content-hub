@@ -107,7 +107,12 @@ bool ContentTransfer::start()
     }
 
     qDebug() << Q_FUNC_INFO;
-    return m_transfer->start();
+    if (m_state == Initiated) {
+        return m_transfer->start();
+    } else {
+        qDebug() << Q_FUNC_INFO << "Don't start transfer only in Initiated state";
+        return false;
+    }
 }
 
 /*!

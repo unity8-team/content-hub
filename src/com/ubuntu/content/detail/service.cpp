@@ -174,7 +174,6 @@ void cucd::Service::connect_import_handler(const QString& peer_id, const QString
     qDebug() << Q_FUNC_INFO << "h->isValid:" << h->isValid();
     if (h->isValid() && (not transfer.isEmpty()))
         h->HandleImport(QDBusObjectPath{transfer});
-
 }
 
 QDBusObjectPath cucd::Service::CreateImportForTypeFromPeer(const QString& type_id, const QString& peer_id, const QString& app_id)
@@ -218,13 +217,13 @@ void cucd::Service::handle_transfer(int state)
 
     if (state == cuc::Transfer::aborted)
     {
+        qDebug() << Q_FUNC_INFO << "Aborted";
 //        d->app_manager->invoke_application(transfer->destination().toStdString());
-        d->clean_up_transfer(transfer);
     }
 
     if (state == cuc::Transfer::collected)
     {
-        d->clean_up_transfer(transfer);
+        qDebug() << Q_FUNC_INFO << "Collected";
     }
 
     if (state == cuc::Transfer::charged)

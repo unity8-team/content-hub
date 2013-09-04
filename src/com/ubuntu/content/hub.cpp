@@ -16,6 +16,7 @@
  * Authored by: Thomas Voß <thomas.voss@canonical.com>
  */
 
+#include "common.h"
 #include "ContentServiceInterface.h"
 #include "ContentHandlerInterface.h"
 #include "handleradaptor.h"
@@ -39,8 +40,8 @@ struct cuc::Hub::Private
 {
     Private(QObject* parent) : service(
         new com::ubuntu::content::dbus::Service(
-            "com.ubuntu.content.dbus.Service",
-            "/",
+            HUB_SERVICE_NAME,
+            HUB_SERVICE_PATH,
             QDBusConnection::sessionBus(),
             parent))
     {
@@ -66,7 +67,7 @@ cuc::Hub* cuc::Hub::Client::instance()
 void cuc::Hub::register_import_export_handler(cuc::ImportExportHandler* handler)
 {
     qDebug() << Q_FUNC_INFO;
-    auto id = app_id();
+    QString id = app_id();
     if (id.isEmpty())
     {
         qWarning() << "APP_ID isn't set, the handler can not be registered";
@@ -77,7 +78,7 @@ void cuc::Hub::register_import_export_handler(cuc::ImportExportHandler* handler)
     qDebug() << Q_FUNC_INFO << "BUS_NAME:" << bus_name;
 
     auto c = QDBusConnection::sessionBus();
-    auto h = new cuc::detail::Handler(c, handler);
+    auto h = new cuc::detail::Handler(c, id, handler);
 
     new HandlerAdaptor(h);
     if (not c.registerService(bus_name))
@@ -86,7 +87,7 @@ void cuc::Hub::register_import_export_handler(cuc::ImportExportHandler* handler)
         return;
     }
 
-    if (not c.registerObject("/com/ubuntu/content/transfer/ImportExportHandler", h))
+    if (not c.registerObject(HANDLER_PATH, h))
     {
         qWarning() << Q_FUNC_INFO << "Failed to register object for:" << bus_name;
         return;
@@ -95,7 +96,7 @@ void cuc::Hub::register_import_export_handler(cuc::ImportExportHandler* handler)
     d->service->RegisterImportExportHandler(
                 QString(""),
                 id,
-                QDBusObjectPath{"/com/ubuntu/content/transfer/ImportExportHandler"});
+                QDBusObjectPath{HANDLER_PATH});
 }
 
 const cuc::Store* cuc::Hub::store_for_scope_and_type(cuc::Scope scope, cuc::Type type)

@@ -18,6 +18,8 @@
 
 #include <QtCore>
 
+#include "common.h"
+
 namespace {
 
 /* sanitize the dbus object path */
@@ -36,8 +38,7 @@ QString sanitize_path(const QString& path)
 /* define a bus_name based on our namespace and the app_id */
 QString handler_address(QString app_id)
 {
-    const QString bus_name{"com.ubuntu.content.handler.%1"};
-    return bus_name.arg(app_id);
+    return QString(HANDLER_NAME_TEMPLATE).arg(app_id);
 }
 
 QString app_id()

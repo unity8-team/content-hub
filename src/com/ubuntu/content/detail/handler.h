@@ -19,9 +19,13 @@
 #define HANDLER_H_
 
 #include <QObject>
-#include <com/ubuntu/content/import_export_handler.h>
+#include <QList>
 #include <QtDBus/QDBusConnection>
 #include <QtDBus/QDBusObjectPath>
+#include <QtDBus/QDBusMessage>
+
+#include <com/ubuntu/content/import_export_handler.h>
+#include <com/ubuntu/content/peer.h>
 
 namespace com
 {
@@ -37,6 +41,7 @@ class Handler : public QObject
     Q_OBJECT
   public:
     Handler(QDBusConnection connection,
+            const QString &peer_id,
             com::ubuntu::content::ImportExportHandler *handler = nullptr);
     Handler(const Handler&) = delete;
     ~Handler();
@@ -51,10 +56,6 @@ class Handler : public QObject
     struct Private;
     QScopedPointer<Private> d;
     com::ubuntu::content::ImportExportHandler *m_handler;
-    com::ubuntu::content::Transfer *m_transfer;
-
-  private Q_SLOTS:
-    void start_export();
 
 };
 }

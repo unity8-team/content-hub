@@ -17,6 +17,7 @@
  */
 
 #include "transfer.h"
+#include "utils.cpp"
 
 #include <com/ubuntu/content/transfer.h>
 
@@ -27,21 +28,55 @@ namespace cucd = com::ubuntu::content::detail;
 
 struct cucd::Transfer::Private
 {
-    Private() : state(cuc::Transfer::initiated)
+    Private(const int id,
+            const QString& source,
+            const QString& destination) :
+        state(cuc::Transfer::initiated),
+            id(id),
+            source(source),
+            destination(destination)
     {
     }
     
     cuc::Transfer::State state;
+    const int id;
+    QString source;
+    QString destination;
     QStringList items;
 };
 
-cucd::Transfer::Transfer(QObject* parent) : QObject(parent), d(new Private())
+cucd::Transfer::Transfer(const int id,
+                         const QString& source,
+                         const QString& destination,
+                         QObject* parent) :
+    QObject(parent), d(new Private(id, source, destination))
 {
     qDebug() << __PRETTY_FUNCTION__;
 }
 
 cucd::Transfer::~Transfer()
 {
+}
+
+/* unique id of the transfer */
+int cucd::Transfer::id()
+{
+    qDebug() << __PRETTY_FUNCTION__;
+    return d->id;
+}
+
+/* returns the peer_id of the requested export handler */
+QString cucd::Transfer::source()
+{
+    qDebug() << __PRETTY_FUNCTION__;
+    return d->source;
+}
+
+/* returns the peer_id of the application requesting the import */
+QString cucd::Transfer::destination()
+{
+    qDebug() << __PRETTY_FUNCTION__;
+    return d->destination;
 }
 
 int cucd::Transfer::State()
@@ -95,4 +130,26 @@ QStringList cucd::Transfer::Collect()
     }
 
     return d->items;
+}
+
+/* returns the object path for the export */
+QString cucd::Transfer::export_path()
+{
+    qDebug() << Q_FUNC_INFO << "source:" << d->source;
+    static const QString exporter_path_pattern{"/transfers/%1/export/%2"};
+    QString source = exporter_path_pattern
+            .arg(sanitize_path(d->source))
+            .arg(d->id);
+    return source;
+}
+
+/* returns the object path for the import */
+QString cucd::Transfer::import_path()
+{
+    qDebug() << Q_FUNC_INFO << "destination:" << d->destination;
+    static const QString importer_path_pattern{"/transfers/%1/import/%2"};
+    QString destination = importer_path_pattern
+            .arg(sanitize_path(d->destination))
+            .arg(d->id);
+    return destination;
 }

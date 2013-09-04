@@ -18,7 +18,7 @@
 
 #include <QCoreApplication>
 #include <QDebug>
-
+#include "common.h"
 #include "registry.h"
 #include "detail/service.h"
 #include "detail/peer_registry.h"
@@ -55,9 +55,8 @@ namespace {
 
 int main(int argc, char** argv)
 {
+    int ret = 0;
     QCoreApplication *app = new QCoreApplication(argc, argv);
-    const QString name = "com.ubuntu.content.dbus.Service";
-    const QString path = "/";
 
     auto connection = QDBusConnection::sessionBus();
 
@@ -66,11 +65,25 @@ int main(int argc, char** argv)
     auto server = new cucd::Service(connection, registry, app->parent());
     new ServiceAdaptor(server);
 
-    connection.registerService(name);
-    connection.registerObject(path, server, QDBusConnection::ExportAdaptors);
+    if (not connection.registerService(HUB_SERVICE_NAME))
+    {
+        qWarning() << "Failed to register" << HUB_SERVICE_NAME;
+        ret = 1;
+    }
+    if (not connection.registerObject(HUB_SERVICE_PATH,
+                                      server,
+                                      QDBusConnection::ExportAdaptors))
+    {
+        qWarning() << "Failed to register object on" << HUB_SERVICE_PATH;
+        ret = 1;
+    }
 
-    /* Populate registry with dummy peers */
-    populate(registry);
-
-    return app->exec();
+    if (ret == 1)
+        app->exit(ret);
+    else
+    {
+        /* Populate registry with dummy peers */
+        populate(registry);
+        return app->exec();
+    }
 }

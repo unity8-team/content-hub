@@ -18,6 +18,7 @@
 #ifndef COM_UBUNTU_CONTENT_TRANSFER_P_H_
 #define COM_UBUNTU_CONTENT_TRANSFER_P_H_
 
+#include "common.h"
 #include "ContentTransferInterface.h"
 
 #include <com/ubuntu/content/item.h>
@@ -46,7 +47,7 @@ class Transfer::Private : public QObject
             : QObject(parent),
               remote_transfer(
                   new com::ubuntu::content::dbus::Transfer(
-                      "com.ubuntu.content.dbus.Service", 
+                      HUB_SERVICE_NAME,
                       transfer.path(), 
                       QDBusConnection::sessionBus(), this))
     {

@@ -29,9 +29,6 @@ public:
     explicit Example(QObject *parent = 0);
     void create_import();
 
-public slots:
-    void import();
-
 private:
     ExampleImporter *m_importer;
     cuc::Transfer *m_transfer;

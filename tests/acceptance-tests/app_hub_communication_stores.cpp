@@ -98,6 +98,7 @@ TEST(Hub, stores_are_reported_correctly_to_clients)
         connection.unregisterService(service_name);
 
         delete implementation;
+        delete app_manager;
     };
 
     auto child = [&sync]()

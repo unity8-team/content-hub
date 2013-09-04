@@ -108,7 +108,8 @@ TEST(Hub, querying_default_peer_returns_correct_value)
         app.exec();
 
         connection.unregisterObject("/");
-        connection.unregisterService(service_name);        
+        connection.unregisterService(service_name);
+        delete app_manager;
     };
 
     auto child = [&sync, default_peer_id]()

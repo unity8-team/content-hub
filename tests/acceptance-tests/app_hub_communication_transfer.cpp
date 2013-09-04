@@ -107,6 +107,7 @@ TEST(Hub, transfer_creation_and_states_work)
 
         connection.unregisterObject("/");
         connection.unregisterService(service_name);
+        delete app_manager;
     };
 
     auto child = [&sync]()

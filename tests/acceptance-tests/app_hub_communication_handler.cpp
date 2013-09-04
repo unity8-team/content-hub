@@ -125,6 +125,7 @@ TEST(Handler, handler_on_bus)
         connection.unregisterService(service_name);
         delete implementation;
         delete mock_handler;
+        delete app_manager;
     };
 
     auto child = [&sync, default_peer_id]()

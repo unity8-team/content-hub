@@ -40,14 +40,14 @@ struct cucd::Transfer::Private
     
     cuc::Transfer::State state;
     const int id;
-    const QString& source;
-    const QString& destination;
+    const QString source;
+    const QString destination;
     QStringList items;
 };
 
 cucd::Transfer::Transfer(const int id,
-                         const QString& source,
-                         const QString& destination,
+                         const QString source,
+                         const QString destination,
                          QObject* parent) :
     QObject(parent), d(new Private(id, source, destination))
 {

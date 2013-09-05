@@ -105,13 +105,13 @@ void cucd::Service::connect_export_handler(const QString& address, const QString
     h->HandleExport(QDBusObjectPath{destination});
 }
 
-QDBusObjectPath cucd::Service::CreateImportForTypeFromPeer(const QString& type_id, const QString& peer_id, const QString& app_id)
+QDBusObjectPath cucd::Service::CreateImportForTypeFromPeer(const QString& type_id, const int selection_type, const QString& peer_id, const QString& app_id)
 {
     static size_t import_counter{0}; import_counter++;
 
     QUuid uuid{QUuid::createUuid()};
 
-    auto transfer = new cucd::Transfer(import_counter, peer_id, app_id, this);
+    auto transfer = new cucd::Transfer(import_counter, peer_id, app_id, selection_type, this);
     new TransferAdaptor(transfer);
     d->active_transfers.insert(transfer);
 

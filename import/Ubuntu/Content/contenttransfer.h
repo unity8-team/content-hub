@@ -30,8 +30,11 @@ class ContentTransfer : public QObject
     Q_OBJECT
     Q_ENUMS(State)
     Q_ENUMS(Direction)
+    Q_ENUMS(SelectionType)
     Q_PROPERTY(State state READ state WRITE setState NOTIFY stateChanged)
     Q_PROPERTY(Direction direction READ direction CONSTANT)
+    Q_PROPERTY(SelectionType selectionType READ selectionType CONSTANT)
+
     Q_PROPERTY(QQmlListProperty<ContentItem> items READ items NOTIFY itemsChanged)
 
 public:
@@ -46,6 +49,10 @@ public:
         Import,
         Export
     };
+    enum SelectionType {
+        Single = com::ubuntu::content::Transfer::SelectionType::single,
+        Multiple = com::ubuntu::content::Transfer::SelectionType::multiple
+    };
 
     ContentTransfer(QObject *parent = nullptr);
 
@@ -53,6 +60,8 @@ public:
     void setState(State state);
 
     Direction direction() const;
+
+    SelectionType selectionType() const;
 
     QQmlListProperty<ContentItem> items();
 

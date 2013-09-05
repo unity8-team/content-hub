@@ -30,11 +30,13 @@ struct cucd::Transfer::Private
 {
     Private(const int id,
             const QString& source,
-            const QString& destination) :
+            const QString& destination,
+            const int selection_type) :
         state(cuc::Transfer::initiated),
             id(id),
             source(source),
-            destination(destination)
+            destination(destination),
+            selection_type(selection_type)
     {
     }
     
@@ -42,14 +44,16 @@ struct cucd::Transfer::Private
     const int id;
     const QString source;
     const QString destination;
+    const int selection_type;
     QStringList items;
 };
 
 cucd::Transfer::Transfer(const int id,
                          const QString& source,
                          const QString& destination,
+                         const int selection_type,
                          QObject* parent) :
-    QObject(parent), d(new Private(id, source, destination))
+    QObject(parent), d(new Private(id, source, destination, selection_type))
 {
     qDebug() << __PRETTY_FUNCTION__;
 }
@@ -130,6 +134,12 @@ QStringList cucd::Transfer::Collect()
     }
 
     return d->items;
+}
+
+int cucd::Transfer::SelectionType()
+{
+    qDebug() << __PRETTY_FUNCTION__;
+    return d->selection_type;
 }
 
 /* returns the object path for the export */

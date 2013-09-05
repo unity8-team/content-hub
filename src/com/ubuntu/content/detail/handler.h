@@ -19,13 +19,10 @@
 #define HANDLER_H_
 
 #include <QObject>
-#include <QList>
 #include <QtDBus/QDBusConnection>
 #include <QtDBus/QDBusObjectPath>
-#include <QtDBus/QDBusMessage>
 
 #include <com/ubuntu/content/import_export_handler.h>
-#include <com/ubuntu/content/peer.h>
 
 namespace com
 {

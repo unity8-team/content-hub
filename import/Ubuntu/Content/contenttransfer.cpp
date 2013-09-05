@@ -81,6 +81,16 @@ ContentTransfer::Direction ContentTransfer::direction() const
 }
 
 /*!
+ * \brief ContentTransfer::selectionType indicates if this transferobject is allows
+ * single or multiple selection of items
+ * \return
+ */
+ContentTransfer::SelectionType ContentTransfer::selectionType() const
+{
+    return static_cast<ContentTransfer::SelectionType>(m_transfer->selectionType());
+}
+
+/*!
  * \qmlproperty list<ContentItem> ContentTransfer::items
  *
  * FIXME add documentation

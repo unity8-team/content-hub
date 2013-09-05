@@ -52,7 +52,7 @@ class Service : public QObject
   public Q_SLOTS:
     QString DefaultPeerForType(const QString &type_id);
     QStringList KnownPeersForType(const QString &type_id);
-    QDBusObjectPath CreateImportForTypeFromPeer(const QString&, const QString&, const QString&);
+    QDBusObjectPath CreateImportForTypeFromPeer(const QString&, const int, const QString&, const QString&);
     void RegisterImportExportHandler(const QString&, const QString&, const QDBusObjectPath& handler);
     void Quit();
 

@@ -33,12 +33,17 @@ class Transfer : public QObject
 {
     Q_OBJECT
     Q_PROPERTY(int State READ State NOTIFY StateChanged)
+    Q_PROPERTY(int SelectionType READ SelectionType)
     Q_PROPERTY(int id READ id)
     Q_PROPERTY(QString source READ source)
     Q_PROPERTY(QString destination READ destination)
 
   public:
-    Transfer(const int, const QString&, const QString&, QObject* parent = nullptr);
+    Transfer(const int,
+             const QString&,
+             const QString&,
+             const int selection_type = 0,
+             QObject* parent = nullptr);
     Transfer(const Transfer&) = delete;
     virtual ~Transfer();
 
@@ -53,6 +58,7 @@ class Transfer : public QObject
     void Start();
     void Charge(const QStringList&);
     QStringList Collect();
+    int SelectionType();
     int id();
     QString source();
     QString destination();

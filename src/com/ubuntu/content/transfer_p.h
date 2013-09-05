@@ -111,6 +111,18 @@ class Transfer::Private : public QObject
         return result;
     }
 
+    SelectionType selection_type()
+    {
+        auto reply = remote_transfer->SelectionType();
+        reply.waitForFinished();
+
+        /* if SelectionType fails, default to single */
+        if (reply.isError())
+            return Transfer::SelectionType::single;
+
+        return static_cast<Transfer::SelectionType>(reply.value());
+    }
+
     com::ubuntu::content::dbus::Transfer* remote_transfer;
 };
 }

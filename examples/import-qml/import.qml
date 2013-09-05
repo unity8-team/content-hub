@@ -16,8 +16,9 @@ Rectangle {
         text: "Import from default"
         onClicked: {
             var peer = ContentHub.defaultSourceForType(ContentType.Pictures);
-            var transfer = ContentHub.importContent(ContentType.Pictures, peer);
+            var transfer = ContentHub.importContent(ContentType.Pictures, peer, ContentTransfer.Multiple);
             if (transfer !== null) {
+                console.log ("selectionType:" + transfer.selectionType);
                 activeTransfer = transfer
             }
         }

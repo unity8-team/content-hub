@@ -60,3 +60,8 @@ QVector<cuc::Item> cuc::Transfer::collect()
 {
     return d->collect();
 }
+
+cuc::Transfer::SelectionType cuc::Transfer::selectionType() const
+{
+    return d->selection_type();
+}

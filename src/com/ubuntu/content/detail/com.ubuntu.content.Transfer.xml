@@ -16,5 +16,8 @@
     <method name="Collect">
       <arg name="items" type="as" direction="out" />
     </method>
+    <method name="SelectionType">
+      <arg name="selection_type" type="i" direction="out" />
+    </method>
  </interface>
 </node>

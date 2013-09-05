@@ -59,17 +59,6 @@ struct cucd::Service::Private : public QObject
     QSharedPointer<cucd::PeerRegistry> registry;
     QSet<cucd::Transfer*> active_transfers;
     cua::ApplicationManager *app_manager;
-
-    /* Removes the given transfer from the list of active transfer and does all the cleanup work */
-    void clean_up_transfer(cucd::Transfer *transfer)
-    {
-        qDebug() << Q_FUNC_INFO << "Found aborted or collected transfer, removing";
-        connection.unregisterObject(transfer->export_path());
-        connection.unregisterObject(transfer->import_path());
-        active_transfers.remove(transfer);
-        qDebug() << Q_FUNC_INFO << "ACTIVE TRANSFERS:" << active_transfers.count();
-    }
-
 };
 
 cucd::Service::Service(QDBusConnection connection, const QSharedPointer<cucd::PeerRegistry>& peer_registry,
@@ -215,21 +204,9 @@ void cucd::Service::handle_transfer(int state)
 
     cucd::Transfer *transfer = static_cast<cucd::Transfer*>(sender());
 
-    if (state == cuc::Transfer::aborted)
-    {
-        qDebug() << Q_FUNC_INFO << "Aborted";
-//        d->app_manager->invoke_application(transfer->destination().toStdString());
-    }
-
-    if (state == cuc::Transfer::collected)
-    {
-        qDebug() << Q_FUNC_INFO << "Collected";
-    }
-
     if (state == cuc::Transfer::charged)
     {
         qDebug() << Q_FUNC_INFO << "Charged";
-//        d->app_manager->invoke_application(transfer->destination().toStdString());
         this->connect_import_handler(transfer->destination(), HANDLER_PATH, transfer->import_path());
     }
 
@@ -237,11 +214,6 @@ void cucd::Service::handle_transfer(int state)
     {
         qDebug() << Q_FUNC_INFO << "Initiated";
         this->connect_export_handler(transfer->source(), HANDLER_PATH, transfer->export_path());
-    }
-
-    if (state == cuc::Transfer::in_progress)
-    {
-        qDebug() << Q_FUNC_INFO << "InProgress";
     }
 }
 

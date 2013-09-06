@@ -16,6 +16,7 @@
  * Authored by: Thomas Voß <thomas.voss@canonical.com>
  */
 
+#include "app_manager_mock.h"
 #include "test_harness.h"
 #include "../cross_process_sync.h"
 #include "../fork_and_run.h"
@@ -40,6 +41,7 @@
 
 #include <thread>
 
+namespace cua = com::ubuntu::ApplicationManager;
 namespace cuc = com::ubuntu::content;
 namespace cucd = com::ubuntu::content::detail;
 
@@ -82,7 +84,8 @@ TEST(Hub, stores_are_reported_correctly_to_clients)
         QDBusConnection connection = QDBusConnection::sessionBus();        
 
         QSharedPointer<cucd::PeerRegistry> registry{new MockedPeerRegistry{}};
-        auto implementation = new cucd::Service(connection, registry, &app);
+        auto app_manager = QSharedPointer<cua::ApplicationManager>(new MockedAppManager());
+        auto implementation = new cucd::Service(connection, registry, app_manager, &app);
         new ServiceAdaptor(implementation);
 
         ASSERT_TRUE(connection.registerService(service_name));

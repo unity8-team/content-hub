@@ -38,29 +38,34 @@
 
 #include <cassert>
 
+namespace cua = com::ubuntu::ApplicationManager;
 namespace cucd = com::ubuntu::content::detail;
 namespace cuc = com::ubuntu::content;
 
 struct cucd::Service::Private : public QObject
 {
     Private(QDBusConnection connection,
-            const QSharedPointer<cucd::PeerRegistry>& registry, 
+            const QSharedPointer<cucd::PeerRegistry>& registry,
+            QSharedPointer<cua::ApplicationManager>& application_manager,
             QObject* parent)
             : QObject(parent),
               connection(connection),
-              registry(registry)
+              registry(registry),
+              app_manager(application_manager)
     {
     }
 
     QDBusConnection connection;
     QSharedPointer<cucd::PeerRegistry> registry;
     QSet<cucd::Transfer*> active_transfers;
+    QSharedPointer<cua::ApplicationManager> app_manager;
 };
 
-cucd::Service::Service(QDBusConnection connection, const QSharedPointer<cucd::PeerRegistry>& peer_registry, QObject* parent)
+cucd::Service::Service(QDBusConnection connection, const QSharedPointer<cucd::PeerRegistry>& peer_registry,
+                       QSharedPointer<cua::ApplicationManager>& application_manager, QObject* parent)
         : QObject(parent),
           m_watcher(new QDBusServiceWatcher()),
-          d(new Private{connection, peer_registry, this})
+          d(new Private{connection, peer_registry, application_manager, this})
 {
     assert(!peer_registry.isNull());
 
@@ -186,6 +191,8 @@ QDBusObjectPath cucd::Service::CreateImportForTypeFromPeer(const QString& type_i
     this->connect_import_handler(peer_id, HANDLER_PATH, destination);
 
     Q_UNUSED(type_id);
+
+    d->app_manager->invoke_application(transfer->source().toStdString());
 
     return QDBusObjectPath{destination};
 }

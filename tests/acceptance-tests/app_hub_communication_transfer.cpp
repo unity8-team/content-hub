@@ -43,6 +43,7 @@
 
 #include <thread>
 
+namespace cua = com::ubuntu::ApplicationManager;
 namespace cuc = com::ubuntu::content;
 namespace cucd = com::ubuntu::content::detail;
 
@@ -94,7 +95,7 @@ TEST(Hub, transfer_creation_and_states_work)
         WillRepeatedly(Return(cuc::Peer{default_peer_id}));
         
         QSharedPointer<cucd::PeerRegistry> registry{mock};
-        auto app_manager = new MockedAppManager{};
+        auto app_manager = QSharedPointer<cua::ApplicationManager>(new MockedAppManager());
         cucd::Service implementation(connection, registry, app_manager, &app);
         new ServiceAdaptor(std::addressof(implementation));
 
@@ -107,7 +108,6 @@ TEST(Hub, transfer_creation_and_states_work)
 
         connection.unregisterObject("/");
         connection.unregisterService(service_name);
-        delete app_manager;
     };
 
     auto child = [&sync]()

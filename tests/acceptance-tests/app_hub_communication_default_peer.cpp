@@ -95,8 +95,8 @@ TEST(Hub, querying_default_peer_returns_correct_value)
 
         QSharedPointer<cucd::PeerRegistry> registry{mock};
 
-        auto app_manager = new MockedAppManager{};
-        
+        auto app_manager = QSharedPointer<cua::ApplicationManager>(new MockedAppManager());
+
         auto implementation = new cucd::Service(connection, registry, app_manager, &app);
         new ServiceAdaptor(implementation);
 
@@ -109,7 +109,6 @@ TEST(Hub, querying_default_peer_returns_correct_value)
 
         connection.unregisterObject("/");
         connection.unregisterService(service_name);
-        delete app_manager;
     };
 
     auto child = [&sync, default_peer_id]()

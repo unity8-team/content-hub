@@ -50,6 +50,7 @@ public:
 
     Q_INVOKABLE ContentTransfer* importContent(int type);
     Q_INVOKABLE ContentTransfer* importContent(int type, ContentPeer *peer);
+    Q_INVOKABLE ContentTransfer* importContent(int type, ContentPeer *peer, int selection_type);
 
     Q_INVOKABLE void restoreImports();
 
@@ -65,7 +66,8 @@ private Q_SLOTS:
 
 private:
     ContentTransfer* importContent(const com::ubuntu::content::Type &hubType,
-                                   const com::ubuntu::content::Peer &hubPeer);
+                                   const com::ubuntu::content::Peer &hubPeer,
+                                   int selectionType);
 
     QList<ContentTransfer *> m_finishedImports;
     QHash<com::ubuntu::content::Transfer *, ContentTransfer *> m_activeImports;

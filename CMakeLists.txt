@@ -51,6 +51,7 @@ find_package(Qt5DBus)
 find_package(PkgConfig REQUIRED)
 pkg_check_modules(GLIB REQUIRED glib-2.0)
 pkg_check_modules(UPSTART_LAUNCH REQUIRED upstart-app-launch-1)
+pkg_check_modules(GSETTINGS REQUIRED gsettings-qt)
 
 set(CONTENT_HUB_VERSION_MAJOR 0)
 set(CONTENT_HUB_VERSION_MINOR 0)

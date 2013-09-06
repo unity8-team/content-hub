@@ -18,15 +18,19 @@
 
 #include "registry.h"
 
-Registry::Registry()
+Registry::Registry() :
+    m_defaultPeers("com.ubuntu.content.hub.default",
+                   "/com/ubuntu/content/hub/peers/"),
+    m_peers("com.ubuntu.content.hub.all",
+            "/com/ubuntu/content/hub/peers/")
 {
 }
 
 cuc::Peer Registry::default_peer_for_type(cuc::Type type)
 {
     qDebug() << Q_FUNC_INFO << type.id();
-    if (m_defaultPeers.contains(type))
-        return m_defaultPeers.find(type).value();
+    if (m_defaultPeers.keys().contains(type.id()))
+        return cuc::Peer(m_defaultPeers.get(type.id()).toString());
     else
         return cuc::Peer();
 }
@@ -35,24 +39,23 @@ cuc::Peer Registry::default_peer_for_type(cuc::Type type)
 void Registry::enumerate_known_peers_for_type(cuc::Type type, const std::function<void(const cuc::Peer&)>&for_each)
 {
     qDebug() << Q_FUNC_INFO << type.id();
-    for (auto it = m_peers.lowerBound(type), itE = m_peers.upperBound(type); it != itE; ++it)
+
+    Q_FOREACH (QString k, m_peers.get(type.id()).toStringList())
     {
-        if(it.key() == type)
-        {
-            for_each(it.value());
-        }
+        qDebug() << Q_FUNC_INFO << k;
+        for_each(k);
     }
 }
 
 bool Registry::install_default_peer_for_type(cuc::Type type, cuc::Peer peer)
 {
     qDebug() << Q_FUNC_INFO << "type:" << type.id() << "peer:" << peer.id();
-    if (m_defaultPeers.contains(type))
+    if (m_defaultPeers.keys().contains(type.id()))
     {
         qDebug() << Q_FUNC_INFO << "Default peer for" << type.id() << "already installed.";
         return false;
     }
-    m_defaultPeers.insert(type, peer);
+    m_defaultPeers.set(type.id(), peer.id());
     this->install_peer_for_type(type, peer);
     return true;
 }
@@ -60,6 +63,12 @@ bool Registry::install_default_peer_for_type(cuc::Type type, cuc::Peer peer)
 bool Registry::install_peer_for_type(cuc::Type type, cuc::Peer peer)
 {
     qDebug() << Q_FUNC_INFO << "type:" << type.id() << "peer:" << peer.id();
-    m_peers.insertMulti(type, peer);
-    return true;
+    QStringList l = m_peers.get(type.id()).toStringList();
+    if (not l.contains(peer.id()))
+    {
+        l.append(peer.id());
+        m_peers.set(type.id(), QVariant(l));
+        return true;
+    }
+    return false;
 }

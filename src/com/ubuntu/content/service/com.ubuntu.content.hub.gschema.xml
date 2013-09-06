@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<schemalist>
+  <schema id="com.ubuntu.content.hub.default" path="/com/ubuntu/content/hub/peers/">
+    <key name="pictures" type="s">
+      <default>"gallery-app"</default>
+    </key>
+    <key name="videos" type="s">
+      <default>"mediaplayer-app"</default>
+    </key>
+    <key name="documents" type="s">
+      <default>"notes-app"</default>
+    </key>
+  </schema>
+  <schema id="com.ubuntu.content.hub.all" path="/com/ubuntu/content/hub/peers/">
+    <key name="pictures" type="as">
+      <default>[]</default>
+    </key>
+    <key name="videos" type="as">
+      <default>[]</default>
+    </key>
+    <key name="documents" type="as">
+      <default>[]</default>
+    </key>
+  </schema>
+</schemalist>

@@ -19,7 +19,7 @@
 #ifndef REGISTRY_H
 #define REGISTRY_H
 
-#include <QtCore/QMap>
+#include <QGSettings/QGSettings>
 #include <QDebug>
 #include <com/ubuntu/content/peer.h>
 #include <com/ubuntu/content/type.h>
@@ -39,8 +39,8 @@ public:
     bool install_peer_for_type(cuc::Type type, cuc::Peer peer);    
 
 private:
-    QMap<cuc::Type,cuc::Peer> m_defaultPeers;
-    QMap<cuc::Type,cuc::Peer> m_peers;
+    QGSettings m_defaultPeers;
+    QGSettings m_peers;
 };
 
 #endif // REGISTRY_H

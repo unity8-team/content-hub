@@ -23,6 +23,7 @@ qt5_add_dbus_adaptor(
 include_directories(
   ${CMAKE_SOURCE_DIR}/src
   ${CMAKE_SOURCE_DIR}/src/com/ubuntu/content
+  ${GSETTINGS_INCLUDE_DIRS}
 )
 
 add_executable(
@@ -38,7 +39,8 @@ qt5_use_modules(content-hub-service Core DBus)
 target_link_libraries(
   content-hub-service
  
-  content-hub 
+  content-hub
+  ${GSETTINGS_LDFLAGS}
 )
 
 install(

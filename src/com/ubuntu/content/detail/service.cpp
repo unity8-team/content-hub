@@ -28,6 +28,7 @@
 
 #include <com/ubuntu/content/peer.h>
 #include <com/ubuntu/content/type.h>
+#include <com/ubuntu/content/transfer.h>
 
 #include <QCache>
 #include <QCoreApplication>
@@ -54,17 +55,53 @@ struct cucd::Service::Private : public QObject
     QDBusConnection connection;
     QSharedPointer<cucd::PeerRegistry> registry;
     QSet<cucd::Transfer*> active_transfers;
-    QMap<QString, QDBusObjectPath> registered_handlers;
 };
 
 cucd::Service::Service(QDBusConnection connection, const QSharedPointer<cucd::PeerRegistry>& peer_registry, QObject* parent)
         : QObject(parent),
+          m_watcher(new QDBusServiceWatcher()),
           d(new Private{connection, peer_registry, this})
 {
     assert(!peer_registry.isNull());
+
+    m_watcher->setWatchMode(QDBusServiceWatcher::WatchForRegistration);
+    m_watcher->setConnection(d->connection);
+    QObject::connect(m_watcher, SIGNAL(serviceRegistered(const QString&)),
+            this,
+            SLOT(handler_registered(const QString&)));
 }
 
 cucd::Service::~Service() {}
+
+void cucd::Service::handler_registered(const QString& name)
+{
+    qDebug() << Q_FUNC_INFO << name;
+    Q_FOREACH (cucd::Transfer *t, d->active_transfers)
+    {
+        if (handler_address(t->source()) == name)
+        {
+            qDebug() << Q_FUNC_INFO << "Found source:" << name;
+            cuc::dbus::Handler *h = new cuc::dbus::Handler(
+                    name,
+                    HANDLER_PATH,
+                    QDBusConnection::sessionBus(),
+                    0);
+            if (h->isValid())
+                h->HandleExport(QDBusObjectPath{t->export_path()});
+        }
+        else if (handler_address(t->destination()) == name)
+        {
+            qDebug() << Q_FUNC_INFO << "Found destination:" << name;
+            cuc::dbus::Handler *h = new cuc::dbus::Handler(
+                    name,
+                    HANDLER_PATH,
+                    QDBusConnection::sessionBus(),
+                    0);
+            if (h->isValid())
+                h->HandleImport(QDBusObjectPath{t->import_path()});
+        }
+    }
+}
 
 void cucd::Service::Quit()
 {
@@ -92,17 +129,34 @@ QString cucd::Service::DefaultPeerForType(const QString& type_id)
     return peer.id();
 }
 
-void cucd::Service::connect_export_handler(const QString& address, const QString& path, const QString& destination)
+void cucd::Service::connect_export_handler(const QString& peer_id, const QString& path, const QString& transfer)
 {
     qDebug() << Q_FUNC_INFO;
 
-    cuc::dbus::Handler* h = new cuc::dbus::Handler(
-                address,
+    cuc::dbus::Handler *h = new cuc::dbus::Handler(
+                handler_address(peer_id),
                 path,
                 QDBusConnection::sessionBus(),
                 0);
 
-    h->HandleExport(QDBusObjectPath{destination});
+    qDebug() << Q_FUNC_INFO << "h->isValid:" << h->isValid();
+    if (h->isValid() && (not transfer.isEmpty()))
+        h->HandleExport(QDBusObjectPath{transfer});
+}
+
+void cucd::Service::connect_import_handler(const QString& peer_id, const QString& path, const QString& transfer)
+{
+    qDebug() << Q_FUNC_INFO;
+
+    cuc::dbus::Handler *h = new cuc::dbus::Handler(
+                handler_address(peer_id),
+                path,
+                QDBusConnection::sessionBus(),
+                0);
+
+    qDebug() << Q_FUNC_INFO << "h->isValid:" << h->isValid();
+    if (h->isValid() && (not transfer.isEmpty()))
+        h->HandleImport(QDBusObjectPath{transfer});
 }
 
 QDBusObjectPath cucd::Service::CreateImportForTypeFromPeer(const QString& type_id, const QString& peer_id, const QString& app_id)
@@ -123,29 +177,39 @@ QDBusObjectPath cucd::Service::CreateImportForTypeFromPeer(const QString& type_i
 
     qDebug() << "Created transfer " << source << " -> " << destination;
 
-    /* FIXME: Lookup export handler already registered and call handle_export
-     * on it this needs to be replaced with something that listens for the
-     * handler
-     */
+    connect(transfer, SIGNAL(StateChanged(int)), this, SLOT(handle_transfer(int)));
 
-    /* iterate registered handlers */
-    QMap<QString, QDBusObjectPath>::iterator i = d->registered_handlers.find(peer_id);
-
-    if (i != d->registered_handlers.end())
-    {
-        QString address = handler_address(peer_id);
-        QString handler_path = i.value().path();
-        this->connect_export_handler(address, handler_path, source);
-    }
-    /* end export handler hack */
+    /* watch for handlers */
+    m_watcher->addWatchedService(handler_address(peer_id));
+    qDebug() << Q_FUNC_INFO << "Watches:" << m_watcher->watchedServices();
+    this->connect_export_handler(peer_id, HANDLER_PATH, source);
+    this->connect_import_handler(peer_id, HANDLER_PATH, destination);
 
     Q_UNUSED(type_id);
 
     return QDBusObjectPath{destination};
 }
 
+void cucd::Service::handle_transfer(int state)
+{
+    qDebug() << Q_FUNC_INFO;
+
+    cucd::Transfer *transfer = static_cast<cucd::Transfer*>(sender());
+
+    if (state == cuc::Transfer::charged)
+    {
+        qDebug() << Q_FUNC_INFO << "Charged";
+        this->connect_import_handler(transfer->destination(), HANDLER_PATH, transfer->import_path());
+    }
+
+    if (state == cuc::Transfer::initiated)
+    {
+        qDebug() << Q_FUNC_INFO << "Initiated";
+        this->connect_export_handler(transfer->source(), HANDLER_PATH, transfer->export_path());
+    }
+}
+
 void cucd::Service::RegisterImportExportHandler(const QString& /*type_id*/, const QString& peer_id, const QDBusObjectPath& handler)
 {
     qDebug() << Q_FUNC_INFO << peer_id << ":" << handler.path();
-    d->registered_handlers.insert(peer_id, handler);
 }

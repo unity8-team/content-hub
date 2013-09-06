@@ -18,6 +18,7 @@
 
 #include "transfer_p.h"
 #include "handler.h"
+#include "utils.cpp"
 
 #include <QObject>
 
@@ -27,18 +28,21 @@ namespace cuc = com::ubuntu::content;
 struct cucd::Handler::Private : public QObject
 {
     Private(QDBusConnection connection,
+            const QString& peer_id,
             QObject* parent)
             : QObject(parent),
-              connection(connection)
+              connection(connection),
+              peer_id(peer_id)
     {
         qDebug() << Q_FUNC_INFO;
     }
 
     QDBusConnection connection;
+    const QString peer_id;
 };
 
-cucd::Handler::Handler(QDBusConnection connection, cuc::ImportExportHandler* handler)
-        : d(new Private{connection, this})
+cucd::Handler::Handler(QDBusConnection connection, const QString& peer_id, cuc::ImportExportHandler* handler)
+        : d(new Private{connection, peer_id, this})
 {
     qDebug() << Q_FUNC_INFO;
     m_handler = handler;
@@ -49,22 +53,22 @@ cucd::Handler::~Handler() {}
 void cucd::Handler::HandleImport(const QDBusObjectPath& transfer)
 {
     qDebug() << Q_FUNC_INFO;
-    Q_UNUSED(transfer);
+    cuc::Transfer* t = cuc::Transfer::Private::make_transfer(transfer, this);
+
+    qDebug() << Q_FUNC_INFO << "State:" << t->state();
+    if (t->state() == cuc::Transfer::charged)
+        m_handler->handle_import(t);
 }
 
 void cucd::Handler::HandleExport(const QDBusObjectPath& transfer)
 {
     qDebug() << Q_FUNC_INFO;
-    m_transfer = cuc::Transfer::Private::make_transfer(transfer, this);
-    QObject::connect(m_transfer,
-            SIGNAL(stateChanged()),
-            this,
-            SLOT(start_export()));
-}
+    cuc::Transfer* t = cuc::Transfer::Private::make_transfer(transfer, this);
 
-void cucd::Handler::start_export()
-{
-    qDebug() << Q_FUNC_INFO << "State:" << m_transfer->state();
-    if (m_transfer->state() == cuc::Transfer::in_progress)
-        m_handler->handle_export(m_transfer);
+    qDebug() << Q_FUNC_INFO << "State:" << t->state();
+    if (t->state() == cuc::Transfer::initiated)
+    {
+        t->start();
+        m_handler->handle_export(t);
+    }
 }

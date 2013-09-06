@@ -19,7 +19,6 @@ Rectangle {
             var transfer = ContentHub.importContent(ContentType.Pictures, peer);
             if (transfer !== null) {
                 activeTransfer = transfer
-                transfer.start()
             }
         }
     }

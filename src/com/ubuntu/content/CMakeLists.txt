@@ -16,7 +16,12 @@
 
 add_subdirectory(service)
 
-include_directories(${CMAKE_CURRENT_BINARY_DIR})
+include_directories(
+  ${CMAKE_CURRENT_BINARY_DIR}
+  ${CMAKE_SOURCE_DIR}/src
+  ${CMAKE_SOURCE_DIR}
+  ${GLIB_INCLUDE_DIRS}
+)
 
 qt5_add_dbus_interface(
   CONTENT_SERVICE_STUB ${CMAKE_CURRENT_SOURCE_DIR}/detail/com.ubuntu.content.Service.xml 
@@ -26,7 +31,7 @@ qt5_add_dbus_adaptor(
   detail/service.h com::ubuntu::content::detail::Service)
 
 qt5_add_dbus_interface(
-  CONTENT_TRANSFER_STUB ${CMAKE_CURRENT_SOURCE_DIR}/detail/com.ubuntu.content.Transfer.xml 
+  CONTENT_TRANSFER_STUB ${CMAKE_CURRENT_SOURCE_DIR}/detail/com.ubuntu.content.Transfer.xml
   ContentTransferInterface)
 qt5_add_dbus_adaptor(
   CONTENT_TRANSFER_SKELETON ${CMAKE_CURRENT_SOURCE_DIR}/detail/com.ubuntu.content.Transfer.xml 
@@ -59,6 +64,7 @@ add_library(
   type.cpp
   utils.cpp
 
+  detail/app_manager.cpp
   detail/service.cpp
   detail/transfer.cpp
   detail/handler.cpp
@@ -82,6 +88,10 @@ set_target_properties(
 )
 
 qt5_use_modules(content-hub Core DBus)
+
+target_link_libraries(content-hub
+    ${UPSTART_LAUNCH_LDFLAGS}
+)
 
 install(
   TARGETS content-hub

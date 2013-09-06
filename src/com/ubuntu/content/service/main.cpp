@@ -18,12 +18,14 @@
 
 #include <QCoreApplication>
 #include <QDebug>
+#include "detail/app_manager.h"
 #include "common.h"
 #include "registry.h"
 #include "detail/service.h"
 #include "detail/peer_registry.h"
 #include "serviceadaptor.h"
 
+namespace cuca = com::ubuntu::ApplicationManager;
 namespace cucd = com::ubuntu::content::detail;
 namespace cuc = com::ubuntu::content;
 
@@ -62,7 +64,9 @@ int main(int argc, char** argv)
 
     auto registry = QSharedPointer<cucd::PeerRegistry>(new Registry());
 
-    auto server = new cucd::Service(connection, registry, app->parent());
+    auto app_manager = QSharedPointer<cuca::ApplicationManager>(new cucd::AppManager());
+
+    auto server = new cucd::Service(connection, registry, app_manager, app->parent());
     new ServiceAdaptor(server);
 
     if (not connection.registerService(HUB_SERVICE_NAME))
@@ -87,6 +91,3 @@ int main(int argc, char** argv)
         return app->exec();
     }
 }
-
-
-

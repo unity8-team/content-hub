@@ -59,11 +59,11 @@ struct cucd::Service::Private : public QObject
 
 cucd::Service::Service(QDBusConnection connection, const QSharedPointer<cucd::PeerRegistry>& peer_registry, QObject* parent)
         : QObject(parent),
+          m_watcher(new QDBusServiceWatcher()),
           d(new Private{connection, peer_registry, this})
 {
     assert(!peer_registry.isNull());
 
-    m_watcher = new QDBusServiceWatcher();
     m_watcher->setWatchMode(QDBusServiceWatcher::WatchForRegistration);
     m_watcher->setConnection(d->connection);
     QObject::connect(m_watcher, SIGNAL(serviceRegistered(const QString&)),
@@ -89,7 +89,6 @@ void cucd::Service::handler_registered(const QString& name)
             if (h->isValid())
                 h->HandleExport(QDBusObjectPath{t->export_path()});
         }
-
         else if (handler_address(t->destination()) == name)
         {
             qDebug() << Q_FUNC_INFO << "Found destination:" << name;

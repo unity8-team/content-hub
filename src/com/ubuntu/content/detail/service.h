@@ -58,8 +58,8 @@ class Service : public QObject
 
   private:
     struct Private;
+    QDBusServiceWatcher* m_watcher;
     QScopedPointer<Private> d;
-    QDBusServiceWatcher *m_watcher;
     void connect_export_handler(const QString&, const QString&, const QString&);
     void connect_import_handler(const QString&, const QString&, const QString&);
 

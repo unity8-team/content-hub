@@ -35,11 +35,9 @@ class AppManager: public com::ubuntu::ApplicationManager::ApplicationManager
     virtual ~AppManager() = default;
     AppManager& operator=(const AppManager&) = default;
 
-    /*!
-     * \brief invoke_application starts an application, and brings it to foreground
-     * \param desktopFile .desktop file for that applicaiton
-     */
     virtual bool invoke_application(const std::string &app_id);
+    virtual bool stop_application(const std::string &app_id);
+    virtual bool is_application_started(const std::string &app_id);
 };
 
 }

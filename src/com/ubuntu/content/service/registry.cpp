@@ -35,7 +35,6 @@ cuc::Peer Registry::default_peer_for_type(cuc::Type type)
         return cuc::Peer();
 }
 
-
 void Registry::enumerate_known_peers_for_type(cuc::Type type, const std::function<void(const cuc::Peer&)>&for_each)
 {
     qDebug() << Q_FUNC_INFO << type.id();

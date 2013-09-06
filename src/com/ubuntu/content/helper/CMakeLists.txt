@@ -16,68 +16,26 @@
 
 include_directories(${CMAKE_CURRENT_BINARY_DIR})
 
-qt5_add_dbus_adaptor(
-  CONTENT_SERVICE_SKELETON ${CMAKE_SOURCE_DIR}/src/com/ubuntu/content/detail/com.ubuntu.content.Service.xml
-  detail/service.h com::ubuntu::content::detail::Service)
-
 include_directories(
   ${CMAKE_SOURCE_DIR}/src
   ${CMAKE_SOURCE_DIR}/src/com/ubuntu/content
-  ${GSETTINGS_INCLUDE_DIRS}
 )
 
 add_executable(
-  content-hub-service
+  content-hub-install-peer
 
   main.cpp
-  registry.cpp
-  ${CONTENT_SERVICE_SKELETON}
 )
 
-qt5_use_modules(content-hub-service Core DBus)
-
-target_link_libraries(
-  content-hub-service
- 
-  content-hub
-  ${GSETTINGS_LDFLAGS}
-)
-
-install(
-  TARGETS content-hub-service
-  RUNTIME DESTINATION ${CMAKE_INSTALL_BINDIR}
-)
-
-install(
-  FILES com.ubuntu.content.dbus.Service.service 
-  DESTINATION ${CMAKE_INSTALL_DATADIR}/dbus-1/services
-)
-
-###########################
-# GSettings
-###########################
-
-add_schema ("com.ubuntu.content.hub.gschema.xml")
-
-add_executable(
-  content-hub-install-peer
-
-  helper.cpp
-  registry.cpp
-)
-
-qt5_use_modules(content-hub-install-peer Core )
+qt5_use_modules(content-hub-install-peer Core)
 
 target_link_libraries(
   content-hub-install-peer
  
   content-hub
-  ${GSETTINGS_LDFLAGS}
-
 )
 
 install(
   TARGETS content-hub-install-peer
   RUNTIME DESTINATION ${CMAKE_INSTALL_BINDIR}
 )
-

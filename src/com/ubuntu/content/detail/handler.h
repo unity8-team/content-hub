@@ -38,7 +38,7 @@ class Handler : public QObject
     Q_OBJECT
   public:
     Handler(QDBusConnection connection,
-            const QString &peer_id,
+            const QString& peer_id,
             com::ubuntu::content::ImportExportHandler *handler = nullptr);
     Handler(const Handler&) = delete;
     ~Handler();

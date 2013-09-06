@@ -46,7 +46,7 @@ struct cucd::Service::Private : public QObject
 {
     Private(QDBusConnection connection,
             const QSharedPointer<cucd::PeerRegistry>& registry,
-            cua::ApplicationManager *application_manager,
+            QSharedPointer<cua::ApplicationManager>& application_manager,
             QObject* parent)
             : QObject(parent),
               connection(connection),
@@ -58,11 +58,11 @@ struct cucd::Service::Private : public QObject
     QDBusConnection connection;
     QSharedPointer<cucd::PeerRegistry> registry;
     QSet<cucd::Transfer*> active_transfers;
-    cua::ApplicationManager *app_manager;
+    QSharedPointer<cua::ApplicationManager> app_manager;
 };
 
 cucd::Service::Service(QDBusConnection connection, const QSharedPointer<cucd::PeerRegistry>& peer_registry,
-                       cua::ApplicationManager *application_manager, QObject* parent)
+                       QSharedPointer<cua::ApplicationManager>& application_manager, QObject* parent)
         : QObject(parent),
           d(new Private{connection, peer_registry, application_manager, this})
 {

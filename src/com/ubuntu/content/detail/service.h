@@ -44,7 +44,7 @@ class Service : public QObject
   public:
     Service(QDBusConnection connection,
             const QSharedPointer<PeerRegistry>& registry,
-            com::ubuntu::ApplicationManager::ApplicationManager *,
+            QSharedPointer<com::ubuntu::ApplicationManager::ApplicationManager>& application_manager,
             QObject* parent = nullptr);
     Service(const Service&) = delete;
     ~Service();

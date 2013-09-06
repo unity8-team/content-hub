@@ -29,3 +29,21 @@ bool cucd::AppManager::invoke_application(const std::string &app_id)
     gboolean ok = upstart_app_launch_start_application(app_id.c_str(), (const gchar * const *)uris);
     return static_cast<bool>(ok);
 }
+
+/*!
+ * \reimp
+ */
+bool cucd::AppManager::stop_application(const std::string &app_id)
+{
+    gboolean ok = upstart_app_launch_stop_application(app_id.c_str());
+    return static_cast<bool>(ok);
+}
+
+/*!
+ * \reimp
+ */
+bool cucd::AppManager::is_application_started(const std::string &app_id)
+{
+    GPid pid = upstart_app_launch_get_primary_pid(app_id.c_str());
+    return pid != 0;
+}

@@ -44,6 +44,7 @@
 
 #include <thread>
 
+namespace cua = com::ubuntu::ApplicationManager;
 namespace cuc = com::ubuntu::content;
 namespace cucd = com::ubuntu::content::detail;
 
@@ -100,7 +101,7 @@ TEST(Handler, handler_on_bus)
         QDBusConnection connection = QDBusConnection::sessionBus();
 
         QSharedPointer<cucd::PeerRegistry> registry{new MockedPeerRegistry{}};
-        auto app_manager = new MockedAppManager{};
+        auto app_manager = QSharedPointer<cua::ApplicationManager>(new MockedAppManager());
         auto implementation = new cucd::Service(connection, registry, app_manager, &app);
         new ServiceAdaptor(implementation);
 
@@ -125,7 +126,6 @@ TEST(Handler, handler_on_bus)
         connection.unregisterService(service_name);
         delete implementation;
         delete mock_handler;
-        delete app_manager;
     };
 
     auto child = [&sync, default_peer_id]()

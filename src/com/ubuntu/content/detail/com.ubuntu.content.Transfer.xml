@@ -8,6 +8,8 @@
     </method>
     <method name="Start">
     </method>
+    <method name="Handled">
+    </method>
     <method name="Abort">
     </method>
     <method name="Charge">
@@ -19,5 +21,11 @@
     <method name="SelectionType">
       <arg name="selection_type" type="i" direction="out" />
     </method>
+    <method name="SetSelectionType">
+      <arg name="selection_type" type="i" direction="in" />
+    </method>
+    <signal name="SelectionTypeChanged">
+      <arg name="selection_type" type="i"/>
+    </signal>
  </interface>
 </node>

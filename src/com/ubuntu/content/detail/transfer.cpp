@@ -31,8 +31,8 @@ struct cucd::Transfer::Private
     Private(const int id,
             const QString& source,
             const QString& destination,
-            const int selection_type) :
-        state(cuc::Transfer::initiated),
+            int selection_type) :
+        state(cuc::Transfer::created),
             id(id),
             source(source),
             destination(destination),
@@ -44,14 +44,14 @@ struct cucd::Transfer::Private
     const int id;
     const QString source;
     const QString destination;
-    const int selection_type;
+    int selection_type;
     QStringList items;
 };
 
 cucd::Transfer::Transfer(const int id,
                          const QString& source,
                          const QString& destination,
-                         const int selection_type,
+                         int selection_type,
                          QObject* parent) :
     QObject(parent), d(new Private(id, source, destination, selection_type))
 {
@@ -104,6 +104,17 @@ void cucd::Transfer::Start()
 {
     qDebug() << __PRETTY_FUNCTION__;
 
+    if (d->state == cuc::Transfer::initiated)
+        return;
+
+    d->state = cuc::Transfer::initiated;
+    Q_EMIT(StateChanged(d->state));
+}
+
+void cucd::Transfer::Handled()
+{
+    qDebug() << __PRETTY_FUNCTION__;
+
     if (d->state == cuc::Transfer::in_progress)
         return;
 
@@ -140,6 +151,16 @@ int cucd::Transfer::SelectionType()
 {
     qDebug() << __PRETTY_FUNCTION__;
     return d->selection_type;
+}
+
+void cucd::Transfer::SetSelectionType(int type)
+{
+    qDebug() << Q_FUNC_INFO;
+    if (d->selection_type == type)
+        return;
+
+    d->selection_type = type;
+    Q_EMIT(SelectionTypeChanged(d->selection_type));
 }
 
 /* returns the object path for the export */

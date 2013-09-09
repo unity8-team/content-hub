@@ -33,7 +33,7 @@ class Transfer : public QObject
 {
     Q_OBJECT
     Q_PROPERTY(int State READ State NOTIFY StateChanged)
-    Q_PROPERTY(int SelectionType READ SelectionType)
+    Q_PROPERTY(int SelectionType READ SelectionType WRITE SetSelectionType NOTIFY SelectionTypeChanged)
     Q_PROPERTY(int id READ id)
     Q_PROPERTY(QString source READ source)
     Q_PROPERTY(QString destination READ destination)
@@ -42,7 +42,7 @@ class Transfer : public QObject
     Transfer(const int,
              const QString&,
              const QString&,
-             const int selection_type = 0,
+             int selection_type = 0,
              QObject* parent = nullptr);
     Transfer(const Transfer&) = delete;
     virtual ~Transfer();
@@ -51,14 +51,17 @@ class Transfer : public QObject
 
   Q_SIGNALS:
     void StateChanged(int State);
+    void SelectionTypeChanged(int SelectionType);
 
   public Q_SLOTS:
     int State();
     void Abort();
     void Start();
+    void Handled();
     void Charge(const QStringList&);
     QStringList Collect();
     int SelectionType();
+    void SetSelectionType(int);
     int id();
     QString source();
     QString destination();

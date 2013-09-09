@@ -38,7 +38,8 @@ ContentTransfer::ContentTransfer(QObject *parent)
     : QObject(parent),
       m_transfer(0),
       m_state(Aborted),
-      m_direction(Import)
+      m_direction(Import),
+      m_selectionType(Single)
 {
     qDebug() << Q_FUNC_INFO;
 }
@@ -87,7 +88,20 @@ ContentTransfer::Direction ContentTransfer::direction() const
  */
 ContentTransfer::SelectionType ContentTransfer::selectionType() const
 {
-    return static_cast<ContentTransfer::SelectionType>(m_transfer->selectionType());
+    return m_selectionType;
+}
+
+void ContentTransfer::setSelectionType(ContentTransfer::SelectionType type)
+{
+    qDebug() << Q_FUNC_INFO << type;
+    if (!m_transfer)
+        return;
+
+    if (m_state == Created && (m_selectionType != type)) {
+        qDebug() << Q_FUNC_INFO << "Changing:" << m_selectionType << "To:" << type;
+        m_transfer->setSelectionType(static_cast<cuc::Transfer::SelectionType>(type));
+        updateSelectionType();
+    }
 }
 
 /*!
@@ -111,8 +125,13 @@ QQmlListProperty<ContentItem> ContentTransfer::items()
  */
 bool ContentTransfer::start()
 {
-    qDebug() << Q_FUNC_INFO << "This function should not be used";
-    return false;
+    qDebug() << Q_FUNC_INFO;
+    if (m_state == Created) {
+        return m_transfer->start();
+    } else {
+        qDebug() << Q_FUNC_INFO << "Don't start transfer only in Created state";
+        return false;
+    }
 }
 
 /*!
@@ -145,12 +164,15 @@ void ContentTransfer::setTransfer(com::ubuntu::content::Transfer *transfer, Dire
 
     m_direction = direction;
     m_transfer = transfer;
+
+    updateSelectionType();
     updateState();
 
     if (m_state == Charged && m_direction == Import)
         collectItems();
 
     connect(m_transfer, SIGNAL(stateChanged()), this, SLOT(updateState()));
+    connect(m_transfer, SIGNAL(selectionTypeChanged()), this, SLOT(updateSelectionType()));
 }
 
 /*!
@@ -179,9 +201,23 @@ void ContentTransfer::collectItems()
  */
 void ContentTransfer::updateState()
 {
+    qDebug() << Q_FUNC_INFO;
     if (!m_transfer)
         return;
 
     m_state = static_cast<ContentTransfer::State>(m_transfer->state());
     Q_EMIT stateChanged();
+}
+
+/*!
+ * \brief ContentTransfer::updateSelectionType update the selectionType from the hub transfer object
+ */
+void ContentTransfer::updateSelectionType()
+{
+    qDebug() << Q_FUNC_INFO;
+    if (!m_transfer)
+        return;
+
+    m_selectionType = static_cast<ContentTransfer::SelectionType>(m_transfer->selectionType());
+    Q_EMIT selectionTypeChanged();
 }

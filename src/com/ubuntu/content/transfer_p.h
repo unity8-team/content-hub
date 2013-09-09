@@ -72,6 +72,14 @@ class Transfer::Private : public QObject
         return not reply.isError();
     }
 
+    bool handled()
+    {
+        auto reply = remote_transfer->Handled();
+        reply.waitForFinished();
+
+        return not reply.isError();
+    }
+
     bool abort()
     {
         auto reply = remote_transfer->Abort();
@@ -121,6 +129,14 @@ class Transfer::Private : public QObject
             return Transfer::SelectionType::single;
 
         return static_cast<Transfer::SelectionType>(reply.value());
+    }
+
+    bool setSelectionType(int type)
+    {
+        auto reply = remote_transfer->SetSelectionType(type);
+        reply.waitForFinished();
+
+        return not reply.isError();
     }
 
     com::ubuntu::content::dbus::Transfer* remote_transfer;

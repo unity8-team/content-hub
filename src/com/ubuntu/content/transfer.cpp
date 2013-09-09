@@ -30,6 +30,10 @@ cuc::Transfer::Transfer(const QSharedPointer<cuc::Transfer::Private>& d, QObject
                 SIGNAL (StateChanged(int)),
                 this,
                 SIGNAL (stateChanged()));
+    QObject::connect(d->remote_transfer,
+                SIGNAL (SelectionTypeChanged(int)),
+                this,
+                SIGNAL (selectionTypeChanged()));
 }
 
 cuc::Transfer::~Transfer()
@@ -64,4 +68,9 @@ QVector<cuc::Item> cuc::Transfer::collect()
 cuc::Transfer::SelectionType cuc::Transfer::selectionType() const
 {
     return d->selection_type();
+}
+
+bool cuc::Transfer::setSelectionType(const cuc::Transfer::SelectionType& type)
+{
+    return d->setSelectionType(type);
 }

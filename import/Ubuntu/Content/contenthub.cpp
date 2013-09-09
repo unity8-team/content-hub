@@ -52,6 +52,8 @@
  *         text: "Import from a selectable list"
  *          onClicked: {
  *              activeTransfer = ContentHub.importContent(ContentType.Pictures);
+ *              activeTransfer.selectionType =ContentTransfer.Multiple;
+ *              activeTransfer.start();
  *         }
  *     }
  *     property list<ContentItem> importItems
@@ -154,7 +156,7 @@ ContentTransfer *ContentHub::importContent(int type)
 //    FIXME show user a selection of possible peers instead
     cuc::Peer hubPeer = m_hub->default_peer_for_type(hubType);
 
-    return importContent(hubType, hubPeer, (int)cuc::Transfer::SelectionType::single);
+    return importContent(hubType, hubPeer);
 }
 
 /*!
@@ -167,20 +169,7 @@ ContentTransfer *ContentHub::importContent(int type, ContentPeer *peer)
     qDebug() << Q_FUNC_INFO << static_cast<ContentType::Type>(type) << peer;
 
     const cuc::Type &hubType = ContentType::contentType2HubType(type);
-    return importContent(hubType, peer->peer(), (int)cuc::Transfer::SelectionType::single);
-}
-
-/*!
- * \qmlmethod ContentHub::importContent()
- *
- * Start a request to import data of \a type from the given \peer
- */
-ContentTransfer *ContentHub::importContent(int type, ContentPeer *peer, int selection_type)
-{
-    qDebug() << Q_FUNC_INFO << static_cast<ContentType::Type>(type) << peer;
-
-    const cuc::Type &hubType = ContentType::contentType2HubType(type);
-    return importContent(hubType, peer->peer(), selection_type);
+    return importContent(hubType, peer->peer());
 }
 
 /*!
@@ -190,10 +179,9 @@ ContentTransfer *ContentHub::importContent(int type, ContentPeer *peer, int sele
  * \return
  */
 ContentTransfer* ContentHub::importContent(const com::ubuntu::content::Type &hubType,
-                                           const com::ubuntu::content::Peer &hubPeer,
-                                           int selectionType)
+                                           const com::ubuntu::content::Peer &hubPeer)
 {
-    cuc::Transfer *hubTransfer = m_hub->create_import_for_type_from_peer(hubType, hubPeer, (cuc::Transfer::SelectionType)selectionType);
+    cuc::Transfer *hubTransfer = m_hub->create_import_for_type_from_peer(hubType, hubPeer);
 // FIXME update tests so this can be enabled
 //    if (!hubTransfer)
 //        return nullptr;

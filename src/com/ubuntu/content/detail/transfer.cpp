@@ -156,6 +156,8 @@ int cucd::Transfer::SelectionType()
 void cucd::Transfer::SetSelectionType(int type)
 {
     qDebug() << Q_FUNC_INFO;
+    if (d->state != cuc::Transfer::created)
+        return;
     if (d->selection_type == type)
         return;
 

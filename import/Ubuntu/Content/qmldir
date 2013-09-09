@@ -1,3 +1,4 @@
 module Ubuntu.Content
 plugin ubuntu-content-hub-plugin
 
+ContentExportChrome 0.1 ContentExportChrome.qml

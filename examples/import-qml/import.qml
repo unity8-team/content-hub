@@ -5,6 +5,7 @@ import Ubuntu.Components.ListItems 0.1
 import Ubuntu.Content 0.1
 
 Rectangle {
+    id: root
     width: 300
     height: 200
 
@@ -53,8 +54,12 @@ Rectangle {
     Connections {
         target: activeTransfer
         onStateChanged: {
-            if (activeTransfer.state === ContentTransfer.Charged)
-                importItems = activeTransfer.items;
+            if (root.activeTransfer.state === ContentTransfer.Charged) {
+                importItems = root.activeTransfer.items;
+                console.log("root.activeTransfer.items.length: " + root.activeTransfer.items.length)
+                console.log("root.activeTransfer.items: " + root.activeTransfer.items)
+                console.log("First Item URL: " + root.activeTransfer.items[0].url)
+            }
         }
     }
 }

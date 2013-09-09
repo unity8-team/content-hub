@@ -5,75 +5,44 @@ import Ubuntu.Content 0.1
 Rectangle {
     id: root
     width: 300
-    height: 200
+    height: 400
 
-    property bool pickMode: false
-    property list<ContentItem> selectedItems
-    property var activeTransfer
+    ContentExportChrome {
+        id: chrome
 
-    function __returnResult() {
-        activeTransfer.items = selectedItems;
-        activeTransfer.state = ContentTransfer.Charged;
-    }
+        anchors.fill: parent
 
-    Button {
-        id: button1
-        anchors.top: parent.top
-        anchors.left: parent.left
-        enabled: pickMode
-        text: "Return URL1"
-        onClicked: {
-            var result = resultComponent.createObject(root);
-            result.url = "file:///picture_1.jpg";
-            selectedItems = [ result ];
-            root.__returnResult();
+        CheckBox {
+            id: option1
+            anchors.top: parent.top
+            anchors.left: parent.left
+            text: "file:///home/schwann/Pictures/Scan200.jpg"
         }
-    }
-    Button {
-        id: button2
-        anchors.top: parent.top
-        anchors.right: parent.right
-        enabled: pickMode
-        text: "Return Url2"
-        onClicked: {
+        CheckBox {
+            id: option2
+            anchors.top: parent.top
+            anchors.right: parent.right
+            text: "file:///picture_2.jpg"
+        }
+
+        onExportPressed: {
             var results = [];
-
-            var result = resultComponent.createObject(root);
-            result.url = "file:///picture_1.jpg";
-            results.push(result);
-
-            result = resultComponent.createObject(root);
-            result.url = "file:///picture_2.jpg";
-            results.push(result);
-
-            selectedItems = results;
-            console.log(selectedItems[0].url + "/" + selectedItems[1].url)
-            root.__returnResult();
-        }
-    }
-
-    Button {
-        id: buttonAbort
-        anchors.bottom: parent.bottom
-        anchors.horizontalCenter: parent.horizontalCenter
-        enabled: pickMode
-        text: "Cancel"
-        onClicked: {
-            root.activeTransfer.state = ContentTransfer.Aborted;
-            root.pickMode = false;
+            if (option1.checked) {
+                var result = resultComponent.createObject(chrome);
+                result.url = option1.text;
+                results.push(result);
+            }
+            if (option2.checked) {
+                var result = resultComponent.createObject(chrome);
+                result.url = option1.text;
+                results.push(result);
+            }
+            activeTransfer.items = results;
         }
     }
 
     Component {
         id: resultComponent
         ContentItem {}
-    }
-
-    Connections {
-        target: ContentHub
-        onExportRequested: {
-            root.activeTransfer = transfer
-            root.pickMode = true;
-        }
     }
 }

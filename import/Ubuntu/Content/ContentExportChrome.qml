@@ -126,6 +126,22 @@ Item {
         }
 
         Button {
+            id: selectAllButton
+            anchors {
+                right: okButton.left
+                rightMargin: internal.margin
+                bottom: parent.bottom
+                bottomMargin: internal.margin
+            }
+
+            text: i18n.tr("All/None")
+            visible: internal.transferActive ? true /* TODO check for selection mode */ : false
+            onClicked: {
+                root.selectAllToggled
+            }
+        }
+
+        Button {
             id: okButton
             anchors {
                 right: parent.right
@@ -135,7 +151,7 @@ Item {
             }
 
             text: i18n.tr("Import") // TODO set text according to context of the transfer (upload/import/...)
-            enabled: internal.transferActive
+            enabled: internal.transferActive && root.slectedItemsCount > 0
             onClicked: {
                 root.exportPressed();
                 if (root.activeTransfer.state === ContentTransfer.InProgress)

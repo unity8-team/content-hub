@@ -11,18 +11,31 @@ Rectangle {
         id: chrome
 
         anchors.fill: parent
+        slectedItemsCount: 0
 
         CheckBox {
             id: option1
             anchors.top: parent.top
             anchors.left: parent.left
-            text: "file:///home/schwann/Pictures/Scan200.jpg"
+            text: "file:///picture_1.jpg"
+            onCheckedChanged: {
+                if (checked)
+                    chrome.slectedItemsCount += 1;
+                else
+                    chrome.slectedItemsCount -= 1;
+            }
         }
         CheckBox {
             id: option2
             anchors.top: parent.top
             anchors.right: parent.right
             text: "file:///picture_2.jpg"
+            onCheckedChanged: {
+                if (checked)
+                    chrome.slectedItemsCount += 1;
+                else
+                    chrome.slectedItemsCount -= 1;
+            }
         }
 
         onExportPressed: {

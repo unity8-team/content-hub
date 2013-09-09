@@ -1,0 +1,4 @@
+Pattern: ${home}/.cache/content-hub/provides/${id}.json
+Exec: @pkglibexecdir@/content-hub/content-hub-peer-hook ${id}
+User-Level: yes
+Hook-Name: content-hub-peer

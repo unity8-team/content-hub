@@ -60,16 +60,16 @@ install(
 add_schema ("com.ubuntu.content.hub.gschema.xml")
 
 add_executable(
-  content-hub-install-peer
+  content-hub-peer-hook
 
   helper.cpp
   registry.cpp
 )
 
-qt5_use_modules(content-hub-install-peer Core )
+qt5_use_modules(content-hub-peer-hook Core )
 
 target_link_libraries(
-  content-hub-install-peer
+  content-hub-peer-hook
  
   content-hub
   ${GSETTINGS_LDFLAGS}
@@ -77,7 +77,24 @@ target_link_libraries(
 )
 
 install(
-  TARGETS content-hub-install-peer
-  RUNTIME DESTINATION ${CMAKE_INSTALL_BINDIR}
+  TARGETS content-hub-peer-hook
+  RUNTIME DESTINATION "${CMAKE_INSTALL_FULL_LIBEXECDIR}/content-hub/"
 )
+
+set(CLICK_HOOK
+"${CMAKE_CURRENT_BINARY_DIR}/content-hub-peer.hook"
+)
+
+set(pkglibexecdir "${CMAKE_INSTALL_FULL_LIBEXECDIR}/content-hub")
+configure_file("content-hub-peer.hook.in"
+  "${CLICK_HOOK}"
+  @ONLY
+)
+
+install(
+FILES
+"${CLICK_HOOK}"
+DESTINATION "/usr/share/click/hooks"
+)
+
 

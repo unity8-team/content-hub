@@ -4,8 +4,8 @@
     <key name="pictures" type="s">
       <default>"gallery-app"</default>
     </key>
-    <key name="videos" type="s">
-      <default>"mediaplayer-app"</default>
+    <key name="music" type="s">
+      <default>"music-app"</default>
     </key>
     <key name="documents" type="s">
       <default>"notes-app"</default>
@@ -15,7 +15,7 @@
     <key name="pictures" type="as">
       <default>[]</default>
     </key>
-    <key name="videos" type="as">
+    <key name="music" type="as">
       <default>[]</default>
     </key>
     <key name="documents" type="as">

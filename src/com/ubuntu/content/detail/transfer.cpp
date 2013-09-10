@@ -30,13 +30,12 @@ struct cucd::Transfer::Private
 {
     Private(const int id,
             const QString& source,
-            const QString& destination,
-            int selection_type) :
+            const QString& destination) :
         state(cuc::Transfer::created),
             id(id),
             source(source),
             destination(destination),
-            selection_type(selection_type)
+            selection_type(cuc::Transfer::single)
     {
     }
     
@@ -51,9 +50,8 @@ struct cucd::Transfer::Private
 cucd::Transfer::Transfer(const int id,
                          const QString& source,
                          const QString& destination,
-                         int selection_type,
                          QObject* parent) :
-    QObject(parent), d(new Private(id, source, destination, selection_type))
+    QObject(parent), d(new Private(id, source, destination))
 {
     qDebug() << __PRETTY_FUNCTION__;
 }

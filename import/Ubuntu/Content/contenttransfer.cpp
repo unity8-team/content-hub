@@ -98,7 +98,6 @@ void ContentTransfer::setSelectionType(ContentTransfer::SelectionType type)
         return;
 
     if (m_state == Created && (m_selectionType != type)) {
-        qDebug() << Q_FUNC_INFO << "Changing:" << m_selectionType << "To:" << type;
         m_transfer->setSelectionType(static_cast<cuc::Transfer::SelectionType>(type));
         updateSelectionType();
     }
@@ -129,7 +128,7 @@ bool ContentTransfer::start()
     if (m_state == Created) {
         return m_transfer->start();
     } else {
-        qDebug() << Q_FUNC_INFO << "Don't start transfer only in Created state";
+        qWarning() << Q_FUNC_INFO << "Transfer can't be started";
         return false;
     }
 }

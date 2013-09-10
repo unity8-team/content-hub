@@ -42,7 +42,6 @@ class Transfer : public QObject
     Transfer(const int,
              const QString&,
              const QString&,
-             int selection_type = 0,
              QObject* parent = nullptr);
     Transfer(const Transfer&) = delete;
     virtual ~Transfer();

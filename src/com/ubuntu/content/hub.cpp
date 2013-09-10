@@ -153,14 +153,14 @@ QVector<cuc::Peer> cuc::Hub::known_peers_for_type(cuc::Type t)
     return result;
 }
 
-cuc::Transfer* cuc::Hub::create_import_for_type_from_peer(cuc::Type type, cuc::Peer peer, cuc::Transfer::SelectionType selection_type)
+cuc::Transfer* cuc::Hub::create_import_for_type_from_peer(cuc::Type type, cuc::Peer peer)
 {
     /* This needs to be replaced with a better way to get the APP_ID */
     QString id = app_id();
     if (id == "")
         id = "NoAppId";
 
-    auto reply = d->service->CreateImportForTypeFromPeer(type.id(), selection_type, peer.id(), id);
+    auto reply = d->service->CreateImportForTypeFromPeer(type.id(), peer.id(), id);
     reply.waitForFinished();
 
     if (reply.isError())

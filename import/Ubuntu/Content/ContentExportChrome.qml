@@ -67,9 +67,9 @@ Item {
     signal selectAllToggled()
 
     /// To not be used
-    // Used to put all Items to children of the container
-    // So anchers.fill: parent canbe used by the children, but the chrome is
-    // still at the bottom
+    // Used to put all Items to the children of the container
+    // So "anchors.fill: parent" can be used by the Item(s), but the chrome is
+    // still at the bottom, and the Item's sie is adapted accordingly
     default property alias content: container.children
 
     Item {
@@ -104,7 +104,8 @@ Item {
                 bottom: cancelButton.top
                 bottomMargin: internal.margin
             }
-            text: i18n.tr("%1 items selected").arg(root.slectedItemsCount)
+            text: i18n.dtr("content-hub", "%1 item selected", "%1 items selected",
+                           root.slectedItemsCount).arg(root.slectedItemsCount)
         }
 
         Button {
@@ -116,7 +117,7 @@ Item {
                 bottomMargin: internal.margin
             }
 
-            text: i18n.tr("Cancel")
+            text: i18n.dtr("content-hub", "Cancel")
             enabled: internal.transferActive
             onClicked: {
                 root.exportCanceled();
@@ -134,7 +135,7 @@ Item {
                 bottomMargin: internal.margin
             }
 
-            text: i18n.tr("All/None")
+            text: i18n.dtr("content-hub", "All/None")
             visible: internal.transferActive ? true /* TODO check for selection mode */ : false
             onClicked: {
                 root.selectAllToggled
@@ -150,7 +151,7 @@ Item {
                 bottomMargin: internal.margin
             }
 
-            text: i18n.tr("Import") // TODO set text according to context of the transfer (upload/import/...)
+            text: i18n.dtr("content-hub", "Import") // TODO set text according to context of the transfer (upload/import/...)
             enabled: internal.transferActive && root.slectedItemsCount > 0
             onClicked: {
                 root.exportPressed();

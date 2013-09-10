@@ -56,10 +56,16 @@ set(CONTENT_HUB_VERSION_MAJOR 0)
 set(CONTENT_HUB_VERSION_MINOR 0)
 set(CONTENT_HUB_VERSION_PATCH 1)
 
+file(GLOB_RECURSE I18N_SRC_FILES
+     RELATIVE ${CMAKE_CURRENT_SOURCE_DIR}
+     import/Ubuntu/Content/**.qml)
+list(SORT I18N_SRC_FILES)
+
 include_directories(include)
 
 add_subdirectory(doc)
 add_subdirectory(import)
+add_subdirectory(po)
 add_subdirectory(src)
 add_subdirectory(tests)
 add_subdirectory(examples)

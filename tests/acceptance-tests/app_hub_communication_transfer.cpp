@@ -131,8 +131,13 @@ TEST(Hub, transfer_creation_and_states_work)
                 cuc::Type::Known::pictures(),
                 hub->default_peer_for_type(cuc::Type::Known::pictures()));
             ASSERT_TRUE(transfer != nullptr);
+            EXPECT_EQ(cuc::Transfer::created, transfer->state());
+            EXPECT_TRUE(transfer->setSelectionType(cuc::Transfer::SelectionType::multiple));
+            ASSERT_EQ(cuc::Transfer::SelectionType::multiple, transfer->selectionType());
             EXPECT_TRUE(transfer->start());
-            EXPECT_EQ(cuc::Transfer::in_progress, transfer->state());
+            EXPECT_EQ(cuc::Transfer::initiated, transfer->state());
+            EXPECT_TRUE(transfer->setSelectionType(cuc::Transfer::SelectionType::single));
+            ASSERT_EQ(cuc::Transfer::SelectionType::multiple, transfer->selectionType());
             EXPECT_TRUE(transfer->charge(expected_items));
             EXPECT_EQ(cuc::Transfer::charged, transfer->state());
             EXPECT_EQ(expected_items, transfer->collect());

@@ -18,7 +18,9 @@ Rectangle {
             var peer = ContentHub.defaultSourceForType(ContentType.Pictures);
             var transfer = ContentHub.importContent(ContentType.Pictures, peer);
             if (transfer !== null) {
-                activeTransfer = transfer
+                transfer.selectionType = ContentTransfer.Multiple;
+                activeTransfer = transfer;
+                activeTransfer.start();
             }
         }
     }

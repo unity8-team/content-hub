@@ -33,14 +33,15 @@ class Registry : public cucd::PeerRegistry
 
 public:
     Registry();
+    ~Registry();
     cuc::Peer default_peer_for_type(cuc::Type type);
     void enumerate_known_peers_for_type(cuc::Type type, const std::function<void(const cuc::Peer&)>& for_each);
     bool install_default_peer_for_type(cuc::Type type, cuc::Peer peer);
     bool install_peer_for_type(cuc::Type type, cuc::Peer peer);    
 
 private:
-    QGSettings m_defaultPeers;
-    QGSettings m_peers;
+    QGSettings* m_defaultPeers;
+    QGSettings* m_peers;
 };
 
 #endif // REGISTRY_H

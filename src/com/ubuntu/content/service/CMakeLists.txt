@@ -64,9 +64,10 @@ add_executable(
 
   helper.cpp
   registry.cpp
+  hook.cpp
 )
 
-qt5_use_modules(content-hub-peer-hook Core )
+qt5_use_modules(content-hub-peer-hook Core)
 
 target_link_libraries(
   content-hub-peer-hook
@@ -79,6 +80,12 @@ target_link_libraries(
 install(
   TARGETS content-hub-peer-hook
   RUNTIME DESTINATION "${CMAKE_INSTALL_FULL_LIBEXECDIR}/content-hub/"
+)
+
+set_target_properties(
+  content-hub-peer-hook
+  PROPERTIES
+  AUTOMOC TRUE
 )
 
 set(CLICK_HOOK

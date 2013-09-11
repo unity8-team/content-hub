@@ -16,23 +16,27 @@
  * Authored by: Ken VanDine <ken.vandine@canonical.com>
  */
 
-#include <QCoreApplication>
-#include <com/ubuntu/content/type.h>
+#ifndef HOOK_H
+#define HOOK_H
 
-#include "hook.h"
+#include <QObject>
 
-namespace cuc = com::ubuntu::content;
+#include "registry.h"
 
-int main(int argc, char** argv)
+class Hook : public QObject
 {
-    QCoreApplication app(argc, argv);
+    Q_OBJECT
+public:
+    explicit Hook(QString app_id, QObject *parent = 0);
 
-    if (app.arguments().count() <= 1)
-    {
-        qWarning() << "USAGE:" << app.arguments().first() << "APP_ID";
-        return 1;
-    }
+public slots:
+    void return_error(QString err = "");
+    void run();
 
-    Hook hook(app.arguments().at(1));
-    return app.exec();
-}
+private:
+    QString app_id;
+    Registry* registry;
+    
+};
+
+#endif // HOOK_H

@@ -79,7 +79,7 @@ target_link_libraries(
 
 install(
   TARGETS content-hub-peer-hook
-  RUNTIME DESTINATION "${CMAKE_INSTALL_FULL_LIBEXECDIR}/content-hub/"
+  RUNTIME DESTINATION "${CMAKE_INSTALL_FULL_LIBEXECDIR}"
 )
 
 set_target_properties(
@@ -89,11 +89,11 @@ set_target_properties(
 )
 
 set(CLICK_HOOK
-"${CMAKE_CURRENT_BINARY_DIR}/content-hub-peer.hook"
+"${CMAKE_CURRENT_BINARY_DIR}/content-hub.hook"
 )
 
-set(pkglibexecdir "${CMAKE_INSTALL_FULL_LIBEXECDIR}/content-hub")
-configure_file("content-hub-peer.hook.in"
+set(pkglibexecdir "${CMAKE_INSTALL_FULL_LIBEXECDIR}")
+configure_file("content-hub.hook.in"
   "${CLICK_HOOK}"
   @ONLY
 )

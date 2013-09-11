@@ -74,13 +74,15 @@ target_link_libraries(
  
   content-hub
   ${GSETTINGS_LDFLAGS}
-
 )
 
-install(
-  TARGETS content-hub-peer-hook
-  RUNTIME DESTINATION "${CMAKE_INSTALL_FULL_LIBEXECDIR}"
-)
+##########################
+# Don't install hook yet #
+##########################
+#install(
+#  TARGETS content-hub-peer-hook
+#  RUNTIME DESTINATION "${CMAKE_INSTALL_FULL_LIBEXECDIR}"
+#)
 
 set_target_properties(
   content-hub-peer-hook
@@ -98,10 +100,13 @@ configure_file("content-hub.hook.in"
   @ONLY
 )
 
-install(
-FILES
-"${CLICK_HOOK}"
-DESTINATION "/usr/share/click/hooks"
-)
+##########################
+# Don't install hook yet #
+##########################
+#install(
+#FILES
+#"${CLICK_HOOK}"
+#DESTINATION "/usr/share/click/hooks"
+#)
 
 

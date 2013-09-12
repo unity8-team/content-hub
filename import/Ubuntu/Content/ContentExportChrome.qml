@@ -136,7 +136,7 @@ Item {
             }
 
             text: i18n.dtr("content-hub", "All/None")
-            visible: internal.transferActive ? true /* TODO check for selection mode */ : false
+            visible: internal.multiSelect
             onClicked: {
                 root.selectAllToggled
             }
@@ -168,6 +168,9 @@ Item {
             property bool transferActive: root.activeTransfer ?
                                               root.activeTransfer.state === ContentTransfer.InProgress
                                             : false
+            property bool multiSelect: root.activeTransfer ?
+                                           root.activeTransfer.selectionType === ContentTransfer.Multiple
+                                         : false
             property int margin: units.gu(0.5)
             Connections {
                 target: ContentHub

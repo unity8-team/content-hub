@@ -7,48 +7,81 @@ Rectangle {
     width: 300
     height: 400
 
+    ListModel {
+        id: urlsModel
+        ListElement {
+            name: "Photo 1"
+            url: "file:///home/phablet/Pictures/img0001.jpg"
+            selected: false
+        }
+        ListElement {
+            name: "Photo 2"
+            url: "file:///home/phablet/Pictures/img0002.jpg"
+            selected: false
+        }
+        ListElement {
+            name: "Photo 3"
+            url: "file:///home/phablet/Pictures/img0003.jpg"
+            selected: false
+        }
+        ListElement {
+            name: "Photo 4"
+            url: "file:///home/phablet/Pictures/img0004.jpg"
+            selected: false
+        }
+        ListElement {
+            name: "Photo 5"
+            url: "file:///home/phablet/Pictures/img0005.jpg"
+            selected: false
+        }
+    }
+
     ContentExportChrome {
         id: chrome
 
         anchors.fill: parent
         slectedItemsCount: 0
 
-        CheckBox {
-            id: option1
-            anchors.top: parent.top
-            anchors.left: parent.left
-            text: "file:///picture_1.jpg"
-            onCheckedChanged: {
-                if (checked)
-                    chrome.slectedItemsCount += 1;
-                else
-                    chrome.slectedItemsCount -= 1;
-            }
-        }
-        CheckBox {
-            id: option2
-            anchors.top: parent.top
-            anchors.right: parent.right
-            text: "file:///picture_2.jpg"
-            onCheckedChanged: {
-                if (checked)
-                    chrome.slectedItemsCount += 1;
-                else
-                    chrome.slectedItemsCount -= 1;
+        ListView {
+            anchors.fill: parent
+            model: urlsModel
+            delegate: Rectangle {
+                height: 40
+                width: parent.width
+                color: (index % 2) === 0 ? "#aaeebb" : "#99ddaa"
+                CheckBox {
+                    id: checkBox
+                    anchors.left: parent.left
+                    anchors.leftMargin: 10
+                    anchors.verticalCenter: parent.verticalCenter
+                    checked: selected
+                    onClicked: {
+                        urlsModel.setProperty(index, "selected", checked)
+                        if (checked)
+                            chrome.slectedItemsCount += 1;
+                        else
+                            chrome.slectedItemsCount -= 1;
+                    }
+                }
+                Label {
+                    anchors.left: checkBox.right
+                    anchors.leftMargin: 10
+                    anchors.verticalCenter: checkBox.verticalCenter
+                    text: name
+                }
             }
         }
 
         onExportPressed: {
             var results = [];
-            if (option1.checked) {
-                var result = resultComponent.createObject(chrome);
-                result.url = option1.text;
-                results.push(result);
-            }
-            if (option2.checked) {
-                var result = resultComponent.createObject(chrome);
-                result.url = option1.text;
-                results.push(result);
+            for (var i=0; i<urlsModel.count; ++i) {
+                console.log("urlsModel.get(i).selected : "+urlsModel.get(i).selected)
+                if (urlsModel.get(i).selected) {
+                    var result = resultComponent.createObject(chrome);
+                    result.url = urlsModel.get(i).url;
+                    console.log("result.url: "+result.url)
+                    results.push(result);
+                }
             }
             activeTransfer.items = results;
         }

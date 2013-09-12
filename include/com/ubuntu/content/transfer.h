@@ -50,17 +50,26 @@ class Transfer : public QObject
 {
     Q_OBJECT
     Q_ENUMS(State)
+    Q_ENUMS(SelectionType)
     Q_PROPERTY(State state READ state NOTIFY stateChanged)
     Q_PROPERTY(QVector<Item> items READ collect WRITE charge)
+    Q_PROPERTY(SelectionType selectionType READ selectionType WRITE setSelectionType NOTIFY selectionTypeChanged)
 
   public:
     enum State
     {
+        created,
         initiated,
         in_progress,
         charged,
         collected,
         aborted
+    };
+
+    enum SelectionType
+    {
+        single,
+        multiple
     };
 
     Transfer(const Transfer&) = delete;
@@ -69,13 +78,15 @@ class Transfer : public QObject
     Transfer& operator=(const Transfer&) = delete;
 
     Q_INVOKABLE virtual State state() const;
-
+    Q_INVOKABLE virtual SelectionType selectionType() const;
     Q_INVOKABLE virtual bool start();
     Q_INVOKABLE virtual bool abort();
     Q_INVOKABLE virtual bool charge(const QVector<Item>& items);
     Q_INVOKABLE virtual QVector<Item> collect();
+    Q_INVOKABLE virtual bool setSelectionType(const SelectionType&);
 
     Q_SIGNAL void stateChanged();
+    Q_SIGNAL void selectionTypeChanged();
 
   private:
     struct Private;

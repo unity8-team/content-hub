@@ -32,6 +32,12 @@ void ExampleExporter::handle_export(cuc::Transfer *transfer)
         qDebug() << Q_FUNC_INFO << "Transfer null";
         return;
     }
+
+    if (transfer->selectionType() == cuc::Transfer::SelectionType::single)
+        qDebug() << Q_FUNC_INFO << "selectionType: single";
+    else if (transfer->selectionType() == cuc::Transfer::SelectionType::multiple)
+        qDebug() << Q_FUNC_INFO << "selectionType: multiple";
+
     QVector<cuc::Item> items;
     items << cuc::Item(QUrl("file:///tmp/test1"));
     items << cuc::Item(QUrl("file:///tmp/test2"));

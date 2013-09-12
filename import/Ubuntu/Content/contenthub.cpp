@@ -52,6 +52,8 @@
  *         text: "Import from a selectable list"
  *          onClicked: {
  *              activeTransfer = ContentHub.importContent(ContentType.Pictures);
+ *              activeTransfer.selectionType =ContentTransfer.Multiple;
+ *              activeTransfer.start();
  *         }
  *     }
  *     property list<ContentItem> importItems

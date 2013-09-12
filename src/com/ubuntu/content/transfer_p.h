@@ -72,6 +72,14 @@ class Transfer::Private : public QObject
         return not reply.isError();
     }
 
+    bool handled()
+    {
+        auto reply = remote_transfer->Handled();
+        reply.waitForFinished();
+
+        return not reply.isError();
+    }
+
     bool abort()
     {
         auto reply = remote_transfer->Abort();
@@ -109,6 +117,26 @@ class Transfer::Private : public QObject
             result << Item(QUrl(url));
         }
         return result;
+    }
+
+    SelectionType selection_type()
+    {
+        auto reply = remote_transfer->SelectionType();
+        reply.waitForFinished();
+
+        /* if SelectionType fails, default to single */
+        if (reply.isError())
+            return Transfer::SelectionType::single;
+
+        return static_cast<Transfer::SelectionType>(reply.value());
+    }
+
+    bool setSelectionType(int type)
+    {
+        auto reply = remote_transfer->SetSelectionType(type);
+        reply.waitForFinished();
+
+        return not reply.isError();
     }
 
     com::ubuntu::content::dbus::Transfer* remote_transfer;

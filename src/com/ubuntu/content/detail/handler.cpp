@@ -68,7 +68,7 @@ void cucd::Handler::HandleExport(const QDBusObjectPath& transfer)
     qDebug() << Q_FUNC_INFO << "State:" << t->state();
     if (t->state() == cuc::Transfer::initiated)
     {
-        t->start();
+        t->d->handled();
         m_handler->handle_export(t);
     }
 }

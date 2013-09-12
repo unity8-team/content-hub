@@ -35,25 +35,15 @@ namespace {
         /* list known peers for pictures */
         QStringList result;
         registry->enumerate_known_peers_for_type(
-            cuc::Type::Known::music(),
+            cuc::Type::Known::pictures(),
             [&result](const cuc::Peer& peer)
             {
                 result.append(peer.id());
             });
 
         foreach (QString r, result) {
-            qDebug() << "RESULT: " << r;
+            qDebug() << "PEER: " << r;
         }
-    }
-
-    void populate(QSharedPointer<cucd::PeerRegistry> registry)
-    {
-        //registry->install_default_peer_for_type(cuc::Type::Known::pictures(), cuc::Peer("gallery-app"));
-        //registry->install_peer_for_type(cuc::Type::Known::pictures(), cuc::Peer("com.example.pictures"));
-        //registry->install_peer_for_type(cuc::Type::Known::pictures(), cuc::Peer("com.example.pictures2"));
-        //registry->install_peer_for_type(cuc::Type::Known::pictures(), cuc::Peer("com.example.pictures3"));
-        //registry->install_peer_for_type(cuc::Type::Known::pictures(), cuc::Peer("com.example.pictures"));
-        list(registry);
     }
 }
 
@@ -88,8 +78,8 @@ int main(int argc, char** argv)
         app->exit(ret);
     else
     {
-        /* Populate registry with dummy peers */
-        populate(registry);
+        /* list known peers */
+        list(registry);
         return app->exec();
     }
 }

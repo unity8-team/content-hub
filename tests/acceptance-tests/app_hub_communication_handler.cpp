@@ -90,6 +90,7 @@ TEST(Handler, handler_on_bus)
     using namespace ::testing;
 
     QString default_peer_id{"com.does.not.exist.anywhere.application"};
+    QString default_dest_peer_id{"com.also.does.not.exist.anywhere.application"};
 
     test::CrossProcessSync sync;
     
@@ -108,16 +109,6 @@ TEST(Handler, handler_on_bus)
         ASSERT_TRUE(connection.registerService(service_name));
         ASSERT_TRUE(connection.registerObject("/", implementation));
 
-        auto mock_handler = new MockedHandler{};
-
-        EXPECT_CALL(*mock_handler, handle_export(_)).Times(Exactly(1));
-
-        /* register handler on the service */
-        qputenv("APP_ID", default_peer_id.toLatin1());
-        auto hub = cuc::Hub::Client::instance();
-        hub->register_import_export_handler(mock_handler);
-        hub->quit();
-
         sync.signal_ready();
 
         app.exec();
@@ -125,26 +116,37 @@ TEST(Handler, handler_on_bus)
         connection.unregisterObject("/");
         connection.unregisterService(service_name);
         delete implementation;
-        delete mock_handler;
     };
 
-    auto child = [&sync, default_peer_id]()
+    auto child = [&sync, default_peer_id, default_dest_peer_id]()
     {
         sync.wait_for_signal_ready();
 
         int argc = 0;
         QCoreApplication app(argc, nullptr);
+
         test::TestHarness harness;
-        harness.add_test_case([default_peer_id]()
+        harness.add_test_case([default_peer_id, default_dest_peer_id]()
         {
+            /* register handler on the service */
+            auto mock_handler = new MockedHandler{};
+            EXPECT_CALL(*mock_handler, handle_export(_)).Times(Exactly(1));
+            qputenv("APP_ID", default_peer_id.toLatin1());
             auto hub = cuc::Hub::Client::instance();
+            hub->register_import_export_handler(mock_handler);
+            hub->quit();
+
+            qputenv("APP_ID", default_dest_peer_id.toLatin1());
+            hub = cuc::Hub::Client::instance();
             auto transfer = hub->create_import_for_type_from_peer(
                 cuc::Type::Known::pictures(),
                 cuc::Peer(default_peer_id));
             ASSERT_TRUE(transfer != nullptr);
             EXPECT_TRUE(transfer->start());
             EXPECT_EQ(cuc::Transfer::in_progress, transfer->state());
+            EXPECT_EQ(cuc::Transfer::charged, transfer->state());
             hub->quit();
+            delete mock_handler;
         });
 
         EXPECT_EQ(0, QTest::qExec(std::addressof(harness)));

@@ -31,6 +31,10 @@ cuc::Transfer::Transfer(const QSharedPointer<cuc::Transfer::Private>& d, QObject
                 this,
                 SIGNAL (stateChanged()));
     QObject::connect(d->remote_transfer,
+                SIGNAL (StoreChanged(QString)),
+                this,
+                SIGNAL (storeChanged()));
+    QObject::connect(d->remote_transfer,
                 SIGNAL (SelectionTypeChanged(int)),
                 this,
                 SIGNAL (selectionTypeChanged()));
@@ -63,6 +67,16 @@ bool cuc::Transfer::charge(const QVector<cuc::Item>& items)
 QVector<cuc::Item> cuc::Transfer::collect()
 {
     return d->collect();
+}
+
+cuc::Store cuc::Transfer::store() const
+{
+    return d->store();
+}
+
+bool cuc::Transfer::setStore(const cuc::Store& store)
+{
+    return d->setStore(store);
 }
 
 cuc::Transfer::SelectionType cuc::Transfer::selectionType() const

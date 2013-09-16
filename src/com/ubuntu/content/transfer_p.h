@@ -119,6 +119,29 @@ class Transfer::Private : public QObject
         return result;
     }
 
+    Store store()
+    {
+        auto reply = remote_transfer->Store();
+        reply.waitForFinished();
+
+        /* FIXME: Return something if it fails */
+        /*
+        if (reply.isError())
+            return new cuc::Store{""};
+        */
+
+        //return new Store{reply.value()};
+        return static_cast<Store>(reply.value());
+    }
+
+    bool setStore(const Store& store)
+    {
+        auto reply = remote_transfer->SetStore(store.uri());
+        reply.waitForFinished();
+
+        return not reply.isError();
+    }
+
     SelectionType selection_type()
     {
         auto reply = remote_transfer->SelectionType();

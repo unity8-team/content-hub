@@ -19,6 +19,7 @@
 #define COM_UBUNTU_CONTENT_TRANSFER_H_
 
 #include <com/ubuntu/content/item.h>
+#include <com/ubuntu/content/store.h>
 
 #include <QObject>
 #include <QSharedPointer>
@@ -53,6 +54,7 @@ class Transfer : public QObject
     Q_ENUMS(SelectionType)
     Q_PROPERTY(State state READ state NOTIFY stateChanged)
     Q_PROPERTY(QVector<Item> items READ collect WRITE charge)
+    Q_PROPERTY(Store store READ store WRITE setStore NOTIFY storeChanged)
     Q_PROPERTY(SelectionType selectionType READ selectionType WRITE setSelectionType NOTIFY selectionTypeChanged)
 
   public:
@@ -83,9 +85,12 @@ class Transfer : public QObject
     Q_INVOKABLE virtual bool abort();
     Q_INVOKABLE virtual bool charge(const QVector<Item>& items);
     Q_INVOKABLE virtual QVector<Item> collect();
+    Q_INVOKABLE virtual Store store() const;
+    Q_INVOKABLE virtual bool setStore(const Store&);
     Q_INVOKABLE virtual bool setSelectionType(const SelectionType&);
 
     Q_SIGNAL void stateChanged();
+    Q_SIGNAL void storeChanged();
     Q_SIGNAL void selectionTypeChanged();
 
   private:

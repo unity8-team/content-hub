@@ -19,6 +19,10 @@
 #include <QtCore>
 #include <QtDBus/QDBusMessage>
 #include <QtDBus/QDBusConnection>
+#include <QFile>
+#include <QDir>
+#include <QFileInfo>
+#include <QUrl>
 #include <nih/alloc.h>
 #include <nih-dbus/dbus_util.h>
 
@@ -88,6 +92,29 @@ QString aa_profile(QString uniqueConnectionId)
         return QString("");
     }
     return aaProfile;
+}
+
+QString copy_to_store(const QString& src, const QString& store)
+{
+    qDebug() << Q_FUNC_INFO;
+    QUrl srcUrl(src);
+    if (not srcUrl.isLocalFile())
+        return srcUrl.url();
+
+    QFileInfo fi(srcUrl.toLocalFile());
+
+    QDir st(store);
+    if (not st.exists())
+        st.mkpath(st.absolutePath());
+    QString destFilePath = store + QDir::separator() + fi.fileName();
+    qDebug() << Q_FUNC_INFO << destFilePath;
+    bool result = QFile::copy(fi.filePath(), destFilePath);
+    if (not result)
+    {
+        qWarning() << "Failed to copy to Store:" << store;
+        return "";
+    }
+    return destFilePath;
 }
 
 }

@@ -18,6 +18,8 @@
 
 #include "example.h"
 
+#include <com/ubuntu/content/store.h>
+
 Example::Example(QObject *parent) :
     QObject(parent),
     m_importer(new ExampleImporter())
@@ -27,6 +29,10 @@ Example::Example(QObject *parent) :
 void Example::create_import()
 {
     auto hub = cuc::Hub::Client::instance();
+
+    auto store = hub->store_for_scope_and_type(cuc::Scope::app, cuc::Type::Known::pictures());
+    qDebug() << "STORE:" << store->uri();
+
     auto peer = hub->default_peer_for_type(cuc::Type::Known::pictures());
     qDebug() << Q_FUNC_INFO << "PEER: " << peer.id();
 

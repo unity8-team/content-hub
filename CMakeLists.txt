@@ -51,6 +51,8 @@ find_package(Qt5DBus)
 find_package(PkgConfig REQUIRED)
 pkg_check_modules(GLIB REQUIRED glib-2.0)
 pkg_check_modules(UPSTART_LAUNCH REQUIRED upstart-app-launch-1)
+pkg_check_modules(NIH REQUIRED libnih)
+pkg_check_modules(NIH_DBUS REQUIRED libnih-dbus)
 
 set(CONTENT_HUB_VERSION_MAJOR 0)
 set(CONTENT_HUB_VERSION_MINOR 0)
@@ -59,10 +61,10 @@ set(CONTENT_HUB_VERSION_PATCH 1)
 include_directories(include)
 
 add_subdirectory(doc)
-add_subdirectory(import)
 add_subdirectory(src)
-add_subdirectory(tests)
+add_subdirectory(import)
 add_subdirectory(examples)
+add_subdirectory(tests)
 
 install(DIRECTORY include DESTINATION ${CMAKE_INSTALL_PREFIX})
 

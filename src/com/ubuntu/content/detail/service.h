@@ -24,6 +24,7 @@
 #include <QtDBus/QDBusObjectPath>
 #include <QtDBus/QDBusMessage>
 #include <QtDBus/QDBusServiceWatcher>
+#include <QtDBus/QDBusContext>
 
 #include <com/ubuntu/applicationmanager/application_manager.h>
 #include "handler.h"
@@ -38,7 +39,7 @@ namespace detail
 {
 class PeerRegistry;
 
-class Service : public QObject
+class Service : public QObject, protected QDBusContext
 {
     Q_OBJECT
   public:
@@ -62,8 +63,8 @@ class Service : public QObject
     struct Private;
     QDBusServiceWatcher* m_watcher;
     QScopedPointer<Private> d;
-    void connect_export_handler(const QString&, const QString&, const QString&);
-    void connect_import_handler(const QString&, const QString&, const QString&);
+    void connect_export_handler(const QString&, const QString&);
+    void connect_import_handler(const QString&, const QString&);
 
   private Q_SLOTS:
     void handle_transfer(int);

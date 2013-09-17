@@ -21,6 +21,7 @@
 #include "ContentHandlerInterface.h"
 #include "handleradaptor.h"
 #include "transfer_p.h"
+#include "utils.cpp"
 
 #include <com/ubuntu/content/hub.h>
 #include <com/ubuntu/content/import_export_handler.h>
@@ -28,10 +29,8 @@
 #include <com/ubuntu/content/scope.h>
 #include <com/ubuntu/content/store.h>
 #include <com/ubuntu/content/type.h>
-#include "utils.cpp"
 
 #include <QStandardPaths>
-
 #include <map>
 
 namespace cuc = com::ubuntu::content;
@@ -68,6 +67,7 @@ void cuc::Hub::register_import_export_handler(cuc::ImportExportHandler* handler)
 {
     qDebug() << Q_FUNC_INFO;
     QString id = app_id();
+
     if (id.isEmpty())
     {
         qWarning() << "APP_ID isn't set, the handler can not be registered";
@@ -87,7 +87,7 @@ void cuc::Hub::register_import_export_handler(cuc::ImportExportHandler* handler)
         return;
     }
 
-    if (not c.registerObject(HANDLER_PATH, h))
+    if (not c.registerObject(handler_path(id), h))
     {
         qWarning() << Q_FUNC_INFO << "Failed to register object for:" << bus_name;
         return;
@@ -96,7 +96,7 @@ void cuc::Hub::register_import_export_handler(cuc::ImportExportHandler* handler)
     d->service->RegisterImportExportHandler(
                 QString(""),
                 id,
-                QDBusObjectPath{HANDLER_PATH});
+                QDBusObjectPath{handler_path(id)});
 }
 
 const cuc::Store* cuc::Hub::store_for_scope_and_type(cuc::Scope scope, cuc::Type type)
@@ -157,8 +157,6 @@ cuc::Transfer* cuc::Hub::create_import_for_type_from_peer(cuc::Type type, cuc::P
 {
     /* This needs to be replaced with a better way to get the APP_ID */
     QString id = app_id();
-    if (id == "")
-        id = "NoAppId";
 
     auto reply = d->service->CreateImportForTypeFromPeer(type.id(), peer.id(), id);
     reply.waitForFinished();

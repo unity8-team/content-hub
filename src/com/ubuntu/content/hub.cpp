@@ -158,6 +158,7 @@ cuc::Transfer* cuc::Hub::create_import_for_type_from_peer(cuc::Type type, cuc::P
     /* This needs to be replaced with a better way to get the APP_ID */
     QString id = app_id();
 
+
     auto reply = d->service->CreateImportForTypeFromPeer(type.id(), peer.id(), id);
     reply.waitForFinished();
 
@@ -165,7 +166,7 @@ cuc::Transfer* cuc::Hub::create_import_for_type_from_peer(cuc::Type type, cuc::P
         return nullptr;
 
     cuc::Transfer *transfer = cuc::Transfer::Private::make_transfer(reply.value(), this);
-    auto store = cuc::Store{QStandardPaths::writableLocation(QStandardPaths::DataLocation) + "/Incoming", this};
+    auto store = cuc::Store{QStandardPaths::writableLocation(QStandardPaths::CacheLocation) + "/Incoming", this};
     transfer->setStore(store);
     return transfer;
 }

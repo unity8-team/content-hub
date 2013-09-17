@@ -112,9 +112,9 @@ QString copy_to_store(const QString& src, const QString& store)
     if (not result)
     {
         qWarning() << "Failed to copy to Store:" << store;
-        return "";
     }
-    return destFilePath;
+
+    return QUrl::fromLocalFile(destFilePath).toString();
 }
 
 }

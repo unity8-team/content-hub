@@ -40,7 +40,7 @@ Rectangle {
         id: chrome
 
         anchors.fill: parent
-        slectedItemsCount: 0
+        selectedItemsCount: 0
 
         ListView {
             anchors.fill: parent
@@ -58,9 +58,9 @@ Rectangle {
                     onClicked: {
                         urlsModel.setProperty(index, "selected", checked)
                         if (checked)
-                            chrome.slectedItemsCount += 1;
+                            chrome.selectedItemsCount += 1;
                         else
-                            chrome.slectedItemsCount -= 1;
+                            chrome.selectedItemsCount -= 1;
                     }
                 }
                 Label {

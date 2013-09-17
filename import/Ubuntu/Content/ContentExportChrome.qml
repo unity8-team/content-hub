@@ -39,8 +39,8 @@ import Ubuntu.Content 0.1
 
                 MySelectionComponent {
                     anchors.fill: parent
-                    // set chrome.activeTranser.items properly when the user selects items
-                    // or set the chrome.slectedItemsCount manually
+                    // set chrome.activeTransfer.items properly when the user selects items
+                    // or set the chrome.selectedItemsCount manually
 
                 }
             }
@@ -54,7 +54,7 @@ Item {
     property var activeTransfer
     /// The number of selected items.
     /// Is calculcated from activeTransfer.items, if not set manually
-    property int slectedItemsCount: activeTransfer ? activeTransfer.items.length : 0
+    property int selectedItemsCount: activeTransfer ? activeTransfer.items.length : 0
 
     /// This signal is emitted when the user presses the cancel button
     /// The transfer is aborted automaically
@@ -105,7 +105,7 @@ Item {
                 bottomMargin: internal.margin
             }
             text: i18n.dtr("content-hub", "%1 item selected", "%1 items selected",
-                           root.slectedItemsCount).arg(root.slectedItemsCount)
+                           root.selectedItemsCount).arg(root.selectedItemsCount)
         }
 
         Button {
@@ -152,7 +152,7 @@ Item {
             }
 
             text: i18n.dtr("content-hub", "Import") // TODO set text according to context of the transfer (upload/import/...)
-            enabled: internal.transferActive && root.slectedItemsCount > 0
+            enabled: internal.transferActive && root.selectedItemsCount > 0
             onClicked: {
                 root.exportPressed();
                 if (root.activeTransfer.state === ContentTransfer.InProgress)

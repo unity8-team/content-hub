@@ -52,6 +52,7 @@ class Transfer : public QObject
     Q_OBJECT
     Q_ENUMS(State)
     Q_ENUMS(SelectionType)
+    Q_PROPERTY(int id READ id)
     Q_PROPERTY(State state READ state NOTIFY stateChanged)
     Q_PROPERTY(QVector<Item> items READ collect WRITE charge)
     Q_PROPERTY(Store store READ store WRITE setStore NOTIFY storeChanged)
@@ -79,6 +80,7 @@ class Transfer : public QObject
 
     Transfer& operator=(const Transfer&) = delete;
 
+    Q_INVOKABLE virtual int id() const;
     Q_INVOKABLE virtual State state() const;
     Q_INVOKABLE virtual SelectionType selectionType() const;
     Q_INVOKABLE virtual bool start();

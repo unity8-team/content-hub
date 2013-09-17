@@ -64,7 +64,7 @@ cucd::Transfer::~Transfer()
 }
 
 /* unique id of the transfer */
-int cucd::Transfer::id()
+int cucd::Transfer::Id()
 {
     qDebug() << __PRETTY_FUNCTION__;
     return d->id;
@@ -133,6 +133,9 @@ void cucd::Transfer::Charge(const QStringList& items)
     QStringList ret;
     Q_FOREACH(QString i, items)
         ret.append(copy_to_store(i, d->store));
+
+    Q_FOREACH(QString f, ret)
+        qDebug() << Q_FUNC_INFO << "Item:" << f;
 
     if (ret.count() <= 0)
     {

@@ -53,6 +53,14 @@ class Transfer::Private : public QObject
     {
     }
 
+    int id()
+    {
+        auto reply = remote_transfer->Id();
+        reply.waitForFinished();
+
+        return reply.value();
+    }
+
     State state()
     {
         auto reply = remote_transfer->State();

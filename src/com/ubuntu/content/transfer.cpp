@@ -44,6 +44,11 @@ cuc::Transfer::~Transfer()
 {
 }
 
+int cuc::Transfer::id() const
+{
+    return d->id();
+}
+
 cuc::Transfer::State cuc::Transfer::state() const
 {
     return d->state();

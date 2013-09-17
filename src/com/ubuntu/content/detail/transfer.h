@@ -35,7 +35,7 @@ class Transfer : public QObject
     Q_PROPERTY(int State READ State NOTIFY StateChanged)
     Q_PROPERTY(QString Store READ Store WRITE SetStore NOTIFY StoreChanged)
     Q_PROPERTY(int SelectionType READ SelectionType WRITE SetSelectionType NOTIFY SelectionTypeChanged)
-    Q_PROPERTY(int id READ id)
+    Q_PROPERTY(int id READ Id)
     Q_PROPERTY(QString source READ source)
     Q_PROPERTY(QString destination READ destination)
 
@@ -62,7 +62,7 @@ class Transfer : public QObject
     void SetStore(QString);
     int SelectionType();
     void SetSelectionType(int);
-    int id();
+    int Id();
     QString source();
     QString destination();
     QString export_path();

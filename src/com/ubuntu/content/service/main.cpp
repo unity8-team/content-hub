@@ -18,6 +18,8 @@
 
 #include <QCoreApplication>
 #include <QDebug>
+#include <csignal>
+
 #include "detail/app_manager.h"
 #include "common.h"
 #include "registry.h"
@@ -46,12 +48,17 @@ namespace {
         }
     }
 
-
     void populate(QSharedPointer<cucd::PeerRegistry> registry)
     {
         registry->install_default_peer_for_type(cuc::Type::Known::pictures(), cuc::Peer("gallery-app"));
         registry->install_peer_for_type(cuc::Type::Known::pictures(), cuc::Peer("com.example.pictures"));
         list(registry);
+    }
+
+    void shutdown(int sig)
+    {
+        qDebug() << Q_FUNC_INFO << sig;
+        QCoreApplication::instance()->quit();
     }
 }
 
@@ -82,12 +89,21 @@ int main(int argc, char** argv)
         ret = 1;
     }
 
+    std::signal(SIGTERM, shutdown);
+    std::signal(SIGHUP, shutdown);
+    std::signal(SIGKILL, shutdown);
+    std::signal(SIGINT, shutdown);
+
     if (ret == 1)
         app->exit(ret);
     else
     {
         /* Populate registry with dummy peers */
         populate(registry);
-        return app->exec();
+        ret = app->exec();
     }
+
+    qDebug() << "Server exiting, cleaning up";
+    delete server;
+    return ret;
 }

@@ -61,6 +61,8 @@ cucd::Transfer::Transfer(const int id,
 
 cucd::Transfer::~Transfer()
 {
+    qDebug() << __PRETTY_FUNCTION__;
+    purge_store_cache(d->store);
 }
 
 /* unique id of the transfer */
@@ -99,6 +101,7 @@ void cucd::Transfer::Abort()
 
     d->state = cuc::Transfer::aborted;
     Q_EMIT(StateChanged(d->state));
+    purge_store_cache(d->store);
 }
 
 void cucd::Transfer::Start()

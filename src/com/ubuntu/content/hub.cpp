@@ -158,7 +158,6 @@ cuc::Transfer* cuc::Hub::create_import_for_type_from_peer(cuc::Type type, cuc::P
     /* This needs to be replaced with a better way to get the APP_ID */
     QString id = app_id();
 
-
     auto reply = d->service->CreateImportForTypeFromPeer(type.id(), peer.id(), id);
     reply.waitForFinished();
 

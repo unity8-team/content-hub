@@ -72,7 +72,7 @@ struct MockedPeerRegistry : public cucd::PeerRegistry
 };
 }
 
-TEST(Hub, querying_default_peer_returns_correct_value)
+TEST(Hub, querying_known_peers_returns_correct_value)
 {
     using namespace ::testing;
 
@@ -102,6 +102,13 @@ TEST(Hub, querying_default_peer_returns_correct_value)
         EXPECT_CALL(*mock, enumerate_known_peers_for_type(_, _)).
         Times(Exactly(1)).
         WillRepeatedly(Invoke(enumerate));
+
+        EXPECT_CALL(*mock, install_peer_for_type(_, _)).
+        Times(Exactly(1)).
+        WillRepeatedly(Return(true));
+
+        ASSERT_TRUE(mock->install_peer_for_type(cuc::Type::Known::documents(),
+                                                cuc::Peer("com.does.not.exist.anywhere.application4")));
 
         QSharedPointer<cucd::PeerRegistry> registry{mock};
         

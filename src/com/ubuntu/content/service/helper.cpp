@@ -16,32 +16,23 @@
  * Authored by: Ken VanDine <ken.vandine@canonical.com>
  */
 
-#ifndef REGISTRY_H
-#define REGISTRY_H
-
-#include <QGSettings/QGSettings>
-#include <QDebug>
-#include <com/ubuntu/content/peer.h>
+#include <QCoreApplication>
 #include <com/ubuntu/content/type.h>
-#include "detail/peer_registry.h"
 
-namespace cucd = com::ubuntu::content::detail;
+#include "hook.h"
+
 namespace cuc = com::ubuntu::content;
 
-class Registry : public cucd::PeerRegistry
+int main(int argc, char** argv)
 {
+    QCoreApplication app(argc, argv);
 
-public:
-    Registry();
-    ~Registry();
-    cuc::Peer default_peer_for_type(cuc::Type type);
-    void enumerate_known_peers_for_type(cuc::Type type, const std::function<void(const cuc::Peer&)>& for_each);
-    bool install_default_peer_for_type(cuc::Type type, cuc::Peer peer);
-    bool install_peer_for_type(cuc::Type type, cuc::Peer peer);    
+    if (app.arguments().count() <= 1)
+    {
+        qWarning() << "USAGE:" << app.arguments().first() << "APP_ID";
+        return 1;
+    }
 
-private:
-    QScopedPointer<QGSettings> m_defaultPeers;
-    QScopedPointer<QGSettings> m_peers;
-};
-
-#endif // REGISTRY_H
+    Hook hook(app.arguments().at(1));
+    return app.exec();
+}

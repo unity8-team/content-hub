@@ -40,8 +40,8 @@ public:
     bool install_peer_for_type(cuc::Type type, cuc::Peer peer);    
 
 private:
-    QGSettings* m_defaultPeers;
-    QGSettings* m_peers;
+    QScopedPointer<QGSettings> m_defaultPeers;
+    QScopedPointer<QGSettings> m_peers;
 };
 
 #endif // REGISTRY_H

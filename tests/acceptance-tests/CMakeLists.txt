@@ -44,6 +44,7 @@ add_executable(
   app_hub_communication_handler
   app_hub_communication_handler.cpp
   ${MOCS}
+  transfer_files
 )
 
 qt5_use_modules(app_hub_communication_default_peer Core Test)
@@ -63,3 +64,8 @@ add_test(app_hub_communication_known_peers app_hub_communication_known_peers)
 add_test(app_hub_communication_stores app_hub_communication_stores)
 add_test(app_hub_communication_transfer app_hub_communication_transfer)
 add_test(app_hub_communication_handler app_hub_communication_handler)
+
+add_custom_command(
+  OUTPUT transfer_files
+  COMMAND cmake -E touch file1 file2 file3
+)

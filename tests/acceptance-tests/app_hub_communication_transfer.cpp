@@ -114,6 +114,7 @@ TEST(Hub, transfer_creation_and_states_work)
     {
         int argc = 0;
         QCoreApplication app(argc, nullptr);
+        app.setApplicationName("com.some.test.app");
 
         sync.wait_for_signal_ready();
         
@@ -121,14 +122,14 @@ TEST(Hub, transfer_creation_and_states_work)
         harness.add_test_case([]()
         {
             QVector<cuc::Item> source_items;
-            source_items << cuc::Item(QUrl("file:///tmp/test1"));
-            source_items << cuc::Item(QUrl("file:///tmp/test2"));
-            source_items << cuc::Item(QUrl("file:///tmp/test3"));
+            source_items << cuc::Item(QUrl::fromLocalFile(QFileInfo("file1").absoluteFilePath()));
+            source_items << cuc::Item(QUrl::fromLocalFile(QFileInfo("file2").absoluteFilePath()));
+            source_items << cuc::Item(QUrl::fromLocalFile(QFileInfo("file3").absoluteFilePath()));
             
             QVector<cuc::Item> expected_items;
-            expected_items << cuc::Item(QUrl("file:///tmp/Incoming/test1"));
-            expected_items << cuc::Item(QUrl("file:///tmp/Incoming/test2"));
-            expected_items << cuc::Item(QUrl("file:///tmp/Incoming/test3"));
+            expected_items << cuc::Item(QUrl("file:///tmp/Incoming/file1"));
+            expected_items << cuc::Item(QUrl("file:///tmp/Incoming/file2"));
+            expected_items << cuc::Item(QUrl("file:///tmp/Incoming/file3"));
 
             /** [Importing pictures] */
             auto hub = cuc::Hub::Client::instance();

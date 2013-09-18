@@ -19,6 +19,7 @@
 #include <com/ubuntu/content/transfer.h>
 
 #include "transfer_p.h"
+#include "utils.cpp"
 
 namespace cuc = com::ubuntu::content;
 
@@ -42,6 +43,8 @@ cuc::Transfer::Transfer(const QSharedPointer<cuc::Transfer::Private>& d, QObject
 
 cuc::Transfer::~Transfer()
 {
+    qDebug() << Q_FUNC_INFO;
+    purge_store_cache(d->store().uri());
 }
 
 int cuc::Transfer::id() const

@@ -117,4 +117,15 @@ QString copy_to_store(const QString& src, const QString& store)
     return QUrl::fromLocalFile(destFilePath).toString();
 }
 
+void purge_store_cache(QString store)
+{
+    qDebug() << Q_FUNC_INFO << "Store:" << store;
+    QDir st(store);
+    if (st.exists())
+    {
+        qDebug() << Q_FUNC_INFO << "Store exists";
+        st.removeRecursively();
+    }
+}
+
 }

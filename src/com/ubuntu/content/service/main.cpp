@@ -44,15 +44,8 @@ namespace {
             });
 
         foreach (QString r, result) {
-            qDebug() << "RESULT: " << r;
+            qDebug() << "PEER: " << r;
         }
-    }
-
-    void populate(QSharedPointer<cucd::PeerRegistry> registry)
-    {
-        registry->install_default_peer_for_type(cuc::Type::Known::pictures(), cuc::Peer("gallery-app"));
-        registry->install_peer_for_type(cuc::Type::Known::pictures(), cuc::Peer("com.example.pictures"));
-        list(registry);
     }
 
     void shutdown(int sig)
@@ -98,8 +91,8 @@ int main(int argc, char** argv)
         app->exit(ret);
     else
     {
-        /* Populate registry with dummy peers */
-        populate(registry);
+        /* list known peers */
+        list(registry);
         ret = app->exec();
     }
 

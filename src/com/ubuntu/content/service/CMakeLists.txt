@@ -23,6 +23,7 @@ qt5_add_dbus_adaptor(
 include_directories(
   ${CMAKE_SOURCE_DIR}/src
   ${CMAKE_SOURCE_DIR}/src/com/ubuntu/content
+  ${GSETTINGS_INCLUDE_DIRS}
 )
 
 add_executable(
@@ -38,7 +39,8 @@ qt5_use_modules(content-hub-service Core DBus)
 target_link_libraries(
   content-hub-service
  
-  content-hub 
+  content-hub
+  ${GSETTINGS_LDFLAGS}
 )
 
 install(
@@ -50,3 +52,61 @@ install(
   FILES com.ubuntu.content.dbus.Service.service 
   DESTINATION ${CMAKE_INSTALL_DATADIR}/dbus-1/services
 )
+
+###########################
+# GSettings
+###########################
+
+add_schema ("com.ubuntu.content.hub.gschema.xml")
+
+add_executable(
+  content-hub-peer-hook
+
+  helper.cpp
+  registry.cpp
+  hook.cpp
+)
+
+qt5_use_modules(content-hub-peer-hook Core)
+
+target_link_libraries(
+  content-hub-peer-hook
+ 
+  content-hub
+  ${GSETTINGS_LDFLAGS}
+)
+
+##########################
+# Don't install hook yet #
+##########################
+#install(
+#  TARGETS content-hub-peer-hook
+#  RUNTIME DESTINATION "${CMAKE_INSTALL_FULL_LIBEXECDIR}"
+#)
+
+set_target_properties(
+  content-hub-peer-hook
+  PROPERTIES
+  AUTOMOC TRUE
+)
+
+set(CLICK_HOOK
+"${CMAKE_CURRENT_BINARY_DIR}/content-hub.hook"
+)
+
+set(pkglibexecdir "${CMAKE_INSTALL_FULL_LIBEXECDIR}")
+configure_file("content-hub.hook.in"
+  "${CLICK_HOOK}"
+  @ONLY
+)
+
+##########################
+# Don't install hook yet #
+##########################
+#install(
+#FILES
+#"${CLICK_HOOK}"
+#DESTINATION "/usr/share/click/hooks"
+#)
+
+

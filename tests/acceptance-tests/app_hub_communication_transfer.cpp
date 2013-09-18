@@ -120,11 +120,16 @@ TEST(Hub, transfer_creation_and_states_work)
         test::TestHarness harness;
         harness.add_test_case([]()
         {
-            QVector<cuc::Item> expected_items;
-            expected_items << cuc::Item(QUrl("file:///tmp/test1"));
-            expected_items << cuc::Item(QUrl("file:///tmp/test2"));
-            expected_items << cuc::Item(QUrl("file:///tmp/test3"));
+            QVector<cuc::Item> source_items;
+            source_items << cuc::Item(QUrl("file:///tmp/test1"));
+            source_items << cuc::Item(QUrl("file:///tmp/test2"));
+            source_items << cuc::Item(QUrl("file:///tmp/test3"));
             
+            QVector<cuc::Item> expected_items;
+            expected_items << cuc::Item(QUrl("file:///tmp/Incoming/test1"));
+            expected_items << cuc::Item(QUrl("file:///tmp/Incoming/test2"));
+            expected_items << cuc::Item(QUrl("file:///tmp/Incoming/test3"));
+
             /** [Importing pictures] */
             auto hub = cuc::Hub::Client::instance();
             auto transfer = hub->create_import_for_type_from_peer(
@@ -134,11 +139,12 @@ TEST(Hub, transfer_creation_and_states_work)
             EXPECT_EQ(cuc::Transfer::created, transfer->state());
             EXPECT_TRUE(transfer->setSelectionType(cuc::Transfer::SelectionType::multiple));
             ASSERT_EQ(cuc::Transfer::SelectionType::multiple, transfer->selectionType());
+            transfer->setStore(cuc::Store{"/tmp/Incoming"});
             EXPECT_TRUE(transfer->start());
             EXPECT_EQ(cuc::Transfer::initiated, transfer->state());
             EXPECT_TRUE(transfer->setSelectionType(cuc::Transfer::SelectionType::single));
             ASSERT_EQ(cuc::Transfer::SelectionType::multiple, transfer->selectionType());
-            EXPECT_TRUE(transfer->charge(expected_items));
+            EXPECT_TRUE(transfer->charge(source_items));
             EXPECT_EQ(cuc::Transfer::charged, transfer->state());
             EXPECT_EQ(expected_items, transfer->collect());
             /** [Importing pictures] */

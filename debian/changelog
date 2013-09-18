@@ -1,3 +1,19 @@
+content-hub (0.0+13.10.20130917-0ubuntu1) saucy; urgency=low
+
+  [ Ken VanDine ]
+  * Make handler registration more dynamic by using a
+    QDBusServiceWatcher to to wait for a handler to register.
+  * Added Transfer::SelectionType enum, used to allow the export handler
+    to limit selection to a single item or allow multiple items. .
+
+  [ Guenter Schwann ]
+  * Add an app manager to start the exporter automaticly.
+
+  [ Ubuntu daily release ]
+  * Automatic snapshot from revision 36
+
+ -- Ubuntu daily release <ps-jenkins@lists.canonical.com>  Tue, 17 Sep 2013 12:08:04 +0000
+
 content-hub (0.0+13.10.20130905-0ubuntu1) saucy; urgency=low
 
   [ Ken VanDine ]

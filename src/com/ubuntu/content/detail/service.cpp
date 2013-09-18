@@ -88,7 +88,7 @@ void cucd::Service::handler_registered(const QString& name)
             qDebug() << Q_FUNC_INFO << "Found source:" << name;
             cuc::dbus::Handler *h = new cuc::dbus::Handler(
                     name,
-                    HANDLER_PATH,
+                    handler_path(t->source()),
                     QDBusConnection::sessionBus(),
                     0);
             if (h->isValid())
@@ -99,7 +99,7 @@ void cucd::Service::handler_registered(const QString& name)
             qDebug() << Q_FUNC_INFO << "Found destination:" << name;
             cuc::dbus::Handler *h = new cuc::dbus::Handler(
                     name,
-                    HANDLER_PATH,
+                    handler_path(t->destination()),
                     QDBusConnection::sessionBus(),
                     0);
             if (h->isValid())
@@ -134,13 +134,13 @@ QString cucd::Service::DefaultPeerForType(const QString& type_id)
     return peer.id();
 }
 
-void cucd::Service::connect_export_handler(const QString& peer_id, const QString& path, const QString& transfer)
+void cucd::Service::connect_export_handler(const QString& peer_id, const QString& transfer)
 {
     qDebug() << Q_FUNC_INFO;
 
     cuc::dbus::Handler *h = new cuc::dbus::Handler(
                 handler_address(peer_id),
-                path,
+                handler_path(peer_id),
                 QDBusConnection::sessionBus(),
                 0);
 
@@ -149,13 +149,13 @@ void cucd::Service::connect_export_handler(const QString& peer_id, const QString
         h->HandleExport(QDBusObjectPath{transfer});
 }
 
-void cucd::Service::connect_import_handler(const QString& peer_id, const QString& path, const QString& transfer)
+void cucd::Service::connect_import_handler(const QString& peer_id, const QString& transfer)
 {
     qDebug() << Q_FUNC_INFO;
 
     cuc::dbus::Handler *h = new cuc::dbus::Handler(
                 handler_address(peer_id),
-                path,
+                handler_path(peer_id),
                 QDBusConnection::sessionBus(),
                 0);
 
@@ -164,9 +164,20 @@ void cucd::Service::connect_import_handler(const QString& peer_id, const QString
         h->HandleImport(QDBusObjectPath{transfer});
 }
 
-QDBusObjectPath cucd::Service::CreateImportForTypeFromPeer(const QString& type_id, const QString& peer_id, const QString& app_id)
+QDBusObjectPath cucd::Service::CreateImportForTypeFromPeer(const QString& type_id, const QString& peer_id, const QString& dest_id)
 {
+    qDebug() << Q_FUNC_INFO;
+
     static size_t import_counter{0}; import_counter++;
+
+    QString app_id = dest_id;
+    if (app_id.isEmpty())
+    {
+        qDebug() << Q_FUNC_INFO << "APP_ID isnt' set, attempting to get it from AppArmor";
+        app_id = aa_profile(this->message().service());
+    }
+
+    qDebug() << Q_FUNC_INFO << "APP_ID:" << app_id;
 
     QUuid uuid{QUuid::createUuid()};
 
@@ -187,8 +198,8 @@ QDBusObjectPath cucd::Service::CreateImportForTypeFromPeer(const QString& type_i
     /* watch for handlers */
     m_watcher->addWatchedService(handler_address(peer_id));
     qDebug() << Q_FUNC_INFO << "Watches:" << m_watcher->watchedServices();
-    this->connect_export_handler(peer_id, HANDLER_PATH, source);
-    this->connect_import_handler(peer_id, HANDLER_PATH, destination);
+    this->connect_export_handler(peer_id, source);
+    this->connect_import_handler(app_id, destination);
 
     Q_UNUSED(type_id);
 
@@ -200,19 +211,18 @@ QDBusObjectPath cucd::Service::CreateImportForTypeFromPeer(const QString& type_i
 void cucd::Service::handle_transfer(int state)
 {
     qDebug() << Q_FUNC_INFO;
-
     cucd::Transfer *transfer = static_cast<cucd::Transfer*>(sender());
 
     if (state == cuc::Transfer::charged)
     {
         qDebug() << Q_FUNC_INFO << "Charged";
-        this->connect_import_handler(transfer->destination(), HANDLER_PATH, transfer->import_path());
+        this->connect_import_handler(transfer->destination(), transfer->import_path());
     }
 
     if (state == cuc::Transfer::initiated)
     {
         qDebug() << Q_FUNC_INFO << "Initiated";
-        this->connect_export_handler(transfer->source(), HANDLER_PATH, transfer->export_path());
+        this->connect_export_handler(transfer->source(), transfer->export_path());
     }
 }
 

@@ -169,7 +169,7 @@ QString cucd::Transfer::export_path()
     qDebug() << Q_FUNC_INFO << "source:" << d->source;
     static const QString exporter_path_pattern{"/transfers/%1/export/%2"};
     QString source = exporter_path_pattern
-            .arg(sanitize_path(d->source))
+            .arg(sanitize_id(d->source))
             .arg(d->id);
     return source;
 }
@@ -180,7 +180,7 @@ QString cucd::Transfer::import_path()
     qDebug() << Q_FUNC_INFO << "destination:" << d->destination;
     static const QString importer_path_pattern{"/transfers/%1/import/%2"};
     QString destination = importer_path_pattern
-            .arg(sanitize_path(d->destination))
+            .arg(sanitize_id(d->destination))
             .arg(d->id);
     return destination;
 }

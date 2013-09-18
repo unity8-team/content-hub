@@ -20,18 +20,13 @@
 
 Registry::Registry() :
     m_defaultPeers(new QGSettings("com.ubuntu.content.hub.default",
-                   "/com/ubuntu/content/hub/peers/")),
+                                  "/com/ubuntu/content/hub/peers/")),
     m_peers(new QGSettings("com.ubuntu.content.hub.all",
-            "/com/ubuntu/content/hub/peers/"))
+                           "/com/ubuntu/content/hub/peers/"))
 {
 }
 
-Registry::~Registry()
-{
-    qDebug() << Q_FUNC_INFO;
-    delete m_defaultPeers;
-    delete m_peers;
-}
+Registry::~Registry() {}
 
 cuc::Peer Registry::default_peer_for_type(cuc::Type type)
 {

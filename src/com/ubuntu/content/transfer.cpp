@@ -77,6 +77,11 @@ QVector<cuc::Item> cuc::Transfer::collect()
     return d->collect();
 }
 
+bool cuc::Transfer::finalize()
+{
+    return d->finalize();
+}
+
 cuc::Store cuc::Transfer::store() const
 {
     return d->store();

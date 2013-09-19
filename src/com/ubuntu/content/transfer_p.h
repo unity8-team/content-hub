@@ -96,6 +96,14 @@ class Transfer::Private : public QObject
         return not reply.isError();
     }
 
+    bool finalize()
+    {
+        auto reply = remote_transfer->Finalize();
+        reply.waitForFinished();
+
+        return not reply.isError();
+    }
+
     bool charge(const QVector<Item>& items)
     {
         QStringList l;

@@ -53,11 +53,12 @@ class Transfer : public QObject
 
   public Q_SLOTS:
     int State();
-    void Abort();
     void Start();
     void Handled();
     void Charge(const QStringList&);
     QStringList Collect();
+    void Abort();
+    void Finalize();
     QString Store();
     void SetStore(QString);
     int SelectionType();

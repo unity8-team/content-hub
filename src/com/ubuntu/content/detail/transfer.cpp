@@ -99,9 +99,10 @@ void cucd::Transfer::Abort()
     if (d->state == cuc::Transfer::aborted)
         return;
 
+    purge_store_cache(d->store);
+    d->items.clear();
     d->state = cuc::Transfer::aborted;
     Q_EMIT(StateChanged(d->state));
-    purge_store_cache(d->store);
 }
 
 void cucd::Transfer::Start()
@@ -164,6 +165,19 @@ QStringList cucd::Transfer::Collect()
     }
 
     return d->items;
+}
+
+void cucd::Transfer::Finalize()
+{
+    qDebug() << __PRETTY_FUNCTION__;
+
+    if (d->state == cuc::Transfer::finalized)
+        return;
+
+    purge_store_cache(d->store);
+    d->items.clear();
+    d->state = cuc::Transfer::finalized;
+    Q_EMIT(StateChanged(d->state));
 }
 
 QString cucd::Transfer::Store()

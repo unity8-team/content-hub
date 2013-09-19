@@ -150,9 +150,9 @@ class Transfer::Private : public QObject
         return static_cast<Store>(reply.value());
     }
 
-    bool setStore(const Store& store)
+    bool setStore(const Store* store)
     {
-        auto reply = remote_transfer->SetStore(store.uri());
+        auto reply = remote_transfer->SetStore(store->uri());
         reply.waitForFinished();
 
         return not reply.isError();

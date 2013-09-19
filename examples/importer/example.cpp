@@ -39,6 +39,7 @@ void Example::create_import()
     m_transfer = hub->create_import_for_type_from_peer(
         cuc::Type::Known::pictures(),
         peer);
+    m_transfer->setStore(store);
     m_transfer->setSelectionType(cuc::Transfer::SelectionType::multiple);
     m_transfer->start();
 }

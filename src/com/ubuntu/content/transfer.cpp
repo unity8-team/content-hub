@@ -87,7 +87,7 @@ cuc::Store cuc::Transfer::store() const
     return d->store();
 }
 
-bool cuc::Transfer::setStore(const cuc::Store& store)
+bool cuc::Transfer::setStore(const cuc::Store* store)
 {
     return d->setStore(store);
 }

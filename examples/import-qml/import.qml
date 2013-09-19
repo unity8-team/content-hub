@@ -18,8 +18,11 @@ MainView {
         onClicked: {
             var peer = ContentHub.defaultSourceForType(ContentType.Pictures);
             var transfer = ContentHub.importContent(ContentType.Pictures, peer);
+            var store = ContentHub.defaultStoreForType(ContentType.Pictures);
+            console.log("Store is: " + store.uri);
             if (transfer !== null) {
                 transfer.selectionType = ContentTransfer.Multiple;
+                transfer.setStore(store);
                 activeTransfer = transfer;
                 activeTransfer.start();
             }

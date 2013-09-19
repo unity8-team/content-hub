@@ -134,6 +134,17 @@ bool ContentTransfer::start()
 }
 
 /*!
+ * \qmlmethod ContentTransfer::finalize()
+ *
+ *  FIXME add documentation
+ */
+bool ContentTransfer::finalize()
+{
+    qDebug() << Q_FUNC_INFO;
+    return m_transfer->finalize();
+}
+
+/*!
  * \brief ContentTransfer::transfer
  * \return
  */

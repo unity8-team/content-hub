@@ -43,7 +43,8 @@ public:
         InProgress = com::ubuntu::content::Transfer::in_progress,
         Charged = com::ubuntu::content::Transfer::charged,
         Collected = com::ubuntu::content::Transfer::collected,
-        Aborted = com::ubuntu::content::Transfer::aborted
+        Aborted = com::ubuntu::content::Transfer::aborted,
+        Finalized = com::ubuntu::content::Transfer::finalized
     };
     enum Direction {
         Import,
@@ -67,6 +68,7 @@ public:
     QQmlListProperty<ContentItem> items();
 
     Q_INVOKABLE bool start();
+    Q_INVOKABLE bool finalize();
 
     com::ubuntu::content::Transfer *transfer() const;
     void setTransfer(com::ubuntu::content::Transfer *transfer, Direction direction);

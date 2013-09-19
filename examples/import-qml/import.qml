@@ -4,7 +4,8 @@ import Ubuntu.Components.ListItems 0.1
 
 import Ubuntu.Content 0.1
 
-Rectangle {
+MainView {
+    applicationName: "import-qml"
     width: 300
     height: 200
 
@@ -23,6 +24,13 @@ Rectangle {
                 activeTransfer.start();
             }
         }
+    }
+
+    Button {
+        anchors.left: importButton.right
+        text: "Finalize import"
+        enabled: activeTransfer.state === ContentTransfer.Collected
+        onClicked: activeTransfer.finalize()
     }
 
     ListView {
@@ -55,6 +63,7 @@ Rectangle {
     Connections {
         target: activeTransfer
         onStateChanged: {
+            console.log("StateChanged: " + activeTransfer.state);
             if (activeTransfer.state === ContentTransfer.Charged)
                 importItems = activeTransfer.items;
         }

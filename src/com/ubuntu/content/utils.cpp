@@ -126,22 +126,24 @@ bool is_persistent(QString store)
     return not rx.exactMatch(store);
 }
 
-void purge_store_cache(QString store)
+bool purge_store_cache(QString store)
 {
     qDebug() << Q_FUNC_INFO << "Store:" << store;
 
     if (is_persistent(store))
     {
         qDebug() << Q_FUNC_INFO << store << "is persistent";
-        return;
+        return false;
     }
 
     QDir st(store);
     if (st.exists())
     {
         qDebug() << Q_FUNC_INFO << store << "isn't persistent, purging";
-        st.removeRecursively();
+        return st.removeRecursively();
     }
+
+    return false;
 }
 
 }

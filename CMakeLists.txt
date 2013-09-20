@@ -22,10 +22,18 @@ set(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} ${CMAKE_CURRENT_SOURCE_DIR}/cmake)
 
 include (GNUInstallDirs)
 include (EnableCoverageReport)
+include (GSettings)
 
 set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -Werror -Wall -pedantic -Wextra -fPIC -pthread")
 set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++11 -Werror -Wall -fno-strict-aliasing -pedantic -Wextra -fPIC -pthread")
 set(CMAKE_SHARED_LINKER_FLAGS "${CMAKE_SHARED_LINKER_FLAGS} -Wl,--no-undefined")
+
+# Workaround for libexecdir on debian
+if (EXISTS "/etc/debian_version")
+  set(CMAKE_INSTALL_LIBEXECDIR ${CMAKE_INSTALL_LIBDIR})
+  set(CMAKE_INSTALL_FULL_LIBEXECDIR "${CMAKE_INSTALL_PREFIX}/${CMAKE_INSTALL_LIBEXECDIR}")
+endif()
+
 
 #####################################################################
 # Enable code coverage calculation with gcov/gcovr/lcov
@@ -51,6 +59,9 @@ find_package(Qt5DBus)
 find_package(PkgConfig REQUIRED)
 pkg_check_modules(GLIB REQUIRED glib-2.0)
 pkg_check_modules(UPSTART_LAUNCH REQUIRED upstart-app-launch-1)
+pkg_check_modules(GSETTINGS REQUIRED gsettings-qt)
+pkg_check_modules(NIH REQUIRED libnih)
+pkg_check_modules(NIH_DBUS REQUIRED libnih-dbus)
 
 set(CONTENT_HUB_VERSION_MAJOR 0)
 set(CONTENT_HUB_VERSION_MINOR 0)
@@ -64,11 +75,11 @@ list(SORT I18N_SRC_FILES)
 include_directories(include)
 
 add_subdirectory(doc)
+add_subdirectory(src)
 add_subdirectory(import)
 add_subdirectory(po)
-add_subdirectory(src)
-add_subdirectory(tests)
 add_subdirectory(examples)
+add_subdirectory(tests)
 
 install(DIRECTORY include DESTINATION ${CMAKE_INSTALL_PREFIX})
 

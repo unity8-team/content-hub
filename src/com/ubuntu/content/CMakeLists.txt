@@ -21,6 +21,8 @@ include_directories(
   ${CMAKE_SOURCE_DIR}/src
   ${CMAKE_SOURCE_DIR}
   ${GLIB_INCLUDE_DIRS}
+  ${NIH_INCLUDE_DIRS}
+  ${NIH_DBUS_INCLUDE_DIRS}
 )
 
 qt5_add_dbus_interface(
@@ -91,6 +93,8 @@ qt5_use_modules(content-hub Core DBus)
 
 target_link_libraries(content-hub
     ${UPSTART_LAUNCH_LDFLAGS}
+    ${NIH_LIBRARIES}
+    ${NIH_DBUS_LIBRARIES}
 )
 
 install(

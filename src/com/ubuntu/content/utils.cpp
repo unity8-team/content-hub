@@ -17,29 +17,39 @@
  */
 
 #include <QtCore>
+#include <QtDBus/QDBusMessage>
+#include <QtDBus/QDBusConnection>
+#include <nih/alloc.h>
+#include <nih-dbus/dbus_util.h>
 
 #include "common.h"
 
 namespace {
 
-/* sanitize the dbus object path */
-QString sanitize_path(const QString& path)
+/* sanitize the dbus names */
+QString sanitize_id(const QString& appId)
 {
-    QString sanitized = path;
-
-    for (int i = 0; i < sanitized.length(); ++i)
-    {
-        if ( !( sanitized[i].isLetter() || sanitized[i].isDigit()))
-            sanitized[i] = QLatin1Char('_');
-    }
-    return sanitized;
+    qDebug() << Q_FUNC_INFO;
+    return QString(nih_dbus_path(NULL,
+                                 "",
+                                 appId.toLocal8Bit().data(),
+                                 NULL)).remove(0, 1);
 }
 
 /* define a bus_name based on our namespace and the app_id */
 QString handler_address(QString app_id)
 {
-    return QString(HANDLER_NAME_TEMPLATE).arg(app_id);
+    return QString(HANDLER_NAME_TEMPLATE).arg(sanitize_id(app_id));
 }
+
+QString handler_path(QString app_id)
+{
+    return nih_dbus_path(NULL,
+                         HANDLER_BASE_PATH.data(),
+                         app_id.toLocal8Bit().data(),
+                         NULL);
+}
+
 
 QString app_id()
 {
@@ -47,7 +57,37 @@ QString app_id()
      * but we'll use this function as a place to
      * later use the application manager
      */
-    QString app_id = qgetenv("APP_ID");
-    return app_id;
+    return QString(qgetenv("APP_ID"));
 }
+
+
+QString aa_profile(QString uniqueConnectionId)
+{
+    qDebug() << Q_FUNC_INFO << uniqueConnectionId;
+    QDBusMessage msg =
+        QDBusMessage::createMethodCall("org.freedesktop.DBus",
+                                       "/org/freedesktop/DBus",
+                                       "org.freedesktop.DBus",
+                                       "GetConnectionAppArmorSecurityContext");
+    QString aaProfile;
+    QVariantList args;
+    args << uniqueConnectionId;
+    msg.setArguments(args);
+    QDBusMessage reply =
+        QDBusConnection::sessionBus().call(msg, QDBus::Block);
+    if (reply.type() == QDBusMessage::ReplyMessage) {
+        aaProfile = reply.arguments().value(0, QString()).toString();
+        qDebug() << "AppArmor Profile:" << aaProfile;
+    } else {
+        qWarning() << "Error getting app ID:" << reply.errorName() <<
+            reply.errorMessage();
+    }
+
+    if (aaProfile.toStdString() == QString("unconfined").toStdString())
+    {
+        return QString("");
+    }
+    return aaProfile;
+}
+
 }

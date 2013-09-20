@@ -48,6 +48,21 @@ void Registry::enumerate_known_peers_for_type(cuc::Type type, const std::functio
     }
 }
 
+void Registry::enumerate_known_peers(const std::function<void(const cuc::Peer&)>&for_each)
+{
+    qDebug() << Q_FUNC_INFO;
+
+    Q_FOREACH (QString type_id, m_peers->keys())
+    {
+        qDebug() << Q_FUNC_INFO << type_id;
+        Q_FOREACH (QString k, m_peers->get(type_id).toStringList())
+        {
+            qDebug() << Q_FUNC_INFO << k;
+            for_each(k);
+        }
+    }
+}
+
 bool Registry::install_default_peer_for_type(cuc::Type type, cuc::Peer peer)
 {
     qDebug() << Q_FUNC_INFO << "type:" << type.id() << "peer:" << peer.id();
@@ -71,4 +86,20 @@ bool Registry::install_peer_for_type(cuc::Type type, cuc::Peer peer)
         return m_peers->trySet(type.id(), QVariant(l));
     }
     return false;
+}
+
+bool Registry::remove_peer(cuc::Peer peer)
+{
+    qDebug() << Q_FUNC_INFO << "peer:" << peer.id();
+    bool ret = false;
+    Q_FOREACH (QString type_id, m_peers->keys())
+    {
+        QStringList l = m_peers->get(type_id).toStringList();
+        if (l.contains(peer.id()))
+        {
+            l.removeAll(peer.id());
+            ret = m_peers->trySet(type_id, QVariant(l));
+        }
+    }
+    return ret;
 }

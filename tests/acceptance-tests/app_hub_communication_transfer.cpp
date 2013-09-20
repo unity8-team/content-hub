@@ -140,7 +140,7 @@ TEST(Hub, transfer_creation_and_states_work)
             EXPECT_EQ(cuc::Transfer::created, transfer->state());
             EXPECT_TRUE(transfer->setSelectionType(cuc::Transfer::SelectionType::multiple));
             ASSERT_EQ(cuc::Transfer::SelectionType::multiple, transfer->selectionType());
-            transfer->setStore(cuc::Store{"/tmp/Incoming"});
+            transfer->setStore(new cuc::Store{"/tmp/Incoming"});
             EXPECT_TRUE(transfer->start());
             EXPECT_EQ(cuc::Transfer::initiated, transfer->state());
             EXPECT_TRUE(transfer->setSelectionType(cuc::Transfer::SelectionType::single));

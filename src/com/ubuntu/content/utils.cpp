@@ -117,13 +117,29 @@ QString copy_to_store(const QString& src, const QString& store)
     return QUrl::fromLocalFile(destFilePath).toString();
 }
 
+bool is_persistent(QString store)
+{
+    qDebug() << Q_FUNC_INFO << store;
+    QRegExp rx("*.cache/*/HubIncoming/*");
+    rx.setPatternSyntax(QRegExp::Wildcard);
+    rx.setCaseSensitivity(Qt::CaseSensitive);
+    return not rx.exactMatch(store);
+}
+
 void purge_store_cache(QString store)
 {
     qDebug() << Q_FUNC_INFO << "Store:" << store;
+
+    if (is_persistent(store))
+    {
+        qDebug() << Q_FUNC_INFO << store << "is persistent";
+        return;
+    }
+
     QDir st(store);
     if (st.exists())
     {
-        qDebug() << Q_FUNC_INFO << "Store exists";
+        qDebug() << Q_FUNC_INFO << store << "isn't persistent, purging";
         st.removeRecursively();
     }
 }

@@ -24,39 +24,66 @@
 #include <QStandardPaths>
 #include <QDebug>
 #include <QTimer>
+#include <com/ubuntu/content/peer.h>
 
 #include "hook.h"
 
-Hook::Hook(QString app_id, QObject *parent) :
+Hook::Hook(QObject *parent) :
     QObject(parent),
-    app_id(app_id),
     registry(new Registry())
 {
     qDebug() << Q_FUNC_INFO;
     QTimer::singleShot(200, this, SLOT(run()));
 }
 
+void Hook::check_peer(const com::ubuntu::content::Peer& peer)
+{
+    qDebug() << Q_FUNC_INFO << peer.id();
+}
+
 void Hook::run()
 {
     qDebug() << Q_FUNC_INFO;
-
-    /* FIXME: we should do a sanity check on this before installing */
-    auto peer = cuc::Peer(app_id);
-
     QDir contentDir(
-        QStandardPaths::writableLocation(QStandardPaths::GenericCacheLocation)
+        QStandardPaths::writableLocation(QStandardPaths::GenericDataLocation)
         + QString("/")
         + QString("content-hub"));
 
-    qDebug() << contentDir.absolutePath();
     if (not contentDir.exists())
         return_error();
 
-    const QString file = contentDir.filePath(peer.id() + QString("-content.json"));
+    QStringList all_peers;
+    registry->enumerate_known_peers([&all_peers](const com::ubuntu::content::Peer& peer)
+                                    {
+                                        all_peers.append(peer.id());
+                                    });
 
-    QFile contentJson(file);
+    Q_FOREACH(QString p, all_peers)
+    {
+        qDebug() << Q_FUNC_INFO << "Looking for" << p;
+        QStringList pp = contentDir.entryList(QStringList("*"+ p));
+        if (pp.isEmpty())
+            registry->remove_peer(com::ubuntu::content::Peer{p});
+    }
+
+    Q_FOREACH(QFileInfo f, contentDir.entryInfoList(QDir::Files))
+        handle_app(f);
+
+    QCoreApplication::instance()->quit();
+}
+
+
+
+void Hook::handle_app(QFileInfo result)
+{
+    qDebug() << Q_FUNC_INFO << "FILE:" << result.filePath();
+
+    QString app_id = result.fileName();
+    auto peer = cuc::Peer(app_id);
+
+    QFile contentJson(result.absoluteFilePath());
     if (!contentJson.open(QIODevice::ReadOnly | QIODevice::Text))
-        return_error("couldn't open " + QString(file));
+        return_error("couldn't open " + result.absoluteFilePath());
 
     QJsonParseError *e = new QJsonParseError();
     QJsonDocument contentDoc = QJsonDocument::fromJson(contentJson.readAll(), e);
@@ -88,8 +115,6 @@ void Hook::run()
                 qWarning() << "Failed to install peer for" << source;
         }
     }
-
-    QCoreApplication::instance()->quit();
 }
 
 void Hook::return_error(QString err)

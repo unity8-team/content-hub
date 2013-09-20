@@ -20,21 +20,23 @@
 #define HOOK_H
 
 #include <QObject>
-
+#include <QFileInfo>
+#include <com/ubuntu/content/peer.h>
 #include "registry.h"
 
 class Hook : public QObject
 {
     Q_OBJECT
 public:
-    explicit Hook(QString app_id, QObject *parent = 0);
+    explicit Hook(QObject *parent = 0);
 
 public slots:
     void return_error(QString err = "");
     void run();
+    void handle_app(QFileInfo);
+    void check_peer(const com::ubuntu::content::Peer&);
 
 private:
-    QString app_id;
     Registry* registry;
     
 };

@@ -17,7 +17,6 @@
  */
 
 #include <QCoreApplication>
-#include <com/ubuntu/content/type.h>
 
 #include "hook.h"
 
@@ -27,12 +26,9 @@ int main(int argc, char** argv)
 {
     QCoreApplication app(argc, argv);
 
-    if (app.arguments().count() <= 1)
-    {
-        qWarning() << "USAGE:" << app.arguments().first() << "APP_ID";
-        return 1;
-    }
+    qDebug() << Q_FUNC_INFO;
 
-    Hook hook(app.arguments().at(1));
+    auto hook = new Hook();
+    Q_UNUSED(hook);
     return app.exec();
 }

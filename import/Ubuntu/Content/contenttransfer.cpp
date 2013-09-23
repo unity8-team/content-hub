@@ -100,7 +100,6 @@ void ContentTransfer::setSelectionType(ContentTransfer::SelectionType type)
 
     if (m_state == Created && (m_selectionType != type)) {
         m_transfer->setSelectionType(static_cast<cuc::Transfer::SelectionType>(type));
-        updateSelectionType();
     }
 }
 
@@ -165,7 +164,6 @@ void ContentTransfer::setStore(ContentStore* contentStore)
         return;
     }
     m_transfer->setStore(contentStore->store());
-    updateStore();
 }
 
 /*!
@@ -206,9 +204,9 @@ void ContentTransfer::setTransfer(com::ubuntu::content::Transfer *transfer, Dire
     if (m_state == Charged && m_direction == Import)
         collectItems();
 
-    connect(m_transfer, SIGNAL(stateChanged()), this, SLOT(updateState()));
     connect(m_transfer, SIGNAL(selectionTypeChanged()), this, SLOT(updateSelectionType()));
     connect(m_transfer, SIGNAL(storeChanged()), this, SLOT(updateStore()));
+    connect(m_transfer, SIGNAL(stateChanged()), this, SLOT(updateState()));
 }
 
 /*!

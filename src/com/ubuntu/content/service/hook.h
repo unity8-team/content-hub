@@ -33,7 +33,7 @@ public:
 public slots:
     void return_error(QString err = "");
     void run();
-    void handle_app(QFileInfo);
+    void handle_peer(QFileInfo);
     void check_peer(const com::ubuntu::content::Peer&);
 
 private:

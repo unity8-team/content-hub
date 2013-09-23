@@ -67,16 +67,14 @@ void Hook::run()
     }
 
     Q_FOREACH(QFileInfo f, contentDir.entryInfoList(QDir::Files))
-        handle_app(f);
+        handle_peer(f);
 
     QCoreApplication::instance()->quit();
 }
 
-
-
-void Hook::handle_app(QFileInfo result)
+void Hook::handle_peer(QFileInfo result)
 {
-    qDebug() << Q_FUNC_INFO << "FILE:" << result.filePath();
+    qDebug() << Q_FUNC_INFO << "Hook:" << result.filePath();
 
     QString app_id = result.fileName();
     auto peer = cuc::Peer(app_id);
@@ -99,6 +97,8 @@ void Hook::handle_app(QFileInfo result)
     QVariant sources = contentObj.toVariantMap()["source"];
     Q_FOREACH(QString source, sources.toStringList())
     {
+        /* FIXME: we should iterate known types, but there isn't
+         * really a good way to do that right now */
         if (source == "pictures")
         {
             if (not registry->install_peer_for_type(cuc::Type::Known::pictures(), peer))
@@ -120,5 +120,5 @@ void Hook::handle_app(QFileInfo result)
 void Hook::return_error(QString err)
 {
     qWarning() << "Failed to install peer" << err;
-    QCoreApplication::instance()->exit(1);
+    QCoreApplication::instance()->quit();
 }

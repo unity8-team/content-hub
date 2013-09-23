@@ -28,7 +28,16 @@ int main(int argc, char** argv)
 
     qDebug() << Q_FUNC_INFO;
 
-    auto hook = new Hook();
-    Q_UNUSED(hook);
-    return app.exec();
+    if (app.arguments().count() > 1)
+    {
+            qWarning() << "Shouldn't have arguments";
+            return 1;
+    }
+
+    new Hook();
+
+    app.exec();
+
+    /* We always want to return 0 */
+    return 0;
 }

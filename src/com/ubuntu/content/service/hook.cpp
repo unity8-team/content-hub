@@ -45,6 +45,20 @@ Hook::Hook(Registry *registry, QObject *parent) :
 void Hook::run()
 {
     qDebug() << Q_FUNC_INFO;
+    /* Looks for files in ${HOME}/.local/share/content-hub/${id} installed
+     * by click packages.  These files are JSON, for example:
+     *
+     * {
+     *     "source": [
+     *         "pictures",
+     *         "music"
+     *     ]
+     * }
+     *
+     * The hook also iterates known peers and removes them if there is
+     * no JSON file installed in this path.
+     */
+
     QDir contentDir(
         QStandardPaths::writableLocation(QStandardPaths::GenericDataLocation)
         + QString("/")

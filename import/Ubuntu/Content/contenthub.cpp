@@ -15,10 +15,11 @@
  */
 
 #include "contenthub.h"
-#include <contentpeer.h>
-#include <contenttransfer.h>
-#include <contenttype.h>
-#include <qmlimportexporthandler.h>
+#include "contentpeer.h"
+#include "contentstore.h"
+#include "contenttransfer.h"
+#include "contenttype.h"
+#include "qmlimportexporthandler.h"
 
 #include <com/ubuntu/content/hub.h>
 #include <com/ubuntu/content/peer.h>
@@ -125,6 +126,21 @@ ContentPeer *ContentHub::defaultSourceForType(int type)
     qmlPeer->setPeer(hubPeer);
 
     return qmlPeer;
+}
+
+ContentStore *ContentHub::defaultStoreForType(int type)
+{
+    qDebug() << Q_FUNC_INFO;
+
+    const cuc::Type &hubType = ContentType::contentType2HubType(type);
+    const cuc::Store *hubStore = m_hub->store_for_scope_and_type(cuc::app, hubType);
+
+    qDebug() << Q_FUNC_INFO << "STORE:" << hubStore->uri();
+
+    ContentStore *qmlStore = new ContentStore(this);
+    qmlStore->setStore(hubStore);
+
+    return qmlStore;
 }
 
 /*!

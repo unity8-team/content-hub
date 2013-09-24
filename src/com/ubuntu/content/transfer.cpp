@@ -19,6 +19,7 @@
 #include <com/ubuntu/content/transfer.h>
 
 #include "transfer_p.h"
+#include "utils.cpp"
 
 namespace cuc = com::ubuntu::content;
 
@@ -31,6 +32,10 @@ cuc::Transfer::Transfer(const QSharedPointer<cuc::Transfer::Private>& d, QObject
                 this,
                 SIGNAL (stateChanged()));
     QObject::connect(d->remote_transfer,
+                SIGNAL (StoreChanged(QString)),
+                this,
+                SIGNAL (storeChanged()));
+    QObject::connect(d->remote_transfer,
                 SIGNAL (SelectionTypeChanged(int)),
                 this,
                 SIGNAL (selectionTypeChanged()));
@@ -38,6 +43,13 @@ cuc::Transfer::Transfer(const QSharedPointer<cuc::Transfer::Private>& d, QObject
 
 cuc::Transfer::~Transfer()
 {
+    qDebug() << Q_FUNC_INFO;
+    purge_store_cache(d->store().uri());
+}
+
+int cuc::Transfer::id() const
+{
+    return d->id();
 }
 
 cuc::Transfer::State cuc::Transfer::state() const
@@ -63,6 +75,21 @@ bool cuc::Transfer::charge(const QVector<cuc::Item>& items)
 QVector<cuc::Item> cuc::Transfer::collect()
 {
     return d->collect();
+}
+
+bool cuc::Transfer::finalize()
+{
+    return d->finalize();
+}
+
+cuc::Store cuc::Transfer::store() const
+{
+    return d->store();
+}
+
+bool cuc::Transfer::setStore(const cuc::Store* store)
+{
+    return d->setStore(store);
 }
 
 cuc::Transfer::SelectionType cuc::Transfer::selectionType() const

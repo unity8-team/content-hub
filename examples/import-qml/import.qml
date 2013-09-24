@@ -4,8 +4,9 @@ import Ubuntu.Components.ListItems 0.1
 
 import Ubuntu.Content 0.1
 
-Rectangle {
+MainView {
     id: root
+    applicationName: "import-qml"
     width: 300
     height: 200
 
@@ -18,12 +19,22 @@ Rectangle {
         onClicked: {
             var peer = ContentHub.defaultSourceForType(ContentType.Pictures);
             var transfer = ContentHub.importContent(ContentType.Pictures, peer);
+            var store = ContentHub.defaultStoreForType(ContentType.Pictures);
+            console.log("Store is: " + store.uri);
             if (transfer !== null) {
                 transfer.selectionType = ContentTransfer.Multiple;
+                transfer.setStore(store);
                 activeTransfer = transfer;
                 activeTransfer.start();
             }
         }
+    }
+
+    Button {
+        anchors.left: importButton.right
+        text: "Finalize import"
+        enabled: activeTransfer.state === ContentTransfer.Collected
+        onClicked: activeTransfer.finalize()
     }
 
     ListView {
@@ -61,12 +72,9 @@ Rectangle {
     Connections {
         target: root.activeTransfer
         onStateChanged: {
-            if (root.activeTransfer.state === ContentTransfer.Charged) {
-                importItems = root.activeTransfer.items;
-                console.log("root.activeTransfer.items.length: " + root.activeTransfer.items.length)
-                console.log("root.activeTransfer.items: " + root.activeTransfer.items)
-                console.log("First Item URL: " + root.activeTransfer.items[0].url)
-            }
+            console.log("StateChanged: " + activeTransfer.state);
+            if (activeTransfer.state === ContentTransfer.Charged)
+                importItems = activeTransfer.items;
         }
     }
 }

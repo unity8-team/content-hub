@@ -1,3 +1,22 @@
+content-hub (0.0+13.10.20130920-0ubuntu1) saucy; urgency=low
+
+  [ Ken VanDine ]
+  * fix for the MockHandler so it doesn't trigger dbus activation .
+  * explicitly build dep on libglib2.0-dev .
+  * Updated handler names and paths to use nih_dbus_path to sanitize the
+    names. nih_dbus_path is designed to really just return a dbus path,
+    however this is the same function apparmor uses to mangle app_id
+    names for policy, so it should ensure we can match consistently.
+    This is needed for confined apps.
+  * Use QGSettings for persistent peer registration and set defaults.
+    Also adds a helper install peers, which will be used as a click
+    hook, but doesn't get installed yet.
+
+  [ Ubuntu daily release ]
+  * Automatic snapshot from revision 41
+
+ -- Ubuntu daily release <ps-jenkins@lists.canonical.com>  Fri, 20 Sep 2013 10:54:49 +0000
+
 content-hub (0.0+13.10.20130917-0ubuntu1) saucy; urgency=low
 
   [ Ken VanDine ]

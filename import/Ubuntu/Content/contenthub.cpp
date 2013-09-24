@@ -41,6 +41,7 @@
  * import Ubuntu.Content 0.1
  *
  * Rectangle {
+ *     id: root
  *     Button {
  *         text: "Import from default"
  *          onClicked: {
@@ -56,13 +57,18 @@
  *              activeTransfer.start();
  *         }
  *     }
+ *     ContentImportHint {
+ *         id: importHint
+ *         anchors.fill: parent
+ *         activeTransfer: root.activeTransfer
+ *     }
  *     property list<ContentItem> importItems
  *     property var activeTransfer
  *     Connections {
- *         target: activeTransfer
+ *         target: root.activeTransfer
  *         onStateChanged: {
- *             if (activeTransfer.state === ContentTransfer.Charged)
- *                 importItmes = activeTransfer.items;
+ *             if (root.activeTransfer.state === ContentTransfer.Charged)
+ *                 importItmes = root.activeTransfer.items;
  *         }
  *     }
  * }

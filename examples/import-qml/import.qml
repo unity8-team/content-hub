@@ -53,8 +53,13 @@ Rectangle {
             }
     }
 
+    ContentImportHint {
+        anchors.fill: parent
+        activeTransfer: root.activeTransfer
+    }
+
     Connections {
-        target: activeTransfer
+        target: root.activeTransfer
         onStateChanged: {
             if (root.activeTransfer.state === ContentTransfer.Charged) {
                 importItems = root.activeTransfer.items;

@@ -164,7 +164,10 @@ cuc::Transfer* cuc::Hub::create_import_for_type_from_peer(cuc::Type type, cuc::P
     if (reply.isError())
         return nullptr;
 
-    return cuc::Transfer::Private::make_transfer(reply.value(), this);
+    cuc::Transfer *transfer = cuc::Transfer::Private::make_transfer(reply.value(), this);
+    const cuc::Store *store = new cuc::Store{QStandardPaths::writableLocation(QStandardPaths::CacheLocation) + "/HubIncoming/" + QString::number(transfer->id()), this};
+    transfer->setStore(store);
+    return transfer;
 }
 
 void cuc::Hub::quit()

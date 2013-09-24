@@ -76,7 +76,15 @@ cucd::Service::Service(QDBusConnection connection, const QSharedPointer<cucd::Pe
             SLOT(handler_registered(const QString&)));
 }
 
-cucd::Service::~Service() {}
+cucd::Service::~Service()
+{
+    qDebug() << Q_FUNC_INFO;
+    Q_FOREACH (cucd::Transfer *t, d->active_transfers)
+    {
+        qDebug() << Q_FUNC_INFO << "Destroying transfer:" << t->Id();
+        delete t;
+    }
+}
 
 void cucd::Service::handler_registered(const QString& name)
 {

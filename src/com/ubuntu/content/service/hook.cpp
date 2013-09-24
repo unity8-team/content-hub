@@ -32,8 +32,14 @@ Hook::Hook(QObject *parent) :
     QObject(parent),
     registry(new Registry())
 {
-    qDebug() << Q_FUNC_INFO;
     QTimer::singleShot(200, this, SLOT(run()));
+}
+
+
+Hook::Hook(Registry *registry, QObject *parent) :
+    QObject(parent),
+    registry(registry)
+{
 }
 
 void Hook::check_peer(const com::ubuntu::content::Peer& peer)
@@ -72,7 +78,7 @@ void Hook::run()
     QCoreApplication::instance()->quit();
 }
 
-void Hook::handle_peer(QFileInfo result)
+bool Hook::handle_peer(QFileInfo result)
 {
     qDebug() << Q_FUNC_INFO << "Hook:" << result.filePath();
 
@@ -87,11 +93,10 @@ void Hook::handle_peer(QFileInfo result)
     QJsonDocument contentDoc = QJsonDocument::fromJson(contentJson.readAll(), e);
 
     if (e->error != 0)
-        return_error(e->errorString());
+        return return_error(e->errorString());
 
     if (not contentDoc.isObject())
-        return_error("invalid JSON object");
-
+        return return_error("invalid JSON object");
 
     QJsonObject contentObj = contentDoc.object();
     QVariant sources = contentObj.toVariantMap()["source"];
@@ -115,10 +120,11 @@ void Hook::handle_peer(QFileInfo result)
                 qWarning() << "Failed to install peer for" << source;
         }
     }
+    return true;
 }
 
-void Hook::return_error(QString err)
+bool Hook::return_error(QString err)
 {
     qWarning() << "Failed to install peer" << err;
-    QCoreApplication::instance()->quit();
+    return false;
 }

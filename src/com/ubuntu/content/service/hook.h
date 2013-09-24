@@ -29,11 +29,12 @@ class Hook : public QObject
     Q_OBJECT
 public:
     explicit Hook(QObject *parent = 0);
+    Hook(Registry *registry, QObject *parent = 0);
 
 public slots:
-    void return_error(QString err = "");
+    bool return_error(QString err = "");
     void run();
-    void handle_peer(QFileInfo);
+    bool handle_peer(QFileInfo);
     void check_peer(const com::ubuntu::content::Peer&);
 
 private:

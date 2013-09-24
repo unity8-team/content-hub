@@ -35,7 +35,6 @@ public slots:
     bool return_error(QString err = "");
     void run();
     bool handle_peer(QFileInfo);
-    void check_peer(const com::ubuntu::content::Peer&);
 
 private:
     Registry* registry;

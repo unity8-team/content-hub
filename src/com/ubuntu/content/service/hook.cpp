@@ -42,11 +42,6 @@ Hook::Hook(Registry *registry, QObject *parent) :
 {
 }
 
-void Hook::check_peer(const com::ubuntu::content::Peer& peer)
-{
-    qDebug() << Q_FUNC_INFO << peer.id();
-}
-
 void Hook::run()
 {
     qDebug() << Q_FUNC_INFO;

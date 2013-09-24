@@ -43,10 +43,9 @@ Item {
         opacity: 0.7
     }
 
-    Label {
+    ActivityIndicator {
         anchors.centerIn: parent
-        text: i18n.dtr("content-hub", "Importing")
-        fontSize: "large"
+        running: internal.isTransferRunning
     }
 
     MouseArea {

@@ -16,6 +16,7 @@
 
 import QtQuick 2.0
 import Ubuntu.Components 0.1
+import Ubuntu.Components.Popups 0.1
 import Ubuntu.Content 0.1
 
 /*!
@@ -37,26 +38,14 @@ Item {
 
     opacity: internal.isTransferRunning ? 1.0 : 0.0
 
-    Rectangle {
-        anchors.fill: parent
-        color: "black"
-        opacity: 0.7
-    }
-
-    ActivityIndicator {
-        anchors.centerIn: parent
-        running: internal.isTransferRunning
-    }
-
-    MouseArea {
-        anchors.fill: parent
-        enabled: internal.isTransferRunning
-    }
-
-    Behavior on opacity {
-        NumberAnimation {
-            duration: UbuntuAnimation.FastDuration
-            easing: UbuntuAnimation.StandardEasing
+    Component {
+        id: dialog
+        Dialog {
+            id: dialogue
+            ActivityIndicator {
+                anchors.centerIn: parent
+                running: internal.isTransferRunning
+            }
         }
     }
 
@@ -65,5 +54,14 @@ Item {
         property bool isTransferRunning: root.activeTransfer ?
                                              root.activeTransfer.state === ContentTransfer.InProgress
                                            : false
+        property var dialogue
+
+        onIsTransferRunningChanged: {
+            if (isTransferRunning) {
+                dialogue = PopupUtils.open(dialog);
+            } else {
+                PopupUtils.close(dialogue);
+            }
+        }
     }
 }

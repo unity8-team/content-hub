@@ -55,6 +55,10 @@ Item {
     /// The number of selected items.
     /// Is calculcated from activeTransfer.items, if not set manually
     property int selectedItemsCount: activeTransfer ? activeTransfer.items.length : 0
+    /// If set to totrue and amultiSelect mode is used, a button to select all / none
+    // is shown. The functionality needs to be hooked up using the selectAllToggled()
+    /// signal
+    property bool showSelectAllButton: false
 
     /// This signal is emitted when the user presses the cancel button
     /// The transfer is aborted automaically
@@ -120,7 +124,7 @@ Item {
             text: i18n.dtr("content-hub", "Cancel")
             enabled: internal.transferActive
             onClicked: {
-                root.exportCanceled();
+                root.exportCanceled()
                 if (root.activeTransfer.state === ContentTransfer.InProgress)
                     root.activeTransfer.state = ContentTransfer.Aborted;
             }
@@ -136,7 +140,7 @@ Item {
             }
 
             text: i18n.dtr("content-hub", "All/None")
-            visible: internal.multiSelect
+            visible: internal.multiSelect && root.showSelectAllButton
             onClicked: {
                 root.selectAllToggled
             }

@@ -34,7 +34,7 @@ public:
 public slots:
     bool return_error(QString err = "");
     void run();
-    bool handle_peer(QFileInfo);
+    bool add_peer(QFileInfo);
 
 private:
     Registry* registry;

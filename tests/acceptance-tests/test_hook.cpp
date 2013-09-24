@@ -68,8 +68,8 @@ TEST(Hook, parse_json)
     QFileInfo f("good.json");
     Hook *hook = new Hook(mock);
 
-    EXPECT_TRUE(hook->handle_peer(f));
+    EXPECT_TRUE(hook->add_peer(f));
     f.setFile("bad.json");
-    EXPECT_FALSE(hook->handle_peer(f));
+    EXPECT_FALSE(hook->add_peer(f));
     delete mock;
 }

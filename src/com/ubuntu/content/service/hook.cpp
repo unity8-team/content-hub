@@ -68,12 +68,12 @@ void Hook::run()
     }
 
     Q_FOREACH(QFileInfo f, contentDir.entryInfoList(QDir::Files))
-        handle_peer(f);
+        add_peer(f);
 
     QCoreApplication::instance()->quit();
 }
 
-bool Hook::handle_peer(QFileInfo result)
+bool Hook::add_peer(QFileInfo result)
 {
     qDebug() << Q_FUNC_INFO << "Hook:" << result.filePath();
 

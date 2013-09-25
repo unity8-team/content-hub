@@ -18,7 +18,7 @@
 
 #include <com/ubuntu/content/peer.h>
 #include <com/ubuntu/content/type.h>
-#include "com/ubuntu/content/service/registry.h"
+#include "com/ubuntu/content/detail/peer_registry.h"
 #include "com/ubuntu/content/service/hook.h"
 
 #include <gmock/gmock.h>
@@ -34,9 +34,9 @@ void PrintTo(const QString& s, ::std::ostream* os) {
 
 namespace
 {
-struct MockedRegistry : public Registry
+struct MockedRegistry : public cuc::detail::PeerRegistry
 {
-    MockedRegistry() : Registry()
+    MockedRegistry() : PeerRegistry()
     {
         using namespace ::testing;
 

@@ -22,6 +22,7 @@
 #include <QObject>
 #include <QFileInfo>
 #include <com/ubuntu/content/peer.h>
+
 #include "registry.h"
 
 class Hook : public QObject
@@ -29,7 +30,7 @@ class Hook : public QObject
     Q_OBJECT
 public:
     explicit Hook(QObject *parent = 0);
-    Hook(Registry *registry, QObject *parent = 0);
+    Hook(com::ubuntu::content::detail::PeerRegistry *registry, QObject *parent = 0);
 
 public slots:
     bool return_error(QString err = "");
@@ -37,7 +38,7 @@ public slots:
     bool add_peer(QFileInfo);
 
 private:
-    Registry* registry;
+    com::ubuntu::content::detail::PeerRegistry* registry;
     
 };
 

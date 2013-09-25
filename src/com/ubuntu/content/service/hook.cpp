@@ -36,7 +36,7 @@ Hook::Hook(QObject *parent) :
 }
 
 
-Hook::Hook(Registry *registry, QObject *parent) :
+Hook::Hook(com::ubuntu::content::detail::PeerRegistry *registry, QObject *parent) :
     QObject(parent),
     registry(registry)
 {

@@ -1,3 +1,32 @@
+content-hub (0.0+13.10.20130925-0ubuntu1) saucy; urgency=low
+
+  [ Ken VanDine ]
+  * Adds a store property to the Transfer, which defaults to an
+    cuc::Scope::app scope and appended with "HubIncoming/${id}". The hub
+    will copy the files to that store when the transfer gets charged and
+    set the proper paths based on the Store::url when setting
+    Transfer::items. To handle cleaning up temporary copies of files,
+    this adds an additional state to the tranfer "finalized" and a
+    finalize function to the API. When the importer calls finalize, the
+    hub will purge the copied files, but only if the destination didn't
+    specify their own persistent content store. On purge, we only remove
+    the files if the store is set to the default used by the hub. If the
+    destination set a different store, we leave the files there. This is
+    an important implementation detail, without setting a persistent
+    store, a QML app wouldn't have a way to copy the files out of the
+    incoming directory into their own persistent location. Allowing the
+    destination app to setStore, gives it a way to keep the files in
+    it's own store for future access. If the destination doesn't set the
+    store, we assume the destination app is done with the content before
+    calling finalize.
+  * fixed typo in Type enum.
+  * Added a name property to Peer using GAppInfo to get a friendly name.
+
+  [ Ubuntu daily release ]
+  * Automatic snapshot from revision 45
+
+ -- Ubuntu daily release <ps-jenkins@lists.canonical.com>  Wed, 25 Sep 2013 11:05:41 +0000
+
 content-hub (0.0+13.10.20130920-0ubuntu1) saucy; urgency=low
 
   [ Ken VanDine ]

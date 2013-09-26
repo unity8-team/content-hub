@@ -19,6 +19,10 @@
 #include <QtCore>
 #include <QtDBus/QDBusMessage>
 #include <QtDBus/QDBusConnection>
+#include <QFile>
+#include <QDir>
+#include <QFileInfo>
+#include <QUrl>
 #include <nih/alloc.h>
 #include <nih-dbus/dbus_util.h>
 
@@ -88,6 +92,58 @@ QString aa_profile(QString uniqueConnectionId)
         return QString("");
     }
     return aaProfile;
+}
+
+QString copy_to_store(const QString& src, const QString& store)
+{
+    qDebug() << Q_FUNC_INFO;
+    QUrl srcUrl(src);
+    if (not srcUrl.isLocalFile())
+        return srcUrl.url();
+
+    QFileInfo fi(srcUrl.toLocalFile());
+
+    QDir st(store);
+    if (not st.exists())
+        st.mkpath(st.absolutePath());
+    QString destFilePath = store + QDir::separator() + fi.fileName();
+    qDebug() << Q_FUNC_INFO << destFilePath;
+    bool result = QFile::copy(fi.filePath(), destFilePath);
+    if (not result)
+    {
+        qWarning() << "Failed to copy to Store:" << store;
+    }
+
+    return QUrl::fromLocalFile(destFilePath).toString();
+}
+
+bool is_persistent(QString store)
+{
+    qDebug() << Q_FUNC_INFO << store;
+    QRegExp rx("*.cache/*/HubIncoming/*");
+    rx.setPatternSyntax(QRegExp::Wildcard);
+    rx.setCaseSensitivity(Qt::CaseSensitive);
+    return not rx.exactMatch(store);
+}
+
+bool purge_store_cache(QString store)
+{
+    qDebug() << Q_FUNC_INFO << "Store:" << store;
+
+    if (is_persistent(store))
+    {
+        qDebug() << Q_FUNC_INFO << store << "is persistent";
+        return false;
+    }
+
+    QDir st(store);
+    if (st.exists())
+    {
+        qDebug() << Q_FUNC_INFO << store << "isn't persistent, purging";
+        return st.removeRecursively();
+    }
+
+    return false;
 }
 
 }

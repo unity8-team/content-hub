@@ -29,6 +29,16 @@ cuc::Store::Store(const QString& uri, QObject* parent) : QObject(parent), d(new 
 {
 }
 
+cuc::Store::Store(const cuc::Store& rhs) : QObject(rhs.parent()), d(rhs.d)
+{
+}
+
+cuc::Store& cuc::Store::operator=(const cuc::Store& rhs)
+{
+    d = rhs.d;
+    return *this;
+}
+
 cuc::Store::~Store()
 {
 }

@@ -4,8 +4,7 @@ import Ubuntu.Components.ListItems 0.1
 
 import Ubuntu.Content 0.1
 
-MainView {
-    applicationName: "import-qml"
+Rectangle {
     width: 300
     height: 200
 
@@ -18,22 +17,12 @@ MainView {
         onClicked: {
             var peer = ContentHub.defaultSourceForType(ContentType.Pictures);
             var transfer = ContentHub.importContent(ContentType.Pictures, peer);
-            var store = ContentHub.defaultStoreForType(ContentType.Pictures);
-            console.log("Store is: " + store.uri);
             if (transfer !== null) {
                 transfer.selectionType = ContentTransfer.Multiple;
-                transfer.setStore(store);
                 activeTransfer = transfer;
                 activeTransfer.start();
             }
         }
-    }
-
-    Button {
-        anchors.left: importButton.right
-        text: "Finalize import"
-        enabled: activeTransfer.state === ContentTransfer.Collected
-        onClicked: activeTransfer.finalize()
     }
 
     ListView {
@@ -66,7 +55,6 @@ MainView {
     Connections {
         target: activeTransfer
         onStateChanged: {
-            console.log("StateChanged: " + activeTransfer.state);
             if (activeTransfer.state === ContentTransfer.Charged)
                 importItems = activeTransfer.items;
         }

@@ -53,14 +53,6 @@ class Transfer::Private : public QObject
     {
     }
 
-    int id()
-    {
-        auto reply = remote_transfer->Id();
-        reply.waitForFinished();
-
-        return reply.value();
-    }
-
     State state()
     {
         auto reply = remote_transfer->State();
@@ -96,14 +88,6 @@ class Transfer::Private : public QObject
         return not reply.isError();
     }
 
-    bool finalize()
-    {
-        auto reply = remote_transfer->Finalize();
-        reply.waitForFinished();
-
-        return not reply.isError();
-    }
-
     bool charge(const QVector<Item>& items)
     {
         QStringList l;
@@ -133,29 +117,6 @@ class Transfer::Private : public QObject
             result << Item(QUrl(url));
         }
         return result;
-    }
-
-    Store store()
-    {
-        auto reply = remote_transfer->Store();
-        reply.waitForFinished();
-
-        /* FIXME: Return something if it fails */
-        /*
-        if (reply.isError())
-            return new cuc::Store{""};
-        */
-
-        //return new Store{reply.value()};
-        return static_cast<Store>(reply.value());
-    }
-
-    bool setStore(const Store* store)
-    {
-        auto reply = remote_transfer->SetStore(store->uri());
-        reply.waitForFinished();
-
-        return not reply.isError();
     }
 
     SelectionType selection_type()

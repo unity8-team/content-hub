@@ -33,7 +33,6 @@ set(PLUGIN_HDRS
     contenthubplugin.h
     contentitem.h
     contentpeer.h
-    contentstore.h
     contenttransfer.h
     contenttype.h
     qmlimportexporthandler.h
@@ -44,7 +43,6 @@ set(PLUGIN_SRC
     contenthubplugin.cpp
     contentitem.cpp
     contentpeer.cpp
-    contentstore.cpp
     contenttransfer.cpp
     contenttype.cpp
     qmlimportexporthandler.cpp

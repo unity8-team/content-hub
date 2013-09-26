@@ -29,7 +29,7 @@ class ContentType : public QObject
 
 public:
     enum Type {
-        Unknown = 0,
+        Unkown = 0,
         Documents = 1,
         Pictures = 2,
         Music = 3

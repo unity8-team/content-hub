@@ -16,7 +16,6 @@
  * Authored by: Thomas Voß <thomas.voss@canonical.com>
  */
 
-#include <gio/gdesktopappinfo.h>
 #include <com/ubuntu/content/peer.h>
 
 namespace cuc = com::ubuntu::content;
@@ -61,13 +60,4 @@ bool cuc::Peer::operator==(const cuc::Peer& rhs) const
 const QString& cuc::Peer::id() const
 {
     return d->id;
-}
-
-QString cuc::Peer::name()
-{
-    QString desktop_id(d->id + ".desktop");
-    GDesktopAppInfo* app = g_desktop_app_info_new(desktop_id.toLocal8Bit().data());
-    QString display_name = QString::fromLatin1(g_app_info_get_display_name(G_APP_INFO(app)));
-    g_object_unref(app);
-    return display_name;
 }

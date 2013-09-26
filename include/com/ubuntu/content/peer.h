@@ -31,7 +31,6 @@ class Peer : public QObject
 {
     Q_OBJECT
     Q_PROPERTY(QString id READ id())
-    Q_PROPERTY(QString name READ name())
 
   public:
     static const Peer& unknown();
@@ -44,7 +43,6 @@ class Peer : public QObject
     bool operator==(const Peer& rhs) const;
 
     Q_INVOKABLE virtual const QString& id() const;
-    Q_INVOKABLE virtual QString name();
 
   private:
     struct Private;

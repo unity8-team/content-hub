@@ -3,9 +3,6 @@
     <signal name="StateChanged">
       <arg name="state" type="i"/>
     </signal>
-    <method name="Id">
-      <arg name="id" type="i" direction="out" />
-    </method>
     <method name="State">
       <arg name="state" type="i" direction="out" />
     </method>
@@ -15,23 +12,12 @@
     </method>
     <method name="Abort">
     </method>
-    <method name="Finalize">
-    </method>
     <method name="Charge">
       <arg name="items" type="as" direction="in" />
     </method>
     <method name="Collect">
       <arg name="items" type="as" direction="out" />
     </method>
-    <method name="Store">
-      <arg name="uri" type="s" direction="out" />
-    </method>
-    <method name="SetStore">
-      <arg name="uri" type="s" direction="in" />
-    </method>
-    <signal name="StoreChanged">
-      <arg name="uri" type="s"/>
-    </signal>
     <method name="SelectionType">
       <arg name="selection_type" type="i" direction="out" />
     </method>

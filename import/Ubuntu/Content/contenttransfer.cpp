@@ -15,7 +15,7 @@
  */
 
 #include "contenttransfer.h"
-#include "contentitem.h"
+#include <contentitem.h>
 
 #include <com/ubuntu/content/item.h>
 
@@ -39,8 +39,7 @@ ContentTransfer::ContentTransfer(QObject *parent)
       m_transfer(0),
       m_state(Aborted),
       m_direction(Import),
-      m_selectionType(Single),
-      m_store(0)
+      m_selectionType(Single)
 {
     qDebug() << Q_FUNC_INFO;
 }
@@ -100,6 +99,7 @@ void ContentTransfer::setSelectionType(ContentTransfer::SelectionType type)
 
     if (m_state == Created && (m_selectionType != type)) {
         m_transfer->setSelectionType(static_cast<cuc::Transfer::SelectionType>(type));
+        updateSelectionType();
     }
 }
 
@@ -134,39 +134,6 @@ bool ContentTransfer::start()
 }
 
 /*!
- * \qmlmethod ContentTransfer::finalize()
- *
- *  FIXME add documentation
- */
-bool ContentTransfer::finalize()
-{
-    qDebug() << Q_FUNC_INFO;
-    return m_transfer->finalize();
-}
-
-/*!
- * \brief ContentTransfer::store
- * \return
- */
-const QString ContentTransfer::store() const
-{
-    qDebug() << Q_FUNC_INFO;
-    return m_transfer->store().uri();
-}
-
-void ContentTransfer::setStore(ContentStore* contentStore)
-{
-    qDebug() << Q_FUNC_INFO;
-
-    if (!m_transfer)
-    {
-        qWarning() << Q_FUNC_INFO << "invalid transfer";
-        return;
-    }
-    m_transfer->setStore(contentStore->store());
-}
-
-/*!
  * \brief ContentTransfer::transfer
  * \return
  */
@@ -198,15 +165,13 @@ void ContentTransfer::setTransfer(com::ubuntu::content::Transfer *transfer, Dire
     m_transfer = transfer;
 
     updateSelectionType();
-    updateStore();
     updateState();
 
     if (m_state == Charged && m_direction == Import)
         collectItems();
 
-    connect(m_transfer, SIGNAL(selectionTypeChanged()), this, SLOT(updateSelectionType()));
-    connect(m_transfer, SIGNAL(storeChanged()), this, SLOT(updateStore()));
     connect(m_transfer, SIGNAL(stateChanged()), this, SLOT(updateState()));
+    connect(m_transfer, SIGNAL(selectionTypeChanged()), this, SLOT(updateSelectionType()));
 }
 
 /*!
@@ -254,18 +219,4 @@ void ContentTransfer::updateSelectionType()
 
     m_selectionType = static_cast<ContentTransfer::SelectionType>(m_transfer->selectionType());
     Q_EMIT selectionTypeChanged();
-}
-
-
-/*!
- * \brief ContentTransfer::updateStore update the store from the hub transfer object
- */
-void ContentTransfer::updateStore()
-{
-    qDebug() << Q_FUNC_INFO;
-    if (!m_transfer)
-        return;
-
-    m_store = m_transfer->store();
-    Q_EMIT storeChanged();
 }

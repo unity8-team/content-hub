@@ -19,7 +19,6 @@
 #define COM_UBUNTU_CONTENT_STORE_H_
 
 #include <QObject>
-#include <QSharedPointer>
 
 namespace com
 {
@@ -33,17 +32,17 @@ class Store : public QObject
   public:
     Q_PROPERTY(QString uri READ uri)
 
-    Store(const QString& uri, QObject* parent = nullptr);
-    Store(const Store&);
+    Store(const QString& uri, QObject* parent);
+    Store(const Store&) = delete;
     virtual ~Store();
     
-    Store& operator=(const Store&);
+    Store& operator=(const Store&) = delete;
     
     Q_INVOKABLE virtual const QString& uri() const;
 
   protected:
     struct Private;
-    QSharedPointer<Private> d;
+    QScopedPointer<Private> d;
 };
 }
 }

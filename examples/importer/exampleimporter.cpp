@@ -36,7 +36,4 @@ void ExampleImporter::handle_import(cuc::Transfer *transfer)
     qDebug() << Q_FUNC_INFO;
     auto items = transfer->collect();
     qDebug() << Q_FUNC_INFO << "Items:" << items.count();
-    Q_FOREACH(cuc::Item item, items)
-        qDebug() << Q_FUNC_INFO << "Item:" << item.url();
-    transfer->finalize();
 }

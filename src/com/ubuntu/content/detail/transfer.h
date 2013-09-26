@@ -33,9 +33,8 @@ class Transfer : public QObject
 {
     Q_OBJECT
     Q_PROPERTY(int State READ State NOTIFY StateChanged)
-    Q_PROPERTY(QString Store READ Store WRITE SetStore NOTIFY StoreChanged)
     Q_PROPERTY(int SelectionType READ SelectionType WRITE SetSelectionType NOTIFY SelectionTypeChanged)
-    Q_PROPERTY(int id READ Id)
+    Q_PROPERTY(int id READ id)
     Q_PROPERTY(QString source READ source)
     Q_PROPERTY(QString destination READ destination)
 
@@ -48,22 +47,18 @@ class Transfer : public QObject
 
   Q_SIGNALS:
     void StateChanged(int State);
-    void StoreChanged(QString Store);
     void SelectionTypeChanged(int SelectionType);
 
   public Q_SLOTS:
     int State();
+    void Abort();
     void Start();
     void Handled();
     void Charge(const QStringList&);
     QStringList Collect();
-    void Abort();
-    void Finalize();
-    QString Store();
-    void SetStore(QString);
     int SelectionType();
     void SetSelectionType(int);
-    int Id();
+    int id();
     QString source();
     QString destination();
     QString export_path();

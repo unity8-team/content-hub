@@ -19,8 +19,6 @@
 #include "transfer.h"
 #include "utils.cpp"
 
-#include <com/ubuntu/content/hub.h>
-#include <com/ubuntu/content/store.h>
 #include <com/ubuntu/content/transfer.h>
 
 #include <QDebug>
@@ -45,7 +43,6 @@ struct cucd::Transfer::Private
     const int id;
     const QString source;
     const QString destination;
-    QString store;
     int selection_type;
     QStringList items;
 };
@@ -61,12 +58,10 @@ cucd::Transfer::Transfer(const int id,
 
 cucd::Transfer::~Transfer()
 {
-    qDebug() << __PRETTY_FUNCTION__;
-    purge_store_cache(d->store);
 }
 
 /* unique id of the transfer */
-int cucd::Transfer::Id()
+int cucd::Transfer::id()
 {
     qDebug() << __PRETTY_FUNCTION__;
     return d->id;
@@ -99,8 +94,6 @@ void cucd::Transfer::Abort()
     if (d->state == cuc::Transfer::aborted)
         return;
 
-    purge_store_cache(d->store);
-    d->items.clear();
     d->state = cuc::Transfer::aborted;
     Q_EMIT(StateChanged(d->state));
 }
@@ -134,23 +127,8 @@ void cucd::Transfer::Charge(const QStringList& items)
     if (d->state == cuc::Transfer::charged)
         return;
 
-    QStringList ret;
-    Q_FOREACH(QString i, items)
-        ret.append(copy_to_store(i, d->store));
-
-    Q_FOREACH(QString f, ret)
-        qDebug() << Q_FUNC_INFO << "Item:" << f;
-
-    if (ret.count() <= 0)
-    {
-        qWarning() << "Failed to charge items, aborting";
-        d->state = cuc::Transfer::aborted;
-    }
-    else
-    {
-        d->items = ret;
-        d->state = cuc::Transfer::charged;
-    }
+    d->items = items;
+    d->state = cuc::Transfer::charged;
     Q_EMIT(StateChanged(d->state));
 }
 
@@ -165,36 +143,6 @@ QStringList cucd::Transfer::Collect()
     }
 
     return d->items;
-}
-
-void cucd::Transfer::Finalize()
-{
-    qDebug() << __PRETTY_FUNCTION__;
-
-    if (d->state == cuc::Transfer::finalized)
-        return;
-
-    purge_store_cache(d->store);
-    d->items.clear();
-    d->state = cuc::Transfer::finalized;
-    Q_EMIT(StateChanged(d->state));
-}
-
-QString cucd::Transfer::Store()
-{
-    qDebug() << __PRETTY_FUNCTION__;
-    return d->store;
-}
-
-void cucd::Transfer::SetStore(QString uri)
-{
-    qDebug() << Q_FUNC_INFO;
-
-    if (d->store == uri)
-        return;
-
-    d->store = uri;
-    Q_EMIT(StoreChanged(d->store));
 }
 
 int cucd::Transfer::SelectionType()

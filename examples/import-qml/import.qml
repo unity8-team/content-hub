@@ -5,6 +5,7 @@ import Ubuntu.Components.ListItems 0.1
 import Ubuntu.Content 0.1
 
 MainView {
+    id: root
     applicationName: "import-qml"
     width: 300
     height: 200
@@ -63,8 +64,13 @@ MainView {
             }
     }
 
+    ContentImportHint {
+        anchors.fill: parent
+        activeTransfer: root.activeTransfer
+    }
+
     Connections {
-        target: activeTransfer
+        target: root.activeTransfer
         onStateChanged: {
             console.log("StateChanged: " + activeTransfer.state);
             if (activeTransfer.state === ContentTransfer.Charged)

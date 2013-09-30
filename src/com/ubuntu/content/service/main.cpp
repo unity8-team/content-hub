@@ -18,6 +18,8 @@
 
 #include <QCoreApplication>
 #include <QDebug>
+#include <csignal>
+
 #include "detail/app_manager.h"
 #include "common.h"
 #include "registry.h"
@@ -44,6 +46,12 @@ namespace {
         foreach (QString r, result) {
             qDebug() << "PEER: " << r;
         }
+    }
+
+    void shutdown(int sig)
+    {
+        qDebug() << Q_FUNC_INFO << sig;
+        QCoreApplication::instance()->quit();
     }
 }
 
@@ -74,12 +82,21 @@ int main(int argc, char** argv)
         ret = 1;
     }
 
+    std::signal(SIGTERM, shutdown);
+    std::signal(SIGHUP, shutdown);
+    std::signal(SIGKILL, shutdown);
+    std::signal(SIGINT, shutdown);
+
     if (ret == 1)
         app->exit(ret);
     else
     {
         /* list known peers */
         list(registry);
-        return app->exec();
+        ret = app->exec();
     }
+
+    qDebug() << "Server exiting, cleaning up";
+    delete server;
+    return ret;
 }

@@ -17,6 +17,9 @@
 #ifndef COM_UBUNTU_CONTENTTRANSFER_H_
 #define COM_UBUNTU_CONTENTTRANSFER_H_
 
+#include "contentstore.h"
+
+#include <com/ubuntu/content/store.h>
 #include <com/ubuntu/content/transfer.h>
 
 #include <QList>
@@ -34,6 +37,7 @@ class ContentTransfer : public QObject
     Q_PROPERTY(State state READ state WRITE setState NOTIFY stateChanged)
     Q_PROPERTY(Direction direction READ direction CONSTANT)
     Q_PROPERTY(SelectionType selectionType READ selectionType WRITE setSelectionType NOTIFY selectionTypeChanged)
+    Q_PROPERTY(QString store READ store NOTIFY storeChanged)
     Q_PROPERTY(QQmlListProperty<ContentItem> items READ items NOTIFY itemsChanged)
 
 public:
@@ -43,7 +47,8 @@ public:
         InProgress = com::ubuntu::content::Transfer::in_progress,
         Charged = com::ubuntu::content::Transfer::charged,
         Collected = com::ubuntu::content::Transfer::collected,
-        Aborted = com::ubuntu::content::Transfer::aborted
+        Aborted = com::ubuntu::content::Transfer::aborted,
+        Finalized = com::ubuntu::content::Transfer::finalized
     };
     enum Direction {
         Import,
@@ -67,6 +72,10 @@ public:
     QQmlListProperty<ContentItem> items();
 
     Q_INVOKABLE bool start();
+    Q_INVOKABLE bool finalize();
+
+    const QString store() const;
+    Q_INVOKABLE void setStore(ContentStore *contentStore);
 
     com::ubuntu::content::Transfer *transfer() const;
     void setTransfer(com::ubuntu::content::Transfer *transfer, Direction direction);
@@ -77,9 +86,11 @@ Q_SIGNALS:
     void stateChanged();
     void itemsChanged();
     void selectionTypeChanged();
+    void storeChanged();
 
 private Q_SLOTS:
     void updateState();
+    void updateStore();
     void updateSelectionType();
 
 private:
@@ -88,6 +99,7 @@ private:
     State m_state;
     Direction m_direction;
     SelectionType m_selectionType;
+    com::ubuntu::content::Store m_store;
 };
 
 #endif // COM_UBUNTU_CONTENTTRANSFER_H_

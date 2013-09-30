@@ -14,31 +14,32 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#ifndef COM_UBUNTU_CONTENTTYPE_H_
-#define COM_UBUNTU_CONTENTTYPE_H_
+#ifndef COM_UBUNTU_CONTENTSTORE_H_
+#define COM_UBUNTU_CONTENTSTORE_H_
 
-#include <com/ubuntu/content/type.h>
+#include <com/ubuntu/content/store.h>
 
 #include <QObject>
 #include <QString>
 
-class ContentType : public QObject
+class ContentStore : public QObject
 {
     Q_OBJECT
-    Q_ENUMS(Type)
+    Q_PROPERTY(QString uri READ uri NOTIFY uriChanged)
 
 public:
-    enum Type {
-        Unknown = 0,
-        Documents = 1,
-        Pictures = 2,
-        Music = 3
-    };
+    ContentStore(QObject *parent = nullptr);
 
-    ContentType(QObject *parent = nullptr);
+    const QString &uri() const;
 
-    static const com::ubuntu::content::Type &contentType2HubType(int type);
-    static const com::ubuntu::content::Type &contentType2HubType(Type type);
+    const com::ubuntu::content::Store *store() const;
+    void setStore(const com::ubuntu::content::Store *store);
+
+Q_SIGNALS:
+    void uriChanged();
+
+private:
+    const com::ubuntu::content::Store *m_store;
 };
 
-#endif // COM_UBUNTU_CONTENTTYPE_H_
+#endif // COM_UBUNTU_CONTENTSTORE_H_

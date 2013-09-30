@@ -21,6 +21,7 @@ include_directories(
   ${CMAKE_SOURCE_DIR}/src
   ${CMAKE_SOURCE_DIR}
   ${GLIB_INCLUDE_DIRS}
+  ${GIO_INCLUDE_DIRS}
   ${NIH_INCLUDE_DIRS}
   ${NIH_DBUS_INCLUDE_DIRS}
 )
@@ -95,6 +96,7 @@ target_link_libraries(content-hub
     ${UPSTART_LAUNCH_LDFLAGS}
     ${NIH_LIBRARIES}
     ${NIH_DBUS_LIBRARIES}
+    ${GIO_LIBRARIES}
 )
 
 install(

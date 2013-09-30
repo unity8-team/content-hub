@@ -1,3 +1,15 @@
+content-hub (0.0+13.10.20130930-0ubuntu1) saucy; urgency=low
+
+  [ Ken VanDine ]
+  * Pulled back in all the changes that were reverted in rev 47. Bug
+    (LP: #1231368) seemed to be caused by gallery-app needing a rebuild
+    against this version of content-hub. (LP: #1231368)
+
+  [ Ubuntu daily release ]
+  * Automatic snapshot from revision 49
+
+ -- Ubuntu daily release <ps-jenkins@lists.canonical.com>  Mon, 30 Sep 2013 20:00:26 +0000
+
 content-hub (0.0+13.10.20130927-0ubuntu1) saucy; urgency=low
 
   [ Sebastien Bacher ]

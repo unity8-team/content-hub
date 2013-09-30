@@ -18,6 +18,8 @@
 
 #include "example.h"
 
+#include <com/ubuntu/content/store.h>
+
 Example::Example(QObject *parent) :
     QObject(parent),
     m_importer(new ExampleImporter())
@@ -27,12 +29,20 @@ Example::Example(QObject *parent) :
 void Example::create_import()
 {
     auto hub = cuc::Hub::Client::instance();
+
     auto peer = hub->default_peer_for_type(cuc::Type::Known::pictures());
-    qDebug() << Q_FUNC_INFO << "PEER: " << peer.id();
+    qDebug() << Q_FUNC_INFO << "PEER: " << peer.name();
 
     m_transfer = hub->create_import_for_type_from_peer(
         cuc::Type::Known::pictures(),
         peer);
+
+    /* Uncommit this for persistent storage
+    auto store = hub->store_for_scope_and_type(cuc::Scope::app, cuc::Type::Known::pictures());
+    qDebug() << Q_FUNC_INFO << "STORE:" << store->uri();
+    m_transfer->setStore(store);
+    */
+
     m_transfer->setSelectionType(cuc::Transfer::SelectionType::multiple);
     m_transfer->start();
 }

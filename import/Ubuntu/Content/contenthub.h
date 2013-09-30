@@ -23,6 +23,7 @@
 #include <QQmlListProperty>
 
 class ContentPeer;
+class ContentStore;
 class ContentTransfer;
 class QmlImportExportHandler;
 
@@ -31,6 +32,7 @@ namespace ubuntu {
 namespace content {
 class Hub;
 class Peer;
+class Store;
 class Type;
 class Transfer;
 }
@@ -47,6 +49,8 @@ public:
 
     Q_INVOKABLE ContentPeer *defaultSourceForType(int type);
     Q_INVOKABLE QList<ContentPeer *> knownSourcesForType(int type);
+
+    Q_INVOKABLE ContentStore *defaultStoreForType(int type);
 
     Q_INVOKABLE ContentTransfer* importContent(int type);
     Q_INVOKABLE ContentTransfer* importContent(int type, ContentPeer *peer);

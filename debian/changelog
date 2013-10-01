@@ -1,3 +1,13 @@
+content-hub (0.0+13.10.20131001-0ubuntu1) saucy; urgency=low
+
+  [ Ken VanDine ]
+  * Added basic pkgconfig file .
+
+  [ Ubuntu daily release ]
+  * Automatic snapshot from revision 51
+
+ -- Ubuntu daily release <ps-jenkins@lists.canonical.com>  Tue, 01 Oct 2013 00:20:01 +0000
+
 content-hub (0.0+13.10.20130930-0ubuntu1) saucy; urgency=low
 
   [ Ken VanDine ]

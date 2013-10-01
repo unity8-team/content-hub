@@ -61,3 +61,9 @@ Example usage - Importing Pictures
 ----------------------------------
 
 \snippet acceptance-tests/app_hub_communication_transfer.cpp Importing pictures
+
+
+Example usage - Exporting Pictures
+----------------------------------
+
+\snippet acceptance-tests/app_hub_communication_transfer.cpp Exporting pictures

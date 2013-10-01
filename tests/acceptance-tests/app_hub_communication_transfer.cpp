@@ -91,7 +91,7 @@ TEST(Hub, transfer_creation_and_states_work)
         
         auto mock = new ::testing::NiceMock<MockedPeerRegistry>{};
         EXPECT_CALL(*mock, default_peer_for_type(_)).
-        Times(Exactly(1)).
+        Times(Exactly(2)).
         WillRepeatedly(Return(cuc::Peer{default_peer_id}));
         
         QSharedPointer<cucd::PeerRegistry> registry{mock};
@@ -149,6 +149,38 @@ TEST(Hub, transfer_creation_and_states_work)
             EXPECT_EQ(cuc::Transfer::charged, transfer->state());
             EXPECT_EQ(expected_items, transfer->collect());
             /** [Importing pictures] */
+            hub->quit();
+        });
+        harness.add_test_case([]()
+        {
+            QVector<cuc::Item> source_items;
+            source_items << cuc::Item(QUrl::fromLocalFile(QFileInfo("file1").absoluteFilePath()));
+            source_items << cuc::Item(QUrl::fromLocalFile(QFileInfo("file2").absoluteFilePath()));
+            source_items << cuc::Item(QUrl::fromLocalFile(QFileInfo("file3").absoluteFilePath()));
+
+            QVector<cuc::Item> expected_items;
+            expected_items << cuc::Item(QUrl("file:///tmp/Outgoing/file1"));
+            expected_items << cuc::Item(QUrl("file:///tmp/Outgoing/file2"));
+            expected_items << cuc::Item(QUrl("file:///tmp/Outgoing/file3"));
+
+            /** [Exporting pictures] */
+            auto hub = cuc::Hub::Client::instance();
+            auto transfer = hub->create_export_for_type_from_peer(
+                cuc::Type::Known::pictures(),
+                hub->default_peer_for_type(cuc::Type::Known::pictures()));
+            ASSERT_TRUE(transfer != nullptr);
+            EXPECT_EQ(cuc::Transfer::created, transfer->state());
+            EXPECT_TRUE(transfer->setSelectionType(cuc::Transfer::SelectionType::multiple));
+            ASSERT_EQ(cuc::Transfer::SelectionType::multiple, transfer->selectionType());
+            transfer->setStore(new cuc::Store{"/tmp/Outgoing"});
+            EXPECT_TRUE(transfer->start());
+            EXPECT_EQ(cuc::Transfer::initiated, transfer->state());
+            EXPECT_TRUE(transfer->setSelectionType(cuc::Transfer::SelectionType::single));
+            ASSERT_EQ(cuc::Transfer::SelectionType::multiple, transfer->selectionType());
+            EXPECT_TRUE(transfer->charge(source_items));
+            EXPECT_EQ(cuc::Transfer::charged, transfer->state());
+            EXPECT_EQ(expected_items, transfer->collect());
+            /** [Exporting pictures] */
             hub->quit();
         });
         EXPECT_EQ(0, QTest::qExec(std::addressof(harness)));

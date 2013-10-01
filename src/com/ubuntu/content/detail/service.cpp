@@ -216,6 +216,50 @@ QDBusObjectPath cucd::Service::CreateImportForTypeFromPeer(const QString& type_i
     return QDBusObjectPath{destination};
 }
 
+QDBusObjectPath cucd::Service::CreateExportForTypeFromPeer(const QString& type_id, const QString& peer_id, const QString& source_id)
+{
+    qDebug() << Q_FUNC_INFO;
+
+    static size_t import_counter{0}; import_counter++;
+
+    QString app_id = source_id;
+    if (app_id.isEmpty())
+    {
+        qDebug() << Q_FUNC_INFO << "APP_ID isnt' set, attempting to get it from AppArmor";
+        app_id = aa_profile(this->message().service());
+    }
+
+    qDebug() << Q_FUNC_INFO << "APP_ID:" << app_id;
+
+    QUuid uuid{QUuid::createUuid()};
+
+    auto transfer = new cucd::Transfer(import_counter, app_id, peer_id, this);
+    new TransferAdaptor(transfer);
+    d->active_transfers.insert(transfer);
+
+    auto destination = transfer->import_path();
+    auto source = transfer->export_path();
+    if (not d->connection.registerObject(destination, transfer))
+        qDebug() << "Problem registering object for path: " << destination;
+    d->connection.registerObject(source, transfer);
+
+    qDebug() << "Created transfer " << source << " -> " << destination;
+
+    connect(transfer, SIGNAL(StateChanged(int)), this, SLOT(handle_transfer(int)));
+
+    /* watch for handlers */
+    m_watcher->addWatchedService(handler_address(app_id));
+    qDebug() << Q_FUNC_INFO << "Watches:" << m_watcher->watchedServices();
+    this->connect_export_handler(app_id, source);
+    this->connect_import_handler(peer_id, destination);
+
+    Q_UNUSED(type_id);
+
+    d->app_manager->invoke_application(transfer->destination().toStdString());
+
+    return QDBusObjectPath{source};
+}
+
 void cucd::Service::handle_transfer(int state)
 {
     qDebug() << Q_FUNC_INFO;

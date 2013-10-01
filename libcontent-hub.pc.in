@@ -1,0 +1,8 @@
+prefix=@prefix@
+exec_prefix=@exec_prefix@
+libdir=@libdir@
+
+Name: @pkg-name@
+Description: content sharing/picking library
+Version: @CONTENT_HUB_VERSION@
+Libs: -L${libdir} -lcontent-hub

@@ -67,6 +67,8 @@ pkg_check_modules(NIH_DBUS REQUIRED libnih-dbus)
 set(CONTENT_HUB_VERSION_MAJOR 0)
 set(CONTENT_HUB_VERSION_MINOR 0)
 set(CONTENT_HUB_VERSION_PATCH 1)
+set(CONTENT_HUB_VERSION "${CONTENT_HUB_VERSION_MAJOR}.${CONTENT_HUB_VERSION_MINOR}.${CONTENT_HUB_VERSION_PATCH}")
+
 
 include_directories(include)
 
@@ -77,6 +79,14 @@ add_subdirectory(examples)
 add_subdirectory(tests)
 
 install(DIRECTORY include DESTINATION ${CMAKE_INSTALL_PREFIX})
+
+# Build and install a pkg-config file
+set(prefix ${CMAKE_INSTALL_PREFIX})
+set(exec_prefix ${prefix}/bin)
+set(libdir ${prefix}/${CMAKE_INSTALL_LIBDIR})
+set(pkg-name "libcontent-hub")
+configure_file(libcontent-hub.pc.in libcontent-hub.pc @ONLY)
+install(FILES ${CMAKE_CURRENT_BINARY_DIR}/libcontent-hub.pc DESTINATION ${CMAKE_INSTALL_LIBDIR}/pkgconfig)
 
 # There's no nice way to format this. Thanks CMake.
 add_test(LGPL-required

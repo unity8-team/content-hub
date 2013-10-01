@@ -144,7 +144,7 @@ QString cucd::Service::DefaultPeerForType(const QString& type_id)
 
 void cucd::Service::connect_export_handler(const QString& peer_id, const QString& transfer)
 {
-    qDebug() << Q_FUNC_INFO;
+    qDebug() << Q_FUNC_INFO << peer_id;
 
     cuc::dbus::Handler *h = new cuc::dbus::Handler(
                 handler_address(peer_id),
@@ -159,7 +159,7 @@ void cucd::Service::connect_export_handler(const QString& peer_id, const QString
 
 void cucd::Service::connect_import_handler(const QString& peer_id, const QString& transfer)
 {
-    qDebug() << Q_FUNC_INFO;
+    qDebug() << Q_FUNC_INFO << peer_id;
 
     cuc::dbus::Handler *h = new cuc::dbus::Handler(
                 handler_address(peer_id),
@@ -246,7 +246,7 @@ QDBusObjectPath cucd::Service::CreateExportForTypeFromPeer(const QString& type_i
     connect(transfer, SIGNAL(StateChanged(int)), this, SLOT(handle_transfer(int)));
 
     /* watch for handlers */
-    m_watcher->addWatchedService(handler_address(app_id));
+    m_watcher->addWatchedService(handler_address(peer_id));
     qDebug() << Q_FUNC_INFO << "Watches:" << m_watcher->watchedServices();
     this->connect_export_handler(app_id, source);
     this->connect_import_handler(peer_id, destination);

@@ -25,6 +25,7 @@
 #include <com/ubuntu/content/peer.h>
 #include <com/ubuntu/content/type.h>
 
+#include <QStandardPaths>
 #include <QDebug>
 
 /*!
@@ -236,6 +237,11 @@ QQmlListProperty<ContentTransfer> ContentHub::finishedImports()
 void ContentHub::handleImport(com::ubuntu::content::Transfer *transfer)
 {
     qDebug() << Q_FUNC_INFO;
+    if (transfer->store().uri().isEmpty())
+    {
+        const cuc::Store *store = new cuc::Store{QStandardPaths::writableLocation(QStandardPaths::CacheLocation) + "/HubIncoming/" + QString::number(transfer->id()), this};
+        transfer->setStore(store);
+    }
     ContentTransfer *qmlTransfer = nullptr;
     if (m_activeImports.contains(transfer)) {
         qmlTransfer = m_activeImports.take(transfer);

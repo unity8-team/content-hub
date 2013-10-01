@@ -134,22 +134,30 @@ void cucd::Transfer::Charge(const QStringList& items)
     if (d->state == cuc::Transfer::charged)
         return;
 
-    QStringList ret;
-    Q_FOREACH(QString i, items)
-        ret.append(copy_to_store(i, d->store));
-
-    Q_FOREACH(QString f, ret)
-        qDebug() << Q_FUNC_INFO << "Item:" << f;
-
-    if (ret.count() <= 0)
+    if (d->store.isEmpty())
     {
-        qWarning() << "Failed to charge items, aborting";
-        d->state = cuc::Transfer::aborted;
+        d->items = items;
+        d->state = cuc::Transfer::charged;
     }
     else
     {
-        d->items = ret;
-        d->state = cuc::Transfer::charged;
+        QStringList ret;
+        Q_FOREACH(QString i, items)
+            ret.append(copy_to_store(i, d->store));
+
+        Q_FOREACH(QString f, ret)
+            qDebug() << Q_FUNC_INFO << "Item:" << f;
+
+        if (ret.count() <= 0)
+        {
+            qWarning() << "Failed to charge items, aborting";
+            d->state = cuc::Transfer::aborted;
+        }
+        else
+        {
+            d->items = ret;
+            d->state = cuc::Transfer::charged;
+        }
     }
     Q_EMIT(StateChanged(d->state));
 }
@@ -190,10 +198,17 @@ void cucd::Transfer::SetStore(QString uri)
 {
     qDebug() << Q_FUNC_INFO;
 
-    if (d->store == uri)
+    if (d->store == uri || d->state == cuc::Transfer::collected)
         return;
 
     d->store = uri;
+    if (d->items.count() > 0)
+    {
+        QStringList ret;
+        Q_FOREACH(QString i, d->items)
+            ret.append(copy_to_store(i, d->store));
+        d->items = ret;
+    }
     Q_EMIT(StoreChanged(d->store));
 }
 

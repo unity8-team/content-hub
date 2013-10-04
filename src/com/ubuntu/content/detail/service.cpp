@@ -211,8 +211,6 @@ QDBusObjectPath cucd::Service::CreateImportForTypeFromPeer(const QString& type_i
 
     Q_UNUSED(type_id);
 
-    d->app_manager->invoke_application(transfer->source().toStdString());
-
     return QDBusObjectPath{destination};
 }
 
@@ -230,6 +228,7 @@ void cucd::Service::handle_transfer(int state)
     if (state == cuc::Transfer::initiated)
     {
         qDebug() << Q_FUNC_INFO << "Initiated";
+        d->app_manager->invoke_application(transfer->source().toStdString());
         this->connect_export_handler(transfer->source(), transfer->export_path());
     }
 }

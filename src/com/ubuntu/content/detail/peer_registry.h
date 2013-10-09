@@ -42,9 +42,13 @@ class PeerRegistry
 
     virtual Peer default_peer_for_type(Type) = 0;
     virtual void enumerate_known_peers_for_type(Type, const std::function<void(const Peer&)>& for_each) = 0;
+    virtual void enumerate_known_peers(const std::function<void(const Peer&)>& for_each) = 0;
 
     virtual bool install_default_peer_for_type(Type, Peer) = 0;
     virtual bool install_peer_for_type(Type, Peer) = 0;
+    virtual bool remove_peer(Peer peer) = 0;
+
+
 };
 }
 }

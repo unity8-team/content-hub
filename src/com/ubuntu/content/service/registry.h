@@ -36,8 +36,10 @@ public:
     ~Registry();
     cuc::Peer default_peer_for_type(cuc::Type type);
     void enumerate_known_peers_for_type(cuc::Type type, const std::function<void(const cuc::Peer&)>& for_each);
+    void enumerate_known_peers(const std::function<void(const cuc::Peer&)>& for_each);
     bool install_default_peer_for_type(cuc::Type type, cuc::Peer peer);
     bool install_peer_for_type(cuc::Type type, cuc::Peer peer);    
+    bool remove_peer(cuc::Peer peer);
 
 private:
     QScopedPointer<QGSettings> m_defaultPeers;

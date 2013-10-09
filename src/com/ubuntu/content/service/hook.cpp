@@ -24,54 +24,95 @@
 #include <QStandardPaths>
 #include <QDebug>
 #include <QTimer>
+#include <com/ubuntu/content/peer.h>
 
 #include "hook.h"
 
-Hook::Hook(QString app_id, QObject *parent) :
+Hook::Hook(QObject *parent) :
     QObject(parent),
-    app_id(app_id),
     registry(new Registry())
 {
-    qDebug() << Q_FUNC_INFO;
     QTimer::singleShot(200, this, SLOT(run()));
+}
+
+
+Hook::Hook(com::ubuntu::content::detail::PeerRegistry *registry, QObject *parent) :
+    QObject(parent),
+    registry(registry)
+{
 }
 
 void Hook::run()
 {
     qDebug() << Q_FUNC_INFO;
-
-    /* FIXME: we should do a sanity check on this before installing */
-    auto peer = cuc::Peer(app_id);
+    /* Looks for files in ${HOME}/.local/share/content-hub/${id} installed
+     * by click packages.  These files are JSON, for example:
+     *
+     * {
+     *     "source": [
+     *         "pictures",
+     *         "music"
+     *     ]
+     * }
+     *
+     * The hook also iterates known peers and removes them if there is
+     * no JSON file installed in this path.
+     */
 
     QDir contentDir(
-        QStandardPaths::writableLocation(QStandardPaths::GenericCacheLocation)
+        QStandardPaths::writableLocation(QStandardPaths::GenericDataLocation)
         + QString("/")
         + QString("content-hub"));
 
-    qDebug() << contentDir.absolutePath();
     if (not contentDir.exists())
         return_error();
 
-    const QString file = contentDir.filePath(peer.id() + QString("-content.json"));
+    QStringList all_peers;
+    registry->enumerate_known_peers([&all_peers](const com::ubuntu::content::Peer& peer)
+                                    {
+                                        all_peers.append(peer.id());
+                                    });
 
-    QFile contentJson(file);
+    Q_FOREACH(QString p, all_peers)
+    {
+        qDebug() << Q_FUNC_INFO << "Looking for" << p;
+        QStringList pp = contentDir.entryList(QStringList("*"+ p));
+        if (pp.isEmpty())
+            registry->remove_peer(com::ubuntu::content::Peer{p});
+    }
+
+    Q_FOREACH(QFileInfo f, contentDir.entryInfoList(QDir::Files))
+        add_peer(f);
+
+    QCoreApplication::instance()->quit();
+}
+
+bool Hook::add_peer(QFileInfo result)
+{
+    qDebug() << Q_FUNC_INFO << "Hook:" << result.filePath();
+
+    QString app_id = result.fileName();
+    auto peer = cuc::Peer(app_id);
+
+    QFile contentJson(result.absoluteFilePath());
     if (!contentJson.open(QIODevice::ReadOnly | QIODevice::Text))
-        return_error("couldn't open " + QString(file));
+        return_error("couldn't open " + result.absoluteFilePath());
 
     QJsonParseError *e = new QJsonParseError();
     QJsonDocument contentDoc = QJsonDocument::fromJson(contentJson.readAll(), e);
 
     if (e->error != 0)
-        return_error(e->errorString());
+        return return_error(e->errorString());
 
     if (not contentDoc.isObject())
-        return_error("invalid JSON object");
-
+        return return_error("invalid JSON object");
 
     QJsonObject contentObj = contentDoc.object();
     QVariant sources = contentObj.toVariantMap()["source"];
     Q_FOREACH(QString source, sources.toStringList())
     {
+        /* FIXME: we should iterate known types, but there isn't
+         * really a good way to do that right now */
         if (source == "pictures")
         {
             if (not registry->install_peer_for_type(cuc::Type::Known::pictures(), peer))
@@ -88,12 +129,11 @@ void Hook::run()
                 qWarning() << "Failed to install peer for" << source;
         }
     }
-
-    QCoreApplication::instance()->quit();
+    return true;
 }
 
-void Hook::return_error(QString err)
+bool Hook::return_error(QString err)
 {
     qWarning() << "Failed to install peer" << err;
-    QCoreApplication::instance()->exit(1);
+    return false;
 }

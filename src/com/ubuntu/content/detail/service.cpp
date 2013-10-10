@@ -124,14 +124,14 @@ void cucd::Service::Quit()
 QStringList cucd::Service::KnownPeersForType(const QString& type_id)
 {
     QStringList result;
-    
+
     d->registry->enumerate_known_peers_for_type(
         Type(type_id),
         [&result](const Peer& peer)
         {
             result.append(peer.id());
         });
-    
+
     return result;
 }
 
@@ -219,18 +219,35 @@ void cucd::Service::handle_transfer(int state)
     qDebug() << Q_FUNC_INFO;
     cucd::Transfer *transfer = static_cast<cucd::Transfer*>(sender());
 
+    if (state == cuc::Transfer::initiated)
+    {
+        qDebug() << Q_FUNC_INFO << "Initiated";
+        if (d->app_manager->is_application_started(transfer->source().toStdString()))
+            transfer->SetSourceStartedByContentHub(false);
+        else
+            transfer->SetSourceStartedByContentHub(true);
+
+        d->app_manager->invoke_application(transfer->source().toStdString());
+        this->connect_export_handler(transfer->source(), transfer->export_path());
+    }
+
     if (state == cuc::Transfer::charged)
     {
         qDebug() << Q_FUNC_INFO << "Charged";
         d->app_manager->invoke_application(transfer->destination().toStdString());
+
+        if (transfer->WasSourceStartedByContentHub())
+            d->app_manager->stop_application(transfer->source().toStdString());
+
         this->connect_import_handler(transfer->destination(), transfer->import_path());
     }
 
-    if (state == cuc::Transfer::initiated)
+    if (state == cuc::Transfer::aborted)
     {
-        qDebug() << Q_FUNC_INFO << "Initiated";
-        d->app_manager->invoke_application(transfer->source().toStdString());
-        this->connect_export_handler(transfer->source(), transfer->export_path());
+        d->app_manager->invoke_application(transfer->destination().toStdString());
+
+        if (transfer->WasSourceStartedByContentHub())
+            d->app_manager->stop_application(transfer->source().toStdString());
     }
 }
 

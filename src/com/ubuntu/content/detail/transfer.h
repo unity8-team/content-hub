@@ -46,7 +46,10 @@ class Transfer : public QObject
 
     Transfer& operator=(const Transfer&) = delete;
 
-  Q_SIGNALS:
+    void SetSourceStartedByContentHub(bool started);
+    bool WasSourceStartedByContentHub() const;
+
+Q_SIGNALS:
     void StateChanged(int State);
     void StoreChanged(QString Store);
     void SelectionTypeChanged(int SelectionType);

@@ -1,3 +1,24 @@
+content-hub (0.0+13.10.20131011-0ubuntu1) saucy; urgency=low
+
+  [ Ken VanDine ]
+  * Make libcontent-hub0 recommend content-hub .
+  * invoke the destination when the transfer is charged .
+  * Added a click hook, which iterates installed known peers, removing
+    them when they are no longer installed and adding peers when needed.
+
+  [ Robert Bruce Park ]
+  * New component for the importer to indicate an ongoing transfer.
+
+  [ Guenter Schwann ]
+  * New component for the importer to indicate an ongoing transfer.
+  * Quit the source app on charged/abort when it was started by the
+    content hub.
+
+  [ Ubuntu daily release ]
+  * Automatic snapshot from revision 60
+
+ -- Ubuntu daily release <ps-jenkins@lists.canonical.com>  Fri, 11 Oct 2013 05:41:10 +0000
+
 content-hub (0.0+13.10.20131007-0ubuntu1) saucy; urgency=low
 
   [ Ken VanDine ]

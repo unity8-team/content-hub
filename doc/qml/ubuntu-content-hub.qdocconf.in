@@ -1,7 +1,7 @@
 project = Ubuntu Content QML API
 description = Ubuntu Content API
 
-sourcedirs = @CMAKE_SOURCE_DIR@/import
+sourcedirs = @CMAKE_CURRENT_SOURCE_DIR@/pages @CMAKE_SOURCE_DIR@/import
 exampledirs = @CMAKE_SOURCE_DIR@/examples/
 imagedirs = @CMAKE_CURRENT_SOURCE_DIR@/../images
 

@@ -1,0 +1,27 @@
+/*!
+\page index.html overview
+\title Ubuntu Content API
+
+\contentspage {Ubuntu Content API} {Contents}
+
+\part Introduction
+
+FIXME: Add intro
+
+\part General Topics
+\list
+    \li \l {ContentHub}
+    \li \l {ContentTransfer}
+    \li \l {ContentImportHint}
+    \li \l {ContentType}
+\endlist
+
+\part Reporting Bugs
+If you find any problems with the or this documentation,
+please file a bug in Ubuntu Content API \l {https://bugs.launchpad.net/content-hub} {Launchpad page}
+
+\part Components
+Available through:
+\code
+    import Ubuntu.Content 0.1
+\endcode

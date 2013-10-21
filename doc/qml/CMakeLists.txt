@@ -15,8 +15,10 @@ file(COPY "${CMAKE_CURRENT_SOURCE_DIR}/css"
 
 install(
   DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}/html/
-  DESTINATION ${CMAKE_INSTALL_DOCDIR}/qml/
+  DESTINATION ${CMAKE_INSTALL_DOCDIR}/qml/html
 )
+
+add_dependencies(doc qmldoc)
 
 endif(QDOC_EXECUTABLE)
 

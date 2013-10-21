@@ -28,6 +28,32 @@ class ContentType : public QObject
     Q_ENUMS(Type)
 
 public:
+    /*!
+      \qmlproperty Type Type
+      \brief ContentType::Type well known ContentType
+      \e {Type} is an enumeration:
+      \list
+        \li \b{Type.Unknown}: Unknown type
+        \li \b{Type.Documents}: Documents
+        \li \b{Type.Pictures}: Pictures
+        \li \b{Type.Music}: Music
+      \endlist
+     */
+    / *!
+        \enum ContentType::Type
+
+        This enum well known content types:
+
+        \value Unknown
+               The top-left corner of the rectangle.
+        \value Documents
+               The top-right corner of the rectangle.
+        \value Pictures
+               The bottom-left corner of the rectangle.
+        \value Music
+               The bottom-right corner of the rectangle.
+
+    * /
     enum Type {
         Unknown = 0,
         Documents = 1,

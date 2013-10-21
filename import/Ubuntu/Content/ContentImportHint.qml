@@ -28,7 +28,7 @@ import Ubuntu.Content 0.1
     application is active. It blocks all input during that time.
     Place this component on top of your view.
 
-    See documentation for \ContentHub to see an example
+    See documentation for ContentHub to see an example
 */
 Item {
     id: root

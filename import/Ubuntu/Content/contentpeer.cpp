@@ -28,7 +28,7 @@
  *
  * FIXME add documentation
  *
- * See documentation for \ContentHub
+ * See documentation for ContentHub
  */
 
 namespace cuc = com::ubuntu::content;
@@ -65,7 +65,7 @@ const QString &ContentPeer::type() const
 
 /*!
  * \brief ContentPeer::peer
- * \return
+ * \internal
  */
 const com::ubuntu::content::Peer &ContentPeer::peer() const
 {
@@ -74,7 +74,7 @@ const com::ubuntu::content::Peer &ContentPeer::peer() const
 
 /*!
  * \brief ContentPeer::setPeer
- * \param peer
+ * \internal
  */
 void ContentPeer::setPeer(const cuc::Peer &peer)
 {

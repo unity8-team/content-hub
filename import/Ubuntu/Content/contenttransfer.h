@@ -50,10 +50,20 @@ public:
         Aborted = com::ubuntu::content::Transfer::aborted,
         Finalized = com::ubuntu::content::Transfer::finalized
     };
+    / *!
+      * \variable ContentTransfer::Direction
+      *
+      * The Direction (Import or Export) of the ContentTransfer
+      * /
     enum Direction {
         Import,
         Export
     };
+    / *!
+      * \variable ContentTransfer::SelectionType
+      *
+      * The selection type (Single or Multiple) when the ContentTransfer
+      * /
     enum SelectionType {
         Single = com::ubuntu::content::Transfer::SelectionType::single,
         Multiple = com::ubuntu::content::Transfer::SelectionType::multiple

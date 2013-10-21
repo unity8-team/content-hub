@@ -26,7 +26,7 @@
  *
  * FIXME add documentation
  *
- * See documentation for \ContentHub
+ * See documentation for ContentHub
  */
 
 namespace cuc = com::ubuntu::content;
@@ -51,7 +51,7 @@ const QString &ContentStore::uri() const
 
 /*!
  * \brief ContentStore::store
- * \return
+ * \internal
  */
 const com::ubuntu::content::Store *ContentStore::store() const
 {
@@ -61,7 +61,7 @@ const com::ubuntu::content::Store *ContentStore::store() const
 
 /*!
  * \brief ContentStore::setStore
- * \param store
+ * \internal
  */
 void ContentStore::setStore(const com::ubuntu::content::Store *store)
 {

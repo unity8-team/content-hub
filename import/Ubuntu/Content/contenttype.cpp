@@ -19,17 +19,34 @@
 #include <QDebug>
 
 /*!
- * \qmltype ContentType
- * \instantiates ContentType
- * \inqmlmodule Ubuntu.Content 0.1
- * \brief FIXME add documentation
- *
- * FIXME add documentation
- *
- * See documentation for \ContentHub
+   \qmltype ContentType
+   \instantiates ContentType
+   \inqmlmodule Ubuntu.Content 0.1
+
+   \sa ContentHub
+
+   \e {ContentType} is an enumeration of well known content types:
+   \table
+   \header
+     \li Type
+     \li Description
+   \row
+     \li ContentType.Uknown
+     \li Unknown type
+   \row
+     \li ContentType.Documents
+     \li Documents
+   \row
+     \li ContentType.Pictures
+     \li Pictures
+   \row
+     \li ContentType.Music
+     \li Music
+   \endtable
  */
 
 namespace cuc = com::ubuntu::content;
+
 
 ContentType::ContentType(QObject *parent)
     : QObject(parent)
@@ -37,11 +54,11 @@ ContentType::ContentType(QObject *parent)
     qDebug() << Q_FUNC_INFO;
 }
 
+
 /*!
  * \brief ContentType::contentType2HubType converts a ContentType::Type to a
  * com::ubuntu::content::Type
- * \param type integer representing a ContentType::Type
- * \return
+ * \internal
  */
 const com::ubuntu::content::Type &ContentType::contentType2HubType(int type)
 {
@@ -53,8 +70,7 @@ const com::ubuntu::content::Type &ContentType::contentType2HubType(int type)
 /*!
  * \brief ContentType::contentType2HubType converts a ContentType::Type to a
  * com::ubuntu::content::Type
- * \param type type of the content
- * \return
+ * \internal
  */
 const com::ubuntu::content::Type &ContentType::contentType2HubType(Type type)
 {

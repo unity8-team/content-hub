@@ -113,7 +113,7 @@ ContentHub::ContentHub(QObject *parent)
 /*!
  * \qmlmethod ContentHub::defaultSourceForType()
  *
- *  Returns the default peer for the given content \a type
+ *  Returns the default ContentPeer for the given ContentType
  */
 ContentPeer *ContentHub::defaultSourceForType(int type)
 {
@@ -128,6 +128,11 @@ ContentPeer *ContentHub::defaultSourceForType(int type)
     return qmlPeer;
 }
 
+/*!
+ * \qmlmethod ContentHub::defaultStoreForType(ContentStore)
+ *
+ *  Returns the default ContentStore for the given ContentType
+ */
 ContentStore *ContentHub::defaultStoreForType(int type)
 {
     qDebug() << Q_FUNC_INFO;
@@ -144,9 +149,9 @@ ContentStore *ContentHub::defaultStoreForType(int type)
 }
 
 /*!
- * \qmlmethod ContentHub::knownSourcesForType()
+ * \qmlmethod ContentHub::knownSourcesForType(ContentType)
  *
- *  Returns all possible peers for the given content \a type
+ *  Returns all possible peers for the given ContentType
  */
 QList<ContentPeer *> ContentHub::knownSourcesForType(int type)
 {
@@ -166,9 +171,11 @@ QList<ContentPeer *> ContentHub::knownSourcesForType(int type)
 }
 
 /*!
- * \qmlmethod ContentHub::importContent()
+ * \qmlmethod ContentHub::importContent(ContentType)
  *
- * Start a request to import data of \a type from a peer, the user needs to select
+ * \brief Start a request to import data of ContentType from the default 
+ * ContentPeer for the ContentType
+ * \a ContentType
  */
 ContentTransfer *ContentHub::importContent(int type)
 {
@@ -182,9 +189,11 @@ ContentTransfer *ContentHub::importContent(int type)
 }
 
 /*!
- * \qmlmethod ContentHub::importContent()
+ * \overload ContentHub::importContent(ContentType, ContentPeer)
  *
- * Start a request to import data of \a type from the given \peer
+ * \brief Start a request to import data of \a type from the given \a peer
+ * \a ContentType
+ * \a ContentPeer
  */
 ContentTransfer *ContentHub::importContent(int type, ContentPeer *peer)
 {
@@ -196,9 +205,9 @@ ContentTransfer *ContentHub::importContent(int type, ContentPeer *peer)
 
 /*!
  * \brief ContentHub::importContent creates a ContentTransfer object
- * \param type
- * \param peer
- * \return
+ * \a type
+ * \a peer
+ * \internal
  */
 ContentTransfer* ContentHub::importContent(const com::ubuntu::content::Type &hubType,
                                            const com::ubuntu::content::Peer &hubPeer)
@@ -237,7 +246,7 @@ QQmlListProperty<ContentTransfer> ContentHub::finishedImports()
 
 /*!
  * \brief ContentHub::handleImport handles an incoming request for importing content
- * \param transfer
+ * \internal
  */
 void ContentHub::handleImport(com::ubuntu::content::Transfer *transfer)
 {
@@ -257,7 +266,7 @@ void ContentHub::handleImport(com::ubuntu::content::Transfer *transfer)
 
 /*!
  * \brief ContentHub::handleExport handles an incoming request for exporting content
- * \param transfer
+ * \internal
  */
 void ContentHub::handleExport(com::ubuntu::content::Transfer *transfer)
 {

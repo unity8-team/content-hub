@@ -29,7 +29,7 @@
  *
  * FIXME add documentation
  *
- * See documentation for \ContentHub
+ * See documentation for ContentHub
  */
 
 namespace cuc = com::ubuntu::content;
@@ -46,9 +46,36 @@ ContentTransfer::ContentTransfer(QObject *parent)
 }
 
 /*!
- * \qmlproperty string ContentTransfer::state
- *
- * FIXME add documentation
+   \qmlproperty ContentTransfer.State ContentTransfer::state
+
+   \table
+   \header
+     \li {2, 1} \e {ContentTransfer.State} is an enumeration:
+   \header
+     \li State
+     \li Description
+   \row
+     \li ContentTransfer.Created
+     \li Transfer created, waiting to be initiated.
+   \row
+     \li ContentTransfer.Initiated
+     \li Transfer has been initiated.
+   \row
+     \li ContentTransfer.InProgress
+     \li Transfer is in progress.
+   \row
+     \li ContentTransfer.Charged
+     \li Transfer is charged with items and ready to be collected.
+   \row
+     \li ContentTransfer.Collected
+     \li Items in the transfer have been collected.
+   \row
+     \li ContentTransfer.Aborted
+     \li Transfer has been aborted.
+   \row
+     \li ContentTransfer.Finalized
+     \li Transfer has been finished and cleaned up.
+   \endtable
  */
 ContentTransfer::State ContentTransfer::state() const
 {
@@ -73,9 +100,22 @@ void ContentTransfer::setState(ContentTransfer::State state)
 }
 
 /*!
- * \brief ContentTransfer::direction indicates if this transferobject is used for
- * import or export transaction
- * \return
+  \qmlproperty ContentTransfer.Direction ContentTransfer::direction
+  \brief ContentTransfer::direction indicates if this transferobject is used for
+  import or export transaction
+  \table
+  \header
+     \li {2, 1} \e {ContentTransfer.Direction} is an enumeration:
+  \header
+    \li Direction
+    \li Description
+  \row
+    \li ContentTransfer.Import
+    \li Transfer is a request to import content.
+  \row
+    \li ContentTransfer.Export
+    \li Transfer is a request to export content.
+  \endtable
  */
 ContentTransfer::Direction ContentTransfer::direction() const
 {
@@ -83,9 +123,22 @@ ContentTransfer::Direction ContentTransfer::direction() const
 }
 
 /*!
- * \brief ContentTransfer::selectionType indicates if this transferobject is allows
- * single or multiple selection of items
- * \return
+  \qmlproperty ContentTransfer.SelectionType ContentTransfer::selectionType
+  \brief ContentTransfer::selectionType indicates if this transfer object allows
+  single or multiple selection of items
+  \table
+  \header
+     \li {2, 1} \e {ContentTransfer.SelectionType} is an enumeration:
+  \header
+    \li Type
+    \li Description
+  \row
+    \li ContentTransfer.Single
+    \li Transfer should contain a single item.
+  \row
+    \li ContentTransfer.Multiple
+    \li Transfer can contain multiple items.
+  \endtable
  */
 ContentTransfer::SelectionType ContentTransfer::selectionType() const
 {
@@ -145,8 +198,8 @@ bool ContentTransfer::finalize()
 }
 
 /*!
- * \brief ContentTransfer::store
- * \return
+ * \qmlproperty string ContentTransfer::store
+ * FIXME add documentation
  */
 const QString ContentTransfer::store() const
 {
@@ -168,7 +221,7 @@ void ContentTransfer::setStore(ContentStore* contentStore)
 
 /*!
  * \brief ContentTransfer::transfer
- * \return
+ * \internal
  */
 com::ubuntu::content::Transfer *ContentTransfer::transfer() const
 {
@@ -178,7 +231,7 @@ com::ubuntu::content::Transfer *ContentTransfer::transfer() const
 
 /*!
  * \brief ContentTransfer::setTransfer
- * \param transfer
+ * \internal
  */
 void ContentTransfer::setTransfer(com::ubuntu::content::Transfer *transfer, Direction direction)
 {
@@ -211,6 +264,7 @@ void ContentTransfer::setTransfer(com::ubuntu::content::Transfer *transfer, Dire
 
 /*!
  * \brief ContentTransfer::collectItems gets the items out of the transfer object
+ * \internal
  */
 void ContentTransfer::collectItems()
 {
@@ -232,6 +286,7 @@ void ContentTransfer::collectItems()
 
 /*!
  * \brief ContentTransfer::updateState update the state from the hub transfer object
+ * \internal
  */
 void ContentTransfer::updateState()
 {
@@ -245,6 +300,7 @@ void ContentTransfer::updateState()
 
 /*!
  * \brief ContentTransfer::updateSelectionType update the selectionType from the hub transfer object
+ * \internal
  */
 void ContentTransfer::updateSelectionType()
 {
@@ -259,6 +315,7 @@ void ContentTransfer::updateSelectionType()
 
 /*!
  * \brief ContentTransfer::updateStore update the store from the hub transfer object
+ * \internal
  */
 void ContentTransfer::updateStore()
 {

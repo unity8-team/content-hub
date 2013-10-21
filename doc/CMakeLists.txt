@@ -28,3 +28,5 @@ if(DOXYGEN_FOUND)
     DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}/html
     DESTINATION share/doc/content-hub)
 endif(DOXYGEN_FOUND)
+
+add_subdirectory(qml)

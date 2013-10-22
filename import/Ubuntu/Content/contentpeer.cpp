@@ -91,5 +91,5 @@ void ContentPeer::setPeer(const cuc::Peer &peer)
 {
     m_peer = peer;
     Q_EMIT nameChanged();
-    Q_EMIT typeChanged();
+    Q_EMIT idChanged();
 }

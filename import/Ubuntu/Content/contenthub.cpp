@@ -31,9 +31,6 @@
  * \qmltype ContentHub
  * \instantiates ContentHub
  * \inqmlmodule Ubuntu.Content 0.1
- * \brief FIXME documentation
- *
- * FIXME documentation
  *
  * Example usage for importing content:
  * \qml
@@ -227,6 +224,7 @@ ContentTransfer* ContentHub::importContent(const com::ubuntu::content::Type &hub
  * \qmlmethod ContentHub::restoreImports()
  *
  *  FIXME add documentation
+ * \internal
  */
 void ContentHub::restoreImports()
 {
@@ -237,6 +235,7 @@ void ContentHub::restoreImports()
  * \qmlproperty list<ContentTransfer> ContentHub::finishedImports
  *
  * FIXME add documentation
+ * \internal
  */
 QQmlListProperty<ContentTransfer> ContentHub::finishedImports()
 {

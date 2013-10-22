@@ -63,18 +63,6 @@ const QString &ContentPeer::id() const
 }
 
 /*!
- * \qmlproperty string ContentPeer::type
- *
- * FIXME add documentation
- */
-const QString &ContentPeer::type() const
-{
-    qDebug() << Q_FUNC_INFO;
-    // FIXME return the type
-    return m_peer.id();
-}
-
-/*!
  * \brief ContentPeer::peer
  * \return
  */

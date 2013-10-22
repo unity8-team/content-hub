@@ -27,14 +27,12 @@ class ContentPeer : public QObject
     Q_OBJECT
     Q_PROPERTY(QString name READ name NOTIFY nameChanged)
     Q_PROPERTY(QString id READ id NOTIFY idChanged)
-    Q_PROPERTY(QString type READ type NOTIFY typeChanged)
 
 public:
     ContentPeer(QObject *parent = nullptr);
 
     QString name();
     const QString &id() const;
-    const QString &type() const;
 
     const com::ubuntu::content::Peer &peer() const;
     void setPeer(const com::ubuntu::content::Peer &peer);
@@ -42,7 +40,6 @@ public:
 Q_SIGNALS:
     void nameChanged();
     void idChanged();
-    void typeChanged();
 
 private:
     com::ubuntu::content::Peer m_peer;

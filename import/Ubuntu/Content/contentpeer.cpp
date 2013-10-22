@@ -59,7 +59,6 @@ QString ContentPeer::name()
 const QString &ContentPeer::id() const
 {
     qDebug() << Q_FUNC_INFO;
-    // FIXME return the type
     return m_peer.id();
 }
 

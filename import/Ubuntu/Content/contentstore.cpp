@@ -22,9 +22,6 @@
  * \qmltype ContentStore
  * \instantiates ContentStore
  * \inqmlmodule Ubuntu.Content 0.1
- * \brief FIXME add documentation
- *
- * FIXME add documentation
  *
  * See documentation for ContentHub
  */

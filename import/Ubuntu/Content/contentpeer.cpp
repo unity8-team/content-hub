@@ -43,7 +43,7 @@ ContentPeer::ContentPeer(QObject *parent)
 /*!
  * \qmlproperty string ContentPeer::name
  *
- * FIXME add documentation
+ * Returns user friendly name of the peer
  */
 const QString &ContentPeer::name() const
 {

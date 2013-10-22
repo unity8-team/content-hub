@@ -25,9 +25,6 @@
  * \qmltype ContentTransfer
  * \instantiates ContentTransfer
  * \inqmlmodule Ubuntu.Content 0.1
- * \brief FIXME add documentation
- *
- * FIXME add documentation
  *
  * See documentation for ContentHub
  */
@@ -159,7 +156,7 @@ void ContentTransfer::setSelectionType(ContentTransfer::SelectionType type)
 /*!
  * \qmlproperty list<ContentItem> ContentTransfer::items
  *
- * FIXME add documentation
+ * List of items included in the ContentTransfer
  */
 QQmlListProperty<ContentItem> ContentTransfer::items()
 {
@@ -173,7 +170,7 @@ QQmlListProperty<ContentItem> ContentTransfer::items()
 /*!
  * \qmlmethod ContentTransfer::start()
  *
- *  FIXME add documentation
+ *  Start the transfer, this sets the State to ContentTransfer.Initiated
  */
 bool ContentTransfer::start()
 {
@@ -189,7 +186,7 @@ bool ContentTransfer::start()
 /*!
  * \qmlmethod ContentTransfer::finalize()
  *
- *  FIXME add documentation
+ * Sets State to ContentTransfer.Finalized and cleans up temporary files
  */
 bool ContentTransfer::finalize()
 {
@@ -199,7 +196,7 @@ bool ContentTransfer::finalize()
 
 /*!
  * \qmlproperty string ContentTransfer::store
- * FIXME add documentation
+ * ContentStore where the ContentTransfer will add items
  */
 const QString ContentTransfer::store() const
 {

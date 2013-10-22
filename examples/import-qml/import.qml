@@ -12,21 +12,55 @@ MainView {
 
     property list<ContentItem> importItems
     property var activeTransfer
+    property var peers
+
+
+    function _importFromPeer(peer) {
+        /* if peer is null, choose default */
+        if (peer === null)
+            peer = ContentHub.defaultSourceForType(ContentType.Pictures);
+        var transfer = ContentHub.importContent(ContentType.Pictures, peer);
+        var store = ContentHub.defaultStoreForType(ContentType.Pictures);
+        console.log("Store is: " + store.uri);
+        if (transfer !== null) {
+            transfer.selectionType = ContentTransfer.Multiple;
+            transfer.setStore(store);
+            activeTransfer = transfer;
+            activeTransfer.start();
+        }
+    }
+
+    Component.onCompleted: {
+        peers = ContentHub.knownSourcesForType(ContentType.Pictures);
+    }
+
+    ListView {
+        id: peerList
+        anchors {
+            left: parent.left
+            right: parent.right
+            bottom: parent.bottom
+            top: importButton.bottom
+        }
+        visible: !resultList.visible
+        model: peers
+
+        delegate: Standard {
+            text: modelData.name
+            control: Button {
+                text: "Import"
+                onClicked: {
+                    _importFromPeer(modelData);
+                }
+            }
+        }
+    }
 
     Button {
         id: importButton
         text: "Import from default"
         onClicked: {
-            var peer = ContentHub.defaultSourceForType(ContentType.Pictures);
-            var transfer = ContentHub.importContent(ContentType.Pictures, peer);
-            var store = ContentHub.defaultStoreForType(ContentType.Pictures);
-            console.log("Store is: " + store.uri);
-            if (transfer !== null) {
-                transfer.selectionType = ContentTransfer.Multiple;
-                transfer.setStore(store);
-                activeTransfer = transfer;
-                activeTransfer.start();
-            }
+            _importFromPeer(null);
         }
     }
 
@@ -38,12 +72,14 @@ MainView {
     }
 
     ListView {
+        id: resultList
         anchors {
             left: parent.left
             right: parent.right
             bottom: parent.bottom
             top: importButton.bottom
         }
+        visible: importItems.length > 0
 
         model: importItems
         delegate: Empty {

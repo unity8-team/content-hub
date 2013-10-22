@@ -45,9 +45,21 @@ ContentPeer::ContentPeer(QObject *parent)
  *
  * FIXME add documentation
  */
-const QString &ContentPeer::name() const
+QString ContentPeer::name()
 {
     qDebug() << Q_FUNC_INFO;
+    return m_peer.name();
+}
+
+/*!
+ * \qmlproperty string ContentPeer::id
+ *
+ * FIXME add documentation
+ */
+const QString &ContentPeer::id() const
+{
+    qDebug() << Q_FUNC_INFO;
+    // FIXME return the type
     return m_peer.id();
 }
 

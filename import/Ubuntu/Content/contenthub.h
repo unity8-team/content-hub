@@ -52,7 +52,7 @@ public:
     ContentHub(QObject *parent = nullptr);
 
     Q_INVOKABLE ContentPeer *defaultSourceForType(int type);
-    Q_INVOKABLE QList<ContentPeer *> knownSourcesForType(int type);
+    Q_INVOKABLE QVariantList knownSourcesForType(int type);
 
     Q_INVOKABLE ContentStore *defaultStoreForType(int type);
 

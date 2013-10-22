@@ -45,21 +45,20 @@ ContentPeer::ContentPeer(QObject *parent)
  *
  * Returns user friendly name of the peer
  */
-const QString &ContentPeer::name() const
+QString ContentPeer::name()
 {
     qDebug() << Q_FUNC_INFO;
-    return m_peer.id();
+    return m_peer.name();
 }
 
 /*!
- * \qmlproperty string ContentPeer::type
+ * \qmlproperty string ContentPeer::id
  *
  * FIXME add documentation
  */
-const QString &ContentPeer::type() const
+const QString &ContentPeer::id() const
 {
     qDebug() << Q_FUNC_INFO;
-    // FIXME return the type
     return m_peer.id();
 }
 
@@ -80,5 +79,5 @@ void ContentPeer::setPeer(const cuc::Peer &peer)
 {
     m_peer = peer;
     Q_EMIT nameChanged();
-    Q_EMIT typeChanged();
+    Q_EMIT idChanged();
 }

@@ -150,20 +150,19 @@ ContentStore *ContentHub::defaultStoreForType(int type)
  *
  *  Returns all possible peers for the given ContentType
  */
-QList<ContentPeer *> ContentHub::knownSourcesForType(int type)
+QVariantList ContentHub::knownSourcesForType(int type)
 {
     qDebug() << Q_FUNC_INFO;
 
     const cuc::Type &hubType = ContentType::contentType2HubType(type);
     QVector<cuc::Peer> hubPeers = m_hub->known_peers_for_type(hubType);
 
-    QList<ContentPeer *> qmlPeers;
+    QVariantList qmlPeers;
     foreach (const cuc::Peer &hubPeer, hubPeers) {
         ContentPeer *qmlPeer = new ContentPeer(this);
         qmlPeer->setPeer(hubPeer);
-        qmlPeers.append(qmlPeer);
+        qmlPeers.append(QVariant::fromValue(qmlPeer));
     }
-
     return qmlPeers;
 }
 

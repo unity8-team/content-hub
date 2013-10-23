@@ -28,7 +28,7 @@
  *
  * FIXME add documentation
  *
- * See documentation for \ContentHub
+ * See documentation for ContentHub
  */
 
 namespace cuc = com::ubuntu::content;
@@ -43,7 +43,7 @@ ContentPeer::ContentPeer(QObject *parent)
 /*!
  * \qmlproperty string ContentPeer::name
  *
- * FIXME add documentation
+ * Returns user friendly name of the peer
  */
 QString ContentPeer::name()
 {
@@ -52,11 +52,11 @@ QString ContentPeer::name()
 }
 
 /*!
- * \qmlproperty string ContentPeer::id
+ * \qmlproperty string ContentPeer::appId
  *
- * FIXME add documentation
+ * Returns the Application id
  */
-const QString &ContentPeer::id() const
+const QString &ContentPeer::appId() const
 {
     qDebug() << Q_FUNC_INFO;
     return m_peer.id();
@@ -64,7 +64,7 @@ const QString &ContentPeer::id() const
 
 /*!
  * \brief ContentPeer::peer
- * \return
+ * \internal
  */
 const com::ubuntu::content::Peer &ContentPeer::peer() const
 {
@@ -73,11 +73,11 @@ const com::ubuntu::content::Peer &ContentPeer::peer() const
 
 /*!
  * \brief ContentPeer::setPeer
- * \param peer
+ * \internal
  */
 void ContentPeer::setPeer(const cuc::Peer &peer)
 {
     m_peer = peer;
     Q_EMIT nameChanged();
-    Q_EMIT idChanged();
+    Q_EMIT appIdChanged();
 }

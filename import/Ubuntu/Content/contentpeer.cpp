@@ -52,11 +52,11 @@ QString ContentPeer::name()
 }
 
 /*!
- * \qmlproperty string ContentPeer::id
+ * \qmlproperty string ContentPeer::appId
  *
- * FIXME add documentation
+ * Returns the Application id
  */
-const QString &ContentPeer::id() const
+const QString &ContentPeer::appId() const
 {
     qDebug() << Q_FUNC_INFO;
     return m_peer.id();
@@ -79,5 +79,5 @@ void ContentPeer::setPeer(const cuc::Peer &peer)
 {
     m_peer = peer;
     Q_EMIT nameChanged();
-    Q_EMIT idChanged();
+    Q_EMIT appIdChanged();
 }

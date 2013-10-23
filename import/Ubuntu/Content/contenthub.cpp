@@ -110,7 +110,7 @@ ContentHub::ContentHub(QObject *parent)
 /*!
  * \qmlmethod ContentHub::defaultSourceForType()
  *
- *  Returns the default ContentPeer for the given ContentType
+ *  Returns the default \a ContentPeer for the given \a ContentType
  */
 ContentPeer *ContentHub::defaultSourceForType(int type)
 {
@@ -126,9 +126,9 @@ ContentPeer *ContentHub::defaultSourceForType(int type)
 }
 
 /*!
- * \qmlmethod ContentHub::defaultStoreForType(ContentStore)
+ * \qmlmethod ContentHub::defaultStoreForType(ContentType)
  *
- *  Returns the default ContentStore for the given ContentType
+ *  Returns the default \a ContentStore for the given \a ContentType
  */
 ContentStore *ContentHub::defaultStoreForType(int type)
 {
@@ -168,10 +168,10 @@ QVariantList ContentHub::knownSourcesForType(int type)
 
 /*!
  * \qmlmethod ContentHub::importContent(ContentType)
+ * \overload ContentHub::importContent(ContentType, ContentPeer)
  *
- * \brief Start a request to import data of ContentType from the default 
- * ContentPeer for the ContentType
- * \a ContentType
+ * \brief Request to import data of \a ContentType from the default
+ * ContentPeer
  */
 ContentTransfer *ContentHub::importContent(int type)
 {
@@ -185,11 +185,11 @@ ContentTransfer *ContentHub::importContent(int type)
 }
 
 /*!
- * \overload ContentHub::importContent(ContentType, ContentPeer)
+ * \qmlmethod ContentHub::importContent(ContentType, ContentPeer)
+ * \overload ContentHub::importContent(ContentType)
  *
- * \brief Start a request to import data of \a type from the given \a peer
- * \a ContentType
- * \a ContentPeer
+ * \brief Request to import data of \a ContentType from the
+ * specified \a ContentPeer
  */
 ContentTransfer *ContentHub::importContent(int type, ContentPeer *peer)
 {

@@ -26,7 +26,7 @@
  *
  * FIXME add documentation
  *
- * See documentation for \ContentHub
+ * See documentation for ContentHub
  */
 
 namespace cuc = com::ubuntu::content;
@@ -81,7 +81,7 @@ void ContentItem::setUrl(const QUrl &url)
 
 /*!
  * \brief ContentItem::item
- * \return
+ * \internal
  */
 const com::ubuntu::content::Item &ContentItem::item() const
 {
@@ -91,7 +91,7 @@ const com::ubuntu::content::Item &ContentItem::item() const
 
 /*!
  * \brief ContentItem::setItem
- * \param item
+ * \internal
  */
 void ContentItem::setItem(const com::ubuntu::content::Item &item)
 {

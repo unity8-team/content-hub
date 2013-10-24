@@ -1,3 +1,4 @@
 module Ubuntu.Content
 plugin ubuntu-content-hub-plugin
 
+ContentImportHint 0.1 ContentImportHint.qml

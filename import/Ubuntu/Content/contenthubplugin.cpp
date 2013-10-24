@@ -30,9 +30,6 @@
 
 /*!
  * \brief qml_content_hub function to unstatinate the ContentHub as a singleton in QML
- * \param engine
- * \param scriptEngine
- * \return
  */
 static QObject *qml_content_hub(QQmlEngine *engine, QJSEngine *scriptEngine)
 {

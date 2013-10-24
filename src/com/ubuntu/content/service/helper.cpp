@@ -17,7 +17,6 @@
  */
 
 #include <QCoreApplication>
-#include <com/ubuntu/content/type.h>
 
 #include "hook.h"
 
@@ -27,12 +26,18 @@ int main(int argc, char** argv)
 {
     QCoreApplication app(argc, argv);
 
-    if (app.arguments().count() <= 1)
+    qDebug() << Q_FUNC_INFO;
+
+    if (app.arguments().count() > 1)
     {
-        qWarning() << "USAGE:" << app.arguments().first() << "APP_ID";
-        return 1;
+            qWarning() << "Shouldn't have arguments";
+            return 1;
     }
 
-    Hook hook(app.arguments().at(1));
-    return app.exec();
+    new Hook();
+
+    app.exec();
+
+    /* We always want to return 0 */
+    return 0;
 }

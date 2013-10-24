@@ -14,17 +14,22 @@
 #
 # Authored by: Thomas Voss <thomas.voss@canonical.com>
 
+add_custom_target(doc ALL)
+
 find_package(Doxygen)
 
 if(DOXYGEN_FOUND)
   configure_file(
     ${CMAKE_CURRENT_SOURCE_DIR}/Doxyfile.in 
     ${CMAKE_CURRENT_BINARY_DIR}/Doxyfile @ONLY)
-  add_custom_target(doc ALL 
+  add_custom_target(cppdoc ALL 
     ${DOXYGEN_EXECUTABLE} ${CMAKE_CURRENT_BINARY_DIR}/Doxyfile
     WORKING_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}
     COMMENT "Generating API documentation with Doxygen" VERBATIM)
   install(
     DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}/html
-    DESTINATION share/doc/content-hub)
+    DESTINATION ${CMAKE_INSTALL_DOCDIR}/cpp)
+  add_dependencies(doc cppdoc)
 endif(DOXYGEN_FOUND)
+
+add_subdirectory(qml)

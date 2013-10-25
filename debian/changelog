@@ -1,3 +1,15 @@
+content-hub (0.0+14.04.20131025-0ubuntu1) trusty; urgency=low
+
+  [ Ken VanDine ]
+  * return a QVariantList from knownSourcesForType so the QML bindings
+    can expose a list of peers, fixes (LP: #1236932). (LP: #1236932)
+  * Added qdoc docs for QML bindings.
+
+  [ Ubuntu daily release ]
+  * Automatic snapshot from revision 63
+
+ -- Ubuntu daily release <ps-jenkins@lists.canonical.com>  Fri, 25 Oct 2013 11:04:43 +0000
+
 content-hub (0.0+13.10.20131011-0ubuntu1) saucy; urgency=low
 
   [ Ken VanDine ]

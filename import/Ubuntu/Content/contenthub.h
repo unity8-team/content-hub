@@ -39,10 +39,6 @@ class Transfer;
 }
 }
 
-/*!
- * \class ContentHub
- * \brief FIXME documentaion
- */ 
 class ContentHub : public QObject
 {
     Q_OBJECT

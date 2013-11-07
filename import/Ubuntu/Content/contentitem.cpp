@@ -22,9 +22,9 @@
  * \qmltype ContentItem
  * \instantiates ContentItem
  * \inqmlmodule Ubuntu.Content 0.1
- * \brief FIXME add documentation
+ * \brief Content that can be imported or exported from a ContentPeer
  *
- * FIXME add documentation
+ * A ContentItem is an item that can be imported or exported from a ContentPeer
  *
  * See documentation for ContentHub
  */
@@ -39,8 +39,7 @@ ContentItem::ContentItem(QObject *parent)
 
 /*!
  * \qmlproperty string ContentItem::name
- *
- * FIXME add documentation
+ * \internal
  */
 const QString &ContentItem::name() const
 {

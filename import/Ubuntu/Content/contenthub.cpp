@@ -221,8 +221,6 @@ ContentTransfer* ContentHub::importContent(const com::ubuntu::content::Type &hub
 
 /*!
  * \qmlmethod ContentHub::restoreImports()
- *
- *  FIXME add documentation
  * \internal
  */
 void ContentHub::restoreImports()
@@ -232,8 +230,6 @@ void ContentHub::restoreImports()
 
 /*!
  * \qmlproperty list<ContentTransfer> ContentHub::finishedImports
- *
- * FIXME add documentation
  * \internal
  */
 QQmlListProperty<ContentTransfer> ContentHub::finishedImports()

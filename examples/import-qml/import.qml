@@ -12,7 +12,7 @@ MainView {
 
     property list<ContentItem> importItems
     property var activeTransfer
-    property var peers
+    property list<ContentPeer> peers
 
 
     function _importFromPeer(peer) {

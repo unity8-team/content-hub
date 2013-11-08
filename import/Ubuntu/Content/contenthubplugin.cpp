@@ -52,8 +52,8 @@ void ContentHubPlugin::registerTypes(const char *uri)
 
     qmlRegisterSingletonType<ContentHub>(uri, versionMajor, versionMinor, "ContentHub", qml_content_hub);
     qmlRegisterType<ContentItem>(uri, versionMajor, versionMinor, "ContentItem");
+    qmlRegisterType<ContentPeer>(uri, versionMajor, versionMinor, "ContentPeer");
     qmlRegisterUncreatableType<ContentStore>(uri, versionMajor, versionMinor, "ContentStore", "created by hub");
-    qmlRegisterUncreatableType<ContentPeer>(uri, versionMajor, versionMinor, "ContentPeer", "created by hub");
     qmlRegisterUncreatableType<ContentTransfer>(uri, versionMajor, versionMinor, "ContentTransfer", "created by hub");
     qmlRegisterUncreatableType<ContentType>(uri, versionMajor, versionMinor, "ContentType", "Use only the type");
 }

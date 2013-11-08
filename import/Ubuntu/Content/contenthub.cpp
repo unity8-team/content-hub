@@ -149,6 +149,29 @@ ContentStore *ContentHub::defaultStoreForType(int type)
  * \qmlmethod ContentHub::knownSourcesForType(ContentType)
  *
  *  Returns all possible peers for the given ContentType
+ *
+ * \qml
+ * import QtQuick 2.0
+ * import Ubuntu.Components 0.1
+ * import Ubuntu.Components.ListItems 0.1 as ListItem
+ * import Ubuntu.Content 0.1
+ *
+ * MainView {
+ *     property list<ContentPeer> peers
+ *
+ *     Component.onCompleted: {
+ *         peers = ContentHub.knownSourcesForType(ContentType.Pictures);
+ *     }
+ *     ListView {
+ *         anchors.fill: parent
+ *         height: childrenRect.height
+ *         model: peers
+ *         delegate: ListItem.Standard {
+ *             text: modelData.name
+ *         }
+ *     }
+ * }
+ * \endqml
  */
 QVariantList ContentHub::knownSourcesForType(int type)
 {

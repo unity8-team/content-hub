@@ -108,7 +108,7 @@ ContentHub::ContentHub(QObject *parent)
 }
 
 /*!
- * \qmlmethod ContentHub::defaultSourceForType()
+ * \qmlmethod ContentHub::defaultSourceForType(ContentType)
  *
  *  Returns the default \a ContentPeer for the given \a ContentType
  */

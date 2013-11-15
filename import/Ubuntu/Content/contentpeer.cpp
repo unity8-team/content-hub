@@ -24,9 +24,10 @@
  * \qmltype ContentPeer
  * \instantiates ContentPeer
  * \inqmlmodule Ubuntu.Content 0.1
- * \brief FIXME add documentation
+ * \brief An application that can export or import a ContentType
  *
- * FIXME add documentation
+ * A ContentPeer is an application that is registered in the ContentHub as
+ * a source or destination of a ContentType
  *
  * See documentation for ContentHub
  */

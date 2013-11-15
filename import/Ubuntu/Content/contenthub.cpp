@@ -39,9 +39,15 @@
  * import Ubuntu.Components 0.1
  * import Ubuntu.Content 0.1
  *
- * Rectangle {
+ * MainView {
  *     id: root
+ *     width: units.gu(60)
+ *     height: units.gu(90)
  *     Button {
+ *         anchors {
+ *             left: parent.left
+ *             margins: units.gu(2)
+ *          }
  *         text: "Import from default"
  *          onClicked: {
  *              var peer = ContentHub.defaultSourceForType(ContentType.Pictures);
@@ -49,6 +55,10 @@
  *         }
  *     }
  *     Button {
+ *         anchors {
+ *             right: parent.right
+ *             margins: units.gu(2)
+ *          }
  *         text: "Import from a selectable list"
  *          onClicked: {
  *              activeTransfer = ContentHub.importContent(ContentType.Pictures);
@@ -67,7 +77,7 @@
  *         target: root.activeTransfer
  *         onStateChanged: {
  *             if (root.activeTransfer.state === ContentTransfer.Charged)
- *                 importItmes = root.activeTransfer.items;
+ *                 importItems = root.activeTransfer.items;
  *         }
  *     }
  * }
@@ -109,7 +119,7 @@ ContentHub::ContentHub(QObject *parent)
 }
 
 /*!
- * \qmlmethod ContentHub::defaultSourceForType()
+ * \qmlmethod ContentHub::defaultSourceForType(ContentType)
  *
  *  Returns the default \a ContentPeer for the given \a ContentType
  */
@@ -222,8 +232,6 @@ ContentTransfer* ContentHub::importContent(const com::ubuntu::content::Type &hub
 
 /*!
  * \qmlmethod ContentHub::restoreImports()
- *
- *  FIXME add documentation
  * \internal
  */
 void ContentHub::restoreImports()
@@ -233,8 +241,6 @@ void ContentHub::restoreImports()
 
 /*!
  * \qmlproperty list<ContentTransfer> ContentHub::finishedImports
- *
- * FIXME add documentation
  * \internal
  */
 QQmlListProperty<ContentTransfer> ContentHub::finishedImports()
@@ -280,3 +286,10 @@ void ContentHub::handleExport(com::ubuntu::content::Transfer *transfer)
 
     Q_EMIT exportRequested(qmlTransfer);
 }
+
+/*!
+ * \qmlsignal ContentHub::exportRequested(ContentTransfer transfer)
+ *
+ * The signal is triggered when an export is requested.
+ */
+

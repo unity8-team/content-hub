@@ -66,7 +66,7 @@
  *         target: root.activeTransfer
  *         onStateChanged: {
  *             if (root.activeTransfer.state === ContentTransfer.Charged)
- *                 importItmes = root.activeTransfer.items;
+ *                 importItems = root.activeTransfer.items;
  *         }
  *     }
  * }
@@ -108,7 +108,7 @@ ContentHub::ContentHub(QObject *parent)
 }
 
 /*!
- * \qmlmethod ContentHub::defaultSourceForType()
+ * \qmlmethod ContentHub::defaultSourceForType(ContentType)
  *
  *  Returns the default \a ContentPeer for the given \a ContentType
  */
@@ -270,3 +270,10 @@ void ContentHub::handleExport(com::ubuntu::content::Transfer *transfer)
 
     Q_EMIT exportRequested(qmlTransfer);
 }
+
+/*!
+ * \qmlsignal ContentHub::exportRequested(ContentTransfer transfer)
+ *
+ * The signal is triggered when an export is requested.
+ */
+

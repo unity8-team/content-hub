@@ -38,9 +38,15 @@
  * import Ubuntu.Components 0.1
  * import Ubuntu.Content 0.1
  *
- * Rectangle {
+ * MainView {
  *     id: root
+ *     width: units.gu(60)
+ *     height: units.gu(90)
  *     Button {
+ *         anchors {
+ *             left: parent.left
+ *             margins: units.gu(2)
+ *          }
  *         text: "Import from default"
  *          onClicked: {
  *              var peer = ContentHub.defaultSourceForType(ContentType.Pictures);
@@ -48,6 +54,10 @@
  *         }
  *     }
  *     Button {
+ *         anchors {
+ *             right: parent.right
+ *             margins: units.gu(2)
+ *          }
  *         text: "Import from a selectable list"
  *          onClicked: {
  *              activeTransfer = ContentHub.importContent(ContentType.Pictures);

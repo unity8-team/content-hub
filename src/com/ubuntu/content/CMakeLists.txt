@@ -24,6 +24,7 @@ include_directories(
   ${GIO_INCLUDE_DIRS}
   ${NIH_INCLUDE_DIRS}
   ${NIH_DBUS_INCLUDE_DIRS}
+  ${UPSTART_LAUNCH_INCLUDE_DIRS}
 )
 
 qt5_add_dbus_interface(

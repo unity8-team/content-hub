@@ -86,3 +86,9 @@ const cuc::Type& cuc::Type::Known::music()
     static cuc::Type t("music", nullptr);
     return t;
 }
+
+const cuc::Type& cuc::Type::Known::contacts()
+{
+    static cuc::Type t("contacts", nullptr);
+    return t;
+}

@@ -42,6 +42,9 @@
    \row
      \li ContentType.Music
      \li Music
+   \row
+     \li ContentType.Contacts
+     \li Music
    \endtable
  */
 
@@ -78,6 +81,7 @@ const com::ubuntu::content::Type &ContentType::contentType2HubType(Type type)
     case Documents: return cuc::Type::Known::documents();
     case Pictures: return cuc::Type::Known::pictures();
     case Music: return cuc::Type::Known::music();
+    case Contacts: return cuc::Type::Known::contacts();
     default: return cuc::Type::unknown();
     }
 }

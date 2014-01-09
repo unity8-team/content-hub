@@ -57,6 +57,7 @@ class Transfer : public QObject
     Q_PROPERTY(QVector<Item> items READ collect WRITE charge)
     Q_PROPERTY(Store store READ store NOTIFY storeChanged)
     Q_PROPERTY(SelectionType selectionType READ selectionType WRITE setSelectionType NOTIFY selectionTypeChanged)
+    Q_PROPERTY(QVector<QString> types READ types WRITE setTypes NOTIFY typesChanged)
 
   public:
     enum State
@@ -92,10 +93,13 @@ class Transfer : public QObject
     Q_INVOKABLE virtual Store store() const;
     Q_INVOKABLE virtual bool setStore(const Store*);
     Q_INVOKABLE virtual bool setSelectionType(const SelectionType&);
+    Q_INVOKABLE virtual QVector<QString> types();
+    Q_INVOKABLE virtual bool setTypes(const QVector<QString>& types);
 
     Q_SIGNAL void stateChanged();
     Q_SIGNAL void storeChanged();
     Q_SIGNAL void selectionTypeChanged();
+    Q_SIGNAL void typesChanged();
 
   private:
     struct Private;

@@ -39,6 +39,10 @@ cuc::Transfer::Transfer(const QSharedPointer<cuc::Transfer::Private>& d, QObject
                 SIGNAL (SelectionTypeChanged(int)),
                 this,
                 SIGNAL (selectionTypeChanged()));
+    QObject::connect(d->remote_transfer,
+                SIGNAL (TypesChanged(int)),
+                this,
+                SIGNAL (typesChanged()));
 }
 
 cuc::Transfer::~Transfer()
@@ -100,4 +104,14 @@ cuc::Transfer::SelectionType cuc::Transfer::selectionType() const
 bool cuc::Transfer::setSelectionType(const cuc::Transfer::SelectionType& type)
 {
     return d->setSelectionType(type);
+}
+
+QVector<QString> cuc::Transfer::types()
+{
+    return d->types();
+}
+
+bool cuc::Transfer::setTypes(const QVector<QString>& types)
+{
+    return d->setTypes(types);
 }

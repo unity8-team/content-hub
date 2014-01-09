@@ -43,6 +43,10 @@ void Example::create_import()
     m_transfer->setStore(store);
     */
 
+    QVector<QString> myTypes;
+    myTypes << "image/png";
+    myTypes << "image/jpeg";
+    m_transfer->setTypes(myTypes);
     m_transfer->setSelectionType(cuc::Transfer::SelectionType::multiple);
     m_transfer->start();
 }

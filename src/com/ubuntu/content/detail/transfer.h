@@ -38,6 +38,8 @@ class Transfer : public QObject
     Q_PROPERTY(int id READ Id)
     Q_PROPERTY(QString source READ source)
     Q_PROPERTY(QString destination READ destination)
+    Q_PROPERTY(QStringList Types READ Types WRITE SetTypes NOTIFY TypesChanged)
+
 
   public:
     Transfer(const int, const QString&, const QString&, QObject* parent = nullptr);
@@ -53,6 +55,7 @@ Q_SIGNALS:
     void StateChanged(int State);
     void StoreChanged(QString Store);
     void SelectionTypeChanged(int SelectionType);
+    void TypesChanged(QStringList Types);
 
   public Q_SLOTS:
     int State();
@@ -71,6 +74,8 @@ Q_SIGNALS:
     QString destination();
     QString export_path();
     QString import_path();
+    QStringList Types();
+    void SetTypes(const QStringList&);
 
   private:
     struct Private;

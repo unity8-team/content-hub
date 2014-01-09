@@ -178,6 +178,37 @@ class Transfer::Private : public QObject
         return not reply.isError();
     }
 
+    QVector<QString> types()
+    {
+        QVector<QString> result;
+
+        auto reply = remote_transfer->Types();
+        reply.waitForFinished();
+
+        if (reply.isError())
+            return result;
+
+        Q_FOREACH(const QString& type, reply.value())
+        {
+            result << type;
+        }
+        return result;
+    }
+
+    bool setTypes(const QVector<QString>& types)
+    {
+        QStringList l;
+        Q_FOREACH(const QString& type, types)
+        {
+            l << type;
+        }
+
+        auto reply = remote_transfer->SetTypes(l);
+        reply.waitForFinished();
+
+        return not reply.isError();
+    }
+
     com::ubuntu::content::dbus::Transfer* remote_transfer;
 };
 }

@@ -33,6 +33,8 @@ void ExampleExporter::handle_export(cuc::Transfer *transfer)
         return;
     }
 
+    qDebug() << Q_FUNC_INFO << "Types: " << transfer->types();
+
     if (transfer->selectionType() == cuc::Transfer::SelectionType::single)
         qDebug() << Q_FUNC_INFO << "selectionType: single";
     else if (transfer->selectionType() == cuc::Transfer::SelectionType::multiple)

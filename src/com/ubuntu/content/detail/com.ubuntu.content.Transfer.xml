@@ -41,5 +41,14 @@
     <signal name="SelectionTypeChanged">
       <arg name="selection_type" type="i"/>
     </signal>
+    <method name="SetTypes">
+      <arg name="types" type="as" direction="in" />
+    </method>
+    <method name="Types">
+      <arg name="types" type="as" direction="out" />
+    </method>
+    <signal name="TypeChanged">
+      <arg name="types" type="as"/>
+    </signal>
  </interface>
 </node>

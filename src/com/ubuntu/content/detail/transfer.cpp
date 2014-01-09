@@ -50,6 +50,7 @@ struct cucd::Transfer::Private
     int selection_type;
     QStringList items;
     bool source_started_by_content_hub;
+    QStringList types;
 };
 
 cucd::Transfer::Transfer(const int id,
@@ -249,4 +250,25 @@ void cucd::Transfer::SetSourceStartedByContentHub(bool started)
 bool com::ubuntu::content::detail::Transfer::WasSourceStartedByContentHub() const
 {
     return d->source_started_by_content_hub;
+}
+
+QStringList cucd::Transfer::Types()
+{
+    qDebug() << __PRETTY_FUNCTION__;
+
+    return d->types;
+}
+
+void cucd::Transfer::SetTypes(const QStringList& types)
+{
+    qDebug() << __PRETTY_FUNCTION__ << "Types:" << types;
+    if (types.count() <= 0)
+    {
+        qWarning() << "At least one type is required";
+    }
+    else
+    {
+        d->types = types;
+    }
+    Q_EMIT(TypesChanged(d->types));
 }

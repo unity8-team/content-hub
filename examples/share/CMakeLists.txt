@@ -14,7 +14,25 @@
 #
 # Authored by: Ken VanDine <ken.vandine@canonical.com>
 
-add_subdirectory(importer)
-add_subdirectory(exporter)
-add_subdirectory(share)
-add_subdirectory(sharehandler)
+include_directories(${CMAKE_CURRENT_BINARY_DIR})
+
+add_executable(
+  share
+
+  share.cpp
+  example.cpp
+)
+
+qt5_use_modules(share Core)
+
+set_target_properties(
+  share
+  PROPERTIES
+  AUTOMOC TRUE
+)
+
+target_link_libraries(
+  share
+ 
+  content-hub 
+)

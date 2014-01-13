@@ -24,6 +24,7 @@
 #include "utils.cpp"
 
 #include "ImportExportHandlerInterface.h"
+#include "ShareHandlerInterface.h"
 
 #include <com/ubuntu/content/peer.h>
 #include <com/ubuntu/content/type.h>
@@ -171,6 +172,21 @@ void cucd::Service::connect_import_handler(const QString& peer_id, const QString
         h->HandleImport(QDBusObjectPath{transfer});
 }
 
+void cucd::Service::connect_share_handler(const QString& peer_id, const QString& transfer)
+{
+    qDebug() << Q_FUNC_INFO;
+
+    cuc::dbus::ShareHandler *h = new cuc::dbus::ShareHandler(
+                handler_address(peer_id),
+                handler_path(peer_id),
+                QDBusConnection::sessionBus(),
+                0);
+
+    qDebug() << Q_FUNC_INFO << "h->isValid:" << h->isValid();
+    if (h->isValid() && (not transfer.isEmpty()))
+        h->HandleShare(QDBusObjectPath{transfer});
+}
+
 QDBusObjectPath cucd::Service::CreateImportForTypeFromPeer(const QString& type_id, const QString& peer_id, const QString& dest_id)
 {
     qDebug() << Q_FUNC_INFO;
@@ -211,6 +227,82 @@ QDBusObjectPath cucd::Service::CreateImportForTypeFromPeer(const QString& type_i
     Q_UNUSED(type_id);
 
     return QDBusObjectPath{destination};
+}
+
+QDBusObjectPath cucd::Service::CreateShareForTypeFromPeer(const QString& type_id, const QString& peer_id, const QString& dest_id)
+{
+    qDebug() << Q_FUNC_INFO;
+
+    static size_t import_counter{0}; import_counter++;
+
+    QString app_id = dest_id;
+    if (app_id.isEmpty())
+    {
+        qDebug() << Q_FUNC_INFO << "APP_ID isnt' set, attempting to get it from AppArmor";
+        app_id = aa_profile(this->message().service());
+    }
+
+    qDebug() << Q_FUNC_INFO << "APP_ID:" << app_id;
+
+    QUuid uuid{QUuid::createUuid()};
+
+    auto transfer = new cucd::Transfer(import_counter, peer_id, app_id, this);
+    new TransferAdaptor(transfer);
+    d->active_transfers.insert(transfer);
+
+    auto destination = transfer->import_path();
+    auto source = transfer->export_path();
+    if (not d->connection.registerObject(destination, transfer))
+        qDebug() << "Problem registering object for path: " << destination;
+    d->connection.registerObject(source, transfer);
+
+    qDebug() << "Created transfer " << source << " -> " << destination;
+
+    connect(transfer, SIGNAL(StateChanged(int)), this, SLOT(handle_share_transfer(int)));
+
+    /* watch for handlers */
+    m_watcher->addWatchedService(handler_address(peer_id));
+    qDebug() << Q_FUNC_INFO << "Watches:" << m_watcher->watchedServices();
+    this->connect_share_handler(peer_id, source);
+
+    Q_UNUSED(type_id);
+
+    return QDBusObjectPath{destination};
+}
+
+void cucd::Service::handle_share_transfer(int state)
+{
+    qDebug() << Q_FUNC_INFO;
+    cucd::Transfer *transfer = static_cast<cucd::Transfer*>(sender());
+
+    if (state == cuc::Transfer::charged)
+    {
+        qDebug() << Q_FUNC_INFO << "Charged";
+        if (d->app_manager->is_application_started(transfer->source().toStdString()))
+            transfer->SetSourceStartedByContentHub(false);
+        else
+            transfer->SetSourceStartedByContentHub(true);
+
+        d->app_manager->invoke_application(transfer->source().toStdString());
+        this->connect_share_handler(transfer->source(), transfer->export_path());
+    }
+
+    if (state == cuc::Transfer::collected)
+    {
+        qDebug() << Q_FUNC_INFO << "Collected";
+        d->app_manager->invoke_application(transfer->destination().toStdString());
+
+        if (transfer->WasSourceStartedByContentHub())
+            d->app_manager->stop_application(transfer->source().toStdString());
+    }
+
+    if (state == cuc::Transfer::aborted)
+    {
+        d->app_manager->invoke_application(transfer->destination().toStdString());
+
+        if (transfer->WasSourceStartedByContentHub())
+            d->app_manager->stop_application(transfer->source().toStdString());
+    }
 }
 
 void cucd::Service::handle_transfer(int state)

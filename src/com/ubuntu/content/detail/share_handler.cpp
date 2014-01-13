@@ -54,7 +54,7 @@ void cucd::ShareHandler::HandleShare(const QDBusObjectPath& transfer)
     cuc::Transfer* t = cuc::Transfer::Private::make_transfer(transfer, this);
 
     qDebug() << Q_FUNC_INFO << "State:" << t->state();
-    if (t->state() == cuc::Transfer::initiated)
+    if (t->state() == cuc::Transfer::charged)
     {
         t->d->handled();
         m_handler->handle_share(t);

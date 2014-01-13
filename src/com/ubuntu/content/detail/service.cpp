@@ -23,8 +23,7 @@
 #include "transferadaptor.h"
 #include "utils.cpp"
 
-#include "handler.h"
-#include "ContentHandlerInterface.h"
+#include "ImportExportHandlerInterface.h"
 
 #include <com/ubuntu/content/peer.h>
 #include <com/ubuntu/content/type.h>
@@ -94,7 +93,7 @@ void cucd::Service::handler_registered(const QString& name)
         if (handler_address(t->source()) == name)
         {
             qDebug() << Q_FUNC_INFO << "Found source:" << name;
-            cuc::dbus::Handler *h = new cuc::dbus::Handler(
+            cuc::dbus::ImportExportHandler *h = new cuc::dbus::ImportExportHandler(
                     name,
                     handler_path(t->source()),
                     QDBusConnection::sessionBus(),
@@ -105,7 +104,7 @@ void cucd::Service::handler_registered(const QString& name)
         else if (handler_address(t->destination()) == name)
         {
             qDebug() << Q_FUNC_INFO << "Found destination:" << name;
-            cuc::dbus::Handler *h = new cuc::dbus::Handler(
+            cuc::dbus::ImportExportHandler *h = new cuc::dbus::ImportExportHandler(
                     name,
                     handler_path(t->destination()),
                     QDBusConnection::sessionBus(),
@@ -146,7 +145,7 @@ void cucd::Service::connect_export_handler(const QString& peer_id, const QString
 {
     qDebug() << Q_FUNC_INFO;
 
-    cuc::dbus::Handler *h = new cuc::dbus::Handler(
+    cuc::dbus::ImportExportHandler *h = new cuc::dbus::ImportExportHandler(
                 handler_address(peer_id),
                 handler_path(peer_id),
                 QDBusConnection::sessionBus(),
@@ -161,7 +160,7 @@ void cucd::Service::connect_import_handler(const QString& peer_id, const QString
 {
     qDebug() << Q_FUNC_INFO;
 
-    cuc::dbus::Handler *h = new cuc::dbus::Handler(
+    cuc::dbus::ImportExportHandler *h = new cuc::dbus::ImportExportHandler(
                 handler_address(peer_id),
                 handler_path(peer_id),
                 QDBusConnection::sessionBus(),

@@ -15,8 +15,8 @@
  *
  * Authored by: Ken VanDine <ken.vandine@canonical.com>
  */
-#ifndef HANDLER_H_
-#define HANDLER_H_
+#ifndef IMPORT_EXPORT_HANDLER_H_
+#define IMPORT_EXPORT_HANDLER_H_
 
 #include <QObject>
 #include <QtDBus/QDBusConnection>
@@ -33,17 +33,17 @@ namespace content
 namespace detail
 {
 
-class Handler : public QObject
+class ImportExportHandler : public Handler
 {
     Q_OBJECT
   public:
-    Handler(QDBusConnection connection,
+    ImportExportHandler(QDBusConnection connection,
             const QString& peer_id,
             com::ubuntu::content::ImportExportHandler *handler = nullptr);
-    Handler(const Handler&) = delete;
-    ~Handler();
+    ImportExportHandler(const ImportExportHandler&) = delete;
+    ~ImportExportHandler();
 
-    Handler& operator=(const Handler&) = delete;
+    ImportExportHandler& operator=(const ImportExportHandler&) = delete;
 
   public Q_SLOTS:
     void HandleImport(const QDBusObjectPath &transfer);
@@ -60,4 +60,4 @@ class Handler : public QObject
 }
 }
 
-#endif // HANDLER_H_
+#endif // IMPORT_EXPORT_HANDLER_H_

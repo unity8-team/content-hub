@@ -33,7 +33,7 @@ namespace content
 namespace detail
 {
 
-class ShareHandler : public QObject
+class ShareHandler : public com::ubuntu::content::Handler
 {
     Q_OBJECT
   public:

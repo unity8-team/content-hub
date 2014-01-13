@@ -20,17 +20,15 @@
 #include "share_handler.h"
 #include "utils.cpp"
 
-#include <QObject>
-
 namespace cucd = com::ubuntu::content::detail;
 namespace cuc = com::ubuntu::content;
 
-struct cucd::ShareHandler::Private : public QObject
+struct cucd::ShareHandler::Private : public cuc::Handler
 {
     Private(QDBusConnection connection,
             const QString& peer_id,
             QObject* parent)
-            : QObject(parent),
+            : cuc::Handler(parent),
               connection(connection),
               peer_id(peer_id)
     {

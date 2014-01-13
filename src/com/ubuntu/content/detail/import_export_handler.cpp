@@ -17,20 +17,18 @@
  */
 
 #include "transfer_p.h"
-#include "handler.h"
+#include "import_export_handler.h"
 #include "utils.cpp"
-
-#include <QObject>
 
 namespace cucd = com::ubuntu::content::detail;
 namespace cuc = com::ubuntu::content;
 
-struct cucd::Handler::Private : public QObject
+struct cucd::ImportExportHandler::Private : public cuc::Handler
 {
     Private(QDBusConnection connection,
             const QString& peer_id,
             QObject* parent)
-            : QObject(parent),
+            : cuc::Handler(parent),
               connection(connection),
               peer_id(peer_id)
     {
@@ -41,16 +39,16 @@ struct cucd::Handler::Private : public QObject
     const QString peer_id;
 };
 
-cucd::Handler::Handler(QDBusConnection connection, const QString& peer_id, cuc::ImportExportHandler* handler)
+cucd::ImportExportHandler::ImportExportHandler(QDBusConnection connection, const QString& peer_id, cuc::ImportExportHandler* handler)
         : d(new Private{connection, peer_id, this})
 {
     qDebug() << Q_FUNC_INFO;
     m_handler = handler;
 }
 
-cucd::Handler::~Handler() {}
+cucd::ImportExportHandler::~ImportExportHandler() {}
 
-void cucd::Handler::HandleImport(const QDBusObjectPath& transfer)
+void cucd::ImportExportHandler::HandleImport(const QDBusObjectPath& transfer)
 {
     qDebug() << Q_FUNC_INFO;
     cuc::Transfer* t = cuc::Transfer::Private::make_transfer(transfer, this);
@@ -60,7 +58,7 @@ void cucd::Handler::HandleImport(const QDBusObjectPath& transfer)
         m_handler->handle_import(t);
 }
 
-void cucd::Handler::HandleExport(const QDBusObjectPath& transfer)
+void cucd::ImportExportHandler::HandleExport(const QDBusObjectPath& transfer)
 {
     qDebug() << Q_FUNC_INFO;
     cuc::Transfer* t = cuc::Transfer::Private::make_transfer(transfer, this);

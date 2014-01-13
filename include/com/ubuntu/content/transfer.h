@@ -33,7 +33,7 @@ namespace content
 {
 namespace detail
 {
-class Handler;
+class ImportExportHandler;
 class ShareHandler;
 }
 }
@@ -102,7 +102,7 @@ class Transfer : public QObject
     struct Private;
     friend struct Private;
     friend class Hub;
-    friend class com::ubuntu::content::detail::Handler;
+    friend class com::ubuntu::content::detail::ImportExportHandler;
     friend class com::ubuntu::content::detail::ShareHandler;
     QSharedPointer<Private> d;
 

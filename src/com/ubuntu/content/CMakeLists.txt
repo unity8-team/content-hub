@@ -42,15 +42,15 @@ qt5_add_dbus_adaptor(
   detail/transfer.h com::ubuntu::content::detail::Transfer)
 
 qt5_add_dbus_interface(
-  CONTENT_HANDLER_STUB ${CMAKE_CURRENT_SOURCE_DIR}/detail/com.ubuntu.content.Handler.xml 
-  ContentHandlerInterface)
+  CONTENT_HANDLER_STUB ${CMAKE_CURRENT_SOURCE_DIR}/detail/com.ubuntu.content.ImportExportHandler.xml 
+  ImportExportHandlerInterface)
 qt5_add_dbus_adaptor(
-  CONTENT_HANDLER_SKELETON ${CMAKE_CURRENT_SOURCE_DIR}/detail/com.ubuntu.content.Handler.xml 
-  detail/handler.h com::ubuntu::content::detail::Handler)
+  CONTENT_HANDLER_SKELETON ${CMAKE_CURRENT_SOURCE_DIR}/detail/com.ubuntu.content.ImportExportHandler.xml 
+  detail/import_export_handler.h com::ubuntu::content::detail::ImportExportHandler)
 
 qt5_add_dbus_interface(
   CONTENT_SHARE_HANDLER_STUB ${CMAKE_CURRENT_SOURCE_DIR}/detail/com.ubuntu.content.ShareHandler.xml 
-  ContentShareHandlerInterface)
+  ShareHandlerInterface)
 qt5_add_dbus_adaptor(
   CONTENT_SHARE_HANDLER_SKELETON ${CMAKE_CURRENT_SOURCE_DIR}/detail/com.ubuntu.content.ShareHandler.xml 
   detail/share_handler.h com::ubuntu::content::detail::ShareHandler)
@@ -82,7 +82,7 @@ add_library(
   detail/app_manager.cpp
   detail/service.cpp
   detail/transfer.cpp
-  detail/handler.cpp
+  detail/import_export_handler.cpp
   detail/share_handler.cpp
 
   ${CONTENT_HUB_MOCS}

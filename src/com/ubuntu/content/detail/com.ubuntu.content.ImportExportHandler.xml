@@ -1,5 +1,5 @@
 <node>
-  <interface name="com.ubuntu.content.dbus.Handler">
+  <interface name="com.ubuntu.content.dbus.ImportExportHandler">
     <method name="HandleImport">
       <arg name="transfer" type="o" direction="in"/>
     </method>

@@ -18,9 +18,9 @@
 
 #include "common.h"
 #include "ContentServiceInterface.h"
-#include "ContentHandlerInterface.h"
-#include "ContentShareHandlerInterface.h"
-#include "handleradaptor.h"
+#include "ImportExportHandlerInterface.h"
+#include "ShareHandlerInterface.h"
+#include "importexporthandleradaptor.h"
 #include "sharehandleradaptor.h"
 #include "transfer_p.h"
 #include "utils.cpp"
@@ -81,9 +81,9 @@ void cuc::Hub::register_import_export_handler(cuc::ImportExportHandler* handler)
     qDebug() << Q_FUNC_INFO << "BUS_NAME:" << bus_name;
 
     auto c = QDBusConnection::sessionBus();
-    auto h = new cuc::detail::Handler(c, id, handler);
+    auto h = new cuc::detail::ImportExportHandler(c, id, handler);
 
-    new HandlerAdaptor(h);
+    new ImportExportHandlerAdaptor(h);
     if (not c.registerService(bus_name))
     {
         qWarning() << Q_FUNC_INFO << "Failed to register name:" << bus_name;

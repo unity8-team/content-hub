@@ -48,10 +48,19 @@ qt5_add_dbus_adaptor(
   CONTENT_HANDLER_SKELETON ${CMAKE_CURRENT_SOURCE_DIR}/detail/com.ubuntu.content.Handler.xml 
   detail/handler.h com::ubuntu::content::detail::Handler)
 
+qt5_add_dbus_interface(
+  CONTENT_SHARE_HANDLER_STUB ${CMAKE_CURRENT_SOURCE_DIR}/detail/com.ubuntu.content.ShareHandler.xml 
+  ContentShareHandlerInterface)
+qt5_add_dbus_adaptor(
+  CONTENT_SHARE_HANDLER_SKELETON ${CMAKE_CURRENT_SOURCE_DIR}/detail/com.ubuntu.content.ShareHandler.xml 
+  detail/share_handler.h com::ubuntu::content::detail::ShareHandler)
+
+qt5_wrap_cpp(CONTENT_HUB_MOCS ${CMAKE_SOURCE_DIR}/include/com/ubuntu/content/handler.h)
 qt5_wrap_cpp(CONTENT_HUB_MOCS ${CMAKE_SOURCE_DIR}/include/com/ubuntu/content/hub.h)
 qt5_wrap_cpp(CONTENT_HUB_MOCS ${CMAKE_SOURCE_DIR}/include/com/ubuntu/content/import_export_handler.h)
 qt5_wrap_cpp(CONTENT_HUB_MOCS ${CMAKE_SOURCE_DIR}/include/com/ubuntu/content/item.h)
 qt5_wrap_cpp(CONTENT_HUB_MOCS ${CMAKE_SOURCE_DIR}/include/com/ubuntu/content/peer.h)
+qt5_wrap_cpp(CONTENT_HUB_MOCS ${CMAKE_SOURCE_DIR}/include/com/ubuntu/content/share_handler.h)
 qt5_wrap_cpp(CONTENT_HUB_MOCS ${CMAKE_SOURCE_DIR}/include/com/ubuntu/content/store.h)
 qt5_wrap_cpp(CONTENT_HUB_MOCS ${CMAKE_SOURCE_DIR}/include/com/ubuntu/content/transfer.h)
 qt5_wrap_cpp(CONTENT_HUB_MOCS ${CMAKE_SOURCE_DIR}/include/com/ubuntu/content/type.h)
@@ -59,10 +68,12 @@ qt5_wrap_cpp(CONTENT_HUB_MOCS ${CMAKE_SOURCE_DIR}/include/com/ubuntu/content/typ
 add_library(
   content-hub SHARED
 
+  handler.cpp
   hub.cpp
   import_export_handler.cpp
   item.cpp
   peer.cpp
+  share_handler.cpp
   store.cpp
   transfer.cpp
   type.cpp
@@ -72,6 +83,7 @@ add_library(
   detail/service.cpp
   detail/transfer.cpp
   detail/handler.cpp
+  detail/share_handler.cpp
 
   ${CONTENT_HUB_MOCS}
   ${CONTENT_SERVICE_STUB}
@@ -80,6 +92,8 @@ add_library(
   ${CONTENT_TRANSFER_SKELETON}
   ${CONTENT_HANDLER_STUB}
   ${CONTENT_HANDLER_SKELETON}
+  ${CONTENT_SHARE_HANDLER_STUB}
+  ${CONTENT_SHARE_HANDLER_SKELETON}
 )
 
 set_target_properties(

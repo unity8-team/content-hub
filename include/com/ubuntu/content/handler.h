@@ -12,12 +12,35 @@
  *
  * You should have received a copy of the GNU Lesser General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ *
+ * Authored by: Ken VanDine <ken.vandine@canonical.com>
  */
+#ifndef COM_UBUNTU_CONTENT_HANDLER_H_
+#define COM_UBUNTU_CONTENT_HANDLER_H_
 
-#include <com/ubuntu/content/import_export_handler.h>
+#include <QObject>
 
-namespace cuc = com::ubuntu::content;
-
-cuc::ImportExportHandler::ImportExportHandler(QObject *parent) : cuc::Handler(parent)
+namespace com
 {
+namespace ubuntu
+{
+namespace content
+{
+class Transfer;
+
+class Handler : public QObject
+{
+    Q_OBJECT
+  public:
+    Handler(const Handler&) = delete;
+    virtual ~Handler() = default;
+    Handler& operator=(const Handler&) = delete;
+
+  protected:
+    Handler(QObject* parent = nullptr); 
+};
 }
+}
+}
+
+#endif // COM_UBUNTU_CONTENT_HANDLER_H_

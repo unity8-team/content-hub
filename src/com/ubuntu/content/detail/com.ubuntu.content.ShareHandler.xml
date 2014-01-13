@@ -1,0 +1,7 @@
+<node>
+  <interface name="com.ubuntu.content.dbus.ShareHandler">
+    <method name="HandleShare">
+      <arg name="transfer" type="o" direction="in"/>
+    </method>
+  </interface>
+</node>

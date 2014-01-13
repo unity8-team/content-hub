@@ -18,7 +18,7 @@
 #ifndef COM_UBUNTU_CONTENT_IMPORT_EXPORT_HANDLER_H_
 #define COM_UBUNTU_CONTENT_IMPORT_EXPORT_HANDLER_H_
 
-#include <QObject>
+#include "handler.h"
 
 namespace com
 {
@@ -28,7 +28,7 @@ namespace content
 {
 class Transfer;
 
-class ImportExportHandler : public QObject
+class ImportExportHandler : public Handler
 {
     Q_OBJECT
   public:
@@ -40,7 +40,7 @@ class ImportExportHandler : public QObject
     Q_INVOKABLE virtual void handle_export(Transfer*) = 0;
 
   protected:
-    ImportExportHandler(QObject* parent = nullptr); 
+    ImportExportHandler(QObject* parent = nullptr);
 };
 }
 }

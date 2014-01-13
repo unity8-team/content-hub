@@ -19,7 +19,9 @@
 #include "common.h"
 #include "ContentServiceInterface.h"
 #include "ContentHandlerInterface.h"
+#include "ContentShareHandlerInterface.h"
 #include "handleradaptor.h"
+#include "sharehandleradaptor.h"
 #include "transfer_p.h"
 #include "utils.cpp"
 
@@ -27,6 +29,7 @@
 #include <com/ubuntu/content/import_export_handler.h>
 #include <com/ubuntu/content/peer.h>
 #include <com/ubuntu/content/scope.h>
+#include <com/ubuntu/content/share_handler.h>
 #include <com/ubuntu/content/store.h>
 #include <com/ubuntu/content/type.h>
 
@@ -94,6 +97,42 @@ void cuc::Hub::register_import_export_handler(cuc::ImportExportHandler* handler)
     }
 
     d->service->RegisterImportExportHandler(
+                QString(""),
+                id,
+                QDBusObjectPath{handler_path(id)});
+}
+
+void cuc::Hub::register_share_handler(cuc::ShareHandler* handler)
+{
+    qDebug() << Q_FUNC_INFO;
+    QString id = app_id();
+
+    if (id.isEmpty())
+    {
+        qWarning() << "APP_ID isn't set, the handler can not be registered";
+        return;
+    }
+
+    QString bus_name = handler_address(id);
+    qDebug() << Q_FUNC_INFO << "BUS_NAME:" << bus_name;
+
+    auto c = QDBusConnection::sessionBus();
+    auto h = new cuc::detail::ShareHandler(c, id, handler);
+
+    new ShareHandlerAdaptor(h);
+    if (not c.registerService(bus_name))
+    {
+        qWarning() << Q_FUNC_INFO << "Failed to register name:" << bus_name;
+        return;
+    }
+
+    if (not c.registerObject(handler_path(id), h))
+    {
+        qWarning() << Q_FUNC_INFO << "Failed to register object for:" << bus_name;
+        return;
+    }
+
+    d->service->RegisterShareHandler(
                 QString(""),
                 id,
                 QDBusObjectPath{handler_path(id)});

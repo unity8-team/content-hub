@@ -22,5 +22,10 @@
       <arg name="peer_id" type="s" direction="in" />
       <arg name="handler_object" type="o" direction="in" />
     </method>
+    <method name="RegisterShareHandler">
+      <arg name="type_id" type="s" direction="in" />
+      <arg name="peer_id" type="s" direction="in" />
+      <arg name="handler_object" type="o" direction="in" />
+    </method>
  </interface>
 </node>

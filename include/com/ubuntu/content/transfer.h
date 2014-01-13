@@ -34,6 +34,7 @@ namespace content
 namespace detail
 {
 class Handler;
+class ShareHandler;
 }
 }
 }
@@ -102,6 +103,7 @@ class Transfer : public QObject
     friend struct Private;
     friend class Hub;
     friend class com::ubuntu::content::detail::Handler;
+    friend class com::ubuntu::content::detail::ShareHandler;
     QSharedPointer<Private> d;
 
     Transfer(const QSharedPointer<Private>&, QObject* parent = nullptr);    

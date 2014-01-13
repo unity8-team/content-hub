@@ -255,3 +255,8 @@ void cucd::Service::RegisterImportExportHandler(const QString& /*type_id*/, cons
 {
     qDebug() << Q_FUNC_INFO << peer_id << ":" << handler.path();
 }
+
+void cucd::Service::RegisterShareHandler(const QString& /*type_id*/, const QString& peer_id, const QDBusObjectPath& handler)
+{
+    qDebug() << Q_FUNC_INFO << peer_id << ":" << handler.path();
+}

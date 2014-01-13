@@ -12,12 +12,14 @@
  *
  * You should have received a copy of the GNU Lesser General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ *
+ * Authored by: Ken VanDine <ken.vandine@canonical.com>
  */
 
-#include <com/ubuntu/content/import_export_handler.h>
+#include <com/ubuntu/content/share_handler.h>
 
 namespace cuc = com::ubuntu::content;
 
-cuc::ImportExportHandler::ImportExportHandler(QObject *parent) : cuc::Handler(parent)
+cuc::ShareHandler::ShareHandler(QObject *parent) : cuc::Handler(parent)
 {
 }

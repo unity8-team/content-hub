@@ -16,7 +16,7 @@
 
 #include "app_manager.h"
 
-#include <libupstart-app-launch-1/upstart-app-launch.h>
+#include <upstart-app-launch.h>
 
 namespace cucd = com::ubuntu::content::detail;
 

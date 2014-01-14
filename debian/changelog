@@ -1,3 +1,23 @@
+content-hub (0.0+14.04.20131209.1-0ubuntu1) trusty; urgency=low
+
+  [ Ken VanDine ]
+  * Filled in the missing docstrings for the QML bindings .
+  * Documentation cleanup, fixes button alignment and uses MainView in
+    the QML code example.
+  * allow ContentPeer to be creatable in QML, this makes it more obvious
+    how to deal with the list returned by knownSourcesForType.
+
+  [ Ted Gould ]
+  * Upgrading to libupstart-app-launch v2.
+
+  [ Alexandre Abreu ]
+  * fix small documentation nit
+
+  [ Ubuntu daily release ]
+  * Automatic snapshot from revision 69
+
+ -- Ubuntu daily release <ps-jenkins@lists.canonical.com>  Mon, 09 Dec 2013 09:59:43 +0000
+
 content-hub (0.0+14.04.20131025-0ubuntu1) trusty; urgency=low
 
   [ Ken VanDine ]

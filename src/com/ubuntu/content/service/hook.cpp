@@ -128,6 +128,11 @@ bool Hook::add_peer(QFileInfo result)
             if (not registry->install_peer_for_type(cuc::Type::Known::documents(), peer))
                 qWarning() << "Failed to install peer for" << source;
         }
+        else if (source == "contacts")
+        {
+            if (not registry->install_peer_for_type(cuc::Type::Known::contacts(), peer))
+                qWarning() << "Failed to install peer for" << source;
+        }
     }
     return true;
 }

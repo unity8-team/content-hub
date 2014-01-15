@@ -58,6 +58,7 @@ struct cucd::Service::Private : public QObject
     QDBusConnection connection;
     QSharedPointer<cucd::PeerRegistry> registry;
     QSet<cucd::Transfer*> active_transfers;
+    QSet<cucd::Transfer*> active_shares;
     QSharedPointer<cua::ApplicationManager> app_manager;
 };
 
@@ -80,6 +81,11 @@ cucd::Service::~Service()
 {
     qDebug() << Q_FUNC_INFO;
     Q_FOREACH (cucd::Transfer *t, d->active_transfers)
+    {
+        qDebug() << Q_FUNC_INFO << "Destroying transfer:" << t->Id();
+        delete t;
+    }
+    Q_FOREACH (cucd::Transfer *t, d->active_shares)
     {
         qDebug() << Q_FUNC_INFO << "Destroying transfer:" << t->Id();
         delete t;
@@ -112,6 +118,21 @@ void cucd::Service::handler_registered(const QString& name)
                     0);
             if (h->isValid())
                 h->HandleImport(QDBusObjectPath{t->import_path()});
+        }
+    }
+
+    Q_FOREACH (cucd::Transfer *t, d->active_shares)
+    {
+        if (handler_address(t->source()) == name)
+        {
+            qDebug() << Q_FUNC_INFO << "Found source:" << name;
+            cuc::dbus::ShareHandler *h = new cuc::dbus::ShareHandler(
+                    name,
+                    handler_path(t->source()),
+                    QDBusConnection::sessionBus(),
+                    0);
+            if (h->isValid())
+                h->HandleShare(QDBusObjectPath{t->export_path()});
         }
     }
 }
@@ -248,7 +269,7 @@ QDBusObjectPath cucd::Service::CreateShareForPeer(const QString& peer_id, const 
 
     auto transfer = new cucd::Transfer(import_counter, peer_id, app_id, this);
     new TransferAdaptor(transfer);
-    d->active_transfers.insert(transfer);
+    d->active_shares.insert(transfer);
 
     auto destination = transfer->import_path();
     auto source = transfer->export_path();

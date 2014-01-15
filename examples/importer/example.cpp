@@ -30,7 +30,9 @@ void Example::create_import()
 {
     auto hub = cuc::Hub::Client::instance();
 
-    auto peer = hub->default_peer_for_type(cuc::Type::Known::pictures());
+    //auto peer = hub->default_peer_for_type(cuc::Type::Known::pictures());
+    auto peer = cuc::Peer{"exporter"};
+
     qDebug() << Q_FUNC_INFO << "PEER: " << peer.name();
 
     m_transfer = hub->create_import_for_type_from_peer(

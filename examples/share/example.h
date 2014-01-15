@@ -30,6 +30,9 @@ public:
     explicit Example(QObject *parent = 0);
     void create_share();
 
+public Q_SLOTS:
+    void state_check();
+
 private:
     com::ubuntu::content::Transfer *m_transfer;
 };

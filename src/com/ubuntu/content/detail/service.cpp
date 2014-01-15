@@ -229,7 +229,7 @@ QDBusObjectPath cucd::Service::CreateImportForTypeFromPeer(const QString& type_i
     return QDBusObjectPath{destination};
 }
 
-QDBusObjectPath cucd::Service::CreateShareForTypeFromPeer(const QString& type_id, const QString& peer_id, const QString& dest_id)
+QDBusObjectPath cucd::Service::CreateShareForPeer(const QString& peer_id, const QString& dest_id)
 {
     qDebug() << Q_FUNC_INFO;
 
@@ -264,8 +264,6 @@ QDBusObjectPath cucd::Service::CreateShareForTypeFromPeer(const QString& type_id
     m_watcher->addWatchedService(handler_address(peer_id));
     qDebug() << Q_FUNC_INFO << "Watches:" << m_watcher->watchedServices();
     this->connect_share_handler(peer_id, source);
-
-    Q_UNUSED(type_id);
 
     return QDBusObjectPath{destination};
 }

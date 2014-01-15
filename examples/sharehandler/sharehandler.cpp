@@ -26,7 +26,7 @@ int main(int argc, char *argv[])
 {
     QCoreApplication a(argc, argv);
     if (qgetenv("APP_ID").isEmpty()) {
-        qputenv("APP_ID", "gallery-app");
+        qputenv("APP_ID", "example-share-handler");
     }
 
     ExampleShareHandler sharehandler;

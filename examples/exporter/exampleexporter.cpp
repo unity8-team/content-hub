@@ -39,7 +39,7 @@ void ExampleExporter::handle_export(cuc::Transfer *transfer)
         qDebug() << Q_FUNC_INFO << "selectionType: multiple";
 
     QVector<cuc::Item> items;
-    items << cuc::Item(QUrl("file:///tmp/test1"));
+    items << cuc::Item(QUrl("http://example.com/something.jpg"));
     items << cuc::Item(QUrl("file:///tmp/test2"));
     transfer->charge(items);
     qDebug() << Q_FUNC_INFO << "Items:" << items.count();

@@ -33,12 +33,12 @@ void ExampleShareHandler::handle_share(cuc::Transfer *transfer)
         return;
     }
 
-    if (transfer->selectionType() == cuc::Transfer::SelectionType::single)
-        qDebug() << Q_FUNC_INFO << "selectionType: single";
-    else if (transfer->selectionType() == cuc::Transfer::SelectionType::multiple)
-        qDebug() << Q_FUNC_INFO << "selectionType: multiple";
-
     QVector<cuc::Item> items;
     items = transfer->collect();
     qDebug() << Q_FUNC_INFO << "Items:" << items.count();
+
+    foreach (auto i, items) {
+        qDebug() << "Item: " << i.url();
+    }
+
 }

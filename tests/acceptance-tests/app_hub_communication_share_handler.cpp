@@ -136,8 +136,7 @@ TEST(Handler, handler_on_bus)
 
             qputenv("APP_ID", default_dest_peer_id.toLatin1());
             hub = cuc::Hub::Client::instance();
-            auto transfer = hub->create_import_for_type_from_peer(
-                cuc::Type::Known::pictures(),
+            auto transfer = hub->create_share_for_peer(
                 cuc::Peer(default_peer_id));
             ASSERT_TRUE(transfer != nullptr);
             EXPECT_TRUE(transfer->start());

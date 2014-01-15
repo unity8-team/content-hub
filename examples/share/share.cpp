@@ -24,6 +24,9 @@ namespace cuc = com::ubuntu::content;
 int main(int argc, char *argv[])
 {
     QCoreApplication a(argc, argv);
+    if (qgetenv("APP_ID").isEmpty()) {
+        qputenv("APP_ID", "example-share");
+    }
 
     Example *e = new Example();
 

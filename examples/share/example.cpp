@@ -19,6 +19,7 @@
 #include "example.h"
 #include <com/ubuntu/content/hub.h>
 #include <com/ubuntu/content/store.h>
+#include <QCoreApplication>
 
 namespace cuc = com::ubuntu::content;
 
@@ -31,18 +32,35 @@ void Example::create_share()
 {
     auto hub = cuc::Hub::Client::instance();
 
-    auto peer = hub->default_peer_for_type(cuc::Type::Known::pictures());
-    qDebug() << Q_FUNC_INFO << "PEER: " << peer.name();
+    auto peer = cuc::Peer{"example-share-handler"};
 
-    m_transfer = hub->create_share_for_type_from_peer(
-        cuc::Type::Known::pictures(),
-        peer);
+    m_transfer = hub->create_share_for_peer(peer);
 
-    m_transfer->setSelectionType(cuc::Transfer::SelectionType::multiple);
+    /* listen for state changes so we known when it's collected */
+    connect(m_transfer, SIGNAL(stateChanged()), this, SLOT(state_check()));
+
     m_transfer->start();
     QVector<cuc::Item> items;
-    items << cuc::Item(QUrl("file:///tmp/test1"));
-    items << cuc::Item(QUrl("file:///tmp/test2"));
+    items << cuc::Item(QUrl("http:///example.com/test1.jpg"));
+    items << cuc::Item(QUrl("file:///tmp/test2.jpg"));
     m_transfer->charge(items);
     qDebug() << Q_FUNC_INFO << "Items:" << items.count();
+}
+
+void Example::state_check()
+{
+    qDebug() << Q_FUNC_INFO << m_transfer->state();
+    /* When the transfer is collected we'll know the share was successful */
+    if (m_transfer->state() == cuc::Transfer::collected)
+    {
+        qDebug() << Q_FUNC_INFO << "Collected";
+        QCoreApplication::exit();
+    }
+
+    /* If the transfer is aborted, we had a failure */
+    if (m_transfer->state() == cuc::Transfer::aborted)
+    {
+        qDebug() << Q_FUNC_INFO << "Share failed";
+        QCoreApplication::exit();
+    }
 }

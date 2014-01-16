@@ -42,8 +42,8 @@ public:
     bool remove_peer(cuc::Peer peer);
 
 private:
-    QScopedPointer<QGSettings> m_defaultPeers;
-    QScopedPointer<QGSettings> m_peers;
+    QScopedPointer<QGSettings> m_defaultImportPeers;
+    QScopedPointer<QGSettings> m_importPeers;
 };
 
 #endif // REGISTRY_H

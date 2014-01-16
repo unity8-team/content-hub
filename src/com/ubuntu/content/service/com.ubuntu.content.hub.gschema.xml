@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <schemalist>
-  <schema id="com.ubuntu.content.hub.default" path="/com/ubuntu/content/hub/peers/">
+  <schema id="com.ubuntu.content.hub.import.default" path="/com/ubuntu/content/hub/peers/import/">
     <key name="pictures" type="s">
       <default>"gallery-app"</default>
     </key>
@@ -14,7 +14,7 @@
       <default>"address-book-app"</default>
     </key>
   </schema>
-  <schema id="com.ubuntu.content.hub.all" path="/com/ubuntu/content/hub/peers/">
+  <schema id="com.ubuntu.content.hub.import.all" path="/com/ubuntu/content/hub/peers/import/">
     <key name="pictures" type="as">
       <default>[]</default>
     </key>

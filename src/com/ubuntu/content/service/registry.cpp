@@ -19,10 +19,10 @@
 #include "registry.h"
 
 Registry::Registry() :
-    m_defaultPeers(new QGSettings("com.ubuntu.content.hub.default",
-                                  "/com/ubuntu/content/hub/peers/")),
-    m_peers(new QGSettings("com.ubuntu.content.hub.all",
-                           "/com/ubuntu/content/hub/peers/"))
+    m_defaultImportPeers(new QGSettings("com.ubuntu.content.hub.import.default",
+                                  "/com/ubuntu/content/hub/peers/import/")),
+    m_importPeers(new QGSettings("com.ubuntu.content.hub.import.all",
+                           "/com/ubuntu/content/hub/peers/import/"))
 {
 }
 
@@ -31,8 +31,8 @@ Registry::~Registry() {}
 cuc::Peer Registry::default_peer_for_type(cuc::Type type)
 {
     qDebug() << Q_FUNC_INFO << type.id();
-    if (m_defaultPeers->keys().contains(type.id()))
-        return cuc::Peer(m_defaultPeers->get(type.id()).toString());
+    if (m_defaultImportPeers->keys().contains(type.id()))
+        return cuc::Peer(m_defaultImportPeers->get(type.id()).toString());
     else
         return cuc::Peer();
 }
@@ -41,7 +41,7 @@ void Registry::enumerate_known_peers_for_type(cuc::Type type, const std::functio
 {
     qDebug() << Q_FUNC_INFO << type.id();
 
-    Q_FOREACH (QString k, m_peers->get(type.id()).toStringList())
+    Q_FOREACH (QString k, m_importPeers->get(type.id()).toStringList())
     {
         qDebug() << Q_FUNC_INFO << k;
         for_each(k);
@@ -52,10 +52,10 @@ void Registry::enumerate_known_peers(const std::function<void(const cuc::Peer&)>
 {
     qDebug() << Q_FUNC_INFO;
 
-    Q_FOREACH (QString type_id, m_peers->keys())
+    Q_FOREACH (QString type_id, m_importPeers->keys())
     {
         qDebug() << Q_FUNC_INFO << type_id;
-        Q_FOREACH (QString k, m_peers->get(type_id).toStringList())
+        Q_FOREACH (QString k, m_importPeers->get(type_id).toStringList())
         {
             qDebug() << Q_FUNC_INFO << k;
             for_each(k);
@@ -66,24 +66,24 @@ void Registry::enumerate_known_peers(const std::function<void(const cuc::Peer&)>
 bool Registry::install_default_peer_for_type(cuc::Type type, cuc::Peer peer)
 {
     qDebug() << Q_FUNC_INFO << "type:" << type.id() << "peer:" << peer.id();
-    if (m_defaultPeers->keys().contains(type.id()))
+    if (m_defaultImportPeers->keys().contains(type.id()))
     {
         qDebug() << Q_FUNC_INFO << "Default peer for" << type.id() << "already installed.";
         return false;
     }
 
     this->install_peer_for_type(type, peer);
-    return m_defaultPeers->trySet(type.id(), QVariant(peer.id()));
+    return m_defaultImportPeers->trySet(type.id(), QVariant(peer.id()));
 }
 
 bool Registry::install_peer_for_type(cuc::Type type, cuc::Peer peer)
 {
     qDebug() << Q_FUNC_INFO << "type:" << type.id() << "peer:" << peer.id();
-    QStringList l = m_peers->get(type.id()).toStringList();
+    QStringList l = m_importPeers->get(type.id()).toStringList();
     if (not l.contains(peer.id()))
     {
         l.append(peer.id());
-        return m_peers->trySet(type.id(), QVariant(l));
+        return m_importPeers->trySet(type.id(), QVariant(l));
     }
     return false;
 }
@@ -92,13 +92,13 @@ bool Registry::remove_peer(cuc::Peer peer)
 {
     qDebug() << Q_FUNC_INFO << "peer:" << peer.id();
     bool ret = false;
-    Q_FOREACH (QString type_id, m_peers->keys())
+    Q_FOREACH (QString type_id, m_importPeers->keys())
     {
-        QStringList l = m_peers->get(type_id).toStringList();
+        QStringList l = m_importPeers->get(type_id).toStringList();
         if (l.contains(peer.id()))
         {
             l.removeAll(peer.id());
-            ret = m_peers->trySet(type_id, QVariant(l));
+            ret = m_importPeers->trySet(type_id, QVariant(l));
         }
     }
     return ret;

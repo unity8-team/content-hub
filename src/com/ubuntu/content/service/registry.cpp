@@ -17,6 +17,7 @@
  */
 
 #include "registry.h"
+#include <upstart-app-launch.h>
 
 Registry::Registry() :
     m_defaultPeers(new QGSettings("com.ubuntu.content.hub.default",
@@ -32,7 +33,13 @@ cuc::Peer Registry::default_peer_for_type(cuc::Type type)
 {
     qDebug() << Q_FUNC_INFO << type.id();
     if (m_defaultPeers->keys().contains(type.id()))
-        return cuc::Peer(m_defaultPeers->get(type.id()).toString());
+    {
+        QStringList as(m_defaultPeers->get(type.id()).toStringList());
+        std::string pkg = as[0].toStdString();
+        std::string app = as[1].toStdString();
+        std::string ver = as[2].toStdString();
+        return cuc::Peer(QString::fromLocal8Bit(upstart_app_launch_triplet_to_app_id(pkg.c_str(), app.c_str(), ver.c_str())));
+    }
     else
         return cuc::Peer();
 }

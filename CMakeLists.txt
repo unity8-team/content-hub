@@ -72,6 +72,7 @@ set(CONTENT_HUB_VERSION "${CONTENT_HUB_VERSION_MAJOR}.${CONTENT_HUB_VERSION_MINO
 
 include_directories(include)
 
+add_subdirectory(utils)
 add_subdirectory(doc)
 add_subdirectory(src)
 add_subdirectory(import)

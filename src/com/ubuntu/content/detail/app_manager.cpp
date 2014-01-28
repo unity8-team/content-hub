@@ -23,6 +23,17 @@ namespace cucd = com::ubuntu::content::detail;
 /*!
  * \reimp
  */
+std::string cucd::AppManager::start_application(const std::string &app_id)
+{
+    gchar ** uris = NULL;
+    std::string instance_id = upstart_app_launch_start_multiple_helper("content-hub", app_id.c_str(), (const gchar * const *)uris);
+    return instance_id;
+    //if (instance_id.length() > 0)
+    //    return true;
+    //else
+    //    return false;
+}
+
 bool cucd::AppManager::invoke_application(const std::string &app_id)
 {
     gchar ** uris = NULL;
@@ -33,17 +44,8 @@ bool cucd::AppManager::invoke_application(const std::string &app_id)
 /*!
  * \reimp
  */
-bool cucd::AppManager::stop_application(const std::string &app_id)
+bool cucd::AppManager::stop_application(const std::string &app_id, const std::string &instance_id)
 {
-    gboolean ok = upstart_app_launch_stop_application(app_id.c_str());
+    gboolean ok = upstart_app_launch_stop_multiple_helper("content-hub", app_id.c_str(), instance_id.c_str());
     return static_cast<bool>(ok);
-}
-
-/*!
- * \reimp
- */
-bool cucd::AppManager::is_application_started(const std::string &app_id)
-{
-    GPid pid = upstart_app_launch_get_primary_pid(app_id.c_str());
-    return pid != 0;
 }

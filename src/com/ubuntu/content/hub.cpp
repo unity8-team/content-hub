@@ -74,27 +74,22 @@ void cuc::Hub::register_import_export_handler(cuc::ImportExportHandler* handler)
         return;
     }
 
-    QString bus_name = handler_address(id);
-    qDebug() << Q_FUNC_INFO << "BUS_NAME:" << bus_name;
+    QString instance_id = qgetenv("INSTANCE_ID");
 
     auto c = QDBusConnection::sessionBus();
     auto h = new cuc::detail::Handler(c, id, handler);
 
     new HandlerAdaptor(h);
-    if (not c.registerService(bus_name))
-    {
-        qWarning() << Q_FUNC_INFO << "Failed to register name:" << bus_name;
-        return;
-    }
+
 
     if (not c.registerObject(handler_path(id), h))
     {
-        qWarning() << Q_FUNC_INFO << "Failed to register object for:" << bus_name;
+        qWarning() << Q_FUNC_INFO << "Failed to register object for:" << id;
         return;
     }
 
     d->service->RegisterImportExportHandler(
-                QString(""),
+                instance_id,
                 id,
                 QDBusObjectPath{handler_path(id)});
 }

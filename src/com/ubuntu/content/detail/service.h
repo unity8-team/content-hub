@@ -61,15 +61,13 @@ class Service : public QObject, protected QDBusContext
 
   private:
     struct Private;
+    struct RegHandler;
     QDBusServiceWatcher* m_watcher;
     QScopedPointer<Private> d;
-    void connect_export_handler(const QString&, const QString&);
-    void connect_import_handler(const QString&, const QString&);
 
   private Q_SLOTS:
     void handle_transfer(int);
-    void handler_registered(const QString&);
-
+    void handler_unregistered(const QString&);
 };
 }
 }

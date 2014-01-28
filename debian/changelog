@@ -1,3 +1,9 @@
+content-hub (0.0+14.04.20140126.1-0ken1) UNRELEASED; urgency=medium
+
+  * 
+
+ -- Ken VanDine <ken.vandine@canonical.com>  Mon, 27 Jan 2014 14:09:38 -0500
+
 content-hub (0.0+14.04.20131209.1-0ubuntu1) trusty; urgency=low
 
   [ Ken VanDine ]

@@ -48,7 +48,9 @@ cucd::Handler::Handler(QDBusConnection connection, const QString& peer_id, cuc::
     m_handler = handler;
 }
 
-cucd::Handler::~Handler() {}
+cucd::Handler::~Handler() {
+    delete m_handler;
+}
 
 void cucd::Handler::HandleImport(const QDBusObjectPath& transfer)
 {

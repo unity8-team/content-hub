@@ -145,7 +145,7 @@ QDBusObjectPath cucd::Service::CreateImportForTypeFromPeer(const QString& type_i
 
     QUuid uuid{QUuid::createUuid()};
 
-    auto transfer = new cucd::Transfer(import_counter, peer_id, this->message().service(), this);
+    auto transfer = new cucd::Transfer(import_counter, peer_id, app_id, this);
     new TransferAdaptor(transfer);
     d->active_transfers.insert(transfer);
 
@@ -185,7 +185,7 @@ void cucd::Service::handle_transfer(int state)
         Q_FOREACH (RegHandler *r, d->handlers)
         {
             qDebug() << "Handler: " << r->service << "Transfer: " << transfer->destination();
-            if (r->service == transfer->destination())
+            if (r->id == transfer->destination())
             {
                 qDebug() << "Found handler for charged transfer" << r->id;
                 if (r->handler->isValid())

@@ -179,7 +179,7 @@ void cucd::Service::handle_transfer(int state)
     if (state == cuc::Transfer::charged)
     {
         qDebug() << Q_FUNC_INFO << "Charged";
-        //d->app_manager->invoke_application(transfer->destination().toStdString());
+        d->app_manager->invoke_application(transfer->destination().toStdString());
         d->app_manager->stop_application(transfer->source().toStdString(), transfer->InstanceId().toStdString());
 
         Q_FOREACH (RegHandler *r, d->handlers)
@@ -196,7 +196,7 @@ void cucd::Service::handle_transfer(int state)
 
     if (state == cuc::Transfer::aborted)
     {
-        //d->app_manager->invoke_application(transfer->destination().toStdString());
+        d->app_manager->invoke_application(transfer->destination().toStdString());
         d->app_manager->stop_application(transfer->source().toStdString(), transfer->InstanceId().toStdString());
     }
 }

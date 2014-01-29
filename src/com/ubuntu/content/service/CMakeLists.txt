@@ -91,7 +91,6 @@ set(CLICK_HOOK
 "${CMAKE_CURRENT_BINARY_DIR}/content-hub.hook"
 )
 
-set(pkglibexecdir "${CMAKE_INSTALL_FULL_LIBEXECDIR}")
 configure_file("content-hub.hook.in"
   "${CLICK_HOOK}"
   @ONLY

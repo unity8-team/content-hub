@@ -34,6 +34,8 @@ if (EXISTS "/etc/debian_version")
   set(CMAKE_INSTALL_FULL_LIBEXECDIR "${CMAKE_INSTALL_PREFIX}/${CMAKE_INSTALL_LIBEXECDIR}")
 endif()
 
+set(pkglibexecdir "${CMAKE_INSTALL_FULL_LIBEXECDIR}")
+
 
 #####################################################################
 # Enable code coverage calculation with gcov/gcovr/lcov

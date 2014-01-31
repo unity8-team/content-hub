@@ -43,6 +43,6 @@ How do I install the code?
 One way to do it one the code is compiled is:
 make install
 
-However, the recommended way to do it is by installing the packages build
+However, the recommended way to do it is by installing the packages built
 manually.
 

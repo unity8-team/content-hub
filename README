@@ -1,0 +1,48 @@
+What is content-hub?
+--------------------
+
+content-hub is a mediation service to let applications share content between
+them even if they are not running at the same time.
+
+For a more detailed description, please have a look at:
+doc/Mainpage.md
+
+
+How do I get all building dependencies?
+---------------------------------------
+
+Build dependencies are already listed in the debian/control file. To get them
+use the following command:
+sudo apt-get build-dep content-hub
+
+
+How do I compile the code?
+--------------------------
+
+To compile the code run the following command from the branch directory:
+cmake . && make
+
+
+How do I run the test cases?
+----------------------------
+
+To run the test cases use the following command:
+make test
+
+
+How do I build the packages?
+----------------------------
+
+To build the pacakges run the following command:
+bzr builddeb
+
+
+How do I install the code?
+--------------------------
+
+One way to do it one the code is compiled is:
+make install
+
+However, the recommended way to do it is by installing the packages build
+manually.
+

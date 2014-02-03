@@ -179,8 +179,8 @@ void cucd::Service::handle_transfer(int state)
     if (state == cuc::Transfer::charged)
     {
         qDebug() << Q_FUNC_INFO << "Charged";
-        d->app_manager->invoke_application(transfer->destination().toStdString());
         d->app_manager->stop_application(transfer->source().toStdString(), transfer->InstanceId().toStdString());
+        d->app_manager->invoke_application(transfer->destination().toStdString());
 
         Q_FOREACH (RegHandler *r, d->handlers)
         {
@@ -196,8 +196,8 @@ void cucd::Service::handle_transfer(int state)
 
     if (state == cuc::Transfer::aborted)
     {
-        d->app_manager->invoke_application(transfer->destination().toStdString());
         d->app_manager->stop_application(transfer->source().toStdString(), transfer->InstanceId().toStdString());
+        d->app_manager->invoke_application(transfer->destination().toStdString());
     }
 }
 
@@ -213,6 +213,7 @@ void cucd::Service::handler_unregistered(const QString& s)
             qDebug() << "Found match for " << r->id;
             d->handlers.remove(r);
             m_watcher->removeWatchedService(s);
+            delete r;
         }
     }
 }
@@ -234,12 +235,20 @@ void cucd::Service::RegisterImportExportHandler(const QString& instance_id, cons
 
     Q_FOREACH (cucd::Transfer *t, d->active_transfers)
     {
-        qDebug() << Q_FUNC_INFO << "SOURCE: " << t->source() << "INSTANCE_ID:" << t->InstanceId();
-        if ((t->source() == peer_id) && (t->InstanceId() == instance_id))
+        qDebug() << Q_FUNC_INFO << "SOURCE: " << t->source() << "STATE:" << t->State();
+        // FIXME: Don't check instance_id because we can't handle multiple instances yet
+        //if ((t->source() == peer_id) && (t->InstanceId() == instance_id))
+        if ((t->source() == peer_id) && (t->State() == cuc::Transfer::initiated))
         {
             qDebug() << Q_FUNC_INFO << "Found source:" << peer_id;
             if (r->handler->isValid())
                 r->handler->HandleExport(QDBusObjectPath{t->export_path()});
+        }
+        else if ((t->destination() == peer_id) && (t->State() == cuc::Transfer::charged))
+        {
+            qDebug() << Q_FUNC_INFO << "Found destination:" << peer_id;
+            if (r->handler->isValid())
+                r->handler->HandleImport(QDBusObjectPath{t->import_path()});
         }
     }
 }

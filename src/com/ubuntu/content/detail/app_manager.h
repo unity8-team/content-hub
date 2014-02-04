@@ -38,6 +38,7 @@ class AppManager: public com::ubuntu::ApplicationManager::ApplicationManager
     virtual std::string start_application(const std::string &app_id, const std::string &uri);
     virtual bool invoke_application(const std::string &app_id, const std::string &uri);
     virtual bool stop_application(const std::string &app_id, const std::string &instance_id);
+    virtual bool is_application_started(const std::string &app_id);
 };
 
 }

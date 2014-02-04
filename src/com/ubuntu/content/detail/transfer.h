@@ -46,6 +46,9 @@ class Transfer : public QObject
 
     Transfer& operator=(const Transfer&) = delete;
 
+    void SetSourceStartedByContentHub(bool started);
+    bool WasSourceStartedByContentHub() const;
+
     void SetInstanceId(QString instance);
     QString InstanceId() const;
 

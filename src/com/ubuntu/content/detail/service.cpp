@@ -172,19 +172,30 @@ void cucd::Service::handle_transfer(int state)
     if (state == cuc::Transfer::initiated)
     {
         qDebug() << Q_FUNC_INFO << "Initiated";
+        if (d->app_manager->is_application_started(transfer->source().toStdString()))
+            transfer->SetSourceStartedByContentHub(false);
+        else
+            transfer->SetSourceStartedByContentHub(true);
+
+        /*
         std::string instance_id = d->app_manager->start_application(
                     transfer->source().toStdString(),
                     transfer->export_path().toStdString());
         transfer->SetInstanceId(QString::fromStdString(instance_id));
+        */
+        d->app_manager->invoke_application(
+                    transfer->source().toStdString(),
+                    QString::number(transfer->Id()).toStdString());
     }
 
     if (state == cuc::Transfer::charged)
     {
         qDebug() << Q_FUNC_INFO << "Charged";
-        d->app_manager->stop_application(transfer->source().toStdString(), transfer->InstanceId().toStdString());
+        if (transfer->WasSourceStartedByContentHub())
+            d->app_manager->stop_application(transfer->source().toStdString(), transfer->InstanceId().toStdString());
         d->app_manager->invoke_application(
                     transfer->destination().toStdString(),
-                    transfer->import_path().toStdString());
+                    QString::number(transfer->Id()).toStdString());
 
         Q_FOREACH (RegHandler *r, d->handlers)
         {
@@ -200,10 +211,12 @@ void cucd::Service::handle_transfer(int state)
 
     if (state == cuc::Transfer::aborted)
     {
-        d->app_manager->stop_application(transfer->source().toStdString(), transfer->InstanceId().toStdString());
+        if (transfer->WasSourceStartedByContentHub())
+            d->app_manager->stop_application(transfer->source().toStdString(), transfer->InstanceId().toStdString());
+
         d->app_manager->invoke_application(
                     transfer->destination().toStdString(),
-                    transfer->import_path().toStdString());
+                    QString::number(transfer->Id()).toStdString());
     }
 }
 

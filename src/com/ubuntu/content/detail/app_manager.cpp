@@ -59,3 +59,12 @@ bool cucd::AppManager::stop_application(const std::string &app_id, const std::st
     gboolean ok = upstart_app_launch_stop_application(app_id.c_str());
     return static_cast<bool>(ok);
 }
+
+/*!
+ * \reimp
+ */
+bool cucd::AppManager::is_application_started(const std::string &app_id)
+{
+    GPid pid = upstart_app_launch_get_primary_pid(app_id.c_str());
+    return pid != 0;
+}

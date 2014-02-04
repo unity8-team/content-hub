@@ -38,6 +38,7 @@ struct cucd::Transfer::Private
             source(source),
             destination(destination),
             selection_type(cuc::Transfer::single),
+            source_started_by_content_hub(false),
             instance_id()
     {
     }
@@ -49,6 +50,7 @@ struct cucd::Transfer::Private
     QString store;
     int selection_type;
     QStringList items;
+    bool source_started_by_content_hub;
     QString instance_id;
 };
 
@@ -237,6 +239,18 @@ QString cucd::Transfer::import_path()
             .arg(sanitize_id(d->destination))
             .arg(d->id);
     return destination;
+}
+
+/* sets, if the source app is freshly started by the content hub */
+void cucd::Transfer::SetSourceStartedByContentHub(bool started)
+{
+    d->source_started_by_content_hub = started;
+}
+
+/* returns if the source app was started by the content hub */
+bool com::ubuntu::content::detail::Transfer::WasSourceStartedByContentHub() const
+{
+    return d->source_started_by_content_hub;
 }
 
 /* sets, if the source app is freshly started by the content hub */

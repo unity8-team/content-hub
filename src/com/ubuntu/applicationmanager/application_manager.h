@@ -49,6 +49,11 @@ class ApplicationManager
      * \param instance_id ID for the instance assigned by upstart
      */
     virtual bool stop_application(const std::string &app_id, const std::string &instance_id) = 0;
+    /*!
+     * \brief is_application_started returns true, if the application s already started by upstart
+     * \param app_id ID for the application (for example "gallery-app" - used for the desktop)
+     */
+    virtual bool is_application_started(const std::string &app_id) = 0;
 };
 
 }

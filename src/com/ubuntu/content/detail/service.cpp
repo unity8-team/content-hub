@@ -172,7 +172,9 @@ void cucd::Service::handle_transfer(int state)
     if (state == cuc::Transfer::initiated)
     {
         qDebug() << Q_FUNC_INFO << "Initiated";
-        std::string instance_id = d->app_manager->start_application(transfer->source().toStdString());
+        std::string instance_id = d->app_manager->start_application(
+                    transfer->source().toStdString(),
+                    transfer->export_path().toStdString());
         transfer->SetInstanceId(QString::fromStdString(instance_id));
     }
 
@@ -180,7 +182,9 @@ void cucd::Service::handle_transfer(int state)
     {
         qDebug() << Q_FUNC_INFO << "Charged";
         d->app_manager->stop_application(transfer->source().toStdString(), transfer->InstanceId().toStdString());
-        d->app_manager->invoke_application(transfer->destination().toStdString());
+        d->app_manager->invoke_application(
+                    transfer->destination().toStdString(),
+                    transfer->import_path().toStdString());
 
         Q_FOREACH (RegHandler *r, d->handlers)
         {
@@ -197,13 +201,18 @@ void cucd::Service::handle_transfer(int state)
     if (state == cuc::Transfer::aborted)
     {
         d->app_manager->stop_application(transfer->source().toStdString(), transfer->InstanceId().toStdString());
-        d->app_manager->invoke_application(transfer->destination().toStdString());
+        d->app_manager->invoke_application(
+                    transfer->destination().toStdString(),
+                    transfer->import_path().toStdString());
     }
 }
 
 void cucd::Service::handler_unregistered(const QString& s)
 {
     qDebug() << Q_FUNC_INFO << s;
+
+    if (d->handlers.isEmpty())
+        return;
 
     Q_FOREACH (RegHandler *r, d->handlers)
     {

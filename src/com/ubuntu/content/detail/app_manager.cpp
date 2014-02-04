@@ -24,22 +24,26 @@ namespace cucd = com::ubuntu::content::detail;
 /*!
  * \reimp
  */
-std::string cucd::AppManager::start_application(const std::string &app_id)
+std::string cucd::AppManager::start_application(const std::string &app_id, const std::string &uri)
 {
     qDebug() << Q_FUNC_INFO << "APP_ID:" << app_id.c_str();
 
     gchar ** uris = NULL;
+    uris = g_new0(gchar *, 1);
+    uris[0] = g_strdup(uri.c_str());
     //std::string instance_id = upstart_app_launch_start_multiple_helper("content-hub", app_id.c_str(), (const gchar * const *)uris);
     std::string instance_id = "";
     upstart_app_launch_start_application(app_id.c_str(), (const gchar * const *)uris);
     return instance_id;
 }
 
-bool cucd::AppManager::invoke_application(const std::string &app_id)
+bool cucd::AppManager::invoke_application(const std::string &app_id, const std::string &uri)
 {
     qDebug() << Q_FUNC_INFO << "APP_ID:" << app_id.c_str();
 
     gchar ** uris = NULL;
+    uris = g_new0(gchar *, 1);
+    uris[0] = g_strdup(uri.c_str());
     gboolean ok = upstart_app_launch_start_application(app_id.c_str(), (const gchar * const *)uris);
     return static_cast<bool>(ok);
 }

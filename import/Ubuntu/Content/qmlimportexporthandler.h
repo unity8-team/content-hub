@@ -17,6 +17,8 @@
 #ifndef COM_UBUNTU_QMLIMPORTEXPORTHANDLER_H_
 #define COM_UBUNTU_QMLIMPORTEXPORTHANDLER_H_
 
+#include "ucurihandler.h"
+
 #include <com/ubuntu/content/import_export_handler.h>
 
 namespace com {
@@ -40,6 +42,14 @@ public:
 Q_SIGNALS:
     void importRequested(com::ubuntu::content::Transfer*);
     void exportRequested(com::ubuntu::content::Transfer*);
+    void urisChanged(const QStringList&);
+
+private Q_SLOTS:
+    void opened(const QStringList&);
+
+private:
+    UCUriHandler* m_uriHandler;
+
 };
 
 #endif // COM_UBUNTU_QMLIMPORTEXPORTHANDLER_H_

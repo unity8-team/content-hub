@@ -115,6 +115,15 @@ ContentHub::ContentHub(QObject *parent)
             this, SLOT(handleImport(com::ubuntu::content::Transfer*)));
     connect(m_handler, SIGNAL(exportRequested(com::ubuntu::content::Transfer*)),
             this, SLOT(handleExport(com::ubuntu::content::Transfer*)));
+
+    connect(m_handler, SIGNAL(urisChanged(const QStringList&)),
+            this, SLOT(urisChanged(const QStringList&)));
+}
+
+void ContentHub::urisChanged(const QStringList& uris)
+{
+    qDebug() << Q_FUNC_INFO << uris;
+
 }
 
 /*!
@@ -191,7 +200,7 @@ QVariantList ContentHub::knownSourcesForType(int type)
     QVector<cuc::Peer> hubPeers = m_hub->known_peers_for_type(hubType);
 
     QVariantList qmlPeers;
-    foreach (const cuc::Peer &hubPeer, hubPeers) {
+    Q_FOREACH (const cuc::Peer &hubPeer, hubPeers) {
         ContentPeer *qmlPeer = new ContentPeer(this);
         qmlPeer->setPeer(hubPeer);
         qmlPeers.append(QVariant::fromValue(qmlPeer));

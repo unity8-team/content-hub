@@ -89,7 +89,7 @@ void ContentTransfer::setState(ContentTransfer::State state)
     if (state == Charged && m_state == InProgress && m_direction == Export) {
         QVector<cuc::Item> hubItems;
         hubItems.reserve(m_items.size());
-        foreach (const ContentItem *citem, m_items) {
+        Q_FOREACH (const ContentItem *citem, m_items) {
             hubItems.append(citem->item());
         }
         m_transfer->charge(hubItems);
@@ -273,7 +273,7 @@ void ContentTransfer::collectItems()
     m_items.clear();
 
     QVector<cuc::Item> transfereditems = m_transfer->collect();
-    foreach (const cuc::Item &hubItem, transfereditems) {
+    Q_FOREACH (const cuc::Item &hubItem, transfereditems) {
         ContentItem *qmlItem = new ContentItem(this);
         qmlItem->setItem(hubItem);
         m_items.append(qmlItem);

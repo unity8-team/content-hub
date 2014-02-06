@@ -25,6 +25,7 @@
 #include <com/ubuntu/content/peer.h>
 #include <com/ubuntu/content/type.h>
 
+#include <QStringList>
 #include <QDebug>
 
 /*!
@@ -115,15 +116,42 @@ ContentHub::ContentHub(QObject *parent)
             this, SLOT(handleImport(com::ubuntu::content::Transfer*)));
     connect(m_handler, SIGNAL(exportRequested(com::ubuntu::content::Transfer*)),
             this, SLOT(handleExport(com::ubuntu::content::Transfer*)));
-
     connect(m_handler, SIGNAL(urisChanged(const QStringList&)),
             this, SLOT(urisChanged(const QStringList&)));
 }
 
 void ContentHub::urisChanged(const QStringList& uris)
 {
-    qDebug() << Q_FUNC_INFO << uris;
+    /* Use this to check for current active transfers, cancel
+     * any existing ones and set one based on the uris
+     */
 
+    qDebug() << Q_FUNC_INFO << uris;
+    QString uri;
+
+    Q_FOREACH (QString u, uris)
+    {
+        if (u.startsWith("transfer://"))
+        {
+            uri = u.split("://").last();
+            qDebug() << Q_FUNC_INFO << uri;
+            break;
+        }
+    }
+
+    if (uri.isEmpty())
+        return;
+
+    Q_FOREACH (com::ubuntu::content::Transfer* t, m_activeImports.keys())
+    {
+        qDebug() << Q_FUNC_INFO << "Found transfer" << t->id();
+        if (t->id() != uri.toInt())
+        {
+            qDebug() << Q_FUNC_INFO << "Deleting" << t->id();
+            m_activeImports.remove(t);
+            t->abort();
+        }
+    }
 }
 
 /*!
@@ -307,8 +335,14 @@ void ContentHub::handleImport(com::ubuntu::content::Transfer *transfer)
 void ContentHub::handleExport(com::ubuntu::content::Transfer *transfer)
 {
     qDebug() << Q_FUNC_INFO;
-    ContentTransfer *qmlTransfer = new ContentTransfer(this);
-    qmlTransfer->setTransfer(transfer, ContentTransfer::Export);
+    ContentTransfer *qmlTransfer = nullptr;
+    if (m_activeImports.contains(transfer))
+        qmlTransfer = m_activeImports.take(transfer);
+    else {
+        qmlTransfer = new ContentTransfer(this);
+        qmlTransfer->setTransfer(transfer, ContentTransfer::Export);
+        m_activeImports.insert(transfer, qmlTransfer);
+    }
 
     Q_EMIT exportRequested(qmlTransfer);
 }

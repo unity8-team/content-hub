@@ -183,9 +183,21 @@ void cucd::Service::handle_transfer(int state)
                     transfer->export_path().toStdString());
         transfer->SetInstanceId(QString::fromStdString(instance_id));
         */
+        
+        Q_FOREACH (RegHandler *r, d->handlers)
+        {
+            qDebug() << "Handler: " << r->service << "Transfer: " << transfer->source();
+            if (r->id == transfer->source())
+            {
+                qDebug() << "Found handler for charged transfer" << r->id;
+                if (r->handler->isValid())
+                    r->handler->HandleExport(QDBusObjectPath{transfer->export_path()});
+            }
+        }
+
         d->app_manager->invoke_application(
                     transfer->source().toStdString(),
-                    QString::number(transfer->Id()).toStdString());
+                    QString(TRANSFER_URI_TEMPLATE).arg(QString::number(transfer->Id())).toStdString());
     }
 
     if (state == cuc::Transfer::charged)
@@ -193,9 +205,10 @@ void cucd::Service::handle_transfer(int state)
         qDebug() << Q_FUNC_INFO << "Charged";
         if (transfer->WasSourceStartedByContentHub())
             d->app_manager->stop_application(transfer->source().toStdString(), transfer->InstanceId().toStdString());
+        
         d->app_manager->invoke_application(
                     transfer->destination().toStdString(),
-                    QString::number(transfer->Id()).toStdString());
+                    QString(TRANSFER_URI_TEMPLATE).arg(QString::number(transfer->Id())).toStdString());
 
         Q_FOREACH (RegHandler *r, d->handlers)
         {
@@ -212,11 +225,26 @@ void cucd::Service::handle_transfer(int state)
     if (state == cuc::Transfer::aborted)
     {
         if (transfer->WasSourceStartedByContentHub())
-            d->app_manager->stop_application(transfer->source().toStdString(), transfer->InstanceId().toStdString());
+        {
+            bool shouldStop = true;
+            Q_FOREACH (cucd::Transfer *t, d->active_transfers)
+            {
+                if (t->Id() != transfer->Id())
+                {
+                    if ((t->source() == transfer->source()) || (t->destination() == transfer->destination()))
+                    {
+                        qDebug() << Q_FUNC_INFO << "Peer has pending transfers:" << t->Id();
+                        shouldStop = false;
+                    }
+                }
+            }
+            if (shouldStop)
+                d->app_manager->stop_application(transfer->source().toStdString(), transfer->InstanceId().toStdString());
+        }
 
         d->app_manager->invoke_application(
                     transfer->destination().toStdString(),
-                    QString::number(transfer->Id()).toStdString());
+                    QString(TRANSFER_URI_TEMPLATE).arg(QString::number(transfer->Id())).toStdString());
     }
 }
 

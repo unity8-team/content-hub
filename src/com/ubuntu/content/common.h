@@ -25,5 +25,6 @@ const QLatin1String HUB_SERVICE_NAME = QLatin1String("com.ubuntu.content.dbus.Se
 const QLatin1String HUB_SERVICE_PATH = QLatin1String("/");
 const QLatin1String HANDLER_NAME_TEMPLATE = QLatin1String("com.ubuntu.content.handler.%1");
 const QLatin1String HANDLER_BASE_PATH = QLatin1String("/com/ubuntu/content/handler");
+const QLatin1String TRANSFER_URI_TEMPLATE = QLatin1String("transfer://%1");
 
 #endif // COMMON_H

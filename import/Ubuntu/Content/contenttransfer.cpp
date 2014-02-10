@@ -93,7 +93,11 @@ void ContentTransfer::setState(ContentTransfer::State state)
             hubItems.append(citem->item());
         }
         m_transfer->charge(hubItems);
-    }
+        return;
+    } else if (state == Aborted)
+        m_transfer->abort();
+    else
+        updateState();
 }
 
 /*!
@@ -289,9 +293,10 @@ void ContentTransfer::updateState()
 {
     qDebug() << Q_FUNC_INFO;
     if (!m_transfer)
-        return;
+        m_state = ContentTransfer::Aborted;
+    else
+        m_state = static_cast<ContentTransfer::State>(m_transfer->state());
 
-    m_state = static_cast<ContentTransfer::State>(m_transfer->state());
     Q_EMIT stateChanged();
 }
 

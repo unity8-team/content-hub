@@ -44,7 +44,6 @@ set(PLUGIN_HDRS
     contenttransfer.h
     contenttype.h
     qmlimportexporthandler.h
-    ucurihandler.h
     )
 
 set(PLUGIN_SRC
@@ -56,7 +55,6 @@ set(PLUGIN_SRC
     contenttransfer.cpp
     contenttype.cpp
     qmlimportexporthandler.cpp
-    ucurihandler.cpp
     )
 
 add_library(${PLUGIN} MODULE ${PLUGIN_SRC} ${PLUGIN_HDRS})

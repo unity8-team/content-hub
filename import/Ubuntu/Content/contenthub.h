@@ -66,7 +66,7 @@ Q_SIGNALS:
 private Q_SLOTS:
     void handleImport(com::ubuntu::content::Transfer * transfer);
     void handleExport(com::ubuntu::content::Transfer * transfer);
-    void urisChanged(const QStringList&);
+    void updateState();
 
 private:
     ContentTransfer* importContent(const com::ubuntu::content::Type &hubType,
@@ -74,7 +74,6 @@ private:
 
     QList<ContentTransfer *> m_finishedImports;
     QHash<com::ubuntu::content::Transfer *, ContentTransfer *> m_activeImports;
-
     com::ubuntu::content::Hub *m_hub;
     QmlImportExportHandler *m_handler;
 };

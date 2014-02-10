@@ -30,14 +30,6 @@ QmlImportExportHandler::QmlImportExportHandler(QObject *parent)
     : cuc::ImportExportHandler(parent)
 {
     qDebug() << Q_FUNC_INFO;
-    m_uriHandler = new UCUriHandler();
-    QObject::connect(m_uriHandler, SIGNAL(opened(const QStringList&)), this, SLOT(opened(const QStringList&)));
-}
-
-void QmlImportExportHandler::opened(const QStringList& uris)
-{
-    qDebug() << Q_FUNC_INFO << uris;
-    Q_EMIT urisChanged(uris);
 }
 
 /*!
@@ -57,4 +49,3 @@ void QmlImportExportHandler::handle_export(com::ubuntu::content::Transfer *trans
     qDebug() << Q_FUNC_INFO;
     Q_EMIT exportRequested(transfer);
 }
-

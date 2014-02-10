@@ -116,42 +116,6 @@ ContentHub::ContentHub(QObject *parent)
             this, SLOT(handleImport(com::ubuntu::content::Transfer*)));
     connect(m_handler, SIGNAL(exportRequested(com::ubuntu::content::Transfer*)),
             this, SLOT(handleExport(com::ubuntu::content::Transfer*)));
-    connect(m_handler, SIGNAL(urisChanged(const QStringList&)),
-            this, SLOT(urisChanged(const QStringList&)));
-}
-
-void ContentHub::urisChanged(const QStringList& uris)
-{
-    /* Use this to check for current active transfers, cancel
-     * any existing ones and set one based on the uris
-     */
-
-    qDebug() << Q_FUNC_INFO << uris;
-    QString uri;
-
-    Q_FOREACH (QString u, uris)
-    {
-        if (u.startsWith("transfer://"))
-        {
-            uri = u.split("://").last();
-            qDebug() << Q_FUNC_INFO << uri;
-            break;
-        }
-    }
-
-    if (uri.isEmpty())
-        return;
-
-    Q_FOREACH (com::ubuntu::content::Transfer* t, m_activeImports.keys())
-    {
-        qDebug() << Q_FUNC_INFO << "Found transfer" << t->id();
-        if (t->id() != uri.toInt())
-        {
-            qDebug() << Q_FUNC_INFO << "Deleting" << t->id();
-            m_activeImports.remove(t);
-            t->abort();
-        }
-    }
 }
 
 /*!
@@ -324,6 +288,9 @@ void ContentHub::handleImport(com::ubuntu::content::Transfer *transfer)
         qmlTransfer->setTransfer(transfer, ContentTransfer::Import);
     }
 
+    connect(qmlTransfer, SIGNAL(stateChanged(com::ubuntu::content::Transfer*)),
+            this, SLOT(updateState(com::ubuntu::content::Transfer*)));
+
     m_finishedImports.append(qmlTransfer);
     Q_EMIT finishedImportsChanged();
 }
@@ -344,7 +311,22 @@ void ContentHub::handleExport(com::ubuntu::content::Transfer *transfer)
         m_activeImports.insert(transfer, qmlTransfer);
     }
 
+    connect(transfer, SIGNAL(stateChanged()),
+            this, SLOT(updateState()));
     Q_EMIT exportRequested(qmlTransfer);
+}
+
+void ContentHub::updateState()
+{
+    qDebug() << Q_FUNC_INFO;
+    com::ubuntu::content::Transfer *transfer = static_cast<com::ubuntu::content::Transfer*>(sender());
+
+    if (transfer->state() == com::ubuntu::content::Transfer::aborted)
+    {
+        qDebug() << Q_FUNC_INFO << "Aborted transfer, removing:" << transfer->id();
+        if (m_activeImports.contains(transfer))
+            m_activeImports.remove(transfer);
+    }
 }
 
 /*!

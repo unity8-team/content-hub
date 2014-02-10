@@ -145,6 +145,20 @@ QDBusObjectPath cucd::Service::CreateImportForTypeFromPeer(const QString& type_i
 
     QUuid uuid{QUuid::createUuid()};
 
+    Q_FOREACH (cucd::Transfer *t, d->active_transfers)
+    {
+        qDebug() << Q_FUNC_INFO << "Destroying transfer:" << t->Id();
+        if (t->source() == peer_id)
+        {
+            qDebug() << Q_FUNC_INFO << "Found transfer for peer_id:" << peer_id;
+            if (t->State() == cuc::Transfer::in_progress)
+            {
+                qDebug() << Q_FUNC_INFO << "Aborting active transfer:" << t->Id();
+                t->Abort();
+            }
+        }
+    }
+
     auto transfer = new cucd::Transfer(import_counter, peer_id, app_id, this);
     new TransferAdaptor(transfer);
     d->active_transfers.insert(transfer);
@@ -239,12 +253,14 @@ void cucd::Service::handle_transfer(int state)
                 }
             }
             if (shouldStop)
+            {
                 d->app_manager->stop_application(transfer->source().toStdString(), transfer->InstanceId().toStdString());
-        }
-
-        d->app_manager->invoke_application(
+                d->app_manager->invoke_application(
                     transfer->destination().toStdString(),
                     QString(TRANSFER_URI_TEMPLATE).arg(QString::number(transfer->Id())).toStdString());
+            }
+        }
+
     }
 }
 

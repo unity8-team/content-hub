@@ -32,6 +32,8 @@
  * \instantiates ContentHub
  * \inqmlmodule Ubuntu.Content 0.1
  *
+ * \b{This component is under heavy development.}
+ *
  * Example usage for importing content:
  * \qml
  * import QtQuick 2.0

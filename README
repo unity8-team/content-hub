@@ -20,14 +20,18 @@ How do I compile the code?
 --------------------------
 
 To compile the code run the following command from the branch directory:
-cmake . && make
+mkdir build
+cd build
+cmake ..
+make
 
 
 How do I run the test cases?
 ----------------------------
 
 To run the test cases use the following command:
-make test
+cd build/tests
+dbus-test-runner -t make -p test
 
 
 How do I build the packages?

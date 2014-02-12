@@ -1,7 +1,6 @@
 import QtQuick 2.0
 import Ubuntu.Components 0.1
 import Ubuntu.Components.ListItems 0.1 as ListItem
-
 import Ubuntu.Content 0.1
 
 MainView {
@@ -12,26 +11,29 @@ MainView {
 
     property list<ContentItem> importItems
     property var activeTransfer
-    property list<ContentPeer> peers
 
 
-    function _importFromPeer(peer) {
-        /* if peer is null, choose default */
-        if (peer === null)
-            peer = ContentHub.defaultSourceForType(ContentType.Pictures);
-        var transfer = ContentHub.importContent(ContentType.Pictures, peer);
-        var store = ContentHub.defaultStoreForType(ContentType.Pictures);
-        console.log("Store is: " + store.uri);
-        if (transfer !== null) {
-            transfer.selectionType = ContentTransfer.Multiple;
-            transfer.setStore(store);
-            activeTransfer = transfer;
-            activeTransfer.start();
+    ContentPeer {
+        id: picSource
+        // well know content type
+        content: ContentType.Pictures
+        // Type of handler: Source, Destination, or Share
+        handler: ContentHandler.Source
+        // Optional appId, if this isn't specified the hub will use the default
+        //appId: ""
+        // Optional store to use for persistent storage of content
+        store: ContentStore {
+            scope: ContentScope.App
         }
     }
 
-    Component.onCompleted: {
-        peers = ContentHub.knownSourcesForType(ContentType.Pictures);
+    // Provides a list<ContentPeer> suitable for use as a model
+    ContentPeerModel {
+        id: picSources
+        // Type of handler: Source, Destination, or Share
+        handler: ContentHandler.Source
+        // well know content type
+        type: ContentType.Pictures
     }
 
     ListView {
@@ -42,14 +44,15 @@ MainView {
             top: importButtons.bottom
         }
         height: childrenRect.height
-        model: peers
+        model: picSources
 
         delegate: ListItem.Standard {
             text: modelData.name
             control: Button {
                 text: "Import"
                 onClicked: {
-                    _importFromPeer(modelData);
+                    // Request the transfer, it needs to be created and dispatched from the hub
+                    activeTransfer = modelData.request();
                 }
             }
         }
@@ -64,7 +67,8 @@ MainView {
             }
             text: "Import from default"
             onClicked: {
-                _importFromPeer(null);
+                // Request the transfer, it needs to be created and dispatched from the hub
+                activeTransfer = picSource.request();
             }
         }
 
@@ -78,7 +82,6 @@ MainView {
             onClicked: activeTransfer.finalize()
         }
     }
-
 
     ListView {
         id: resultList
@@ -108,13 +111,15 @@ MainView {
             }
     }
 
-    ContentImportHint {
+    // Provides overlay showing another app is being used to complete the request
+    // formerly named ContentImportHint
+    ContentTransferHint {
         anchors.fill: parent
-        activeTransfer: root.activeTransfer
+        activeTransfer: activeTransfer
     }
 
     Connections {
-        target: root.activeTransfer
+        target: activeTransfer
         onStateChanged: {
             console.log("StateChanged: " + activeTransfer.state);
             if (activeTransfer.state === ContentTransfer.Charged)

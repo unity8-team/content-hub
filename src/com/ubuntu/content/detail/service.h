@@ -56,6 +56,8 @@ class Service : public QObject, protected QDBusContext
     QString DefaultPeerForType(const QString &type_id);
     QStringList KnownPeersForType(const QString &type_id);
     QDBusObjectPath CreateImportForTypeFromPeer(const QString&, const QString&, const QString&);
+    QDBusObjectPath CreateExportToPeer(const QString&, const QString&);
+
     void RegisterImportExportHandler(const QString&, const QString&, const QDBusObjectPath& handler);
     void Quit();
 
@@ -66,7 +68,8 @@ class Service : public QObject, protected QDBusContext
     QScopedPointer<Private> d;
 
   private Q_SLOTS:
-    void handle_transfer(int);
+    void handle_imports(int);
+    void handle_exports(int);
     void handler_unregistered(const QString&);
 };
 }

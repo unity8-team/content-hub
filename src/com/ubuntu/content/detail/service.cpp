@@ -170,14 +170,61 @@ QDBusObjectPath cucd::Service::CreateImportForTypeFromPeer(const QString& type_i
 
     qDebug() << "Created transfer " << source << " -> " << destination;
 
-    connect(transfer, SIGNAL(StateChanged(int)), this, SLOT(handle_transfer(int)));
+    connect(transfer, SIGNAL(StateChanged(int)), this, SLOT(handle_imports(int)));
 
     Q_UNUSED(type_id);
 
     return QDBusObjectPath{destination};
 }
 
-void cucd::Service::handle_transfer(int state)
+QDBusObjectPath cucd::Service::CreateExportToPeer(const QString& peer_id, const QString& dest_id)
+{
+    qDebug() << Q_FUNC_INFO;
+
+    static size_t import_counter{0}; import_counter++;
+
+    QString app_id = dest_id;
+    if (app_id.isEmpty())
+    {
+        qDebug() << Q_FUNC_INFO << "APP_ID isnt' set, attempting to get it from AppArmor";
+        app_id = aa_profile(this->message().service());
+    }
+
+    qDebug() << Q_FUNC_INFO << "APP_ID:" << app_id;
+
+    QUuid uuid{QUuid::createUuid()};
+
+    Q_FOREACH (cucd::Transfer *t, d->active_transfers)
+    {
+        if (t->destination() == peer_id)
+        {
+            qDebug() << Q_FUNC_INFO << "Found transfer for peer_id:" << peer_id;
+            if (t->State() == cuc::Transfer::in_progress)
+            {
+                qDebug() << Q_FUNC_INFO << "Aborting active transfer:" << t->Id();
+                t->Abort();
+            }
+        }
+    }
+
+    auto transfer = new cucd::Transfer(import_counter, app_id, peer_id, this);
+    new TransferAdaptor(transfer);
+    d->active_transfers.insert(transfer);
+
+    auto destination = transfer->import_path();
+    auto source = transfer->export_path();
+    if (not d->connection.registerObject(destination, transfer))
+        qDebug() << "Problem registering object for path: " << destination;
+    d->connection.registerObject(source, transfer);
+
+    qDebug() << "Created transfer " << source << " -> " << destination;
+
+    connect(transfer, SIGNAL(StateChanged(int)), this, SLOT(handle_exports(int)));
+
+    return QDBusObjectPath{destination};
+}
+
+void cucd::Service::handle_imports(int state)
 {
     qDebug() << Q_FUNC_INFO;
     cucd::Transfer *transfer = static_cast<cucd::Transfer*>(sender());
@@ -248,6 +295,68 @@ void cucd::Service::handle_transfer(int state)
         }
     }
 }
+
+void cucd::Service::handle_exports(int state)
+{
+    qDebug() << Q_FUNC_INFO;
+    cucd::Transfer *transfer = static_cast<cucd::Transfer*>(sender());
+
+    if (state == cuc::Transfer::charged)
+    {
+        qDebug() << Q_FUNC_INFO << "Charged";
+        if (d->app_manager->is_application_started(transfer->destination().toStdString()))
+            transfer->SetSourceStartedByContentHub(false);
+        else
+            transfer->SetSourceStartedByContentHub(true);
+
+        d->app_manager->invoke_application(transfer->destination().toStdString());
+
+        Q_FOREACH (RegHandler *r, d->handlers)
+        {
+            qDebug() << "Handler: " << r->service << "Transfer: " << transfer->destination();
+            if (r->id == transfer->destination())
+            {
+                qDebug() << "Found handler for charged transfer" << r->id;
+                if (r->handler->isValid())
+                    r->handler->HandleImport(QDBusObjectPath{transfer->import_path()});
+            }
+        }
+    }
+
+    if (state == cuc::Transfer::finalized)
+    {
+        qDebug() << Q_FUNC_INFO << "Finalized";
+        if (transfer->WasSourceStartedByContentHub())
+            d->app_manager->stop_application(transfer->destination().toStdString());
+
+        d->app_manager->invoke_application(transfer->source().toStdString());
+    }
+
+    if (state == cuc::Transfer::aborted)
+    {
+        if (transfer->WasSourceStartedByContentHub())
+        {
+            bool shouldStop = true;
+            Q_FOREACH (cucd::Transfer *t, d->active_transfers)
+            {
+                if (t->Id() != transfer->Id())
+                {
+                    if ((t->source() == transfer->source()) || (t->destination() == transfer->destination()))
+                    {
+                        qDebug() << Q_FUNC_INFO << "Peer has pending transfers:" << t->Id();
+                        shouldStop = false;
+                    }
+                }
+            }
+            if (shouldStop)
+            {
+                d->app_manager->stop_application(transfer->destination().toStdString());
+                d->app_manager->invoke_application(transfer->source().toStdString());
+            }
+        }
+    }
+}
+
 
 void cucd::Service::handler_unregistered(const QString& s)
 {

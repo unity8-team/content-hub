@@ -37,18 +37,12 @@ class ApplicationManager
      * \brief invoke_application starts an application, and brings it to foreground
      * \param app_id ID for the application (for example "gallery-app" - used for the desktop)
      */
-    virtual std::string start_application(const std::string &app_id, const std::string &uri) = 0;
-    /*!
-     * \brief invoke_application starts an application, and brings it to foreground
-     * \param app_id ID for the application (for example "gallery-app" - used for the desktop)
-     */
-    virtual bool invoke_application(const std::string &app_id, const std::string &uri) = 0;
+    virtual bool invoke_application(const std::string &app_id) = 0;
     /*!
      * \brief stop_application stops an application started by upstart
      * \param app_id ID for the application (for example "gallery-app" - used for the desktop)
-     * \param instance_id ID for the instance assigned by upstart
      */
-    virtual bool stop_application(const std::string &app_id, const std::string &instance_id) = 0;
+    virtual bool stop_application(const std::string &app_id) = 0;
     /*!
      * \brief is_application_started returns true, if the application s already started by upstart
      * \param app_id ID for the application (for example "gallery-app" - used for the desktop)

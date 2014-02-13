@@ -49,9 +49,6 @@ class Transfer : public QObject
     void SetSourceStartedByContentHub(bool started);
     bool WasSourceStartedByContentHub() const;
 
-    void SetInstanceId(QString instance);
-    QString InstanceId() const;
-
 Q_SIGNALS:
     void StateChanged(int State);
     void StoreChanged(QString Store);

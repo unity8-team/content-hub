@@ -147,7 +147,6 @@ QDBusObjectPath cucd::Service::CreateImportForTypeFromPeer(const QString& type_i
 
     Q_FOREACH (cucd::Transfer *t, d->active_transfers)
     {
-        qDebug() << Q_FUNC_INFO << "Destroying transfer:" << t->Id();
         if (t->source() == peer_id)
         {
             qDebug() << Q_FUNC_INFO << "Found transfer for peer_id:" << peer_id;
@@ -191,13 +190,6 @@ void cucd::Service::handle_transfer(int state)
         else
             transfer->SetSourceStartedByContentHub(true);
 
-        /*
-        std::string instance_id = d->app_manager->start_application(
-                    transfer->source().toStdString(),
-                    transfer->export_path().toStdString());
-        transfer->SetInstanceId(QString::fromStdString(instance_id));
-        */
-        
         Q_FOREACH (RegHandler *r, d->handlers)
         {
             qDebug() << "Handler: " << r->service << "Transfer: " << transfer->source();
@@ -209,20 +201,16 @@ void cucd::Service::handle_transfer(int state)
             }
         }
 
-        d->app_manager->invoke_application(
-                    transfer->source().toStdString(),
-                    QString(TRANSFER_URI_TEMPLATE).arg(QString::number(transfer->Id())).toStdString());
+        d->app_manager->invoke_application(transfer->source().toStdString());
     }
 
     if (state == cuc::Transfer::charged)
     {
         qDebug() << Q_FUNC_INFO << "Charged";
         if (transfer->WasSourceStartedByContentHub())
-            d->app_manager->stop_application(transfer->source().toStdString(), transfer->InstanceId().toStdString());
+            d->app_manager->stop_application(transfer->source().toStdString());
         
-        d->app_manager->invoke_application(
-                    transfer->destination().toStdString(),
-                    QString(TRANSFER_URI_TEMPLATE).arg(QString::number(transfer->Id())).toStdString());
+        d->app_manager->invoke_application(transfer->destination().toStdString());
 
         Q_FOREACH (RegHandler *r, d->handlers)
         {
@@ -254,13 +242,10 @@ void cucd::Service::handle_transfer(int state)
             }
             if (shouldStop)
             {
-                d->app_manager->stop_application(transfer->source().toStdString(), transfer->InstanceId().toStdString());
-                d->app_manager->invoke_application(
-                    transfer->destination().toStdString(),
-                    QString(TRANSFER_URI_TEMPLATE).arg(QString::number(transfer->Id())).toStdString());
+                d->app_manager->stop_application(transfer->source().toStdString());
+                d->app_manager->invoke_application(transfer->destination().toStdString());
             }
         }
-
     }
 }
 

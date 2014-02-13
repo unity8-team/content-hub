@@ -24,6 +24,12 @@ ExampleExporter::ExampleExporter()
     hub->register_import_export_handler(this);
 }
 
+void ExampleExporter::handle_import(cuc::Transfer *transfer)
+{
+    qDebug() << Q_FUNC_INFO << "not implemented";
+    Q_UNUSED(transfer);
+}
+
 void ExampleExporter::handle_export(cuc::Transfer *transfer)
 {
     qDebug() << Q_FUNC_INFO;
@@ -39,13 +45,13 @@ void ExampleExporter::handle_export(cuc::Transfer *transfer)
         qDebug() << Q_FUNC_INFO << "selectionType: multiple";
 
     QVector<cuc::Item> items;
-    items << cuc::Item(QUrl("file:///tmp/test1"));
-    items << cuc::Item(QUrl("file:///tmp/test2"));
+    items << cuc::Item(QUrl("file:///usr/share/icons/hicolor/128x128/apps/ubuntuone-music.png"));
+    items << cuc::Item(QUrl("file:///usr/share/icons/hicolor/128x128/apps/ubuntuone-music.png"));
     transfer->charge(items);
     qDebug() << Q_FUNC_INFO << "Items:" << items.count();
 }
 
-void ExampleExporter::handle_import(cuc::Transfer *transfer)
+void ExampleExporter::handle_share(cuc::Transfer *transfer)
 {
     qDebug() << Q_FUNC_INFO << "not implemented";
     Q_UNUSED(transfer);

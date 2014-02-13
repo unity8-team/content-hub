@@ -76,13 +76,14 @@ struct MockedHandler : public cuc::ImportExportHandler
     MockedHandler() : cuc::ImportExportHandler()
     {
         using namespace ::testing;
-        ON_CALL(*this, handle_export(_)).WillByDefault(Return());
         ON_CALL(*this, handle_import(_)).WillByDefault(Return());
-
+        ON_CALL(*this, handle_export(_)).WillByDefault(Return());
+        ON_CALL(*this, handle_share(_)).WillByDefault(Return());
     }
 
-    MOCK_METHOD1(handle_export, void(cuc::Transfer*));
     MOCK_METHOD1(handle_import, void(cuc::Transfer*));
+    MOCK_METHOD1(handle_export, void(cuc::Transfer*));
+    MOCK_METHOD1(handle_share, void(cuc::Transfer*));
 };
 }
 
@@ -139,9 +140,7 @@ TEST(Handler, handler_on_bus)
 
             qputenv("APP_ID", default_dest_peer_id.toLatin1());
             hub = cuc::Hub::Client::instance();
-            auto transfer = hub->create_import_for_type_from_peer(
-                cuc::Type::Known::pictures(),
-                cuc::Peer(default_peer_id));
+            auto transfer = hub->create_import_from_peer(cuc::Peer(default_peer_id));
             ASSERT_TRUE(transfer != nullptr);
             EXPECT_TRUE(transfer->start());
             EXPECT_EQ(cuc::Transfer::in_progress, transfer->state());

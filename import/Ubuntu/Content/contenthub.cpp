@@ -116,6 +116,8 @@ ContentHub::ContentHub(QObject *parent)
             this, SLOT(handleImport(com::ubuntu::content::Transfer*)));
     connect(m_handler, SIGNAL(exportRequested(com::ubuntu::content::Transfer*)),
             this, SLOT(handleExport(com::ubuntu::content::Transfer*)));
+    connect(m_handler, SIGNAL(shareRequested(com::ubuntu::content::Transfer*)),
+            this, SLOT(handleShare(com::ubuntu::content::Transfer*)));
 }
 
 /*!
@@ -239,10 +241,10 @@ ContentTransfer *ContentHub::importContent(int type, ContentPeer *peer)
  * \a peer
  * \internal
  */
-ContentTransfer* ContentHub::importContent(const com::ubuntu::content::Type &hubType,
+ContentTransfer* ContentHub::importContent(const com::ubuntu::content::Type& /*hubType*/,
                                            const com::ubuntu::content::Peer &hubPeer)
 {
-    cuc::Transfer *hubTransfer = m_hub->create_import_for_type_from_peer(hubType, hubPeer);
+    cuc::Transfer *hubTransfer = m_hub->create_import_from_peer(hubPeer);
 // FIXME update tests so this can be enabled
 //    if (!hubTransfer)
 //        return nullptr;

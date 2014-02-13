@@ -6,5 +6,8 @@
     <method name="HandleExport">
       <arg name="transfer" type="o" direction="in"/>
     </method>
+    <method name="HandleShare">
+      <arg name="transfer" type="o" direction="in"/>
+    </method>
   </interface>
 </node>

@@ -49,3 +49,12 @@ void QmlImportExportHandler::handle_export(com::ubuntu::content::Transfer *trans
     qDebug() << Q_FUNC_INFO;
     Q_EMIT exportRequested(transfer);
 }
+
+/*!
+ * \reimp
+ */
+void QmlImportExportHandler::handle_share(com::ubuntu::content::Transfer *transfer)
+{
+    qDebug() << Q_FUNC_INFO;
+    Q_EMIT shareRequested(transfer);
+}

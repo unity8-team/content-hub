@@ -17,6 +17,7 @@
  */
 
 #include <QCoreApplication>
+#include <QStringList>
 #include "example.h"
 
 namespace cuc = com::ubuntu::content;
@@ -27,7 +28,23 @@ int main(int argc, char *argv[])
 
     Example *e = new Example();
 
-    e->create_import();
+    QString peerName;
+
+    if (a.arguments().size() > 1)
+        peerName = a.arguments().at(1);
+
+    if (!peerName.isEmpty())
+    {
+        qDebug() << peerName;
+        auto hub = cuc::Hub::Client::instance();
+
+        auto peer = cuc::Peer{peerName};
+        qDebug() << Q_FUNC_INFO << "PEER: " << peer.id();
+        auto transfer = hub->create_import_from_peer(peer);
+        transfer->start();
+    }
+
+    Q_UNUSED(e);
 
     return a.exec();
 }

@@ -134,8 +134,7 @@ TEST(Hub, transfer_creation_and_states_work)
 
             /** [Importing pictures] */
             auto hub = cuc::Hub::Client::instance();
-            auto transfer = hub->create_import_for_type_from_peer(
-                cuc::Type::Known::pictures(),
+            auto transfer = hub->create_import_from_peer(
                 hub->default_peer_for_type(cuc::Type::Known::pictures()));
             ASSERT_TRUE(transfer != nullptr);
             EXPECT_EQ(cuc::Transfer::created, transfer->state());
@@ -153,16 +152,14 @@ TEST(Hub, transfer_creation_and_states_work)
 
 
             /* Test that only a single transfer exists for the same peer */
-            auto single_transfer = hub->create_import_for_type_from_peer(
-                cuc::Type::Known::pictures(),
+            auto single_transfer = hub->create_import_from_peer(
                 hub->default_peer_for_type(cuc::Type::Known::pictures()));
             ASSERT_TRUE(single_transfer != nullptr);
             EXPECT_EQ(cuc::Transfer::created, single_transfer->state());
             EXPECT_TRUE(single_transfer->start());
             EXPECT_EQ(cuc::Transfer::initiated, single_transfer->state());
 
-            auto second_transfer = hub->create_import_for_type_from_peer(
-                cuc::Type::Known::pictures(),
+            auto second_transfer = hub->create_import_from_peer(
                 hub->default_peer_for_type(cuc::Type::Known::pictures()));
             ASSERT_TRUE(second_transfer != nullptr);
             EXPECT_EQ(cuc::Transfer::created, second_transfer->state());

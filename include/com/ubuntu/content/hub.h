@@ -53,8 +53,10 @@ class Hub : public QObject
     Q_INVOKABLE virtual const Store* store_for_scope_and_type(Scope scope, Type type);
     Q_INVOKABLE virtual Peer default_peer_for_type(Type type);
     Q_INVOKABLE virtual QVector<Peer> known_peers_for_type(Type type);
-    Q_INVOKABLE virtual Transfer* create_import_for_type_from_peer(Type type, Peer peer);
+    Q_INVOKABLE virtual Transfer* create_import_from_peer(Peer peer);
     Q_INVOKABLE virtual Transfer* create_export_to_peer(Peer peer);
+    Q_INVOKABLE virtual Transfer* create_share_to_peer(Peer peer);
+
 
     Q_INVOKABLE virtual void quit();
        

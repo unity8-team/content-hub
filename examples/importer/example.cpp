@@ -35,9 +35,7 @@ void Example::create_import()
 
     qDebug() << Q_FUNC_INFO << "PEER: " << peer.name();
 
-    m_transfer = hub->create_import_for_type_from_peer(
-        cuc::Type::Known::pictures(),
-        peer);
+    m_transfer = hub->create_import_from_peer(peer);
 
     /* Uncommit this for persistent storage
     auto store = hub->store_for_scope_and_type(cuc::Scope::app, cuc::Type::Known::pictures());

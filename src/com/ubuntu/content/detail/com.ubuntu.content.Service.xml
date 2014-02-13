@@ -11,13 +11,17 @@
       <arg name="type_id" type="s" direction="in" />
       <arg name="peer_ids" type="as" direction="out" />
     </method>
-    <method name="CreateImportForTypeFromPeer">
-      <arg name="type_id" type="s" direction="in" />
+    <method name="CreateImportFromPeer">
       <arg name="peer_id" type="s" direction="in" />
       <arg name="app_id" type="s" direction="in" />
       <arg name="transfer_object" type="o" direction="out" />
     </method>
     <method name="CreateExportToPeer">
+      <arg name="peer_id" type="s" direction="in" />
+      <arg name="app_id" type="s" direction="in" />
+      <arg name="transfer_object" type="o" direction="out" />
+    </method>
+    <method name="CreateShareToPeer">
       <arg name="peer_id" type="s" direction="in" />
       <arg name="app_id" type="s" direction="in" />
       <arg name="transfer_object" type="o" direction="out" />

@@ -66,10 +66,11 @@ Q_SIGNALS:
 private Q_SLOTS:
     void handleImport(com::ubuntu::content::Transfer * transfer);
     void handleExport(com::ubuntu::content::Transfer * transfer);
+    void handleShare(com::ubuntu::content::Transfer * transfer);
     void updateState();
 
 private:
-    ContentTransfer* importContent(const com::ubuntu::content::Type &hubType,
+    ContentTransfer* importContent(const com::ubuntu::content::Type&,
                                    const com::ubuntu::content::Peer &hubPeer);
 
     QList<ContentTransfer *> m_finishedImports;

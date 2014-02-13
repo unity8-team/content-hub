@@ -17,6 +17,8 @@
  */
 
 #include <QCoreApplication>
+#include <QStringList>
+
 
 #include "exampleexporter.h"
 
@@ -30,6 +32,22 @@ int main(int argc, char *argv[])
     }
 
     ExampleExporter exporter;
+
+    QString peerName;
+
+    if (a.arguments().size() > 1)
+        peerName = a.arguments().at(1);
+
+    if (!peerName.isEmpty())
+    {
+        qDebug() << peerName;
+        auto hub = cuc::Hub::Client::instance();
+
+        auto peer = cuc::Peer{peerName};
+        qDebug() << Q_FUNC_INFO << "PEER: " << peer.id();
+        auto transfer = hub->create_export_to_peer(peer);
+        exporter.handle_export(transfer);
+    }
 
     return a.exec();
 }

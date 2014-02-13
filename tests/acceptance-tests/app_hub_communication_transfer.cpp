@@ -92,7 +92,7 @@ TEST(Hub, transfer_creation_and_states_work)
         
         auto mock = new ::testing::NiceMock<MockedPeerRegistry>{};
         EXPECT_CALL(*mock, default_peer_for_type(_)).
-        Times(Exactly(1)).
+        Times(AtLeast(1)).
         WillRepeatedly(Return(cuc::Peer{default_peer_id}));
         
         QSharedPointer<cucd::PeerRegistry> registry{mock};
@@ -150,6 +150,27 @@ TEST(Hub, transfer_creation_and_states_work)
             EXPECT_EQ(cuc::Transfer::charged, transfer->state());
             EXPECT_EQ(expected_items, transfer->collect());
             /** [Importing pictures] */
+
+
+            /* Test that only a single transfer exists for the same peer */
+            auto single_transfer = hub->create_import_for_type_from_peer(
+                cuc::Type::Known::pictures(),
+                hub->default_peer_for_type(cuc::Type::Known::pictures()));
+            ASSERT_TRUE(single_transfer != nullptr);
+            EXPECT_EQ(cuc::Transfer::created, single_transfer->state());
+            EXPECT_TRUE(single_transfer->start());
+            EXPECT_EQ(cuc::Transfer::initiated, single_transfer->state());
+
+            auto second_transfer = hub->create_import_for_type_from_peer(
+                cuc::Type::Known::pictures(),
+                hub->default_peer_for_type(cuc::Type::Known::pictures()));
+            ASSERT_TRUE(second_transfer != nullptr);
+            EXPECT_EQ(cuc::Transfer::created, second_transfer->state());
+            /* Now that a second transfer was created, the previous
+             * transfer should have been aborted */
+            EXPECT_EQ(cuc::Transfer::aborted, single_transfer->state());
+            /* end single transfer test */
+
             hub->quit();
         });
         EXPECT_EQ(0, QTest::qExec(std::addressof(harness)));

@@ -175,13 +175,13 @@ QDBusObjectPath cucd::Service::CreateImportFromPeer(const QString& peer_id, cons
     return QDBusObjectPath{destination};
 }
 
-QDBusObjectPath cucd::Service::CreateExportToPeer(const QString& peer_id, const QString& dest_id)
+QDBusObjectPath cucd::Service::CreateExportToPeer(const QString& peer_id, const QString& src_id)
 {
     qDebug() << Q_FUNC_INFO;
 
     static size_t import_counter{0}; import_counter++;
 
-    QString app_id = dest_id;
+    QString app_id = src_id;
     if (app_id.isEmpty())
     {
         qDebug() << Q_FUNC_INFO << "APP_ID isnt' set, attempting to get it from AppArmor";
@@ -218,17 +218,18 @@ QDBusObjectPath cucd::Service::CreateExportToPeer(const QString& peer_id, const 
     qDebug() << "Created transfer " << source << " -> " << destination;
 
     connect(transfer, SIGNAL(StateChanged(int)), this, SLOT(handle_exports(int)));
+    transfer->Handled();
 
     return QDBusObjectPath{destination};
 }
 
-QDBusObjectPath cucd::Service::CreateShareToPeer(const QString& peer_id, const QString& dest_id)
+QDBusObjectPath cucd::Service::CreateShareToPeer(const QString& peer_id, const QString& src_id)
 {
     qDebug() << Q_FUNC_INFO;
 
     static size_t import_counter{0}; import_counter++;
 
-    QString app_id = dest_id;
+    QString app_id = src_id;
     if (app_id.isEmpty())
     {
         qDebug() << Q_FUNC_INFO << "APP_ID isnt' set, attempting to get it from AppArmor";
@@ -265,6 +266,7 @@ QDBusObjectPath cucd::Service::CreateShareToPeer(const QString& peer_id, const Q
     qDebug() << "Created transfer " << source << " -> " << destination;
 
     connect(transfer, SIGNAL(StateChanged(int)), this, SLOT(handle_shares(int)));
+    transfer->Handled();
 
     return QDBusObjectPath{destination};
 }
@@ -346,6 +348,8 @@ void cucd::Service::handle_exports(int state)
     qDebug() << Q_FUNC_INFO;
     cucd::Transfer *transfer = static_cast<cucd::Transfer*>(sender());
 
+    qDebug() << Q_FUNC_INFO << "STATE:" << transfer->State();
+
     if (state == cuc::Transfer::charged)
     {
         qDebug() << Q_FUNC_INFO << "Charged";
@@ -406,6 +410,7 @@ void cucd::Service::handle_shares(int state)
 {
     qDebug() << Q_FUNC_INFO;
     cucd::Transfer *transfer = static_cast<cucd::Transfer*>(sender());
+    qDebug() << Q_FUNC_INFO << "STATE:" << transfer->State();
 
     if (state == cuc::Transfer::charged)
     {

@@ -270,7 +270,7 @@ void ContentTransfer::setTransfer(com::ubuntu::content::Transfer *transfer, Dire
 void ContentTransfer::collectItems()
 {
     qDebug() << Q_FUNC_INFO;
-    if (m_state != Charged || m_direction != Import)
+    if (m_state != Charged || m_direction == Export)
         return;
 
     qDeleteAll(m_items);

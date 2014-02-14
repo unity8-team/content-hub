@@ -52,7 +52,8 @@ public:
     };
     enum Direction {
         Import,
-        Export
+        Export,
+        Share
     };
     enum SelectionType {
         Single = com::ubuntu::content::Transfer::SelectionType::single,

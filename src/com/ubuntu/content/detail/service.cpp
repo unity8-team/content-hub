@@ -514,6 +514,8 @@ void cucd::Service::RegisterImportExportHandler(const QString& instance_id, cons
             if (r->handler->isValid())
                 r->handler->HandleExport(QDBusObjectPath{t->export_path()});
         }
+        /* FIXME: we need to be able to distingues between import and share and call
+         * can call HandleImport or HandleShare as needed */
         else if ((t->destination() == peer_id) && (t->State() == cuc::Transfer::charged))
         {
             qDebug() << Q_FUNC_INFO << "Found destination:" << peer_id;

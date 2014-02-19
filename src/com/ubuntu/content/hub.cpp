@@ -185,7 +185,6 @@ cuc::Transfer* cuc::Hub::create_export_to_peer(cuc::Peer peer)
     qDebug() << Q_FUNC_INFO << "STORE:" << store->uri();
     transfer->setStore(store);
     transfer->start();
-
     return transfer;
 }
 
@@ -206,6 +205,7 @@ cuc::Transfer* cuc::Hub::create_share_to_peer(cuc::Peer peer)
     const cuc::Store *store = new cuc::Store{QStandardPaths::writableLocation(QStandardPaths::GenericCacheLocation) + "/" + peerName + "/HubIncoming/" + QString::number(transfer->id()), this};
     qDebug() << Q_FUNC_INFO << "STORE:" << store->uri();
     transfer->setStore(store);
+    transfer->start();
     return transfer;
 }
 

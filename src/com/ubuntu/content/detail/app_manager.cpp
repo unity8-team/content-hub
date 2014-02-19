@@ -28,7 +28,6 @@ namespace cucd = com::ubuntu::content::detail;
 bool cucd::AppManager::invoke_application(const std::string &app_id)
 {
     qDebug() << Q_FUNC_INFO << "APP_ID:" << app_id.c_str();
-
     gchar ** uris = NULL;
     gboolean ok = upstart_app_launch_start_application(app_id.c_str(), (const gchar * const *)uris);
     return static_cast<bool>(ok);

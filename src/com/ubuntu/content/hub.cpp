@@ -178,11 +178,14 @@ cuc::Transfer* cuc::Hub::create_export_to_peer(cuc::Peer peer)
         return nullptr;
 
     cuc::Transfer *transfer = cuc::Transfer::Private::make_transfer(reply.value(), this);
+
     QString peerName = peer.id().split("_")[0];
     qDebug() << Q_FUNC_INFO << "peerName: " << peerName;
     const cuc::Store *store = new cuc::Store{QStandardPaths::writableLocation(QStandardPaths::GenericCacheLocation) + "/" + peerName + "/HubIncoming/" + QString::number(transfer->id()), this};
     qDebug() << Q_FUNC_INFO << "STORE:" << store->uri();
     transfer->setStore(store);
+    transfer->start();
+
     return transfer;
 }
 

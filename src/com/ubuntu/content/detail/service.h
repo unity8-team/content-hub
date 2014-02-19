@@ -63,6 +63,7 @@ class Service : public QObject, protected QDBusContext
     void Quit();
 
   private:
+    bool should_cancel(int);
     struct Private;
     struct RegHandler;
     QDBusServiceWatcher* m_watcher;

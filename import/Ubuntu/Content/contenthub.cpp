@@ -320,6 +320,7 @@ ContentTransfer* ContentHub::exportContent(const com::ubuntu::content::Type& /*h
     ContentTransfer *qmlTransfer = new ContentTransfer(this);
     qmlTransfer->setTransfer(hubTransfer, ContentTransfer::Export);
     m_activeImports.insert(hubTransfer, qmlTransfer);
+    qmlTransfer->start();
     return qmlTransfer;
 }
 
@@ -384,14 +385,21 @@ void ContentHub::handleImport(com::ubuntu::content::Transfer *transfer)
         qmlTransfer = m_activeImports.take(transfer);
         qmlTransfer->collectItems();
     } else {
+        // If we don't have a reference to the transfer, it was created
+        // by another handler so this would be an Import
         qmlTransfer = new ContentTransfer(this);
         qmlTransfer->setTransfer(transfer, ContentTransfer::Import);
+        connect(qmlTransfer, SIGNAL(stateChanged()),
+                this, SLOT(updateState()));
+        qmlTransfer->collectItems();
+        Q_EMIT importRequested(qmlTransfer);
     }
 
-    connect(qmlTransfer, SIGNAL(stateChanged()),
-            this, SLOT(updateState()));
 
-    Q_EMIT importRequested(qmlTransfer);
+
+    // FIXME: maybe we need to emit something else here
+//    if (qmlTransfer->state() == ContentTransfer::Charged)
+//        Q_EMIT importRequested(qmlTransfer);
 
     m_finishedImports.append(qmlTransfer);
     Q_EMIT finishedImportsChanged();
@@ -408,18 +416,26 @@ void ContentHub::handleExport(com::ubuntu::content::Transfer *transfer)
     if (m_activeImports.contains(transfer))
         qmlTransfer = m_activeImports.take(transfer);
     else {
+        // If we don't have a reference to the transfer, it was created
+        // by another handler so this would be an Import
         qmlTransfer = new ContentTransfer(this);
-        qmlTransfer->setTransfer(transfer, ContentTransfer::Export);
+        qmlTransfer->setTransfer(transfer, ContentTransfer::Import);
         m_activeImports.insert(transfer, qmlTransfer);
+        connect(qmlTransfer, SIGNAL(stateChanged()),
+                this, SLOT(updateState()));
+        Q_EMIT exportRequested(qmlTransfer);
     }
 
-    connect(qmlTransfer, SIGNAL(stateChanged()),
-            this, SLOT(updateState()));
-    Q_EMIT exportRequested(qmlTransfer);
+    // FIXME: maybe we need to emit something else here
+    //if (qmlTransfer->state() == ContentTransfer::InProgress && qmlTransfer->direction() == ContentTransfer::Import)
+    //    Q_EMIT exportRequested(qmlTransfer);
+
+    m_finishedImports.append(qmlTransfer);
+    Q_EMIT finishedImportsChanged();
 }
 
 /*!
- * \brief ContentHub::handleExport handles an incoming request for exporting content
+ * \brief ContentHub::handleExport handles an incoming request for sharing content
  * \internal
  */
 void ContentHub::handleShare(com::ubuntu::content::Transfer *transfer)
@@ -432,16 +448,21 @@ void ContentHub::handleShare(com::ubuntu::content::Transfer *transfer)
         qmlTransfer = new ContentTransfer(this);
         qmlTransfer->setTransfer(transfer, ContentTransfer::Share);
         m_activeImports.insert(transfer, qmlTransfer);
+        connect(qmlTransfer, SIGNAL(stateChanged()),
+                this, SLOT(updateState()));
     }
 
-    connect(qmlTransfer, SIGNAL(stateChanged()),
-            this, SLOT(updateState()));
-    Q_EMIT shareRequested(qmlTransfer);
+    // FIXME: maybe we need to emit something else here
+    if (qmlTransfer->state() == ContentTransfer::Charged)
+        Q_EMIT shareRequested(qmlTransfer);
+    m_finishedImports.append(qmlTransfer);
+    Q_EMIT finishedImportsChanged();
 }
 
 void ContentHub::updateState()
 {
     qDebug() << Q_FUNC_INFO;
+    /* FIXME
     ContentTransfer *transfer = static_cast<ContentTransfer*>(sender());
 
     if (transfer->state() == ContentTransfer::Aborted)
@@ -449,7 +470,8 @@ void ContentHub::updateState()
         qDebug() << Q_FUNC_INFO << "Aborted transfer, removing:" << transfer->transfer()->id();
         if (m_activeImports.contains(transfer->transfer()))
             m_activeImports.remove(transfer->transfer());
-    }
+    }    
+    */
 }
 
 /*!

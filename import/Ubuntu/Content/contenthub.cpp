@@ -442,18 +442,20 @@ void ContentHub::handleShare(com::ubuntu::content::Transfer *transfer)
     qDebug() << Q_FUNC_INFO;
     ContentTransfer *qmlTransfer = nullptr;
     if (m_activeImports.contains(transfer))
+    {
         qmlTransfer = m_activeImports.take(transfer);
-    else {
+        qmlTransfer->collectItems();
+    } else {
+        // If we don't have a reference to the transfer, it was created
+        // by another handler so this would be an Import
         qmlTransfer = new ContentTransfer(this);
         qmlTransfer->setTransfer(transfer);
-        m_activeImports.insert(transfer, qmlTransfer);
         connect(qmlTransfer, SIGNAL(stateChanged()),
                 this, SLOT(updateState()));
+        qmlTransfer->collectItems();
+        Q_EMIT shareRequested(qmlTransfer);
     }
 
-    // FIXME: maybe we need to emit something else here
-    if (qmlTransfer->state() == ContentTransfer::Charged)
-        Q_EMIT shareRequested(qmlTransfer);
     m_finishedImports.append(qmlTransfer);
     Q_EMIT finishedImportsChanged();
 }

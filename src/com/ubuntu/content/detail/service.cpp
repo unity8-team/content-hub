@@ -161,6 +161,18 @@ QDBusObjectPath cucd::Service::CreateExportToPeer(const QString& peer_id, const 
     return CreateTransfer(peer_id, src_id, cuc::Transfer::Export);
 }
 
+QDBusObjectPath cucd::Service::CreateShareToPeer(const QString& peer_id, const QString& app_id)
+{
+    qDebug() << Q_FUNC_INFO;
+    QString src_id = app_id;
+    if (src_id.isEmpty())
+    {
+        qDebug() << Q_FUNC_INFO << "APP_ID isnt' set, attempting to get it from AppArmor";
+        src_id = aa_profile(this->message().service());
+    }
+    return CreateTransfer(peer_id, src_id, cuc::Transfer::Share);
+}
+
 QDBusObjectPath cucd::Service::CreateTransfer(const QString& dest_id, const QString& src_id, int dir)
 {
     qDebug() << Q_FUNC_INFO << "DEST:" << dest_id << "SRC:" << src_id << "DIRECTION:" << dir;
@@ -174,7 +186,6 @@ QDBusObjectPath cucd::Service::CreateTransfer(const QString& dest_id, const QStr
         if (t->destination() == dest_id || t->source() == src_id)
         {
             qDebug() << Q_FUNC_INFO << "Found transfer for peer_id:" << src_id;
-            //if (t->State() != cuc::Transfer::finalized && t->State() != cuc::Transfer::collected && t->State() != cuc::Transfer::finalized)
             if (should_cancel(t->State()))
             {
                 qDebug() << Q_FUNC_INFO << "Aborting active transfer:" << t->Id();
@@ -195,62 +206,14 @@ QDBusObjectPath cucd::Service::CreateTransfer(const QString& dest_id, const QStr
 
     qDebug() << "Created transfer " << source << " -> " << destination;
 
-    if (dir == cuc::Transfer::Export)
-        connect(transfer, SIGNAL(StateChanged(int)), this, SLOT(handle_exports(int)));
+    // Content flow is different for import
     if (dir == cuc::Transfer::Import)
+    {
         connect(transfer, SIGNAL(StateChanged(int)), this, SLOT(handle_imports(int)));
-
-    if (dir == cuc::Transfer::Export)
-        return QDBusObjectPath{source};
-
-    return QDBusObjectPath{destination};
-}
-
-QDBusObjectPath cucd::Service::CreateShareToPeer(const QString& peer_id, const QString& src_id)
-{
-    qDebug() << Q_FUNC_INFO;
-
-    static size_t import_counter{0}; import_counter++;
-
-    QString app_id = src_id;
-    if (app_id.isEmpty())
-    {
-        qDebug() << Q_FUNC_INFO << "APP_ID isnt' set, attempting to get it from AppArmor";
-        app_id = aa_profile(this->message().service());
+        return QDBusObjectPath{destination};
     }
 
-    qDebug() << Q_FUNC_INFO << "APP_ID:" << app_id;
-
-    QUuid uuid{QUuid::createUuid()};
-
-    Q_FOREACH (cucd::Transfer *t, d->active_transfers)
-    {
-        if (t->destination() == peer_id)
-        {
-            qDebug() << Q_FUNC_INFO << "Found transfer for peer_id:" << peer_id;
-            //if (t->State() != cuc::Transfer::in_progress && t->State() != cuc::Transfer::collected)
-            if (should_cancel( t->State()))
-            {
-                qDebug() << Q_FUNC_INFO << "Aborting active transfer:" << t->Id();
-                t->Abort();
-            }
-        }
-    }
-
-    auto transfer = new cucd::Transfer(import_counter, app_id, peer_id, cuc::Transfer::Share, this);
-    new TransferAdaptor(transfer);
-    d->active_transfers.insert(transfer);
-
-    auto destination = transfer->import_path();
-    auto source = transfer->export_path();
-    if (not d->connection.registerObject(destination, transfer))
-        qDebug() << "Problem registering object for path: " << destination;
-    d->connection.registerObject(source, transfer);
-
-    qDebug() << "Created transfer " << source << " -> " << destination;
-
-    connect(transfer, SIGNAL(StateChanged(int)), this, SLOT(handle_shares(int)));
-
+    connect(transfer, SIGNAL(StateChanged(int)), this, SLOT(handle_exports(int)));
     return QDBusObjectPath{source};
 }
 
@@ -359,7 +322,9 @@ void cucd::Service::handle_exports(int state)
             if (r->id == transfer->destination())
             {
                 qDebug() << "Found handler for charged transfer" << r->id;
-                if (r->handler->isValid())
+                if (transfer->Direction() == cuc::Transfer::Share && r->handler->isValid())
+                    r->handler->HandleShare(QDBusObjectPath{transfer->import_path()});
+                else if (r->handler->isValid())
                     r->handler->HandleImport(QDBusObjectPath{transfer->import_path()});
             }
         }
@@ -377,68 +342,6 @@ void cucd::Service::handle_exports(int state)
     if (state == cuc::Transfer::aborted)
     {
         qDebug() << Q_FUNC_INFO << "Aborted";
-        if (transfer->WasSourceStartedByContentHub())
-        {
-            bool shouldStop = true;
-            Q_FOREACH (cucd::Transfer *t, d->active_transfers)
-            {
-                if (t->Id() != transfer->Id())
-                {
-                    if ((t->source() == transfer->source()) || (t->destination() == transfer->destination()))
-                    {
-                        qDebug() << Q_FUNC_INFO << "Peer has pending transfers:" << t->Id();
-                        shouldStop = false;
-                    }
-                }
-            }
-            if (shouldStop)
-            {
-                d->app_manager->stop_application(transfer->destination().toStdString());
-                d->app_manager->invoke_application(transfer->source().toStdString());
-            }
-        }
-    }
-}
-
-void cucd::Service::handle_shares(int state)
-{
-    qDebug() << Q_FUNC_INFO;
-    cucd::Transfer *transfer = static_cast<cucd::Transfer*>(sender());
-    qDebug() << Q_FUNC_INFO << "STATE:" << transfer->State();
-
-    if (state == cuc::Transfer::charged)
-    {
-        qDebug() << Q_FUNC_INFO << "Charged";
-        if (d->app_manager->is_application_started(transfer->destination().toStdString()))
-            transfer->SetSourceStartedByContentHub(false);
-        else
-            transfer->SetSourceStartedByContentHub(true);
-
-        d->app_manager->invoke_application(transfer->destination().toStdString());
-
-        Q_FOREACH (RegHandler *r, d->handlers)
-        {
-            qDebug() << "Handler: " << r->service << "Transfer: " << transfer->destination();
-            if (r->id == transfer->destination())
-            {
-                qDebug() << "Found handler for charged transfer" << r->id;
-                if (r->handler->isValid())
-                    r->handler->HandleShare(QDBusObjectPath{transfer->import_path()});
-            }
-        }
-    }
-
-    if (state == cuc::Transfer::finalized)
-    {
-        qDebug() << Q_FUNC_INFO << "Finalized";
-        if (transfer->WasSourceStartedByContentHub())
-            d->app_manager->stop_application(transfer->destination().toStdString());
-
-        d->app_manager->invoke_application(transfer->source().toStdString());
-    }
-
-    if (state == cuc::Transfer::aborted)
-    {
         if (transfer->WasSourceStartedByContentHub())
         {
             bool shouldStop = true;

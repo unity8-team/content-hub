@@ -72,7 +72,6 @@ class Service : public QObject, protected QDBusContext
   private Q_SLOTS:
     void handle_imports(int);
     void handle_exports(int);
-    void handle_shares(int);
     void handler_unregistered(const QString&);
     QDBusObjectPath CreateTransfer(const QString&, const QString&, int);
 

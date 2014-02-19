@@ -52,11 +52,13 @@ class Transfer : public QObject
     Q_OBJECT
     Q_ENUMS(State)
     Q_ENUMS(SelectionType)
+    Q_ENUMS(Direction)
     Q_PROPERTY(int id READ id)
     Q_PROPERTY(State state READ state NOTIFY stateChanged)
     Q_PROPERTY(QVector<Item> items READ collect WRITE charge)
     Q_PROPERTY(Store store READ store NOTIFY storeChanged)
     Q_PROPERTY(SelectionType selectionType READ selectionType WRITE setSelectionType NOTIFY selectionTypeChanged)
+    Q_PROPERTY(Direction direction READ direction)
 
   public:
     enum State
@@ -76,6 +78,13 @@ class Transfer : public QObject
         multiple
     };
 
+    enum Direction
+    {
+        Import,
+        Export,
+        Share
+    };
+
     Transfer(const Transfer&) = delete;
     virtual ~Transfer();
 
@@ -84,6 +93,7 @@ class Transfer : public QObject
     Q_INVOKABLE virtual int id() const;
     Q_INVOKABLE virtual State state() const;
     Q_INVOKABLE virtual SelectionType selectionType() const;
+    Q_INVOKABLE virtual Direction direction() const;
     Q_INVOKABLE virtual bool start();
     Q_INVOKABLE virtual bool abort();
     Q_INVOKABLE virtual bool finalize();

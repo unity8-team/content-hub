@@ -250,7 +250,7 @@ ContentTransfer* ContentHub::importContent(const com::ubuntu::content::Type& /*h
 //        return nullptr;
 
     ContentTransfer *qmlTransfer = new ContentTransfer(this);
-    qmlTransfer->setTransfer(hubTransfer, ContentTransfer::Import);
+    qmlTransfer->setTransfer(hubTransfer);
     m_activeImports.insert(hubTransfer, qmlTransfer);
     return qmlTransfer;
 }
@@ -318,9 +318,8 @@ ContentTransfer* ContentHub::exportContent(const com::ubuntu::content::Type& /*h
 {
     cuc::Transfer *hubTransfer = m_hub->create_export_to_peer(hubPeer);
     ContentTransfer *qmlTransfer = new ContentTransfer(this);
-    qmlTransfer->setTransfer(hubTransfer, ContentTransfer::Export);
+    qmlTransfer->setTransfer(hubTransfer);
     m_activeImports.insert(hubTransfer, qmlTransfer);
-    qmlTransfer->start();
     return qmlTransfer;
 }
 
@@ -368,7 +367,7 @@ ContentTransfer* ContentHub::shareContent(const com::ubuntu::content::Type& /*hu
 {
     cuc::Transfer *hubTransfer = m_hub->create_share_to_peer(hubPeer);
     ContentTransfer *qmlTransfer = new ContentTransfer(this);
-    qmlTransfer->setTransfer(hubTransfer, ContentTransfer::Share);
+    qmlTransfer->setTransfer(hubTransfer);
     m_activeImports.insert(hubTransfer, qmlTransfer);
     return qmlTransfer;
 }
@@ -388,7 +387,7 @@ void ContentHub::handleImport(com::ubuntu::content::Transfer *transfer)
         // If we don't have a reference to the transfer, it was created
         // by another handler so this would be an Import
         qmlTransfer = new ContentTransfer(this);
-        qmlTransfer->setTransfer(transfer, ContentTransfer::Import);
+        qmlTransfer->setTransfer(transfer);
         connect(qmlTransfer, SIGNAL(stateChanged()),
                 this, SLOT(updateState()));
         qmlTransfer->collectItems();
@@ -419,7 +418,7 @@ void ContentHub::handleExport(com::ubuntu::content::Transfer *transfer)
         // If we don't have a reference to the transfer, it was created
         // by another handler so this would be an Import
         qmlTransfer = new ContentTransfer(this);
-        qmlTransfer->setTransfer(transfer, ContentTransfer::Import);
+        qmlTransfer->setTransfer(transfer);
         m_activeImports.insert(transfer, qmlTransfer);
         connect(qmlTransfer, SIGNAL(stateChanged()),
                 this, SLOT(updateState()));
@@ -446,7 +445,7 @@ void ContentHub::handleShare(com::ubuntu::content::Transfer *transfer)
         qmlTransfer = m_activeImports.take(transfer);
     else {
         qmlTransfer = new ContentTransfer(this);
-        qmlTransfer->setTransfer(transfer, ContentTransfer::Share);
+        qmlTransfer->setTransfer(transfer);
         m_activeImports.insert(transfer, qmlTransfer);
         connect(qmlTransfer, SIGNAL(stateChanged()),
                 this, SLOT(updateState()));

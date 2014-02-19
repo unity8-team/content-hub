@@ -87,7 +87,7 @@ void ContentTransfer::setState(ContentTransfer::State state)
         return;
 
     if (state == Charged && m_state == InProgress) {
-        qDebug() << Q_FUNC_INFO << "HERE";
+        qDebug() << Q_FUNC_INFO << "Charged";
         QVector<cuc::Item> hubItems;
         hubItems.reserve(m_items.size());
         Q_FOREACH (const ContentItem *citem, m_items) {
@@ -96,7 +96,7 @@ void ContentTransfer::setState(ContentTransfer::State state)
         m_transfer->charge(hubItems);
         return;
     } else if (state == Aborted) {
-        qDebug() << Q_FUNC_INFO << "HERE";
+        qDebug() << Q_FUNC_INFO << "Aborted";
         m_transfer->abort();
     } else
         updateState();
@@ -170,7 +170,7 @@ void ContentTransfer::setSelectionType(ContentTransfer::SelectionType type)
 QQmlListProperty<ContentItem> ContentTransfer::items()
 {
     qDebug() << Q_FUNC_INFO;
-    if (m_state == Charged && m_direction == Import) {
+    if (m_state == Charged) {
         collectItems();
     }
     return QQmlListProperty<ContentItem>(this, m_items);
@@ -239,7 +239,7 @@ com::ubuntu::content::Transfer *ContentTransfer::transfer() const
  * \brief ContentTransfer::setTransfer
  * \internal
  */
-void ContentTransfer::setTransfer(com::ubuntu::content::Transfer *transfer, Direction direction)
+void ContentTransfer::setTransfer(com::ubuntu::content::Transfer *transfer)
 {
     if (m_transfer) {
         qWarning() << Q_FUNC_INFO << "the transfer object was already set";
@@ -251,10 +251,9 @@ void ContentTransfer::setTransfer(com::ubuntu::content::Transfer *transfer, Dire
         return;
     }
 
-    qDebug() << Q_FUNC_INFO << "Direction:" << direction;
-
-    m_direction = direction;
     m_transfer = transfer;
+    m_direction = static_cast<ContentTransfer::Direction>(transfer->direction());
+    qDebug() << Q_FUNC_INFO << "Direction:" << m_direction;
 
     connect(m_transfer, SIGNAL(selectionTypeChanged()), this, SLOT(updateSelectionType()));
     connect(m_transfer, SIGNAL(storeChanged()), this, SLOT(updateStore()));
@@ -277,7 +276,7 @@ void ContentTransfer::setTransfer(com::ubuntu::content::Transfer *transfer, Dire
 void ContentTransfer::collectItems()
 {
     qDebug() << Q_FUNC_INFO;
-    if (m_state != Charged || m_direction != Import)
+    if (m_state != Charged)
         return;
 
     qDeleteAll(m_items);

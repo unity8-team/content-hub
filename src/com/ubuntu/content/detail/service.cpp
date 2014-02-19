@@ -128,86 +128,54 @@ QString cucd::Service::DefaultPeerForType(const QString& type_id)
     return peer.id();
 }
 
-QDBusObjectPath cucd::Service::CreateImportFromPeer(const QString& peer_id, const QString& dest_id)
+QDBusObjectPath cucd::Service::CreateImportFromPeer(const QString& peer_id, const QString& app_id)
 {
     qDebug() << Q_FUNC_INFO;
-
-    static size_t import_counter{0}; import_counter++;
-
-    QString app_id = dest_id;
-    if (app_id.isEmpty())
+    QString dest_id = app_id;
+    if (dest_id.isEmpty())
     {
         qDebug() << Q_FUNC_INFO << "APP_ID isnt' set, attempting to get it from AppArmor";
-        app_id = aa_profile(this->message().service());
+        dest_id = aa_profile(this->message().service());
     }
-
-    qDebug() << Q_FUNC_INFO << "APP_ID:" << app_id;
-
-    QUuid uuid{QUuid::createUuid()};
-
-    Q_FOREACH (cucd::Transfer *t, d->active_transfers)
-    {
-        if (t->source() == peer_id || t->destination() == dest_id)
-        {
-            qDebug() << Q_FUNC_INFO << "Found transfer for peer_id:" << peer_id;
-            //if (t->State() == cuc::Transfer::in_progress)
-            if (should_cancel( t->State()))
-
-            {
-                qDebug() << Q_FUNC_INFO << "Aborting active transfer:" << t->Id();
-                t->Abort();
-            }
-        }
-    }
-
-    auto transfer = new cucd::Transfer(import_counter, peer_id, app_id, this);
-    new TransferAdaptor(transfer);
-    d->active_transfers.insert(transfer);
-
-    auto destination = transfer->import_path();
-    auto source = transfer->export_path();
-    if (not d->connection.registerObject(destination, transfer))
-        qDebug() << "Problem registering object for path: " << destination;
-    d->connection.registerObject(source, transfer);
-
-    qDebug() << "Created transfer " << source << " -> " << destination;
-
-    connect(transfer, SIGNAL(StateChanged(int)), this, SLOT(handle_imports(int)));
-
-    return QDBusObjectPath{destination};
+    return CreateTransfer(dest_id, peer_id, cuc::Transfer::Import);
 }
 
 bool cucd::Service::should_cancel (int st)
 {
+    qDebug() << Q_FUNC_INFO << "State:" << st;
+
     return (st != cuc::Transfer::finalized
             && st != cuc::Transfer::collected
             && st != cuc::Transfer::aborted);
 }
 
-QDBusObjectPath cucd::Service::CreateExportToPeer(const QString& peer_id, const QString& src_id)
+QDBusObjectPath cucd::Service::CreateExportToPeer(const QString& peer_id, const QString& app_id)
 {
     qDebug() << Q_FUNC_INFO;
-
-    static size_t import_counter{0}; import_counter++;
-
-    QString app_id = src_id;
-    if (app_id.isEmpty())
+    QString src_id = app_id;
+    if (src_id.isEmpty())
     {
         qDebug() << Q_FUNC_INFO << "APP_ID isnt' set, attempting to get it from AppArmor";
-        app_id = aa_profile(this->message().service());
+        src_id = aa_profile(this->message().service());
     }
+    return CreateTransfer(peer_id, src_id, cuc::Transfer::Export);
+}
 
-    qDebug() << Q_FUNC_INFO << "APP_ID:" << app_id;
+QDBusObjectPath cucd::Service::CreateTransfer(const QString& dest_id, const QString& src_id, int dir)
+{
+    qDebug() << Q_FUNC_INFO << "DEST:" << dest_id << "SRC:" << src_id << "DIRECTION:" << dir;
+
+    static size_t import_counter{0}; import_counter++;
 
     QUuid uuid{QUuid::createUuid()};
 
     Q_FOREACH (cucd::Transfer *t, d->active_transfers)
     {
-        if (t->destination() == peer_id || t->source() == src_id)
+        if (t->destination() == dest_id || t->source() == src_id)
         {
-            qDebug() << Q_FUNC_INFO << "Found transfer for peer_id:" << peer_id;
+            qDebug() << Q_FUNC_INFO << "Found transfer for peer_id:" << src_id;
             //if (t->State() != cuc::Transfer::finalized && t->State() != cuc::Transfer::collected && t->State() != cuc::Transfer::finalized)
-            if (should_cancel( t->State()))
+            if (should_cancel(t->State()))
             {
                 qDebug() << Q_FUNC_INFO << "Aborting active transfer:" << t->Id();
                 t->Abort();
@@ -215,27 +183,27 @@ QDBusObjectPath cucd::Service::CreateExportToPeer(const QString& peer_id, const 
         }
     }
 
-    auto transfer = new cucd::Transfer(import_counter, app_id, peer_id, this);
+    auto transfer = new cucd::Transfer(import_counter, src_id, dest_id, dir, this);
     new TransferAdaptor(transfer);
     d->active_transfers.insert(transfer);
 
     auto destination = transfer->import_path();
     auto source = transfer->export_path();
-    if (not d->connection.registerObject(destination, transfer))
-        qDebug() << "Problem registering object for path: " << destination;
-    d->connection.registerObject(source, transfer);
+    if (not d->connection.registerObject(source, transfer))
+        qDebug() << "Problem registering object for path: " << source;
+    d->connection.registerObject(destination, transfer);
 
-    qDebug() << "Created transfer " << destination << " -> " << source;
+    qDebug() << "Created transfer " << source << " -> " << destination;
 
-    //QString peerName = peer_id.split("_")[0];
-    //qDebug() << Q_FUNC_INFO << "peerName: " << peerName;
-    //const cuc::Store *store = new cuc::Store{QStandardPaths::writableLocation(QStandardPaths::GenericCacheLocation) + "/" + peerName + "/HubIncoming/" + QString::number(transfer->id()), this};
-    //qDebug() << Q_FUNC_INFO << "STORE:" << store->uri();
-    //transfer->SetStore(QStandardPaths::writableLocation(QStandardPaths::GenericCacheLocation) + "/" + peerName + "/HubIncoming/" + QString::number(import_counter));
+    if (dir == cuc::Transfer::Export)
+        connect(transfer, SIGNAL(StateChanged(int)), this, SLOT(handle_exports(int)));
+    if (dir == cuc::Transfer::Import)
+        connect(transfer, SIGNAL(StateChanged(int)), this, SLOT(handle_imports(int)));
 
-    connect(transfer, SIGNAL(StateChanged(int)), this, SLOT(handle_exports(int)));
+    if (dir == cuc::Transfer::Export)
+        return QDBusObjectPath{source};
 
-    return QDBusObjectPath{source};
+    return QDBusObjectPath{destination};
 }
 
 QDBusObjectPath cucd::Service::CreateShareToPeer(const QString& peer_id, const QString& src_id)
@@ -269,7 +237,7 @@ QDBusObjectPath cucd::Service::CreateShareToPeer(const QString& peer_id, const Q
         }
     }
 
-    auto transfer = new cucd::Transfer(import_counter, app_id, peer_id, this);
+    auto transfer = new cucd::Transfer(import_counter, app_id, peer_id, cuc::Transfer::Share, this);
     new TransferAdaptor(transfer);
     d->active_transfers.insert(transfer);
 
@@ -553,15 +521,22 @@ void cucd::Service::RegisterImportExportHandler(const QString& instance_id, cons
         //if ((t->source() == peer_id) && (t->InstanceId() == instance_id))
         if ((t->source() == peer_id) && (t->State() == cuc::Transfer::initiated))
         {
-            qDebug() << Q_FUNC_INFO << "Found source:" << peer_id;
-            if (r->handler->isValid())
-                r->handler->HandleExport(QDBusObjectPath{t->export_path()});
+            qDebug() << Q_FUNC_INFO << "Found source:" << peer_id << "Direction:" << t->Direction();
+            if (t->Direction() == cuc::Transfer::Import)
+            {
+                if (r->handler->isValid())
+                    r->handler->HandleExport(QDBusObjectPath{t->export_path()});
+            } else if (t->Direction() == cuc::Transfer::Share)
+            {
+                if (r->handler->isValid())
+                    r->handler->HandleShare(QDBusObjectPath{t->export_path()});
+            }
         }
         /* FIXME: we need to be able to distingues between import and share and call
          * can call HandleImport or HandleShare as needed */
         else if ((t->destination() == peer_id) && (t->State() == cuc::Transfer::charged))
         {
-            qDebug() << Q_FUNC_INFO << "Found destination:" << peer_id;
+            qDebug() << Q_FUNC_INFO << "Found destination:" << peer_id << "Direction:" << t->Direction();
             if (r->handler->isValid())
                 r->handler->HandleImport(QDBusObjectPath{t->import_path()});
         }

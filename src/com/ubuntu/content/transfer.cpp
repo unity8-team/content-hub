@@ -101,3 +101,8 @@ bool cuc::Transfer::setSelectionType(const cuc::Transfer::SelectionType& type)
 {
     return d->setSelectionType(type);
 }
+
+cuc::Transfer::Direction cuc::Transfer::direction() const
+{
+    return d->direction();
+}

@@ -250,7 +250,7 @@ ContentTransfer* ContentHub::importContent(const com::ubuntu::content::Type& /*h
 //        return nullptr;
 
     ContentTransfer *qmlTransfer = new ContentTransfer(this);
-    qmlTransfer->setTransfer(hubTransfer, ContentTransfer::Import);
+    qmlTransfer->setTransfer(hubTransfer);
     m_activeImports.insert(hubTransfer, qmlTransfer);
     return qmlTransfer;
 }
@@ -274,6 +274,104 @@ QQmlListProperty<ContentTransfer> ContentHub::finishedImports()
     return QQmlListProperty<ContentTransfer>(this, m_finishedImports);
 }
 
+/* EXPORTS */
+/*!
+ * \qmlmethod ContentHub::exportContent(ContentType)
+ * \overload ContentHub::exportContent(ContentType, ContentPeer)
+ *
+ * \brief Request to export data of \a ContentType to the default
+ * ContentPeer
+ */
+ContentTransfer *ContentHub::exportContent(int type)
+{
+    qDebug() << Q_FUNC_INFO << static_cast<ContentType::Type>(type);
+
+    const cuc::Type &hubType = ContentType::contentType2HubType(type);
+    // FIXME: This is the wrong way to get the default peer for exports
+    cuc::Peer hubPeer = m_hub->default_peer_for_type(hubType);
+    return exportContent(hubType, hubPeer);
+}
+
+/*!
+ * \qmlmethod ContentHub::exportContent(ContentType, ContentPeer)
+ * \overload ContentHub::exportContent(ContentType)
+ *
+ * \brief Request to export data of \a ContentType to the
+ * specified \a ContentPeer
+ */
+ContentTransfer *ContentHub::exportContent(int type, ContentPeer *peer)
+{
+    qDebug() << Q_FUNC_INFO << static_cast<ContentType::Type>(type) << peer;
+
+    const cuc::Type &hubType = ContentType::contentType2HubType(type);
+    return exportContent(hubType, peer->peer());
+}
+
+/*!
+ * \brief ContentHub::exportContent creates a ContentTransfer object
+ * \a type
+ * \a peer
+ * \internal
+ */
+ContentTransfer* ContentHub::exportContent(const com::ubuntu::content::Type& /*hubType*/,
+                                           const com::ubuntu::content::Peer &hubPeer)
+{
+    cuc::Transfer *hubTransfer = m_hub->create_export_to_peer(hubPeer);
+    ContentTransfer *qmlTransfer = new ContentTransfer(this);
+    qmlTransfer->setTransfer(hubTransfer);
+    m_activeImports.insert(hubTransfer, qmlTransfer);
+    return qmlTransfer;
+}
+
+/* SHARE */
+/*!
+ * \qmlmethod ContentHub::shareContent(ContentType)
+ * \overload ContentHub::shareContent(ContentType, ContentPeer)
+ *
+ * \brief Request to share data of \a ContentType to the default
+ * ContentPeer
+ */
+ContentTransfer *ContentHub::shareContent(int type)
+{
+    qDebug() << Q_FUNC_INFO << static_cast<ContentType::Type>(type);
+
+    const cuc::Type &hubType = ContentType::contentType2HubType(type);
+    // FIXME: This is the wrong way to get the default peer for shares
+    cuc::Peer hubPeer = m_hub->default_peer_for_type(hubType);
+    return shareContent(hubType, hubPeer);
+}
+
+/*!
+ * \qmlmethod ContentHub::shareContent(ContentType, ContentPeer)
+ * \overload ContentHub::shareContent(ContentType)
+ *
+ * \brief Request to share data of \a ContentType to the
+ * specified \a ContentPeer
+ */
+ContentTransfer *ContentHub::shareContent(int type, ContentPeer *peer)
+{
+    qDebug() << Q_FUNC_INFO << static_cast<ContentType::Type>(type) << peer;
+
+    const cuc::Type &hubType = ContentType::contentType2HubType(type);
+    return shareContent(hubType, peer->peer());
+}
+
+/*!
+ * \brief ContentHub::shareContent creates a ContentTransfer object
+ * \a type
+ * \a peer
+ * \internal
+ */
+ContentTransfer* ContentHub::shareContent(const com::ubuntu::content::Type& /*hubType*/,
+                                           const com::ubuntu::content::Peer &hubPeer)
+{
+    cuc::Transfer *hubTransfer = m_hub->create_share_to_peer(hubPeer);
+    ContentTransfer *qmlTransfer = new ContentTransfer(this);
+    qmlTransfer->setTransfer(hubTransfer);
+    m_activeImports.insert(hubTransfer, qmlTransfer);
+    return qmlTransfer;
+}
+
 /*!
  * \brief ContentHub::handleImport handles an incoming request for importing content
  * \internal
@@ -286,12 +384,21 @@ void ContentHub::handleImport(com::ubuntu::content::Transfer *transfer)
         qmlTransfer = m_activeImports.take(transfer);
         qmlTransfer->collectItems();
     } else {
+        // If we don't have a reference to the transfer, it was created
+        // by another handler so this would be an Import
         qmlTransfer = new ContentTransfer(this);
-        qmlTransfer->setTransfer(transfer, ContentTransfer::Import);
+        qmlTransfer->setTransfer(transfer);
+        connect(qmlTransfer, SIGNAL(stateChanged()),
+                this, SLOT(updateState()));
+        qmlTransfer->collectItems();
+        Q_EMIT importRequested(qmlTransfer);
     }
 
-    connect(qmlTransfer, SIGNAL(stateChanged(com::ubuntu::content::Transfer*)),
-            this, SLOT(updateState(com::ubuntu::content::Transfer*)));
+
+
+    // FIXME: maybe we need to emit something else here
+//    if (qmlTransfer->state() == ContentTransfer::Charged)
+//        Q_EMIT importRequested(qmlTransfer);
 
     m_finishedImports.append(qmlTransfer);
     Q_EMIT finishedImportsChanged();
@@ -308,32 +415,81 @@ void ContentHub::handleExport(com::ubuntu::content::Transfer *transfer)
     if (m_activeImports.contains(transfer))
         qmlTransfer = m_activeImports.take(transfer);
     else {
+        // If we don't have a reference to the transfer, it was created
+        // by another handler so this would be an Import
         qmlTransfer = new ContentTransfer(this);
-        qmlTransfer->setTransfer(transfer, ContentTransfer::Export);
+        qmlTransfer->setTransfer(transfer);
         m_activeImports.insert(transfer, qmlTransfer);
+        connect(qmlTransfer, SIGNAL(stateChanged()),
+                this, SLOT(updateState()));
+        Q_EMIT exportRequested(qmlTransfer);
     }
 
-    connect(transfer, SIGNAL(stateChanged()),
-            this, SLOT(updateState()));
-    Q_EMIT exportRequested(qmlTransfer);
+    // FIXME: maybe we need to emit something else here
+    //if (qmlTransfer->state() == ContentTransfer::InProgress && qmlTransfer->direction() == ContentTransfer::Import)
+    //    Q_EMIT exportRequested(qmlTransfer);
+
+    m_finishedImports.append(qmlTransfer);
+    Q_EMIT finishedImportsChanged();
+}
+
+/*!
+ * \brief ContentHub::handleExport handles an incoming request for sharing content
+ * \internal
+ */
+void ContentHub::handleShare(com::ubuntu::content::Transfer *transfer)
+{
+    qDebug() << Q_FUNC_INFO;
+    ContentTransfer *qmlTransfer = nullptr;
+    if (m_activeImports.contains(transfer))
+    {
+        qmlTransfer = m_activeImports.take(transfer);
+        qmlTransfer->collectItems();
+    } else {
+        // If we don't have a reference to the transfer, it was created
+        // by another handler so this would be an Import
+        qmlTransfer = new ContentTransfer(this);
+        qmlTransfer->setTransfer(transfer);
+        connect(qmlTransfer, SIGNAL(stateChanged()),
+                this, SLOT(updateState()));
+        qmlTransfer->collectItems();
+        Q_EMIT shareRequested(qmlTransfer);
+    }
+
+    m_finishedImports.append(qmlTransfer);
+    Q_EMIT finishedImportsChanged();
 }
 
 void ContentHub::updateState()
 {
     qDebug() << Q_FUNC_INFO;
-    com::ubuntu::content::Transfer *transfer = static_cast<com::ubuntu::content::Transfer*>(sender());
+    /* FIXME
+    ContentTransfer *transfer = static_cast<ContentTransfer*>(sender());
 
-    if (transfer->state() == com::ubuntu::content::Transfer::aborted)
+    if (transfer->state() == ContentTransfer::Aborted)
     {
-        qDebug() << Q_FUNC_INFO << "Aborted transfer, removing:" << transfer->id();
-        if (m_activeImports.contains(transfer))
-            m_activeImports.remove(transfer);
-    }
+        qDebug() << Q_FUNC_INFO << "Aborted transfer, removing:" << transfer->transfer()->id();
+        if (m_activeImports.contains(transfer->transfer()))
+            m_activeImports.remove(transfer->transfer());
+    }    
+    */
 }
+
+/*!
+ * \qmlsignal ContentHub::importRequested(ContentTransfer transfer)
+ *
+ * The signal is triggered when an import is requested.
+ */
 
 /*!
  * \qmlsignal ContentHub::exportRequested(ContentTransfer transfer)
  *
  * The signal is triggered when an export is requested.
+ */
+
+/*!
+ * \qmlsignal ContentHub::shareRequested(ContentTransfer transfer)
+ *
+ * The signal is triggered when a share is requested.
  */
 

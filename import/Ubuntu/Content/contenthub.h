@@ -55,12 +55,21 @@ public:
     Q_INVOKABLE ContentTransfer* importContent(int type);
     Q_INVOKABLE ContentTransfer* importContent(int type, ContentPeer *peer);
 
+    Q_INVOKABLE ContentTransfer* exportContent(int type);
+    Q_INVOKABLE ContentTransfer* exportContent(int type, ContentPeer *peer);
+
+    Q_INVOKABLE ContentTransfer* shareContent(int type);
+    Q_INVOKABLE ContentTransfer* shareContent(int type, ContentPeer *peer);
+
     Q_INVOKABLE void restoreImports();
 
     QQmlListProperty<ContentTransfer> finishedImports();
 
 Q_SIGNALS:
+    void importRequested(ContentTransfer *transfer);
     void exportRequested(ContentTransfer *transfer);
+    void shareRequested(ContentTransfer *transfer);
+
     void finishedImportsChanged();
 
 private Q_SLOTS:
@@ -71,6 +80,11 @@ private Q_SLOTS:
 
 private:
     ContentTransfer* importContent(const com::ubuntu::content::Type&,
+                                   const com::ubuntu::content::Peer &hubPeer);
+
+    ContentTransfer* exportContent(const com::ubuntu::content::Type&,
+                                   const com::ubuntu::content::Peer &hubPeer);
+    ContentTransfer* shareContent(const com::ubuntu::content::Type&,
                                    const com::ubuntu::content::Peer &hubPeer);
 
     QList<ContentTransfer *> m_finishedImports;

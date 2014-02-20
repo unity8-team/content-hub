@@ -21,6 +21,7 @@
 #include "utils.cpp"
 
 #include <QObject>
+#include <QDebug>
 
 namespace cucd = com::ubuntu::content::detail;
 namespace cuc = com::ubuntu::content;
@@ -54,7 +55,7 @@ cucd::Handler::~Handler() {
 
 void cucd::Handler::HandleImport(const QDBusObjectPath& transfer)
 {
-    qDebug() << Q_FUNC_INFO;
+    qDebug() << Q_FUNC_INFO << transfer.path();
     cuc::Transfer* t = cuc::Transfer::Private::make_transfer(transfer, this);
 
     qDebug() << Q_FUNC_INFO << "State:" << t->state();
@@ -64,7 +65,7 @@ void cucd::Handler::HandleImport(const QDBusObjectPath& transfer)
 
 void cucd::Handler::HandleExport(const QDBusObjectPath& transfer)
 {
-    qDebug() << Q_FUNC_INFO;
+    qDebug() << Q_FUNC_INFO << transfer.path();
     cuc::Transfer* t = cuc::Transfer::Private::make_transfer(transfer, this);
 
     qDebug() << Q_FUNC_INFO << "State:" << t->state();
@@ -83,7 +84,6 @@ void cucd::Handler::HandleShare(const QDBusObjectPath& transfer)
     qDebug() << Q_FUNC_INFO << "State:" << t->state();
     if (t->state() == cuc::Transfer::charged)
     {
-        t->d->handled();
         m_handler->handle_share(t);
     }
 }

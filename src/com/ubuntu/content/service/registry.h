@@ -39,6 +39,8 @@ public:
     void enumerate_known_peers(const std::function<void(const cuc::Peer&)>& for_each);
     bool install_default_source_for_type(cuc::Type type, cuc::Peer peer);
     bool install_source_for_type(cuc::Type type, cuc::Peer peer);    
+    bool install_destination_for_type(cuc::Type type, cuc::Peer peer);
+    bool install_share_for_type(cuc::Type type, cuc::Peer peer);
     bool remove_peer(cuc::Peer peer);
 
 private:

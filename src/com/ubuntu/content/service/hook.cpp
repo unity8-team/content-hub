@@ -112,16 +112,40 @@ bool cucd::Hook::add_peer(QFileInfo result)
 
     QJsonObject contentObj = contentDoc.object();
     QVariant sources = contentObj.toVariantMap()["source"];
-    Q_FOREACH(QString source, sources.toStringList())
+    Q_FOREACH(QString k, sources.toStringList())
     {
-        if (knownTypes.contains(source))
+        if (knownTypes.contains(k))
         {
-            qDebug() << "Known: " << source;
-            if (registry->install_source_for_type(cuc::Type{source}, peer))
-                qDebug() << "Installed source:" << peer.id() << "for type:" << source;
+            qDebug() << "Known: " << k;
+            if (registry->install_source_for_type(cuc::Type{k}, peer))
+                qDebug() << "Installed source:" << peer.id() << "for type:" << k;
         }
         else
-            qWarning() << "Failed to install" << peer.id() << "unknown type:" << source;
+            qWarning() << "Failed to install" << peer.id() << "unknown type:" << k;
+    }
+    QVariant dests = contentObj.toVariantMap()["destination"];
+    Q_FOREACH(QString k, dests.toStringList())
+    {
+        if (knownTypes.contains(k))
+        {
+            qDebug() << "Known: " << k;
+            if (registry->install_destination_for_type(cuc::Type{k}, peer))
+                qDebug() << "Installed destination:" << peer.id() << "for type:" << k;
+        }
+        else
+            qWarning() << "Failed to destination" << peer.id() << "unknown type:" << k;
+    }
+    QVariant shares = contentObj.toVariantMap()["share"];
+    Q_FOREACH(QString k, shares.toStringList())
+    {
+        if (knownTypes.contains(k))
+        {
+            qDebug() << "Known: " << k;
+            if (registry->install_share_for_type(cuc::Type{k}, peer))
+                qDebug() << "Installed source:" << peer.id() << "for type:" << k;
+        }
+        else
+            qWarning() << "Failed to install" << peer.id() << "unknown type:" << k;
     }
     return true;
 }

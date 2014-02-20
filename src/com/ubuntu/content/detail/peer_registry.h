@@ -46,6 +46,8 @@ class PeerRegistry
 
     virtual bool install_default_source_for_type(Type, Peer) = 0;
     virtual bool install_source_for_type(Type, Peer) = 0;
+    virtual bool install_destination_for_type(Type, Peer) = 0;
+    virtual bool install_share_for_type(Type, Peer) = 0;
     virtual bool remove_peer(Peer peer) = 0;
 
 

@@ -70,6 +70,8 @@ struct MockedPeerRegistry : public cucd::PeerRegistry
     MOCK_METHOD1(enumerate_known_peers, void(const std::function<void(const cuc::Peer&)>&));
     MOCK_METHOD2(install_default_source_for_type, bool(cuc::Type, cuc::Peer));
     MOCK_METHOD2(install_source_for_type, bool(cuc::Type, cuc::Peer));
+    MOCK_METHOD2(install_destination_for_type, bool(cuc::Type, cuc::Peer));
+    MOCK_METHOD2(install_share_for_type, bool(cuc::Type, cuc::Peer));
     MOCK_METHOD1(remove_peer, bool(cuc::Peer));
 };
 }

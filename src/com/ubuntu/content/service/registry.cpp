@@ -110,6 +110,30 @@ bool Registry::install_source_for_type(cuc::Type type, cuc::Peer peer)
     return false;
 }
 
+bool Registry::install_destination_for_type(cuc::Type type, cuc::Peer peer)
+{
+    qDebug() << Q_FUNC_INFO << "type:" << type.id() << "peer:" << peer.id();
+    QStringList l = m_dests->get(type.id()).toStringList();
+    if (not l.contains(peer.id()))
+    {
+        l.append(peer.id());
+        return m_dests->trySet(type.id(), QVariant(l));
+    }
+    return false;
+}
+
+bool Registry::install_share_for_type(cuc::Type type, cuc::Peer peer)
+{
+    qDebug() << Q_FUNC_INFO << "type:" << type.id() << "peer:" << peer.id();
+    QStringList l = m_shares->get(type.id()).toStringList();
+    if (not l.contains(peer.id()))
+    {
+        l.append(peer.id());
+        return m_shares->trySet(type.id(), QVariant(l));
+    }
+    return false;
+}
+
 bool Registry::remove_peer(cuc::Peer peer)
 {
     qDebug() << Q_FUNC_INFO << "peer:" << peer.id();

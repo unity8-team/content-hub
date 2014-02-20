@@ -40,6 +40,7 @@ set(PLUGIN_HDRS
     contenthubplugin.h
     contentitem.h
     contentpeer.h
+    contentpeermodel.h
     contentstore.h
     contenttransfer.h
     contenttype.h
@@ -51,6 +52,7 @@ set(PLUGIN_SRC
     contenthubplugin.cpp
     contentitem.cpp
     contentpeer.cpp
+    contentpeermodel.cpp
     contentstore.cpp
     contenttransfer.cpp
     contenttype.cpp

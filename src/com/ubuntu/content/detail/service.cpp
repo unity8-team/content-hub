@@ -429,19 +429,22 @@ void cucd::Service::RegisterImportExportHandler(const QString& instance_id, cons
             {
                 if (r->handler->isValid())
                     r->handler->HandleExport(QDBusObjectPath{t->export_path()});
-            } else if (t->Direction() == cuc::Transfer::Share)
-            {
-                if (r->handler->isValid())
-                    r->handler->HandleShare(QDBusObjectPath{t->export_path()});
             }
         }
-        /* FIXME: we need to be able to distingues between import and share and call
-         * can call HandleImport or HandleShare as needed */
         else if ((t->destination() == peer_id) && (t->State() == cuc::Transfer::charged))
         {
             qDebug() << Q_FUNC_INFO << "Found destination:" << peer_id << "Direction:" << t->Direction();
-            if (r->handler->isValid())
-                r->handler->HandleImport(QDBusObjectPath{t->import_path()});
+            if (t->Direction() == cuc::Transfer::Export)
+            {
+                qDebug() << Q_FUNC_INFO << "Found import, calling HandleImport";
+                if (r->handler->isValid())
+                    r->handler->HandleImport(QDBusObjectPath{t->import_path()});
+            } else if (t->Direction() == cuc::Transfer::Share)
+            {
+                qDebug() << Q_FUNC_INFO << "Found share, calling HandleShare";
+                if (r->handler->isValid())
+                    r->handler->HandleShare(QDBusObjectPath{t->import_path()});
+            }
         }
     }
 }

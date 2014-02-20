@@ -130,7 +130,7 @@ ContentPeer *ContentHub::defaultSourceForType(int type)
     qDebug() << Q_FUNC_INFO;
 
     const cuc::Type &hubType = ContentType::contentType2HubType(type);
-    cuc::Peer hubPeer = m_hub->default_peer_for_type(hubType);
+    cuc::Peer hubPeer = m_hub->default_source_for_type(hubType);
 
     ContentPeer *qmlPeer = new ContentPeer(this);
     qmlPeer->setPeer(hubPeer);
@@ -191,7 +191,7 @@ QVariantList ContentHub::knownSourcesForType(int type)
     qDebug() << Q_FUNC_INFO;
 
     const cuc::Type &hubType = ContentType::contentType2HubType(type);
-    QVector<cuc::Peer> hubPeers = m_hub->known_peers_for_type(hubType);
+    QVector<cuc::Peer> hubPeers = m_hub->known_sources_for_type(hubType);
 
     QVariantList qmlPeers;
     Q_FOREACH (const cuc::Peer &hubPeer, hubPeers) {
@@ -215,7 +215,7 @@ ContentTransfer *ContentHub::importContent(int type)
 
     const cuc::Type &hubType = ContentType::contentType2HubType(type);
 //    FIXME show user a selection of possible peers instead
-    cuc::Peer hubPeer = m_hub->default_peer_for_type(hubType);
+    cuc::Peer hubPeer = m_hub->default_source_for_type(hubType);
 
     return importContent(hubType, hubPeer);
 }
@@ -288,7 +288,7 @@ ContentTransfer *ContentHub::exportContent(int type)
 
     const cuc::Type &hubType = ContentType::contentType2HubType(type);
     // FIXME: This is the wrong way to get the default peer for exports
-    cuc::Peer hubPeer = m_hub->default_peer_for_type(hubType);
+    cuc::Peer hubPeer = m_hub->default_source_for_type(hubType);
     return exportContent(hubType, hubPeer);
 }
 
@@ -337,7 +337,7 @@ ContentTransfer *ContentHub::shareContent(int type)
 
     const cuc::Type &hubType = ContentType::contentType2HubType(type);
     // FIXME: This is the wrong way to get the default peer for shares
-    cuc::Peer hubPeer = m_hub->default_peer_for_type(hubType);
+    cuc::Peer hubPeer = m_hub->default_source_for_type(hubType);
     return shareContent(hubType, hubPeer);
 }
 

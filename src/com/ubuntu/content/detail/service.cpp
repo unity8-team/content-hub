@@ -107,11 +107,11 @@ void cucd::Service::Quit()
     QCoreApplication::instance()->quit();
 }
 
-QStringList cucd::Service::KnownPeersForType(const QString& type_id)
+QStringList cucd::Service::KnownSourcesForType(const QString& type_id)
 {
     QStringList result;
 
-    d->registry->enumerate_known_peers_for_type(
+    d->registry->enumerate_known_sources_for_type(
         Type(type_id),
         [&result](const Peer& peer)
         {
@@ -121,9 +121,9 @@ QStringList cucd::Service::KnownPeersForType(const QString& type_id)
     return result;
 }
 
-QString cucd::Service::DefaultPeerForType(const QString& type_id)
+QString cucd::Service::DefaultSourceForType(const QString& type_id)
 {
-    auto peer = d->registry->default_peer_for_type(Type(type_id));
+    auto peer = d->registry->default_source_for_type(Type(type_id));
 
     return peer.id();
 }

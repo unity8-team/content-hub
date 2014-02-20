@@ -115,22 +115,22 @@ bool Hook::add_peer(QFileInfo result)
          * really a good way to do that right now */
         if (source == "pictures")
         {
-            if (not registry->install_peer_for_type(cuc::Type::Known::pictures(), peer))
+            if (not registry->install_source_for_type(cuc::Type::Known::pictures(), peer))
                 qWarning() << "Failed to install peer for" << source;
         }
         else if (source == "music")
         {
-            if (not registry->install_peer_for_type(cuc::Type::Known::music(), peer))
+            if (not registry->install_source_for_type(cuc::Type::Known::music(), peer))
                 qWarning() << "Failed to install peer for" << source;
         }
         else if (source == "documents")
         {
-            if (not registry->install_peer_for_type(cuc::Type::Known::documents(), peer))
+            if (not registry->install_source_for_type(cuc::Type::Known::documents(), peer))
                 qWarning() << "Failed to install peer for" << source;
         }
         else if (source == "contacts")
         {
-            if (not registry->install_peer_for_type(cuc::Type::Known::contacts(), peer))
+            if (not registry->install_source_for_type(cuc::Type::Known::contacts(), peer))
                 qWarning() << "Failed to install peer for" << source;
         }
     }

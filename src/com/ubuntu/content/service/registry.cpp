@@ -28,7 +28,7 @@ Registry::Registry() :
 
 Registry::~Registry() {}
 
-cuc::Peer Registry::default_peer_for_type(cuc::Type type)
+cuc::Peer Registry::default_source_for_type(cuc::Type type)
 {
     qDebug() << Q_FUNC_INFO << type.id();
     if (m_defaultPeers->keys().contains(type.id()))
@@ -37,7 +37,7 @@ cuc::Peer Registry::default_peer_for_type(cuc::Type type)
         return cuc::Peer();
 }
 
-void Registry::enumerate_known_peers_for_type(cuc::Type type, const std::function<void(const cuc::Peer&)>&for_each)
+void Registry::enumerate_known_sources_for_type(cuc::Type type, const std::function<void(const cuc::Peer&)>&for_each)
 {
     qDebug() << Q_FUNC_INFO << type.id();
 
@@ -63,7 +63,7 @@ void Registry::enumerate_known_peers(const std::function<void(const cuc::Peer&)>
     }
 }
 
-bool Registry::install_default_peer_for_type(cuc::Type type, cuc::Peer peer)
+bool Registry::install_default_source_for_type(cuc::Type type, cuc::Peer peer)
 {
     qDebug() << Q_FUNC_INFO << "type:" << type.id() << "peer:" << peer.id();
     if (m_defaultPeers->keys().contains(type.id()))
@@ -72,11 +72,11 @@ bool Registry::install_default_peer_for_type(cuc::Type type, cuc::Peer peer)
         return false;
     }
 
-    this->install_peer_for_type(type, peer);
+    this->install_source_for_type(type, peer);
     return m_defaultPeers->trySet(type.id(), QVariant(peer.id()));
 }
 
-bool Registry::install_peer_for_type(cuc::Type type, cuc::Peer peer)
+bool Registry::install_source_for_type(cuc::Type type, cuc::Peer peer)
 {
     qDebug() << Q_FUNC_INFO << "type:" << type.id() << "peer:" << peer.id();
     QStringList l = m_peers->get(type.id()).toStringList();

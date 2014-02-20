@@ -36,6 +36,7 @@ include_directories(
 )
 
 set(PLUGIN_HDRS
+    contenthandler.h
     contenthub.h
     contenthubplugin.h
     contentitem.h
@@ -48,6 +49,7 @@ set(PLUGIN_HDRS
     )
 
 set(PLUGIN_SRC
+    contenthandler.cpp
     contenthub.cpp
     contenthubplugin.cpp
     contentitem.cpp

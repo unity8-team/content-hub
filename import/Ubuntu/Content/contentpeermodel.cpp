@@ -36,12 +36,12 @@ ContentPeerModel::ContentPeerModel(QObject *parent)
     : QObject(parent),
       m_type(0)
 {
-    m_hub = cuc::Hub::Client::instance();
     qDebug() << Q_FUNC_INFO;
+    m_hub = cuc::Hub::Client::instance();
 }
 
 /*!
- * \qmlproperty ContentType ContentPeerModel::type
+ * \qmlproperty int ContentPeerModel::type
  *
  * Returns the ContentType 
  */
@@ -51,19 +51,13 @@ int ContentPeerModel::type()
     return m_type;
 }
 
-QVariantList ContentPeerModel::peers()
-{
-    qDebug() << Q_FUNC_INFO;
-    return m_peers;
-}
-
 /*!
- * \qmlproperty ContentType ContentPeerModel::setType
- *
- * Sets the ContentType
+ * \brief ContentPeerModel::setType
+ * \internal
  */
 void ContentPeerModel::setType(int type)
 {
+    qDebug() << Q_FUNC_INFO;
     m_type = type;
     const cuc::Type &hubType = ContentType::contentType2HubType(type);
     QVector<cuc::Peer> hubPeers = m_hub->known_peers_for_type(hubType);
@@ -75,3 +69,32 @@ void ContentPeerModel::setType(int type)
     }
     Q_EMIT typeChanged();
 }
+
+/*!
+ * \qmlproperty int ContentPeerModel::handler
+ *
+ * Returns the ContentHandler 
+ */
+int ContentPeerModel::handler() {
+    qDebug() << Q_FUNC_INFO;
+    return m_handler;
+}
+
+/*!
+ * \brief ContentPeerModel::setHandler
+ * \internal
+ */
+void ContentPeerModel::setHandler(int handler)
+{
+    qDebug() << Q_FUNC_INFO;
+    m_handler = handler;
+
+    Q_EMIT handlerChanged();
+}
+
+QVariantList ContentPeerModel::peers()
+{
+    qDebug() << Q_FUNC_INFO;
+    return m_peers;
+}
+

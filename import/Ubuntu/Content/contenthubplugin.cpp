@@ -16,6 +16,7 @@
 
 #include "contenthubplugin.h"
 
+#include "contenthandler.h"
 #include "contenthub.h"
 #include "contentitem.h"
 #include "contentpeer.h"
@@ -51,6 +52,7 @@ void ContentHubPlugin::registerTypes(const char *uri)
     const int versionMajor = 0;
     const int versionMinor = 1;
 
+    qmlRegisterUncreatableType<ContentHandler>(uri, versionMajor, versionMinor, "ContentHandler", "Not creatable as an object, use only to retrieve handler enums (e.g. ContentHandler.Source)");
     qmlRegisterSingletonType<ContentHub>(uri, versionMajor, versionMinor, "ContentHub", qml_content_hub);
     qmlRegisterType<ContentItem>(uri, versionMajor, versionMinor, "ContentItem");
     qmlRegisterType<ContentPeer>(uri, versionMajor, versionMinor, "ContentPeer");

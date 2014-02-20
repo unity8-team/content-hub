@@ -36,7 +36,7 @@ namespace {
     {
         /* list known peers for pictures */
         QStringList result;
-        registry->enumerate_known_peers_for_type(
+        registry->enumerate_known_sources_for_type(
             cuc::Type::Known::pictures(),
             [&result](const cuc::Peer& peer)
             {

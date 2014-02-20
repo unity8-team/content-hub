@@ -118,9 +118,9 @@ const cuc::Store* cuc::Hub::store_for_scope_and_type(cuc::Scope scope, cuc::Type
     return it->second;
 }
 
-cuc::Peer cuc::Hub::default_peer_for_type(cuc::Type t)
+cuc::Peer cuc::Hub::default_source_for_type(cuc::Type t)
 {
-    auto reply = d->service->DefaultPeerForType(t.id());
+    auto reply = d->service->DefaultSourceForType(t.id());
     reply.waitForFinished();
 
     if (reply.isError())
@@ -129,11 +129,11 @@ cuc::Peer cuc::Hub::default_peer_for_type(cuc::Type t)
     return cuc::Peer(reply.value(), this);
 }
 
-QVector<cuc::Peer> cuc::Hub::known_peers_for_type(cuc::Type t)
+QVector<cuc::Peer> cuc::Hub::known_sources_for_type(cuc::Type t)
 {
     QVector<cuc::Peer> result;
 
-    auto reply = d->service->KnownPeersForType(t.id());
+    auto reply = d->service->KnownSourcesForType(t.id());
     reply.waitForFinished();
 
     if (reply.isError())

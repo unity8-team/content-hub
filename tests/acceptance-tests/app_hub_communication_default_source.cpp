@@ -27,9 +27,10 @@
 #include <com/ubuntu/content/store.h>
 #include <com/ubuntu/content/type.h>
 
+#include "com/ubuntu/content/serviceadaptor.h"
+
 #include "com/ubuntu/content/detail/peer_registry.h"
 #include "com/ubuntu/content/detail/service.h"
-#include "com/ubuntu/content/serviceadaptor.h"
 
 #include <gmock/gmock.h>
 #include <gtest/gtest.h>
@@ -59,60 +60,44 @@ struct MockedPeerRegistry : public cucd::PeerRegistry
     {
         using namespace ::testing;
 
-        ON_CALL(*this, default_peer_for_type(_)).WillByDefault(Return(cuc::Peer::unknown()));
-        ON_CALL(*this, install_default_peer_for_type(_,_)).WillByDefault(Return(false));
-        ON_CALL(*this, install_peer_for_type(_,_)).WillByDefault(Return(false));
+        ON_CALL(*this, default_source_for_type(_)).WillByDefault(Return(cuc::Peer::unknown()));
+        ON_CALL(*this, install_default_source_for_type(_,_)).WillByDefault(Return(false));
+        ON_CALL(*this, install_source_for_type(_,_)).WillByDefault(Return(false));
     }
 
-    MOCK_METHOD1(default_peer_for_type, cuc::Peer(cuc::Type t));
-    MOCK_METHOD2(enumerate_known_peers_for_type, void(cuc::Type, const std::function<void(const cuc::Peer&)>&));
+    MOCK_METHOD1(default_source_for_type, cuc::Peer(cuc::Type t));
+    MOCK_METHOD2(enumerate_known_sources_for_type, void(cuc::Type, const std::function<void(const cuc::Peer&)>&));
     MOCK_METHOD1(enumerate_known_peers, void(const std::function<void(const cuc::Peer&)>&));
-    MOCK_METHOD2(install_default_peer_for_type, bool(cuc::Type, cuc::Peer));
-    MOCK_METHOD2(install_peer_for_type, bool(cuc::Type, cuc::Peer));
+    MOCK_METHOD2(install_default_source_for_type, bool(cuc::Type, cuc::Peer));
+    MOCK_METHOD2(install_source_for_type, bool(cuc::Type, cuc::Peer));
+    MOCK_METHOD2(install_destination_for_type, bool(cuc::Type, cuc::Peer));
+    MOCK_METHOD2(install_share_for_type, bool(cuc::Type, cuc::Peer));
     MOCK_METHOD1(remove_peer, bool(cuc::Peer));
 };
 }
 
-TEST(Hub, querying_known_peers_returns_correct_value)
+TEST(Hub, querying_default_peer_returns_correct_value)
 {
     using namespace ::testing;
 
     test::CrossProcessSync sync;
     
-    QVector<cuc::Peer> default_peers;
-    default_peers << cuc::Peer("com.does.not.exist.anywhere.application1");
-    default_peers << cuc::Peer("com.does.not.exist.anywhere.application2");
-    default_peers << cuc::Peer("com.does.not.exist.anywhere.application3");
+    QString default_peer_id{"com.does.not.exist.anywhere.application"};
 
-    auto parent = [&sync, default_peers]()
+    auto parent = [&sync, default_peer_id]()
     {
         int argc = 0;
         QCoreApplication app{argc, nullptr};
 
         QDBusConnection connection = QDBusConnection::sessionBus();        
-
-        auto enumerate = [default_peers](cuc::Type, const std::function<void(const cuc::Peer&)>& f)
-        {
-            Q_FOREACH(const cuc::Peer& peer, default_peers)
-            {
-                f(peer);
-            }
-        };
         
         auto mock = new MockedPeerRegistry{};
-        EXPECT_CALL(*mock, enumerate_known_peers_for_type(_, _)).
+        EXPECT_CALL(*mock, default_source_for_type(_)).
         Times(Exactly(1)).
-        WillRepeatedly(Invoke(enumerate));
-
-        EXPECT_CALL(*mock, install_peer_for_type(_, _)).
-        Times(Exactly(1)).
-        WillRepeatedly(Return(true));
-
-        ASSERT_TRUE(mock->install_peer_for_type(cuc::Type::Known::documents(),
-                                                cuc::Peer("com.does.not.exist.anywhere.application4")));
+        WillRepeatedly(Return(cuc::Peer{default_peer_id}));
 
         QSharedPointer<cucd::PeerRegistry> registry{mock};
-        
+
         auto app_manager = QSharedPointer<cua::ApplicationManager>(new MockedAppManager());
 
         auto implementation = new cucd::Service(connection, registry, app_manager, &app);
@@ -129,7 +114,7 @@ TEST(Hub, querying_known_peers_returns_correct_value)
         connection.unregisterService(service_name);
     };
 
-    auto child = [&sync, default_peers]()
+    auto child = [&sync, default_peer_id]()
     {
         sync.wait_for_signal_ready();
         
@@ -139,10 +124,9 @@ TEST(Hub, querying_known_peers_returns_correct_value)
         auto hub = cuc::Hub::Client::instance();
         
         test::TestHarness harness;
-        harness.add_test_case([hub, default_peers]()
+        harness.add_test_case([hub, default_peer_id]()
         {            
-            auto peers = hub->known_peers_for_type(cuc::Type::Known::documents());
-            ASSERT_EQ(default_peers, peers);
+            EXPECT_EQ(default_peer_id, hub->default_source_for_type(cuc::Type::Known::documents()).id());
         });
         
         EXPECT_EQ(0, QTest::qExec(std::addressof(harness)));

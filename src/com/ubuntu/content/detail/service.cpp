@@ -107,11 +107,11 @@ void cucd::Service::Quit()
     QCoreApplication::instance()->quit();
 }
 
-QStringList cucd::Service::KnownPeersForType(const QString& type_id)
+QStringList cucd::Service::KnownSourcesForType(const QString& type_id)
 {
     QStringList result;
 
-    d->registry->enumerate_known_peers_for_type(
+    d->registry->enumerate_known_sources_for_type(
         Type(type_id),
         [&result](const Peer& peer)
         {
@@ -121,9 +121,9 @@ QStringList cucd::Service::KnownPeersForType(const QString& type_id)
     return result;
 }
 
-QString cucd::Service::DefaultPeerForType(const QString& type_id)
+QString cucd::Service::DefaultSourceForType(const QString& type_id)
 {
-    auto peer = d->registry->default_peer_for_type(Type(type_id));
+    auto peer = d->registry->default_source_for_type(Type(type_id));
 
     return peer.id();
 }
@@ -429,19 +429,22 @@ void cucd::Service::RegisterImportExportHandler(const QString& instance_id, cons
             {
                 if (r->handler->isValid())
                     r->handler->HandleExport(QDBusObjectPath{t->export_path()});
-            } else if (t->Direction() == cuc::Transfer::Share)
-            {
-                if (r->handler->isValid())
-                    r->handler->HandleShare(QDBusObjectPath{t->export_path()});
             }
         }
-        /* FIXME: we need to be able to distingues between import and share and call
-         * can call HandleImport or HandleShare as needed */
         else if ((t->destination() == peer_id) && (t->State() == cuc::Transfer::charged))
         {
             qDebug() << Q_FUNC_INFO << "Found destination:" << peer_id << "Direction:" << t->Direction();
-            if (r->handler->isValid())
-                r->handler->HandleImport(QDBusObjectPath{t->import_path()});
+            if (t->Direction() == cuc::Transfer::Export)
+            {
+                qDebug() << Q_FUNC_INFO << "Found import, calling HandleImport";
+                if (r->handler->isValid())
+                    r->handler->HandleImport(QDBusObjectPath{t->import_path()});
+            } else if (t->Direction() == cuc::Transfer::Share)
+            {
+                qDebug() << Q_FUNC_INFO << "Found share, calling HandleShare";
+                if (r->handler->isValid())
+                    r->handler->HandleShare(QDBusObjectPath{t->import_path()});
+            }
         }
     }
 }

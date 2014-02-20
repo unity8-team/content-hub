@@ -60,7 +60,7 @@ void ContentPeerModel::setType(int type)
     qDebug() << Q_FUNC_INFO;
     m_type = type;
     const cuc::Type &hubType = ContentType::contentType2HubType(type);
-    QVector<cuc::Peer> hubPeers = m_hub->known_peers_for_type(hubType);
+    QVector<cuc::Peer> hubPeers = m_hub->known_sources_for_type(hubType);
 
     Q_FOREACH (const cuc::Peer &hubPeer, hubPeers) {
         ContentPeer *qmlPeer = new ContentPeer();

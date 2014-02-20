@@ -53,8 +53,8 @@ class Service : public QObject, protected QDBusContext
     Service& operator=(const Service&) = delete;
 
   public Q_SLOTS:
-    QString DefaultPeerForType(const QString &type_id);
-    QStringList KnownPeersForType(const QString &type_id);
+    QString DefaultSourceForType(const QString &type_id);
+    QStringList KnownSourcesForType(const QString &type_id);
     QDBusObjectPath CreateImportFromPeer(const QString&, const QString&);
     QDBusObjectPath CreateExportToPeer(const QString&, const QString&);
     QDBusObjectPath CreateShareToPeer(const QString&, const QString&);

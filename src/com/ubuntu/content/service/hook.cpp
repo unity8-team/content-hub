@@ -28,21 +28,22 @@
 
 #include "hook.h"
 
-Hook::Hook(QObject *parent) :
+namespace cucd = com::ubuntu::content::detail;
+
+cucd::Hook::Hook(QObject *parent) :
     QObject(parent),
     registry(new Registry())
 {
     QTimer::singleShot(200, this, SLOT(run()));
 }
 
-
-Hook::Hook(com::ubuntu::content::detail::PeerRegistry *registry, QObject *parent) :
+cucd::Hook::Hook(com::ubuntu::content::detail::PeerRegistry *registry, QObject *parent) :
     QObject(parent),
     registry(registry)
 {
 }
 
-void Hook::run()
+void cucd::Hook::run()
 {
     qDebug() << Q_FUNC_INFO;
     /* Looks for files in ${HOME}/.local/share/content-hub/${id} installed
@@ -87,10 +88,12 @@ void Hook::run()
     QCoreApplication::instance()->quit();
 }
 
-bool Hook::add_peer(QFileInfo result)
+bool cucd::Hook::add_peer(QFileInfo result)
 {
     qDebug() << Q_FUNC_INFO << "Hook:" << result.filePath();
 
+    QStringList knownTypes;
+    knownTypes << "pictures" << "music" << "contacts" << "documents";
     QString app_id = result.fileName();
     auto peer = cuc::Peer(app_id);
 
@@ -109,35 +112,45 @@ bool Hook::add_peer(QFileInfo result)
 
     QJsonObject contentObj = contentDoc.object();
     QVariant sources = contentObj.toVariantMap()["source"];
-    Q_FOREACH(QString source, sources.toStringList())
+    Q_FOREACH(QString k, sources.toStringList())
     {
-        /* FIXME: we should iterate known types, but there isn't
-         * really a good way to do that right now */
-        if (source == "pictures")
+        if (knownTypes.contains(k))
         {
-            if (not registry->install_peer_for_type(cuc::Type::Known::pictures(), peer))
-                qWarning() << "Failed to install peer for" << source;
+            qDebug() << "Known: " << k;
+            if (registry->install_source_for_type(cuc::Type{k}, peer))
+                qDebug() << "Installed source:" << peer.id() << "for type:" << k;
         }
-        else if (source == "music")
+        else
+            qWarning() << "Failed to install" << peer.id() << "unknown type:" << k;
+    }
+    QVariant dests = contentObj.toVariantMap()["destination"];
+    Q_FOREACH(QString k, dests.toStringList())
+    {
+        if (knownTypes.contains(k))
         {
-            if (not registry->install_peer_for_type(cuc::Type::Known::music(), peer))
-                qWarning() << "Failed to install peer for" << source;
+            qDebug() << "Known: " << k;
+            if (registry->install_destination_for_type(cuc::Type{k}, peer))
+                qDebug() << "Installed destination:" << peer.id() << "for type:" << k;
         }
-        else if (source == "documents")
+        else
+            qWarning() << "Failed to destination" << peer.id() << "unknown type:" << k;
+    }
+    QVariant shares = contentObj.toVariantMap()["share"];
+    Q_FOREACH(QString k, shares.toStringList())
+    {
+        if (knownTypes.contains(k))
         {
-            if (not registry->install_peer_for_type(cuc::Type::Known::documents(), peer))
-                qWarning() << "Failed to install peer for" << source;
+            qDebug() << "Known: " << k;
+            if (registry->install_share_for_type(cuc::Type{k}, peer))
+                qDebug() << "Installed source:" << peer.id() << "for type:" << k;
         }
-        else if (source == "contacts")
-        {
-            if (not registry->install_peer_for_type(cuc::Type::Known::contacts(), peer))
-                qWarning() << "Failed to install peer for" << source;
-        }
+        else
+            qWarning() << "Failed to install" << peer.id() << "unknown type:" << k;
     }
     return true;
 }
 
-bool Hook::return_error(QString err)
+bool cucd::Hook::return_error(QString err)
 {
     qWarning() << "Failed to install peer" << err;
     return false;

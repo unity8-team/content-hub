@@ -20,9 +20,9 @@ import Ubuntu.Components.Popups 0.1
 import Ubuntu.Content 0.1
 
 /*!
-    \qmltype ContentImportHint
+    \qmltype ContentTransferHint
     \inqmlmodule Ubuntu.Content 0.1
-    \brief Component that indicates that a trasnfer is active
+    \brief Component that indicates that a transfer is active
 
     This component shows, that the transfer is currently running, and the source
     application is active. It blocks all input during that time.

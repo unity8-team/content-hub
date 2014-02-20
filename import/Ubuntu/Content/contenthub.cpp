@@ -66,7 +66,7 @@
  *              activeTransfer.start();
  *         }
  *     }
- *     ContentImportHint {
+ *     ContentTransferHint {
  *         id: importHint
  *         anchors.fill: parent
  *         activeTransfer: root.activeTransfer

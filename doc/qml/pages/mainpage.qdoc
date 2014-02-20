@@ -87,7 +87,7 @@ Rectangle {
            activeTransfer.start();
       }
   }
-  ContentImportHint {
+  ContentTransferHint {
       id: importHint
       anchors.fill: parent
       activeTransfer: root.activeTransfer
@@ -108,7 +108,7 @@ Rectangle {
 \list
     \li \l {ContentHub}
     \li \l {ContentTransfer}
-    \li \l {ContentImportHint}
+    \li \l {ContentTransferHint}
     \li \l {ContentType}
 \endlist
 

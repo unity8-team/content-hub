@@ -42,8 +42,10 @@ public:
     bool remove_peer(cuc::Peer peer);
 
 private:
-    QScopedPointer<QGSettings> m_defaultPeers;
-    QScopedPointer<QGSettings> m_peers;
+    QScopedPointer<QGSettings> m_defaultSources;
+    QScopedPointer<QGSettings> m_sources;
+    QScopedPointer<QGSettings> m_dests;
+    QScopedPointer<QGSettings> m_shares;
 };
 
 #endif // REGISTRY_H

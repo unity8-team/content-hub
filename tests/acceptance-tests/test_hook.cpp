@@ -66,7 +66,7 @@ TEST(Hook, parse_json)
     WillRepeatedly(Return(true));
 
     QFileInfo f("good.json");
-    Hook *hook = new Hook(mock);
+    cucd::Hook *hook = new cucd::Hook(mock);
 
     EXPECT_TRUE(hook->add_peer(f));
     f.setFile("bad.json");

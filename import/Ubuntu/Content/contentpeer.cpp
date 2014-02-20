@@ -94,3 +94,26 @@ void ContentPeer::setPeer(const cuc::Peer &peer)
     Q_EMIT nameChanged();
     Q_EMIT appIdChanged();
 }
+
+/*!
+ * \qmlproperty int ContentPeer::handler
+ *
+ * Returns the ContentHandler 
+ */
+int ContentPeer::handler() {
+    qDebug() << Q_FUNC_INFO;
+    return m_handler;
+}
+
+/*!
+ * \brief ContentPeer::setHandler
+ * \internal
+ */
+void ContentPeer::setHandler(int handler)
+{   
+    qDebug() << Q_FUNC_INFO;
+    m_handler = handler;
+
+    Q_EMIT handlerChanged();
+}
+

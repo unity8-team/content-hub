@@ -14,7 +14,9 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
+#include "contenthub.h"
 #include "contentpeer.h"
+#include "contenttype.h"
 
 #include <com/ubuntu/content/peer.h>
 
@@ -39,6 +41,7 @@ ContentPeer::ContentPeer(QObject *parent)
       m_peer(0)
 {
     qDebug() << Q_FUNC_INFO;
+    m_hub = cuc::Hub::Client::instance();
 }
 
 /*!
@@ -122,7 +125,8 @@ void ContentPeer::setHandler(int handler)
  *
  * Returns the ContentType
  */
-int ContentPeer::contentType() {
+int ContentPeer::contentType() 
+{
     qDebug() << Q_FUNC_INFO;
     return m_contentType;
 }
@@ -137,5 +141,25 @@ void ContentPeer::setContentType(int contentType)
     m_contentType = contentType;
 
     Q_EMIT contentTypeChanged();
+}
+
+/*!
+ * \qmlmethod ContentPeer::request()
+ *
+ * \brief Request to import data from this \a ContentPeer
+ */
+ContentTransfer *ContentPeer::request()
+{   
+    qDebug() << Q_FUNC_INFO;
+
+    cuc::Transfer *hubTransfer = m_hub->create_import_from_peer(m_peer);
+// FIXME update tests so this can be enabled
+//    if (!hubTransfer)
+//        return nullptr;
+
+    ContentTransfer *qmlTransfer = new ContentTransfer(this);
+    qmlTransfer->setTransfer(hubTransfer);
+    qmlTransfer->start();
+    return qmlTransfer;
 }
 

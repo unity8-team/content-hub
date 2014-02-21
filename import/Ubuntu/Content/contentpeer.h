@@ -17,6 +17,8 @@
 #ifndef COM_UBUNTU_CONTENTPEER_H_
 #define COM_UBUNTU_CONTENTPEER_H_
 
+#include "contenttransfer.h"
+#include <com/ubuntu/content/hub.h>
 #include <com/ubuntu/content/peer.h>
 
 #include <QObject>
@@ -33,6 +35,8 @@ class ContentPeer : public QObject
 public:
     ContentPeer(QObject *parent = nullptr);
 
+    Q_INVOKABLE ContentTransfer* request();
+
     QString name();
     const QString &appId() const;
     void setAppId(const QString&);
@@ -42,6 +46,7 @@ public:
 
     int handler();
     void setHandler(int handler);
+
     int contentType();
     void setContentType(int contentType);
 
@@ -52,6 +57,7 @@ Q_SIGNALS:
     void contentTypeChanged();
 
 private:
+    com::ubuntu::content::Hub *m_hub;
     com::ubuntu::content::Peer m_peer;
     int m_handler;
     int m_contentType;

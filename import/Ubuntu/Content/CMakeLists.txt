@@ -42,6 +42,7 @@ set(PLUGIN_HDRS
     contentitem.h
     contentpeer.h
     contentpeermodel.h
+    contentscope.h
     contentstore.h
     contenttransfer.h
     contenttype.h
@@ -55,6 +56,7 @@ set(PLUGIN_SRC
     contentitem.cpp
     contentpeer.cpp
     contentpeermodel.cpp
+    contentscope.cpp
     contentstore.cpp
     contenttransfer.cpp
     contenttype.cpp

@@ -21,6 +21,7 @@
 #include "contentitem.h"
 #include "contentpeer.h"
 #include "contentpeermodel.h"
+#include "contentscope.h"
 #include "contentstore.h"
 #include "contenttransfer.h"
 #include "contenttype.h"
@@ -57,6 +58,8 @@ void ContentHubPlugin::registerTypes(const char *uri)
     qmlRegisterType<ContentItem>(uri, versionMajor, versionMinor, "ContentItem");
     qmlRegisterType<ContentPeer>(uri, versionMajor, versionMinor, "ContentPeer");
     qmlRegisterType<ContentPeerModel>(uri, versionMajor, versionMinor, "ContentPeerModel");
+    qmlRegisterType<ContentScope>(uri, versionMajor, versionMinor, "ContentScope");
+    qmlRegisterType<ContentStore>(uri, versionMajor, versionMinor, "ContentStore");
     qmlRegisterUncreatableType<ContentTransfer>(uri, versionMajor, versionMinor, "ContentTransfer", "created by hub");
     qmlRegisterUncreatableType<ContentType>(uri, versionMajor, versionMinor, "ContentType", "Use only the type");
 }

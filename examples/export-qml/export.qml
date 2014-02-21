@@ -33,7 +33,7 @@ MainView {
             selectedItems.push(resultComponent.createObject(root, {"url": "file:///picture_1.jpg"}));
             selectedItems.push(resultComponent.createObject(root, {"url": "file:///picture_2.jpg"}));
             console.log(selectedItems[0].url + "/" + selectedItems[1].url)
-            activeTransfer.items = selectedItems;        }
+            activeTransfer.items = selectedItems;
         }
     }
 

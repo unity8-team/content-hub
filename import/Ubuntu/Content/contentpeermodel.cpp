@@ -34,32 +34,32 @@ namespace cuc = com::ubuntu::content;
 
 ContentPeerModel::ContentPeerModel(QObject *parent)
     : QObject(parent),
-      m_type(0)
+      m_contentType(0)
 {
     qDebug() << Q_FUNC_INFO;
     m_hub = cuc::Hub::Client::instance();
 }
 
 /*!
- * \qmlproperty int ContentPeerModel::type
+ * \qmlproperty int ContentPeerModel::contentType
  *
  * Returns the ContentType 
  */
-int ContentPeerModel::type()
+int ContentPeerModel::contentType()
 {
     qDebug() << Q_FUNC_INFO;
-    return m_type;
+    return m_contentType;
 }
 
 /*!
- * \brief ContentPeerModel::setType
+ * \brief ContentPeerModel::setContentType
  * \internal
  */
-void ContentPeerModel::setType(int type)
+void ContentPeerModel::setContentType(int contentType)
 {
     qDebug() << Q_FUNC_INFO;
-    m_type = type;
-    const cuc::Type &hubType = ContentType::contentType2HubType(type);
+    m_contentType = contentType;
+    const cuc::Type &hubType = ContentType::contentType2HubType(contentType);
     QVector<cuc::Peer> hubPeers = m_hub->known_sources_for_type(hubType);
 
     Q_FOREACH (const cuc::Peer &hubPeer, hubPeers) {
@@ -67,7 +67,7 @@ void ContentPeerModel::setType(int type)
         qmlPeer->setPeer(hubPeer);
         m_peers.append(QVariant::fromValue(qmlPeer));
     }
-    Q_EMIT typeChanged();
+    Q_EMIT contentTypeChanged();
 }
 
 /*!

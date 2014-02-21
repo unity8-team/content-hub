@@ -27,27 +27,27 @@
 class ContentPeerModel : public QObject
 {
     Q_OBJECT
-    Q_PROPERTY(int type READ type WRITE setType NOTIFY typeChanged)
+    Q_PROPERTY(int contentType READ contentType WRITE setContentType NOTIFY contentTypeChanged)
     Q_PROPERTY(int handler READ handler WRITE setHandler NOTIFY handlerChanged)
     Q_PROPERTY(QVariantList peers READ peers NOTIFY peersChanged)
 
 public:
     ContentPeerModel(QObject *parent = nullptr);
 
-    int type();
-    void setType(int type);
+    int contentType();
+    void setContentType(int contentType);
     int handler();
     void setHandler(int handler);
     QVariantList peers();
 
 Q_SIGNALS:
-    void typeChanged();
+    void contentTypeChanged();
     void handlerChanged();
     void peersChanged();
 
 private:
     com::ubuntu::content::Hub *m_hub;
-    int m_type;
+    int m_contentType;
     int m_handler;
     QVariantList m_peers;
 };

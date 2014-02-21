@@ -147,6 +147,30 @@ void ContentPeer::setContentType(int contentType)
 }
 
 /*!
+ * \qmlproperty int ContentPeer::store
+ *
+ * Returns the ContentStore
+ */
+ContentStore *ContentPeer::store() 
+{
+    qDebug() << Q_FUNC_INFO;
+    return m_store;
+}
+
+/*!
+ * \brief ContentPeer::setStore
+ * \internal
+ */
+void ContentPeer::setStore(ContentStore *store)
+{   
+    qDebug() << Q_FUNC_INFO;
+    m_store = store;;
+
+    Q_EMIT storeChanged();
+}
+
+
+/*!
  * \qmlmethod ContentPeer::request()
  *
  * \brief Request to import data from this \a ContentPeer

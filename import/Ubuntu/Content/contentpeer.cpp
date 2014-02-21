@@ -164,7 +164,7 @@ ContentStore *ContentPeer::store()
 void ContentPeer::setStore(ContentStore *store)
 {   
     qDebug() << Q_FUNC_INFO;
-    m_store = store;;
+    m_store = store;
 
     Q_EMIT storeChanged();
 }

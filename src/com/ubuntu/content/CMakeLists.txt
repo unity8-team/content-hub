@@ -20,6 +20,7 @@ include_directories(
   ${CMAKE_CURRENT_BINARY_DIR}
   ${CMAKE_SOURCE_DIR}/src
   ${CMAKE_SOURCE_DIR}
+  ${CMAKE_SOURCE_DIR}/include
   ${GLIB_INCLUDE_DIRS}
   ${GIO_INCLUDE_DIRS}
   ${NIH_INCLUDE_DIRS}
@@ -81,6 +82,7 @@ add_library(
   ${CONTENT_HANDLER_STUB}
   ${CONTENT_HANDLER_SKELETON}
 )
+
 
 set_target_properties(
   content-hub

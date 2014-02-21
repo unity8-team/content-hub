@@ -28,6 +28,7 @@
 #include <com/ubuntu/content/type.h>
 #include <com/ubuntu/content/transfer.h>
 
+#include <QDBusMetaType>
 #include <QCache>
 #include <QCoreApplication>
 #include <QDebug>
@@ -47,7 +48,6 @@ struct cucd::Service::RegHandler
         instance(instance),
         handler(handler)
     {
-
     }
 
     QString id;
@@ -85,6 +85,8 @@ cucd::Service::Service(QDBusConnection connection, const QSharedPointer<cucd::Pe
 {
     assert(!peer_registry.isNull());
 
+    qDBusRegisterMetaType<cuc::Peer>();
+
     m_watcher->setWatchMode(QDBusServiceWatcher::WatchForUnregistration);
     m_watcher->setConnection(d->connection);
     QObject::connect(m_watcher, SIGNAL(serviceUnregistered(const QString&)),
@@ -107,15 +109,15 @@ void cucd::Service::Quit()
     QCoreApplication::instance()->quit();
 }
 
-QStringList cucd::Service::KnownSourcesForType(const QString& type_id)
+QVariantList cucd::Service::KnownSourcesForType(const QString& type_id)
 {
-    QStringList result;
+    QVariantList result;
 
     d->registry->enumerate_known_sources_for_type(
         Type(type_id),
         [&result](const Peer& peer)
         {
-            result.append(peer.id());
+            result.append(QVariant::fromValue(peer));
         });
 
     return result;

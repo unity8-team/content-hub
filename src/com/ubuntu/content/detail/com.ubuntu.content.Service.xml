@@ -9,7 +9,7 @@
     </method>
     <method name="KnownSourcesForType">
       <arg name="type_id" type="s" direction="in" />
-      <arg name="peer_ids" type="as" direction="out" />
+      <arg name="peers" type="av" direction="out" />
     </method>
     <method name="KnownDestinationsForType">
       <arg name="type_id" type="s" direction="in" />

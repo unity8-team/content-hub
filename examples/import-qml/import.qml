@@ -16,7 +16,7 @@ MainView {
     ContentPeer {
         id: picSource
         // well know content type
-        content: ContentType.Pictures
+        contentType: ContentType.Pictures
         // Type of handler: Source, Destination, or Share
         handler: ContentHandler.Source
         // Optional appId, if this isn't specified the hub will use the default
@@ -33,7 +33,7 @@ MainView {
         // Type of handler: Source, Destination, or Share
         handler: ContentHandler.Source
         // well know content type
-        type: ContentType.Pictures
+        contentType: ContentType.Pictures
     }
 
     ListView {
@@ -44,7 +44,7 @@ MainView {
             top: importButtons.bottom
         }
         height: childrenRect.height
-        model: picSources
+        model: picSources.peers
 
         delegate: ListItem.Standard {
             text: modelData.name

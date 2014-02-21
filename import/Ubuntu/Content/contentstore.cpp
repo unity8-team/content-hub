@@ -30,7 +30,8 @@ namespace cuc = com::ubuntu::content;
 
 ContentStore::ContentStore(QObject *parent)
     : QObject(parent),
-      m_store(0)
+      m_store(0),
+      m_scope(0)
 {
     qDebug() << Q_FUNC_INFO;
 }
@@ -69,3 +70,27 @@ void ContentStore::setStore(const com::ubuntu::content::Store *store)
     m_store = store;
     Q_EMIT uriChanged();
 }
+
+/*!
+ * \qmlproperty int ContentStore::scope
+ *
+ * Returns the ContentScope
+ */
+int ContentStore::scope()
+{   
+    qDebug() << Q_FUNC_INFO;
+    return m_scope;
+}
+
+/*!
+ * \brief ContentStore::setScope
+ * \internal
+ */
+void ContentStore::setScope(int scope)
+{   
+    qDebug() << Q_FUNC_INFO;
+    m_scope = scope;
+
+    Q_EMIT scopeChanged();
+}
+

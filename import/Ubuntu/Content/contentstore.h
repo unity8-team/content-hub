@@ -26,6 +26,7 @@ class ContentStore : public QObject
 {
     Q_OBJECT
     Q_PROPERTY(QString uri READ uri NOTIFY uriChanged)
+    Q_PROPERTY(int scope READ scope WRITE setScope NOTIFY scopeChanged)
 
 public:
     ContentStore(QObject *parent = nullptr);
@@ -35,11 +36,17 @@ public:
     const com::ubuntu::content::Store *store() const;
     void setStore(const com::ubuntu::content::Store *store);
 
+    int scope();
+    void setScope(int scope);
+    
+
 Q_SIGNALS:
     void uriChanged();
+    void scopeChanged();
 
 private:
     const com::ubuntu::content::Store *m_store;
+    int m_scope;
 };
 
 #endif // COM_UBUNTU_CONTENTSTORE_H_

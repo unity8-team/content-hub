@@ -28,6 +28,7 @@ class ContentPeer : public QObject
     Q_PROPERTY(QString name READ name NOTIFY nameChanged)
     Q_PROPERTY(QString appId READ appId WRITE setAppId NOTIFY appIdChanged)
     Q_PROPERTY(int handler READ handler WRITE setHandler NOTIFY handlerChanged)
+    Q_PROPERTY(int contentType READ contentType WRITE setContentType NOTIFY contentTypeChanged)
 
 public:
     ContentPeer(QObject *parent = nullptr);
@@ -41,15 +42,19 @@ public:
 
     int handler();
     void setHandler(int handler);
+    int contentType();
+    void setContentType(int contentType);
 
 Q_SIGNALS:
     void nameChanged();
     void appIdChanged();
     void handlerChanged();
+    void contentTypeChanged();
 
 private:
     com::ubuntu::content::Peer m_peer;
     int m_handler;
+    int m_contentType;
 };
 
 #endif // COM_UBUNTU_CONTENTPEER_H_

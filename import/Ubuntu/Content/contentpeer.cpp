@@ -117,3 +117,25 @@ void ContentPeer::setHandler(int handler)
     Q_EMIT handlerChanged();
 }
 
+/*!
+ * \qmlproperty int ContentPeer::contentType
+ *
+ * Returns the ContentType
+ */
+int ContentPeer::contentType() {
+    qDebug() << Q_FUNC_INFO;
+    return m_contentType;
+}
+
+/*!
+ * \brief ContentPeer::setContentType
+ * \internal
+ */
+void ContentPeer::setContentType(int contentType)
+{   
+    qDebug() << Q_FUNC_INFO;
+    m_contentType = contentType;
+
+    Q_EMIT contentTypeChanged();
+}
+

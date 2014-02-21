@@ -121,6 +121,34 @@ QStringList cucd::Service::KnownSourcesForType(const QString& type_id)
     return result;
 }
 
+QStringList cucd::Service::KnownDestinationsForType(const QString& type_id)
+{
+    QStringList result;
+
+    d->registry->enumerate_known_destinations_for_type(
+        Type(type_id),
+        [&result](const Peer& peer)
+        {
+            result.append(peer.id());
+        });
+
+    return result;
+}
+
+QStringList cucd::Service::KnownSharesForType(const QString& type_id)
+{
+    QStringList result;
+
+    d->registry->enumerate_known_shares_for_type(
+        Type(type_id),
+        [&result](const Peer& peer)
+        {
+            result.append(peer.id());
+        });
+
+    return result;
+}
+
 QString cucd::Service::DefaultSourceForType(const QString& type_id)
 {
     auto peer = d->registry->default_source_for_type(Type(type_id));

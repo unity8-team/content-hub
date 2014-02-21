@@ -55,6 +55,8 @@ class Service : public QObject, protected QDBusContext
   public Q_SLOTS:
     QString DefaultSourceForType(const QString &type_id);
     QStringList KnownSourcesForType(const QString &type_id);
+    QStringList KnownDestinationsForType(const QString &type_id);
+    QStringList KnownSharesForType(const QString &type_id);
     QDBusObjectPath CreateImportFromPeer(const QString&, const QString&);
     QDBusObjectPath CreateExportToPeer(const QString&, const QString&);
     QDBusObjectPath CreateShareToPeer(const QString&, const QString&);

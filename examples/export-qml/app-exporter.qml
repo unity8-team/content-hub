@@ -144,7 +144,7 @@ MainView {
     ContentPeer {
         id: picDest
         // well know content type
-        content: ContentType.Pictures
+        contentType: ContentType.Pictures
         // Type of handler: Source, Destination, or Share
         handler: ContentHandler.Destination
         // Optional appId, if this isn't specified the hub will use the default
@@ -154,7 +154,7 @@ MainView {
     ContentPeer {
         id: picShare
         // well know content type
-        content: ContentType.Pictures
+        contentType: ContentType.Pictures
         // Type of handler: Source, Destination, or Share
         handler: ContentHandler.Share
         // Optional appId, if this isn't specified the hub will use the default

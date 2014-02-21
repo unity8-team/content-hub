@@ -140,6 +140,9 @@ void ContentPeer::setContentType(int contentType)
     qDebug() << Q_FUNC_INFO;
     m_contentType = contentType;
 
+    const cuc::Type &hubType = ContentType::contentType2HubType(m_contentType);
+    setPeer(m_hub->default_source_for_type(hubType));
+
     Q_EMIT contentTypeChanged();
 }
 

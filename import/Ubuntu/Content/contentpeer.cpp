@@ -40,6 +40,8 @@ namespace cuc = com::ubuntu::content;
 ContentPeer::ContentPeer(QObject *parent)
     : QObject(parent),
       m_peer(0),
+      m_contentType(0),
+      m_selectionType(ContentTransfer::Single),
       m_explicit_app(false)
 {
     qDebug() << Q_FUNC_INFO;
@@ -152,6 +154,30 @@ void ContentPeer::setContentType(int contentType)
 }
 
 /*!
+ * \qmlproperty int ContentPeer::selectionType
+ *
+ * Returns the ContentTransfer selection type
+ */
+ContentTransfer::SelectionType ContentPeer::selectionType()
+{
+    qDebug() << Q_FUNC_INFO;
+    return m_selectionType;
+}
+
+/*!
+ * \brief ContentPeer::setSelectionType
+ * \internal
+ */
+void ContentPeer::setSelectionType(ContentTransfer::SelectionType selectionType)
+{
+    qDebug() << Q_FUNC_INFO;
+    m_selectionType = selectionType;
+
+    Q_EMIT selectionTypeChanged();
+}
+
+
+/*!
  * \qmlproperty int ContentPeer::store
  *
  * Returns the ContentStore
@@ -199,6 +225,7 @@ ContentTransfer *ContentPeer::request()
 
     ContentTransfer *qmlTransfer = new ContentTransfer(this);
     qmlTransfer->setTransfer(hubTransfer);
+    qmlTransfer->setSelectionType(m_selectionType);
     qmlTransfer->start();
     return qmlTransfer;
 }

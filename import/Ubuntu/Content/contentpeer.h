@@ -31,6 +31,7 @@ class ContentPeer : public QObject
     Q_PROPERTY(QString appId READ appId WRITE setAppId NOTIFY appIdChanged)
     Q_PROPERTY(int handler READ handler WRITE setHandler NOTIFY handlerChanged)
     Q_PROPERTY(int contentType READ contentType WRITE setContentType NOTIFY contentTypeChanged)
+    Q_PROPERTY(ContentTransfer::SelectionType selectionType READ selectionType WRITE setSelectionType NOTIFY selectionTypeChanged)
     Q_PROPERTY(ContentStore *store READ store WRITE setStore NOTIFY storeChanged)
 
 public:
@@ -51,6 +52,9 @@ public:
     int contentType();
     void setContentType(int contentType);
 
+    ContentTransfer::SelectionType selectionType();
+    void setSelectionType(ContentTransfer::SelectionType selectionType);
+
     ContentStore *store();
     void setStore(ContentStore *store);
     
@@ -60,6 +64,7 @@ Q_SIGNALS:
     void appIdChanged();
     void handlerChanged();
     void contentTypeChanged();
+    void selectionTypeChanged();
     void storeChanged();
 
 private:
@@ -67,6 +72,7 @@ private:
     com::ubuntu::content::Peer m_peer;
     int m_handler;
     int m_contentType;
+    ContentTransfer::SelectionType m_selectionType;
     bool m_explicit_app;
     ContentStore *m_store;
 };

@@ -72,28 +72,43 @@ import Ubuntu.Content 0.1
 
 Rectangle {
   id: root
+  property list<ContentItem> importItems
+  property var activeTransfer
+
+  ContentPeer {
+    id: picSourceSingle
+    contentType: ContentType.Pictures
+    handler: ContentHandler.Source
+    selectionType: ContentTransfer.Single
+  }
+
+  ContentPeer {
+    id: picSourceMulti
+    contentType: ContentType.Pictures
+    handler: ContentHandler.Source
+    selectionType: ContentTransfer.Multiple
+  }
+
   Button {
       text: "Import from default"
        onClicked: {
-           var peer = ContentHub.defaultSourceForType(ContentType.Pictures);
-           activeTransfer = ContentHub.importContent(ContentType.Pictures, peer);
+           activeTransfer = picSourceSingle.request()
       }
   }
+
   Button {
       text: "Import from a selectable list"
        onClicked: {
-           activeTransfer = ContentHub.importContent(ContentType.Pictures);
-           activeTransfer.selectionType =ContentTransfer.Multiple;
-           activeTransfer.start();
+           activeTransfer = picSourceMulti.request()
       }
   }
+
   ContentTransferHint {
-      id: importHint
+      id: transferHint
       anchors.fill: parent
       activeTransfer: root.activeTransfer
   }
-  property list<ContentItem> importItems
-  property var activeTransfer
+
   Connections {
       target: root.activeTransfer
       onStateChanged: {

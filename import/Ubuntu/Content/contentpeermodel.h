@@ -19,6 +19,7 @@
 
 #include "contentpeer.h"
 #include "contenttype.h"
+#include "contenthandler.h"
 #include <com/ubuntu/content/hub.h>
 
 #include <QObject>
@@ -27,17 +28,17 @@
 class ContentPeerModel : public QObject
 {
     Q_OBJECT
-    Q_PROPERTY(int contentType READ contentType WRITE setContentType NOTIFY contentTypeChanged)
-    Q_PROPERTY(int handler READ handler WRITE setHandler NOTIFY handlerChanged)
+    Q_PROPERTY(ContentType::Type contentType READ contentType WRITE setContentType NOTIFY contentTypeChanged)
+    Q_PROPERTY(ContentHandler::Handler handler READ handler WRITE setHandler NOTIFY handlerChanged)
     Q_PROPERTY(QVariantList peers READ peers NOTIFY peersChanged)
 
 public:
     ContentPeerModel(QObject *parent = nullptr);
 
-    int contentType();
-    void setContentType(int contentType);
-    int handler();
-    void setHandler(int handler);
+    ContentType::Type contentType();
+    void setContentType(ContentType::Type contentType);
+    ContentHandler::Handler handler();
+    void setHandler(ContentHandler::Handler handler);
     QVariantList peers();
 
 Q_SIGNALS:
@@ -47,8 +48,8 @@ Q_SIGNALS:
 
 private:
     com::ubuntu::content::Hub *m_hub;
-    int m_contentType;
-    int m_handler;
+    ContentType::Type m_contentType;
+    ContentHandler::Handler m_handler;
     QVariantList m_peers;
 };
 

@@ -34,7 +34,8 @@ namespace cuc = com::ubuntu::content;
 
 ContentPeerModel::ContentPeerModel(QObject *parent)
     : QObject(parent),
-      m_contentType(0)
+      m_contentType(ContentType::Unknown),
+      m_handler(ContentHandler::Source)
 {
     qDebug() << Q_FUNC_INFO;
     m_hub = cuc::Hub::Client::instance();
@@ -45,7 +46,7 @@ ContentPeerModel::ContentPeerModel(QObject *parent)
  *
  * Returns the ContentType 
  */
-int ContentPeerModel::contentType()
+ContentType::Type ContentPeerModel::contentType()
 {
     qDebug() << Q_FUNC_INFO;
     return m_contentType;
@@ -55,7 +56,7 @@ int ContentPeerModel::contentType()
  * \brief ContentPeerModel::setContentType
  * \internal
  */
-void ContentPeerModel::setContentType(int contentType)
+void ContentPeerModel::setContentType(ContentType::Type contentType)
 {
     qDebug() << Q_FUNC_INFO;
     m_contentType = contentType;
@@ -75,7 +76,7 @@ void ContentPeerModel::setContentType(int contentType)
  *
  * Returns the ContentHandler 
  */
-int ContentPeerModel::handler() {
+ContentHandler::Handler ContentPeerModel::handler() {
     qDebug() << Q_FUNC_INFO;
     return m_handler;
 }
@@ -84,7 +85,7 @@ int ContentPeerModel::handler() {
  * \brief ContentPeerModel::setHandler
  * \internal
  */
-void ContentPeerModel::setHandler(int handler)
+void ContentPeerModel::setHandler(ContentHandler::Handler handler)
 {
     qDebug() << Q_FUNC_INFO;
     m_handler = handler;

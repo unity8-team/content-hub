@@ -40,7 +40,8 @@ namespace cuc = com::ubuntu::content;
 ContentPeer::ContentPeer(QObject *parent)
     : QObject(parent),
       m_peer(0),
-      m_contentType(0),
+      m_handler(ContentHandler::Source),
+      m_contentType(ContentType::Unknown),
       m_selectionType(ContentTransfer::Single),
       m_explicit_app(false)
 {
@@ -108,7 +109,7 @@ void ContentPeer::setPeer(const cuc::Peer &peer)
  *
  * Returns the ContentHandler 
  */
-int ContentPeer::handler() {
+ContentHandler::Handler ContentPeer::handler() {
     qDebug() << Q_FUNC_INFO;
     return m_handler;
 }
@@ -117,7 +118,7 @@ int ContentPeer::handler() {
  * \brief ContentPeer::setHandler
  * \internal
  */
-void ContentPeer::setHandler(int handler)
+void ContentPeer::setHandler(ContentHandler::Handler handler)
 {   
     qDebug() << Q_FUNC_INFO;
     m_handler = handler;
@@ -130,7 +131,7 @@ void ContentPeer::setHandler(int handler)
  *
  * Returns the ContentType
  */
-int ContentPeer::contentType() 
+ContentType::Type ContentPeer::contentType() 
 {
     qDebug() << Q_FUNC_INFO;
     return m_contentType;
@@ -140,7 +141,7 @@ int ContentPeer::contentType()
  * \brief ContentPeer::setContentType
  * \internal
  */
-void ContentPeer::setContentType(int contentType)
+void ContentPeer::setContentType(ContentType::Type contentType)
 {   
     qDebug() << Q_FUNC_INFO;
     m_contentType = contentType;

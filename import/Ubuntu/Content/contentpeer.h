@@ -17,7 +17,9 @@
 #ifndef COM_UBUNTU_CONTENTPEER_H_
 #define COM_UBUNTU_CONTENTPEER_H_
 
+#include "contenthandler.h"
 #include "contenttransfer.h"
+#include "contenttype.h"
 #include <com/ubuntu/content/hub.h>
 #include <com/ubuntu/content/peer.h>
 
@@ -29,8 +31,8 @@ class ContentPeer : public QObject
     Q_OBJECT
     Q_PROPERTY(QString name READ name NOTIFY nameChanged)
     Q_PROPERTY(QString appId READ appId WRITE setAppId NOTIFY appIdChanged)
-    Q_PROPERTY(int handler READ handler WRITE setHandler NOTIFY handlerChanged)
-    Q_PROPERTY(int contentType READ contentType WRITE setContentType NOTIFY contentTypeChanged)
+    Q_PROPERTY(ContentHandler::Handler handler READ handler WRITE setHandler NOTIFY handlerChanged)
+    Q_PROPERTY(ContentType::Type contentType READ contentType WRITE setContentType NOTIFY contentTypeChanged)
     Q_PROPERTY(ContentTransfer::SelectionType selectionType READ selectionType WRITE setSelectionType NOTIFY selectionTypeChanged)
     Q_PROPERTY(ContentStore *store READ store WRITE setStore NOTIFY storeChanged)
 
@@ -46,11 +48,11 @@ public:
     const com::ubuntu::content::Peer &peer() const;
     void setPeer(const com::ubuntu::content::Peer &peer);
 
-    int handler();
-    void setHandler(int handler);
+    ContentHandler::Handler handler();
+    void setHandler(ContentHandler::Handler handler);
 
-    int contentType();
-    void setContentType(int contentType);
+    ContentType::Type contentType();
+    void setContentType(ContentType::Type contentType);
 
     ContentTransfer::SelectionType selectionType();
     void setSelectionType(ContentTransfer::SelectionType selectionType);
@@ -70,8 +72,8 @@ Q_SIGNALS:
 private:
     com::ubuntu::content::Hub *m_hub;
     com::ubuntu::content::Peer m_peer;
-    int m_handler;
-    int m_contentType;
+    ContentHandler::Handler m_handler;
+    ContentType::Type m_contentType;
     ContentTransfer::SelectionType m_selectionType;
     bool m_explicit_app;
     ContentStore *m_store;

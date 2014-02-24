@@ -14,7 +14,9 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
+#include "contentpeer.h"
 #include "contentstore.h"
+#include "contenttype.h"
 
 #include <QDebug>
 
@@ -31,9 +33,10 @@ namespace cuc = com::ubuntu::content;
 ContentStore::ContentStore(QObject *parent)
     : QObject(parent),
       m_store(0),
-      m_scope(0)
+      m_scope(ContentScope::System)
 {
     qDebug() << Q_FUNC_INFO;
+    m_hub = cuc::Hub::Client::instance();
 }
 
 /*!
@@ -76,7 +79,7 @@ void ContentStore::setStore(const com::ubuntu::content::Store *store)
  *
  * Returns the ContentScope
  */
-int ContentStore::scope()
+ContentScope::Scope ContentStore::scope()
 {   
     qDebug() << Q_FUNC_INFO;
     return m_scope;
@@ -86,11 +89,27 @@ int ContentStore::scope()
  * \brief ContentStore::setScope
  * \internal
  */
-void ContentStore::setScope(int scope)
+void ContentStore::setScope(ContentScope::Scope scope)
 {   
     qDebug() << Q_FUNC_INFO;
     m_scope = scope;
 
+    updateStore();
+
     Q_EMIT scopeChanged();
+}
+
+/*!
+ * \brief ContentStore::updateStore
+ * \internal
+ */
+void ContentStore::updateStore()
+{
+    qDebug() << Q_FUNC_INFO;
+    ContentPeer *peer = (ContentPeer *) parent();
+
+    com::ubuntu::content::Scope hubScope = ContentScope::contentScope2HubScope(m_scope);
+    const com::ubuntu::content::Type &hubType = ContentType::contentType2HubType(peer->contentType());
+    setStore(m_hub->store_for_scope_and_type(hubScope, hubType));
 }
 

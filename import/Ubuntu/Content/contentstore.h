@@ -17,6 +17,8 @@
 #ifndef COM_UBUNTU_CONTENTSTORE_H_
 #define COM_UBUNTU_CONTENTSTORE_H_
 
+#include "contentscope.h"
+#include <com/ubuntu/content/hub.h>
 #include <com/ubuntu/content/store.h>
 
 #include <QObject>
@@ -26,7 +28,7 @@ class ContentStore : public QObject
 {
     Q_OBJECT
     Q_PROPERTY(QString uri READ uri NOTIFY uriChanged)
-    Q_PROPERTY(int scope READ scope WRITE setScope NOTIFY scopeChanged)
+    Q_PROPERTY(ContentScope::Scope scope READ scope WRITE setScope NOTIFY scopeChanged)
 
 public:
     ContentStore(QObject *parent = nullptr);
@@ -36,17 +38,19 @@ public:
     const com::ubuntu::content::Store *store() const;
     void setStore(const com::ubuntu::content::Store *store);
 
-    int scope();
-    void setScope(int scope);
-    
+    ContentScope::Scope scope();
+    void setScope(ContentScope::Scope scope);
+
+    void updateStore();
 
 Q_SIGNALS:
     void uriChanged();
     void scopeChanged();
 
 private:
+    com::ubuntu::content::Hub *m_hub;
     const com::ubuntu::content::Store *m_store;
-    int m_scope;
+    ContentScope::Scope m_scope;
 };
 
 #endif // COM_UBUNTU_CONTENTSTORE_H_

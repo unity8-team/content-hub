@@ -17,6 +17,8 @@
 #ifndef COM_UBUNTU_CONTENTSCOPE_H_
 #define COM_UBUNTU_CONTENTSCOPE_H_
 
+#include <com/ubuntu/content/scope.h>
+
 #include <QObject>
 
 class ContentScope : public QObject
@@ -32,6 +34,10 @@ public:
     };
 
     ContentScope(QObject *parent = nullptr);
+
+    static com::ubuntu::content::Scope contentScope2HubScope(int scope);
+    static com::ubuntu::content::Scope contentScope2HubScope(Scope scope);
+
 };
 
 #endif // COM_UBUNTU_CONTENTSCOPE_H_

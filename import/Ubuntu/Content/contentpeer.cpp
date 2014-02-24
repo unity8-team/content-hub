@@ -43,7 +43,8 @@ ContentPeer::ContentPeer(QObject *parent)
       m_handler(ContentHandler::Source),
       m_contentType(ContentType::Unknown),
       m_selectionType(ContentTransfer::Single),
-      m_explicit_app(false)
+      m_explicit_app(false),
+      m_store(nullptr)
 {
     qDebug() << Q_FUNC_INFO;
     m_hub = cuc::Hub::Client::instance();
@@ -151,6 +152,10 @@ void ContentPeer::setContentType(ContentType::Type contentType)
         setPeer(m_hub->default_source_for_type(hubType));
     }
 
+    if(m_store) {
+        m_store->updateStore();
+    }
+
     Q_EMIT contentTypeChanged();
 }
 
@@ -227,6 +232,9 @@ ContentTransfer *ContentPeer::request()
     ContentTransfer *qmlTransfer = new ContentTransfer(this);
     qmlTransfer->setTransfer(hubTransfer);
     qmlTransfer->setSelectionType(m_selectionType);
+    if(m_store) {
+        qmlTransfer->setStore(m_store);
+    }
     qmlTransfer->start();
     return qmlTransfer;
 }

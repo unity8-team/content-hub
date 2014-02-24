@@ -43,3 +43,26 @@ ContentScope::ContentScope(QObject *parent)
 {
     qDebug() << Q_FUNC_INFO;
 }
+
+/*!
+ * \brief ContentScope::contentScope2HubScope converts a ContentScope::Scope to a
+ * com::ubuntu::content::Scope
+ * \internal
+ */
+com::ubuntu::content::Scope ContentScope::contentScope2HubScope(int scope)
+{
+    Scope cscope = static_cast<Scope>(scope);
+    qDebug() << Q_FUNC_INFO << cscope;
+    return contentScope2HubScope(cscope);
+}
+
+/*!
+ * \brief ContentScope::contentScope2HubScope converts a ContentScope::Scope to a
+ * com::ubuntu::content::Scope
+ * \internal
+ */
+com::ubuntu::content::Scope ContentScope::contentScope2HubScope(Scope scope)
+{
+    return static_cast<com::ubuntu::content::Scope>(scope);
+}
+

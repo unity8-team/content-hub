@@ -67,6 +67,7 @@ private:
     com::ubuntu::content::Peer m_peer;
     int m_handler;
     int m_contentType;
+    bool m_explicit_app;
     ContentStore *m_store;
 };
 

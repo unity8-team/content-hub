@@ -39,7 +39,8 @@ namespace cuc = com::ubuntu::content;
 
 ContentPeer::ContentPeer(QObject *parent)
     : QObject(parent),
-      m_peer(0)
+      m_peer(0),
+      m_explicit_app(false)
 {
     qDebug() << Q_FUNC_INFO;
     m_hub = cuc::Hub::Client::instance();
@@ -77,6 +78,7 @@ void ContentPeer::setAppId(const QString& appId)
     qDebug() << Q_FUNC_INFO << appId;
     // FIXME: Not sure if it's a good idea to be able to change the peer
     this->setPeer(cuc::Peer{appId});
+    m_explicit_app = true;
 }
 
 /*!
@@ -141,8 +143,10 @@ void ContentPeer::setContentType(int contentType)
     qDebug() << Q_FUNC_INFO;
     m_contentType = contentType;
 
-    const cuc::Type &hubType = ContentType::contentType2HubType(m_contentType);
-    setPeer(m_hub->default_source_for_type(hubType));
+    if(!m_explicit_app) {
+        const cuc::Type &hubType = ContentType::contentType2HubType(m_contentType);
+        setPeer(m_hub->default_source_for_type(hubType));
+    }
 
     Q_EMIT contentTypeChanged();
 }

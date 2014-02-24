@@ -123,6 +123,7 @@ MainView {
                               print(text + ": " + src);
                               activeTransfer = picDest.request();
                               activeTransfer.items = [ resultComponent.createObject(root, {"url": src}) ];
+                              activeTransfer.state = ContentTransfer.Charged;
                               actPop.hide();
                           }
                       }
@@ -132,6 +133,7 @@ MainView {
                               print(text + ": " + src);
                               activeTransfer = picShare.request();
                               activeTransfer.items = [ resultComponent.createObject(root, {"url": src}) ];
+                              activeTransfer.state = ContentTransfer.Charged;
                               actPop.hide();
                           }
                       }

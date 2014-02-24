@@ -14,6 +14,7 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
+#include "contenthandler.h"
 #include "contenthub.h"
 #include "contentpeer.h"
 #include "contenttype.h"
@@ -178,8 +179,16 @@ void ContentPeer::setStore(ContentStore *store)
 ContentTransfer *ContentPeer::request()
 {   
     qDebug() << Q_FUNC_INFO;
+    cuc::Transfer *hubTransfer = nullptr;
 
-    cuc::Transfer *hubTransfer = m_hub->create_import_from_peer(m_peer);
+    if(m_handler == ContentHandler::Source) {
+        hubTransfer = m_hub->create_import_from_peer(m_peer);
+    } else if (m_handler == ContentHandler::Destination) {
+        hubTransfer = m_hub->create_export_to_peer(m_peer);
+    } else if (m_handler == ContentHandler::Share) {
+        hubTransfer = m_hub->create_share_to_peer(m_peer);
+    }
+
 // FIXME update tests so this can be enabled
 //    if (!hubTransfer)
 //        return nullptr;

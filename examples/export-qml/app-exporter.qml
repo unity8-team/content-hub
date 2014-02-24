@@ -117,26 +117,26 @@ MainView {
                     contentWidth: childrenRect.width
 
                     actions: ActionList {
-                      Action {
-                          text: "Open with..."
-                          onTriggered: {
-                              print(text + ": " + src);
-                              activeTransfer = picDest.request();
-                              activeTransfer.items = [ resultComponent.createObject(root, {"url": src}) ];
-                              activeTransfer.state = ContentTransfer.Charged;
-                              actPop.hide();
-                          }
-                      }
-                      Action {
-                          text: "Share"
-                          onTriggered: {
-                              print(text + ": " + src);
-                              activeTransfer = picShare.request();
-                              activeTransfer.items = [ resultComponent.createObject(root, {"url": src}) ];
-                              activeTransfer.state = ContentTransfer.Charged;
-                              actPop.hide();
-                          }
-                      }
+                        Action {
+                            text: "Open with..."
+                            onTriggered: {
+                                print(text + ": " + src);
+                                activeTransfer = picDest.request();
+                                activeTransfer.items = [ resultComponent.createObject(root, {"url": src}) ];
+                                activeTransfer.state = ContentTransfer.Charged;
+                                actPop.hide();
+                            }
+                        }
+                        Action {
+                            text: "Share"
+                            onTriggered: {
+                                print(text + ": " + src);
+                                activeTransfer = picShare.request();
+                                activeTransfer.items = [ resultComponent.createObject(root, {"url": src}) ];
+                                activeTransfer.state = ContentTransfer.Charged;
+                                actPop.hide();
+                            }
+                        }
                     }
                 }
             }

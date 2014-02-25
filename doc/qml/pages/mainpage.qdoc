@@ -91,14 +91,14 @@ Rectangle {
 
   Row {
       Button {
-          text: "Import from default"
+          text: "Import single item"
           onClicked: {
               activeTransfer = picSourceSingle.request()
           }
       }
 
       Button {
-          text: "Import from a selectable list"
+          text: "Import multiple items"
           onClicked: {
               activeTransfer = picSourceMulti.request()
           }

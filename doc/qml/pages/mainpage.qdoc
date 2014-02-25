@@ -89,17 +89,19 @@ Rectangle {
       selectionType: ContentTransfer.Multiple
   }
 
-  Button {
-      text: "Import from default"
-       onClicked: {
-           activeTransfer = picSourceSingle.request()
+  Row {
+      Button {
+          text: "Import from default"
+          onClicked: {
+              activeTransfer = picSourceSingle.request()
+          }
       }
-  }
 
-  Button {
-      text: "Import from a selectable list"
-       onClicked: {
-           activeTransfer = picSourceMulti.request()
+      Button {
+          text: "Import from a selectable list"
+          onClicked: {
+              activeTransfer = picSourceMulti.request()
+          }
       }
   }
 

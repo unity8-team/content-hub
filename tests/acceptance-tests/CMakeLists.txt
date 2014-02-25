@@ -62,13 +62,13 @@ add_executable(
   bad.json
 )
 
-qt5_use_modules(app_hub_communication_default_source Core DBus Test)
-qt5_use_modules(app_hub_communication_known_sources Core DBus Test)
-qt5_use_modules(app_hub_communication_stores Core DBus Test)
-qt5_use_modules(app_hub_communication_transfer Core DBus Test)
-qt5_use_modules(app_hub_communication_handler Core DBus Test)
+qt5_use_modules(app_hub_communication_default_source Core Gui DBus Test)
+qt5_use_modules(app_hub_communication_known_sources Core Gui DBus Test)
+qt5_use_modules(app_hub_communication_stores Core Gui DBus Test)
+qt5_use_modules(app_hub_communication_transfer Core Gui DBus Test)
+qt5_use_modules(app_hub_communication_handler Core Gui DBus Test)
 qt5_use_modules(test_utils Core Test)
-qt5_use_modules(test_hook Core DBus Test)
+qt5_use_modules(test_hook Core Gui DBus Test)
 
 target_link_libraries(app_hub_communication_stores content-hub gmock gtest gtest_main)
 target_link_libraries(app_hub_communication_default_source content-hub gmock gtest gtest_main)

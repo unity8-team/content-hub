@@ -83,7 +83,7 @@ void Registry::enumerate_known_sources_for_type(cuc::Type type, const std::funct
     Q_FOREACH (QString k, m_sources->get(type.id()).toStringList())
     {
         qDebug() << Q_FUNC_INFO << k;
-        for_each(k);
+        for_each(cuc::Peer{k});
     }
 }
 

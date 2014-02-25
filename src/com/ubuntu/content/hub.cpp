@@ -30,7 +30,6 @@
 #include <com/ubuntu/content/store.h>
 #include <com/ubuntu/content/type.h>
 
-#include <QDBusMetaType>
 #include <QStandardPaths>
 #include <map>
 
@@ -52,7 +51,6 @@ struct cuc::Hub::Private
 
 cuc::Hub::Hub(QObject* parent) : QObject(parent), d{new cuc::Hub::Private{this}}
 {
-    qDBusRegisterMetaType<cuc::Peer>();
 }
 
 cuc::Hub::~Hub()

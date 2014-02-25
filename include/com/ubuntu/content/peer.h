@@ -21,6 +21,7 @@
 #include <QtDBus>
 #include <QObject>
 #include <QSharedPointer>
+#include <QImage>
 
 namespace com
 {
@@ -31,8 +32,10 @@ namespace content
 class Peer : public QObject
 {
     Q_OBJECT
-    Q_PROPERTY(QString id READ id())
-    Q_PROPERTY(QString name READ name() WRITE setName())
+    Q_PROPERTY(QString id READ id)
+    Q_PROPERTY(QString name READ name() WRITE setName)
+    Q_PROPERTY(QImage icon READ icon() WRITE setIcon)
+
 
   public:
     static const Peer& unknown();
@@ -46,6 +49,9 @@ class Peer : public QObject
     Q_INVOKABLE virtual const QString& id() const;
     Q_INVOKABLE virtual QString name() const;
     Q_INVOKABLE void setName(const QString&);
+    Q_INVOKABLE virtual QImage icon() const;
+    Q_INVOKABLE void setIcon(const QImage&);
+
 
   private:
     struct Private;

@@ -16,8 +16,10 @@
  * Authored by: Thomas Voß <thomas.voss@canonical.com>
  */
 
+
 #include <gio/gdesktopappinfo.h>
 #include <com/ubuntu/content/peer.h>
+#include <QMetaType>
 
 namespace cuc = com::ubuntu::content;
 
@@ -33,6 +35,16 @@ struct cuc::Peer::Private
             if (G_IS_APP_INFO(app))
             {
                 name = QString::fromLatin1(g_app_info_get_display_name(G_APP_INFO(app)));
+                GIcon* ic = g_app_info_get_icon(G_APP_INFO(app));
+                if (G_IS_ICON(ic))
+                {
+                    QString iconName = QString::fromUtf8(g_icon_to_string(ic));
+
+                    if (QFile::exists(iconName))
+                        icon = QImage(iconName);
+                    g_object_unref(ic);
+                }
+
                 g_object_unref(app);
             }
         }
@@ -40,6 +52,7 @@ struct cuc::Peer::Private
 
     QString id;
     QString name;
+    QImage icon;
 };
 
 const cuc::Peer& cuc::Peer::unknown()
@@ -91,11 +104,27 @@ void cuc::Peer::setName(const QString& name)
         d->name = name;
 }
 
+QImage cuc::Peer::icon() const
+{
+    return d->icon;
+}
+
+void cuc::Peer::setIcon(const QImage& icon)
+{
+    if (icon != d->icon)
+        d->icon = icon;
+}
+
 QDBusArgument &operator<<(QDBusArgument &argument, const cuc::Peer& peer)
 {
-    qDebug() << Q_FUNC_INFO;
+    QImage i = peer.icon();
+    QByteArray ba;
+    QBuffer buffer(&ba);
+    buffer.open(QIODevice::WriteOnly);
+    i.save(&buffer,"PNG");
+
     argument.beginStructure();
-    argument << peer.id() << peer.name();
+    argument << peer.id() << peer.name() << ba;
     argument.endStructure();
     return argument;
 }
@@ -105,11 +134,21 @@ const QDBusArgument &operator>>(const QDBusArgument &argument, cuc::Peer &peer)
     qDebug() << Q_FUNC_INFO;
     QString id;
     QString name;
+    QByteArray ic;
 
     argument.beginStructure();
-    argument >> id >> name;
+    argument >> id >> name >> ic;
     argument.endStructure();
+
+    QImage icon;
+    bool ret = icon.loadFromData(reinterpret_cast<const uchar*>(ic.constData()), ic.size(), "png");
+    if (ret)
+        qDebug() << Q_FUNC_INFO << "SUCCESS";
+    else
+        qDebug() << Q_FUNC_INFO << "FAIL";
+
     peer = cuc::Peer{id};
     peer.setName(name);
+    peer.setIcon(icon);
     return argument;
 }

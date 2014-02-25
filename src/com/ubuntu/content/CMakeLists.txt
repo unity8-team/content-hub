@@ -83,7 +83,6 @@ add_library(
   ${CONTENT_HANDLER_SKELETON}
 )
 
-
 set_target_properties(
   content-hub
 
@@ -93,7 +92,7 @@ set_target_properties(
   AUTOMOC TRUE
 )
 
-qt5_use_modules(content-hub Core DBus)
+qt5_use_modules(content-hub Core DBus Gui)
 
 target_link_libraries(content-hub
     ${UPSTART_LAUNCH_LDFLAGS}

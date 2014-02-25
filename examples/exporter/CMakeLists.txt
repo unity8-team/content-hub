@@ -23,7 +23,7 @@ add_executable(
   exampleexporter.cpp
 )
 
-qt5_use_modules(exporter Core DBus)
+qt5_use_modules(exporter Core Gui DBus)
 
 set_target_properties(
   exporter

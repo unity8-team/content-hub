@@ -43,36 +43,45 @@
  *     id: root
  *     width: units.gu(60)
  *     height: units.gu(90)
- *     Button {
- *         anchors {
- *             left: parent.left
- *             margins: units.gu(2)
- *          }
- *         text: "Import from default"
- *          onClicked: {
- *              var peer = ContentHub.defaultSourceForType(ContentType.Pictures);
- *              activeTransfer = ContentHub.importContent(ContentType.Pictures, peer);
+ *     property list<ContentItem> importItems
+ *     property var activeTransfer
+ * 
+ *     ContentPeer {
+ *         id: picSourceSingle
+ *         contentType: ContentType.Pictures
+ *         handler: ContentHandler.Source
+ *         selectionType: ContentTransfer.Single
+ *     }
+ *
+ *     ContentPeer {
+ *         id: picSourceMulti
+ *         contentType: ContentType.Pictures
+ *         handler: ContentHandler.Source
+ *         selectionType: ContentTransfer.Multiple
+ *     }
+ *
+ *     Row {
+ *         Button {
+ *             text: "Import single item"
+ *             onClicked: {
+ *                 activeTransfer = picSourceSingle.request()
+ *             }
+ *         }
+ *
+ *         Button {
+ *             text: "Import multiple items"
+ *             onClicked: {
+ *                 activeTransfer = picSourceMulti.request()
+ *             }
  *         }
  *     }
- *     Button {
- *         anchors {
- *             right: parent.right
- *             margins: units.gu(2)
- *          }
- *         text: "Import from a selectable list"
- *          onClicked: {
- *              activeTransfer = ContentHub.importContent(ContentType.Pictures);
- *              activeTransfer.selectionType =ContentTransfer.Multiple;
- *              activeTransfer.start();
- *         }
- *     }
+ *
  *     ContentTransferHint {
  *         id: importHint
  *         anchors.fill: parent
  *         activeTransfer: root.activeTransfer
  *     }
- *     property list<ContentItem> importItems
- *     property var activeTransfer
+ *
  *     Connections {
  *         target: root.activeTransfer
  *         onStateChanged: {

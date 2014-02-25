@@ -6,3 +6,5 @@ Name: @pkg-name@
 Description: content sharing/picking library
 Version: @CONTENT_HUB_VERSION@
 Libs: -L${libdir} -lcontent-hub
+Cflags: -I${includedir}/QtDBus -I${includedir}
+Requires: Qt5DBus

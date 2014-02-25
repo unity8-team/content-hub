@@ -65,7 +65,7 @@ set(PLUGIN_SRC
 
 add_library(${PLUGIN} MODULE ${PLUGIN_SRC} ${PLUGIN_HDRS})
 
-qt5_use_modules(${PLUGIN} Core Qml Quick)
+qt5_use_modules(${PLUGIN} Core Qml Quick DBus)
 target_link_libraries(
     ${PLUGIN}
     content-hub

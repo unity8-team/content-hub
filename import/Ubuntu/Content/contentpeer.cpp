@@ -20,7 +20,6 @@
 #include "contenttype.h"
 
 #include <com/ubuntu/content/peer.h>
-
 #include <QDebug>
 
 /*!
@@ -85,6 +84,12 @@ void ContentPeer::setAppId(const QString& appId)
     m_explicit_app = true;
 }
 
+QImage &ContentPeer::icon()
+{
+    qDebug() << Q_FUNC_INFO;
+    return m_icon;
+}
+
 /*!
  * \brief ContentPeer::peer
  * \internal
@@ -100,7 +105,10 @@ const com::ubuntu::content::Peer &ContentPeer::peer() const
  */
 void ContentPeer::setPeer(const cuc::Peer &peer)
 {
+    qDebug() << Q_FUNC_INFO;
     m_peer = peer;
+    m_icon = m_peer.icon();
+
     Q_EMIT nameChanged();
     Q_EMIT appIdChanged();
 }

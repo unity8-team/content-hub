@@ -35,8 +35,10 @@ public:
     Registry();
     ~Registry();
     cuc::Peer default_source_for_type(cuc::Type type);
-    void enumerate_known_sources_for_type(cuc::Type type, const std::function<void(const cuc::Peer&)>& for_each);
     void enumerate_known_peers(const std::function<void(const cuc::Peer&)>& for_each);
+    void enumerate_known_sources_for_type(cuc::Type type, const std::function<void(const cuc::Peer&)>& for_each);   
+    void enumerate_known_destinations_for_type(cuc::Type type, const std::function<void(const cuc::Peer&)>& for_each);
+    void enumerate_known_shares_for_type(cuc::Type type, const std::function<void(const cuc::Peer&)>& for_each);
     bool install_default_source_for_type(cuc::Type type, cuc::Peer peer);
     bool install_source_for_type(cuc::Type type, cuc::Peer peer);    
     bool install_destination_for_type(cuc::Type type, cuc::Peer peer);

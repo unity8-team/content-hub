@@ -22,11 +22,11 @@ Registry::Registry() :
     m_defaultSources(new QGSettings("com.ubuntu.content.hub.default",
                                   "/com/ubuntu/content/hub/peers/")),
     m_sources(new QGSettings("com.ubuntu.content.hub.source",
-                           "/com/ubuntu/content/hub/peers/")),
+                           "/com/ubuntu/content/hub/source/")),
     m_dests(new QGSettings("com.ubuntu.content.hub.destination",
-                           "/com/ubuntu/content/hub/peers/")),
+                           "/com/ubuntu/content/hub/destination/")),
     m_shares(new QGSettings("com.ubuntu.content.hub.share",
-                           "/com/ubuntu/content/hub/peers/"))
+                           "/com/ubuntu/content/hub/share/"))
 {
 }
 
@@ -41,16 +41,7 @@ cuc::Peer Registry::default_source_for_type(cuc::Type type)
         return cuc::Peer();
 }
 
-void Registry::enumerate_known_sources_for_type(cuc::Type type, const std::function<void(const cuc::Peer&)>&for_each)
-{
-    qDebug() << Q_FUNC_INFO << type.id();
 
-    Q_FOREACH (QString k, m_sources->get(type.id()).toStringList())
-    {
-        qDebug() << Q_FUNC_INFO << k;
-        for_each(k);
-    }
-}
 
 void Registry::enumerate_known_peers(const std::function<void(const cuc::Peer&)>&for_each)
 {
@@ -82,6 +73,38 @@ void Registry::enumerate_known_peers(const std::function<void(const cuc::Peer&)>
             qDebug() << Q_FUNC_INFO << k;
             for_each(k);
         }
+    }
+}
+
+void Registry::enumerate_known_sources_for_type(cuc::Type type, const std::function<void(const cuc::Peer&)>&for_each)
+{
+    qDebug() << Q_FUNC_INFO << type.id();
+
+    Q_FOREACH (QString k, m_sources->get(type.id()).toStringList())
+    {
+        qDebug() << Q_FUNC_INFO << k;
+        for_each(cuc::Peer{k});
+    }
+}
+
+void Registry::enumerate_known_destinations_for_type(cuc::Type type, const std::function<void(const cuc::Peer&)>&for_each)
+{
+    qDebug() << Q_FUNC_INFO << type.id();
+    Q_FOREACH (QString k, m_dests->get(type.id()).toStringList())
+    {
+        qDebug() << Q_FUNC_INFO << k;
+        for_each(k);
+    }
+}
+
+void Registry::enumerate_known_shares_for_type(cuc::Type type, const std::function<void(const cuc::Peer&)>&for_each)
+{
+    qDebug() << Q_FUNC_INFO << type.id();
+
+    Q_FOREACH (QString k, m_shares->get(type.id()).toStringList())
+    {
+        qDebug() << Q_FUNC_INFO << k;
+        for_each(k);
     }
 }
 
@@ -145,6 +168,24 @@ bool Registry::remove_peer(cuc::Peer peer)
         {
             l.removeAll(peer.id());
             ret = m_sources->trySet(type_id, QVariant(l));
+        }
+    }
+    Q_FOREACH (QString type_id, m_dests->keys())
+    {
+        QStringList l = m_dests->get(type_id).toStringList();
+        if (l.contains(peer.id()))
+        {
+            l.removeAll(peer.id());
+            ret = m_dests->trySet(type_id, QVariant(l));
+        }
+    }
+    Q_FOREACH (QString type_id, m_shares->keys())
+    {
+        QStringList l = m_shares->get(type_id).toStringList();
+        if (l.contains(peer.id()))
+        {
+            l.removeAll(peer.id());
+            ret = m_shares->trySet(type_id, QVariant(l));
         }
     }
     return ret;

@@ -124,6 +124,9 @@ Rectangle {
 \part General Topics
 \list
     \li \l {ContentHub}
+    \li \l {ContentPeer}
+    \li \l {ContentPeerModel}
+    \li \l {ContentStore}
     \li \l {ContentTransfer}
     \li \l {ContentTransferHint}
     \li \l {ContentType}

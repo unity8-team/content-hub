@@ -3,9 +3,8 @@
     <method name="Quit">
     </method>
     <method name="DefaultSourceForType">
-      <annotation name="com.trolltech.QtDBus.QtTypeName.In1" value="QVariantMap"/>
       <arg name="type_id" type="s" direction="in" />
-      <arg name="peer_id" type="s" direction="out" />
+      <arg name="peer" type="v" direction="out" />
     </method>
     <method name="KnownSourcesForType">
       <arg name="type_id" type="s" direction="in" />
@@ -13,11 +12,11 @@
     </method>
     <method name="KnownDestinationsForType">
       <arg name="type_id" type="s" direction="in" />
-      <arg name="peer_ids" type="as" direction="out" />
+      <arg name="peer_ids" type="av" direction="out" />
     </method>
     <method name="KnownSharesForType">
       <arg name="type_id" type="s" direction="in" />
-      <arg name="peer_ids" type="as" direction="out" />
+      <arg name="peer_ids" type="av" direction="out" />
     </method>
     <method name="CreateImportFromPeer">
       <arg name="peer_id" type="s" direction="in" />

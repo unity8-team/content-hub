@@ -76,17 +76,17 @@ Rectangle {
   property var activeTransfer
 
   ContentPeer {
-    id: picSourceSingle
-    contentType: ContentType.Pictures
-    handler: ContentHandler.Source
-    selectionType: ContentTransfer.Single
+      id: picSourceSingle
+      contentType: ContentType.Pictures
+      handler: ContentHandler.Source
+      selectionType: ContentTransfer.Single
   }
 
   ContentPeer {
-    id: picSourceMulti
-    contentType: ContentType.Pictures
-    handler: ContentHandler.Source
-    selectionType: ContentTransfer.Multiple
+      id: picSourceMulti
+      contentType: ContentType.Pictures
+      handler: ContentHandler.Source
+      selectionType: ContentTransfer.Multiple
   }
 
   Button {

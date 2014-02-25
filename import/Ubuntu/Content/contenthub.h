@@ -47,20 +47,6 @@ class ContentHub : public QObject
 public:
     ContentHub(QObject *parent = nullptr);
 
-    Q_INVOKABLE ContentPeer *defaultSourceForType(int type);
-    Q_INVOKABLE QVariantList knownSourcesForType(int type);
-
-    Q_INVOKABLE ContentStore *defaultStoreForType(int type);
-
-    Q_INVOKABLE ContentTransfer* importContent(int type);
-    Q_INVOKABLE ContentTransfer* importContent(int type, ContentPeer *peer);
-
-    Q_INVOKABLE ContentTransfer* exportContent(int type);
-    Q_INVOKABLE ContentTransfer* exportContent(int type, ContentPeer *peer);
-
-    Q_INVOKABLE ContentTransfer* shareContent(int type);
-    Q_INVOKABLE ContentTransfer* shareContent(int type, ContentPeer *peer);
-
     Q_INVOKABLE void restoreImports();
 
     QQmlListProperty<ContentTransfer> finishedImports();

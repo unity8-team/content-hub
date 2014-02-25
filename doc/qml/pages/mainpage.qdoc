@@ -76,30 +76,32 @@ Rectangle {
   property var activeTransfer
 
   ContentPeer {
-    id: picSourceSingle
-    contentType: ContentType.Pictures
-    handler: ContentHandler.Source
-    selectionType: ContentTransfer.Single
+      id: picSourceSingle
+      contentType: ContentType.Pictures
+      handler: ContentHandler.Source
+      selectionType: ContentTransfer.Single
   }
 
   ContentPeer {
-    id: picSourceMulti
-    contentType: ContentType.Pictures
-    handler: ContentHandler.Source
-    selectionType: ContentTransfer.Multiple
+      id: picSourceMulti
+      contentType: ContentType.Pictures
+      handler: ContentHandler.Source
+      selectionType: ContentTransfer.Multiple
   }
 
-  Button {
-      text: "Import from default"
-       onClicked: {
-           activeTransfer = picSourceSingle.request()
+  Row {
+      Button {
+          text: "Import single item"
+          onClicked: {
+              activeTransfer = picSourceSingle.request()
+          }
       }
-  }
 
-  Button {
-      text: "Import from a selectable list"
-       onClicked: {
-           activeTransfer = picSourceMulti.request()
+      Button {
+          text: "Import multiple items"
+          onClicked: {
+              activeTransfer = picSourceMulti.request()
+          }
       }
   }
 
@@ -122,6 +124,9 @@ Rectangle {
 \part General Topics
 \list
     \li \l {ContentHub}
+    \li \l {ContentPeer}
+    \li \l {ContentPeerModel}
+    \li \l {ContentStore}
     \li \l {ContentTransfer}
     \li \l {ContentTransferHint}
     \li \l {ContentType}

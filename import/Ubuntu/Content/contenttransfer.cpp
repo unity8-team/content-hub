@@ -222,7 +222,10 @@ void ContentTransfer::setStore(ContentStore* contentStore)
         qWarning() << Q_FUNC_INFO << "invalid transfer";
         return;
     }
-    m_transfer->setStore(contentStore->store());
+
+    if(contentStore->store() != nullptr) {
+        m_transfer->setStore(contentStore->store());
+    }
 }
 
 /*!

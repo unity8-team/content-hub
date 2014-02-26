@@ -44,12 +44,15 @@ Item {
     Component {
         id: peerDelegate
         Item {
-            width: 196
-            height: 196 + peerLabel.height
+            width: icon.width
+            height: icon.height + peerLabel.height
             UbuntuShape {
                 id: icon
-                width: parent.width;
-                height: parent.height;
+                image: Image {
+                    source: "image://content-hub/" + modelData.appId
+                }
+                width: 196;
+                height: 196;
             }
             Label {
                 id: peerLabel
@@ -85,6 +88,8 @@ Item {
             right: parent.right
             top: appTitle.bottom
         }
+        cellWidth: 196
+        cellHeight: 196
         model: peerModel.peers
         delegate: peerDelegate
     }

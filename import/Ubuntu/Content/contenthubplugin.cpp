@@ -18,6 +18,7 @@
 
 #include "contenthandler.h"
 #include "contenthub.h"
+#include "contenticonprovider.h"
 #include "contentitem.h"
 #include "contentpeer.h"
 #include "contentpeermodel.h"
@@ -40,6 +41,18 @@ static QObject *qml_content_hub(QQmlEngine *engine, QJSEngine *scriptEngine)
     Q_UNUSED(scriptEngine)
     qDebug() << Q_FUNC_INFO;
     return new ContentHub();
+}
+
+/*!
+ * \reimp
+ */
+void ContentHubPlugin::initializeEngine(QQmlEngine * engine, const char * uri)
+{
+    Q_UNUSED(uri)
+    qDebug() << Q_FUNC_INFO;
+
+    ContentIconProvider *iconProvider = ContentIconProvider::instance();
+    engine->addImageProvider("content-hub", iconProvider);
 }
 
 /*!

@@ -39,6 +39,7 @@ set(PLUGIN_HDRS
     contenthandler.h
     contenthub.h
     contenthubplugin.h
+    contenticonprovider.h
     contentitem.h
     contentpeer.h
     contentpeermodel.h
@@ -53,6 +54,7 @@ set(PLUGIN_SRC
     contenthandler.cpp
     contenthub.cpp
     contenthubplugin.cpp
+    contenticonprovider.cpp
     contentitem.cpp
     contentpeer.cpp
     contentpeermodel.cpp

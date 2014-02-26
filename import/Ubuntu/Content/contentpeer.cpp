@@ -16,6 +16,7 @@
 
 #include "contenthandler.h"
 #include "contenthub.h"
+#include "contenticonprovider.h"
 #include "contentpeer.h"
 #include "contenttype.h"
 
@@ -108,6 +109,8 @@ void ContentPeer::setPeer(const cuc::Peer &peer)
     qDebug() << Q_FUNC_INFO;
     m_peer = peer;
     m_icon = m_peer.icon();
+    ContentIconProvider *iconProvider = ContentIconProvider::instance();
+    iconProvider->addImage(appId(), m_icon);
 
     Q_EMIT nameChanged();
     Q_EMIT appIdChanged();

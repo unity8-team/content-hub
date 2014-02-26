@@ -44,27 +44,34 @@ Item {
     Component {
         id: peerDelegate
         Item {
-            width: icon.width
-            height: icon.height + peerLabel.height
-            UbuntuShape {
-                id: icon
-                image: Image {
-                    source: "image://content-hub/" + modelData.appId
-                }
-                width: 196;
-                height: 196;
-            }
-            Label {
-                id: peerLabel
-                anchors.top: icon.bottom
+            width: units.gu(14)
+            height: units.gu(16)
+            Item {
                 width: icon.width
-                text: modelData.name || modelData.appId
-            }
-            MouseArea {
-                anchors.fill: parent
-                onClicked: {
-                    peer = modelData
-                    peerSelected()
+                height: icon.height + peerLabel.height
+                anchors.centerIn: parent
+                UbuntuShape {
+                    id: icon
+                    image: Image {
+                        source: "image://content-hub/" + modelData.appId
+                    }
+                    width: units.gu(12);
+                    height: units.gu(12);
+                }
+                Label {
+                    id: peerLabel
+                    anchors.top: icon.bottom
+                    width: icon.width
+                    elide: Text.ElideRight
+                    font.weight: Font.Bold
+                    text: modelData.name || modelData.appId
+                }
+                MouseArea {
+                    anchors.fill: parent
+                    onClicked: {
+                        peer = modelData
+                        peerSelected()
+                    }
                 }
             }
         }
@@ -88,8 +95,8 @@ Item {
             right: parent.right
             top: appTitle.bottom
         }
-        cellWidth: 196
-        cellHeight: 196
+        cellWidth: units.gu(14)
+        cellHeight: units.gu(16)
         model: peerModel.peers
         delegate: peerDelegate
     }

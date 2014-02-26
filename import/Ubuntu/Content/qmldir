@@ -2,3 +2,4 @@ module Ubuntu.Content
 plugin ubuntu-content-hub-plugin
 
 ContentTransferHint 0.1 ContentTransferHint.qml
+ContentPeerPicker 0.1 ContentPeerPicker.qml

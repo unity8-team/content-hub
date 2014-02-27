@@ -60,6 +60,24 @@ void ContentPeerModel::setContentType(ContentType::Type contentType)
 {
     qDebug() << Q_FUNC_INFO;
     m_contentType = contentType;
+    if(contentType == ContentType::All) {
+        appendPeersForContentType(ContentType::Unknown);
+        appendPeersForContentType(ContentType::Documents);
+        appendPeersForContentType(ContentType::Pictures);
+        appendPeersForContentType(ContentType::Music);
+        appendPeersForContentType(ContentType::Contacts);
+    } else {
+        appendPeersForContentType(contentType);
+    }
+}
+
+/*!
+ * \brief ContentPeerModel::appendPeersForContentType
+ * \internal
+ */
+void ContentPeerModel::appendPeersForContentType(ContentType::Type contentType)
+{
+    qDebug() << Q_FUNC_INFO;
     const cuc::Type &hubType = ContentType::contentType2HubType(contentType);
     QVector<cuc::Peer> hubPeers = m_hub->known_sources_for_type(hubType);
 

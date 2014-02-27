@@ -37,6 +37,7 @@ public:
 
     ContentType::Type contentType();
     void setContentType(ContentType::Type contentType);
+    void appendPeersForContentType(ContentType::Type contentType);
     ContentHandler::Handler handler();
     void setHandler(ContentHandler::Handler handler);
     QVariantList peers();

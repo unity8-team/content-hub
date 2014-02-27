@@ -34,12 +34,12 @@ class ContentPeer : public QObject
     Q_PROPERTY(ContentHandler::Handler handler READ handler WRITE setHandler NOTIFY handlerChanged)
     Q_PROPERTY(ContentType::Type contentType READ contentType WRITE setContentType NOTIFY contentTypeChanged)
     Q_PROPERTY(ContentTransfer::SelectionType selectionType READ selectionType WRITE setSelectionType NOTIFY selectionTypeChanged)
-    Q_PROPERTY(ContentStore *store READ store WRITE setStore NOTIFY storeChanged)
 
 public:
     ContentPeer(QObject *parent = nullptr);
 
     Q_INVOKABLE ContentTransfer* request();
+    Q_INVOKABLE ContentTransfer* request(ContentStore *store);
 
     QString name();
     const QString &appId() const;
@@ -57,17 +57,12 @@ public:
     ContentTransfer::SelectionType selectionType();
     void setSelectionType(ContentTransfer::SelectionType selectionType);
 
-    ContentStore *store();
-    void setStore(ContentStore *store);
-    
-
 Q_SIGNALS:
     void nameChanged();
     void appIdChanged();
     void handlerChanged();
     void contentTypeChanged();
     void selectionTypeChanged();
-    void storeChanged();
 
 private:
     com::ubuntu::content::Hub *m_hub;
@@ -76,7 +71,6 @@ private:
     ContentType::Type m_contentType;
     ContentTransfer::SelectionType m_selectionType;
     bool m_explicit_app;
-    ContentStore *m_store;
 };
 
 #endif // COM_UBUNTU_CONTENTPEER_H_

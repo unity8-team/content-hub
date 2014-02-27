@@ -94,8 +94,6 @@ void ContentStore::setScope(ContentScope::Scope scope)
     qDebug() << Q_FUNC_INFO;
     m_scope = scope;
 
-    updateStore();
-
     Q_EMIT scopeChanged();
 }
 
@@ -103,13 +101,12 @@ void ContentStore::setScope(ContentScope::Scope scope)
  * \brief ContentStore::updateStore
  * \internal
  */
-void ContentStore::updateStore()
+void ContentStore::updateStore(ContentType::Type contentType)
 {
     qDebug() << Q_FUNC_INFO;
-    ContentPeer *peer = (ContentPeer *) parent();
 
     com::ubuntu::content::Scope hubScope = ContentScope::contentScope2HubScope(m_scope);
-    const com::ubuntu::content::Type &hubType = ContentType::contentType2HubType(peer->contentType());
+    const com::ubuntu::content::Type &hubType = ContentType::contentType2HubType(contentType);
     setStore(m_hub->store_for_scope_and_type(hubScope, hubType));
 }
 

@@ -18,6 +18,7 @@
 #define COM_UBUNTU_CONTENTSTORE_H_
 
 #include "contentscope.h"
+#include "contenttype.h"
 #include <com/ubuntu/content/hub.h>
 #include <com/ubuntu/content/store.h>
 
@@ -41,7 +42,7 @@ public:
     ContentScope::Scope scope();
     void setScope(ContentScope::Scope scope);
 
-    void updateStore();
+    void updateStore(ContentType::Type type);
 
 Q_SIGNALS:
     void uriChanged();

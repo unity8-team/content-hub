@@ -21,10 +21,12 @@ MainView {
         handler: ContentHandler.Source
         // Optional appId, if this isn't specified the hub will use the default
         //appId: ""
-        // Optional store to use for persistent storage of content
-        store: ContentStore {
-            scope: ContentScope.App
-        }
+    }
+        
+    // Optional store to use for persistent storage of content
+    ContentStore {
+        id: appStore
+        scope: ContentScope.App
     }
 
     // Provides a list<ContentPeer> suitable for use as a model
@@ -68,7 +70,8 @@ MainView {
             text: "Import from default"
             onClicked: {
                 // Request the transfer, it needs to be created and dispatched from the hub
-                activeTransfer = picSource.request();
+                // Specify a location to use for permanent storage
+                activeTransfer = picSource.request(appStore);
             }
         }
 

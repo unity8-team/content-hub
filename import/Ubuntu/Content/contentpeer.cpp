@@ -43,8 +43,7 @@ ContentPeer::ContentPeer(QObject *parent)
       m_handler(ContentHandler::Source),
       m_contentType(ContentType::Unknown),
       m_selectionType(ContentTransfer::Single),
-      m_explicit_app(false),
-      m_store(nullptr)
+      m_explicit_app(false)
 {
     qDebug() << Q_FUNC_INFO;
     m_hub = cuc::Hub::Client::instance();
@@ -163,10 +162,6 @@ void ContentPeer::setContentType(ContentType::Type contentType)
         setPeer(m_hub->default_source_for_type(hubType));
     }
 
-    if(m_store) {
-        m_store->updateStore();
-    }
-
     Q_EMIT contentTypeChanged();
 }
 
@@ -193,38 +188,26 @@ void ContentPeer::setSelectionType(ContentTransfer::SelectionType selectionType)
     Q_EMIT selectionTypeChanged();
 }
 
-
-/*!
- * \qmlproperty int ContentPeer::store
- *
- * Returns the ContentStore
- */
-ContentStore *ContentPeer::store() 
-{
-    qDebug() << Q_FUNC_INFO;
-    return m_store;
-}
-
-/*!
- * \brief ContentPeer::setStore
- * \internal
- */
-void ContentPeer::setStore(ContentStore *store)
-{   
-    qDebug() << Q_FUNC_INFO;
-    m_store = store;
-
-    Q_EMIT storeChanged();
-}
-
-
 /*!
  * \qmlmethod ContentPeer::request()
+ * \overload ContentPeer::request(ContentStore)
  *
  * \brief Request to import data from this \a ContentPeer
  */
 ContentTransfer *ContentPeer::request()
 {   
+    qDebug() << Q_FUNC_INFO;
+    return request(nullptr);
+}
+
+/*!
+ * \qmlmethod ContentPeer::request(ContentStore)
+ *
+ * \brief Request to import data from this \a ContentPeer and use
+ * a \a ContentStore for permanent storage
+ */
+ContentTransfer *ContentPeer::request(ContentStore *store)
+{
     qDebug() << Q_FUNC_INFO;
     cuc::Transfer *hubTransfer = nullptr;
 
@@ -236,15 +219,12 @@ ContentTransfer *ContentPeer::request()
         hubTransfer = m_hub->create_share_to_peer(m_peer);
     }
 
-// FIXME update tests so this can be enabled
-//    if (!hubTransfer)
-//        return nullptr;
-
     ContentTransfer *qmlTransfer = new ContentTransfer(this);
     qmlTransfer->setTransfer(hubTransfer);
     qmlTransfer->setSelectionType(m_selectionType);
-    if(m_store) {
-        qmlTransfer->setStore(m_store);
+    if(store) {
+        store->updateStore(m_contentType);
+        qmlTransfer->setStore(store);
     }
     qmlTransfer->start();
     return qmlTransfer;

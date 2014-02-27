@@ -38,7 +38,7 @@ struct cuc::Peer::Private
                 GIcon* ic = g_app_info_get_icon(G_APP_INFO(app));
                 if (G_IS_ICON(ic))
                 {
-                    QString iconName = QString::fromUtf8(g_icon_to_string(ic));
+                    iconName = QString::fromUtf8(g_icon_to_string(ic));
 
                     if (QFile::exists(iconName))
                         icon = QImage(iconName);
@@ -53,6 +53,7 @@ struct cuc::Peer::Private
     QString id;
     QString name;
     QImage icon;
+    QString iconName;
 };
 
 const cuc::Peer& cuc::Peer::unknown()
@@ -115,6 +116,17 @@ void cuc::Peer::setIcon(const QImage& icon)
         d->icon = icon;
 }
 
+QString cuc::Peer::iconName() const
+{
+    return d->iconName;
+}
+
+void cuc::Peer::setIconName(const QString& iconName)
+{
+    if (iconName != d->iconName)
+        d->iconName = iconName;
+}
+
 QDBusArgument &operator<<(QDBusArgument &argument, const cuc::Peer& peer)
 {
     QImage i = peer.icon();
@@ -124,7 +136,7 @@ QDBusArgument &operator<<(QDBusArgument &argument, const cuc::Peer& peer)
     i.save(&buffer,"PNG");
 
     argument.beginStructure();
-    argument << peer.id() << peer.name() << ba;
+    argument << peer.id() << peer.name() << ba << peer.iconName();
     argument.endStructure();
     return argument;
 }
@@ -135,9 +147,10 @@ const QDBusArgument &operator>>(const QDBusArgument &argument, cuc::Peer &peer)
     QString id;
     QString name;
     QByteArray ic;
+    QString iconName;
 
     argument.beginStructure();
-    argument >> id >> name >> ic;
+    argument >> id >> name >> ic >> iconName;
     argument.endStructure();
 
     QImage icon;
@@ -150,5 +163,6 @@ const QDBusArgument &operator>>(const QDBusArgument &argument, cuc::Peer &peer)
     peer = cuc::Peer{id};
     peer.setName(name);
     peer.setIcon(icon);
+    peer.setIconName(iconName);
     return argument;
 }

@@ -22,6 +22,7 @@
 
 #include <com/ubuntu/content/peer.h>
 #include <QDebug>
+#include <QIcon>
 
 /*!
  * \qmltype ContentPeer
@@ -107,7 +108,12 @@ void ContentPeer::setPeer(const cuc::Peer &peer)
 {
     qDebug() << Q_FUNC_INFO;
     m_peer = peer;
-    m_icon = m_peer.icon();
+    if (peer.icon().isNull())
+    {
+        if (QIcon::hasThemeIcon(peer.iconName().toUtf8()))
+            m_icon = QIcon::fromTheme(peer.iconName().toUtf8()).pixmap(256).toImage();
+    } else
+        m_icon = peer.icon();
     ContentIconProvider *iconProvider = ContentIconProvider::instance();
     iconProvider->addImage(appId(), m_icon);
 

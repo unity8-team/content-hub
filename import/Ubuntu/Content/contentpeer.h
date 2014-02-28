@@ -26,6 +26,7 @@
 #include <QObject>
 #include <QString>
 #include <QImage>
+
 class ContentPeer : public QObject
 {
     Q_OBJECT

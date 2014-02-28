@@ -309,7 +309,6 @@ void ContentTransfer::updateState()
     }
 
     m_state = static_cast<ContentTransfer::State>(m_transfer->state());
-    qDebug() << Q_FUNC_INFO << "m_state";
     Q_EMIT stateChanged();
 }
 

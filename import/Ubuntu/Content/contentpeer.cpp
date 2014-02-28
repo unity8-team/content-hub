@@ -215,24 +215,26 @@ ContentTransfer *ContentPeer::request()
 ContentTransfer *ContentPeer::request(ContentStore *store)
 {
     qDebug() << Q_FUNC_INFO;
-    cuc::Transfer *hubTransfer = nullptr;
-
+    ContentHub *contentHub = ContentHub::instance();
+    ContentTransfer *qmlTransfer = NULL;
     if(m_handler == ContentHandler::Source) {
-        hubTransfer = m_hub->create_import_from_peer(m_peer);
+        qmlTransfer = contentHub->importContent(m_peer);
     } else if (m_handler == ContentHandler::Destination) {
-        hubTransfer = m_hub->create_export_to_peer(m_peer);
+        qmlTransfer = contentHub->exportContent(m_peer);
     } else if (m_handler == ContentHandler::Share) {
-        hubTransfer = m_hub->create_share_to_peer(m_peer);
+        qmlTransfer = contentHub->shareContent(m_peer);
     }
 
-    ContentTransfer *qmlTransfer = new ContentTransfer(this);
-    qmlTransfer->setTransfer(hubTransfer);
     qmlTransfer->setSelectionType(m_selectionType);
     if(store) {
         store->updateStore(m_contentType);
         qmlTransfer->setStore(store);
     }
-    qmlTransfer->start();
+    
+    /* We only need to start it for import requests */
+    if (m_handler == ContentHandler::Source)
+        qmlTransfer->start();
+
     return qmlTransfer;
 }
 

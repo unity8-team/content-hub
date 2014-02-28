@@ -41,7 +41,7 @@ static QObject *qml_content_hub(QQmlEngine *engine, QJSEngine *scriptEngine)
     Q_UNUSED(engine)
     Q_UNUSED(scriptEngine)
     qDebug() << Q_FUNC_INFO;
-    return new ContentHub();
+    return ContentHub::instance();
 }
 
 /*!

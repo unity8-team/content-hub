@@ -117,6 +117,7 @@ ContentHub::ContentHub(QObject *parent)
     : QObject(parent),
       m_hub(0)
 {
+    qDebug() << Q_FUNC_INFO;
     m_hub = cuc::Hub::Client::instance();
     m_handler = new QmlImportExportHandler(this);
     m_hub->register_import_export_handler(m_handler);
@@ -127,6 +128,64 @@ ContentHub::ContentHub(QObject *parent)
             this, SLOT(handleExport(com::ubuntu::content::Transfer*)));
     connect(m_handler, SIGNAL(shareRequested(com::ubuntu::content::Transfer*)),
             this, SLOT(handleShare(com::ubuntu::content::Transfer*)));
+}
+
+ContentHub *ContentHub::instance()
+{
+    qDebug() << Q_FUNC_INFO;
+    static ContentHub *contentHub = new ContentHub(nullptr);
+    return contentHub;
+}
+
+/*!
+ * \brief ContentHub::importContent creates a ContentTransfer object
+ * \a type
+ * \a peer
+ * \internal
+ */
+ContentTransfer* ContentHub::importContent(cuc::Peer peer)
+{
+    qDebug() << Q_FUNC_INFO;
+
+    cuc::Transfer *hubTransfer = m_hub->create_import_from_peer(peer);
+    ContentTransfer *qmlTransfer = new ContentTransfer(this);
+    qmlTransfer->setTransfer(hubTransfer);
+    m_activeImports.insert(hubTransfer, qmlTransfer);
+    return qmlTransfer;
+}
+
+/*!
+ * \brief ContentHub::exportContent creates a ContentTransfer object
+ * \a type
+ * \a peer
+ * \internal
+ */
+ContentTransfer* ContentHub::exportContent(cuc::Peer peer)
+{
+    qDebug() << Q_FUNC_INFO;
+
+    cuc::Transfer *hubTransfer = m_hub->create_export_to_peer(peer);
+    ContentTransfer *qmlTransfer = new ContentTransfer(this);
+    qmlTransfer->setTransfer(hubTransfer);
+    m_activeImports.insert(hubTransfer, qmlTransfer);
+    return qmlTransfer;
+}
+
+/*!
+ * \brief ContentHub::shareContent creates a ContentTransfer object
+ * \a type
+ * \a peer
+ * \internal
+ */
+ContentTransfer* ContentHub::shareContent(cuc::Peer peer)
+{
+    qDebug() << Q_FUNC_INFO;
+
+    cuc::Transfer *hubTransfer = m_hub->create_share_to_peer(peer);
+    ContentTransfer *qmlTransfer = new ContentTransfer(this);
+    qmlTransfer->setTransfer(hubTransfer);
+    m_activeImports.insert(hubTransfer, qmlTransfer);
+    return qmlTransfer;
 }
 
 /*!

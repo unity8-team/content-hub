@@ -22,6 +22,7 @@
 
 #include <com/ubuntu/content/peer.h>
 #include <QDebug>
+#include <QIcon>
 
 /*!
  * \qmltype ContentPeer
@@ -107,7 +108,12 @@ void ContentPeer::setPeer(const cuc::Peer &peer)
 {
     qDebug() << Q_FUNC_INFO;
     m_peer = peer;
-    m_icon = m_peer.icon();
+    if (peer.icon().isNull())
+    {
+        if (QIcon::hasThemeIcon(peer.iconName().toUtf8()))
+            m_icon = QIcon::fromTheme(peer.iconName().toUtf8()).pixmap(256).toImage();
+    } else
+        m_icon = peer.icon();
     ContentIconProvider *iconProvider = ContentIconProvider::instance();
     iconProvider->addImage(appId(), m_icon);
 
@@ -209,24 +215,26 @@ ContentTransfer *ContentPeer::request()
 ContentTransfer *ContentPeer::request(ContentStore *store)
 {
     qDebug() << Q_FUNC_INFO;
-    cuc::Transfer *hubTransfer = nullptr;
-
+    ContentHub *contentHub = ContentHub::instance();
+    ContentTransfer *qmlTransfer = NULL;
     if(m_handler == ContentHandler::Source) {
-        hubTransfer = m_hub->create_import_from_peer(m_peer);
+        qmlTransfer = contentHub->importContent(m_peer);
     } else if (m_handler == ContentHandler::Destination) {
-        hubTransfer = m_hub->create_export_to_peer(m_peer);
+        qmlTransfer = contentHub->exportContent(m_peer);
     } else if (m_handler == ContentHandler::Share) {
-        hubTransfer = m_hub->create_share_to_peer(m_peer);
+        qmlTransfer = contentHub->shareContent(m_peer);
     }
 
-    ContentTransfer *qmlTransfer = new ContentTransfer(this);
-    qmlTransfer->setTransfer(hubTransfer);
     qmlTransfer->setSelectionType(m_selectionType);
     if(store) {
         store->updateStore(m_contentType);
         qmlTransfer->setStore(store);
     }
-    qmlTransfer->start();
+    
+    /* We only need to start it for import requests */
+    if (m_handler == ContentHandler::Source)
+        qmlTransfer->start();
+
     return qmlTransfer;
 }
 

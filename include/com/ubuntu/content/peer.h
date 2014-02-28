@@ -33,9 +33,9 @@ class Peer : public QObject
 {
     Q_OBJECT
     Q_PROPERTY(QString id READ id)
-    Q_PROPERTY(QString name READ name() WRITE setName)
-    Q_PROPERTY(QImage icon READ icon() WRITE setIcon)
-
+    Q_PROPERTY(QString name READ name WRITE setName)
+    Q_PROPERTY(QImage icon READ icon WRITE setIcon)
+    Q_PROPERTY(QString iconName READ iconName WRITE setIconName)
 
   public:
     static const Peer& unknown();
@@ -51,7 +51,8 @@ class Peer : public QObject
     Q_INVOKABLE void setName(const QString&);
     Q_INVOKABLE virtual QImage icon() const;
     Q_INVOKABLE void setIcon(const QImage&);
-
+    Q_INVOKABLE virtual QString iconName() const;
+    Q_INVOKABLE void setIconName(const QString&);
 
   private:
     struct Private;

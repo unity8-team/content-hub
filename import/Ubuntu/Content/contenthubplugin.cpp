@@ -31,6 +31,7 @@
 #include <QQmlContext>
 #include <QQmlEngine>
 #include <QDebug>
+#include <QIcon>
 
 /*!
  * \brief qml_content_hub function to unstatinate the ContentHub as a singleton in QML
@@ -40,7 +41,7 @@ static QObject *qml_content_hub(QQmlEngine *engine, QJSEngine *scriptEngine)
     Q_UNUSED(engine)
     Q_UNUSED(scriptEngine)
     qDebug() << Q_FUNC_INFO;
-    return new ContentHub();
+    return ContentHub::instance();
 }
 
 /*!
@@ -50,7 +51,8 @@ void ContentHubPlugin::initializeEngine(QQmlEngine * engine, const char * uri)
 {
     Q_UNUSED(uri)
     qDebug() << Q_FUNC_INFO;
-
+    QIcon::setThemeName("ubuntu-mobile");
+    QIcon::setThemeSearchPaths(QStringList() << ("/usr/share/icons/"));
     ContentIconProvider *iconProvider = ContentIconProvider::instance();
     engine->addImageProvider("content-hub", iconProvider);
 }

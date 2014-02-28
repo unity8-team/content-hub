@@ -60,6 +60,7 @@ void ContentPeerModel::setContentType(ContentType::Type contentType)
 {
     qDebug() << Q_FUNC_INFO;
     m_contentType = contentType;
+    m_peers.clear();
     if(contentType == ContentType::All) {
         appendPeersForContentType(ContentType::Unknown);
         appendPeersForContentType(ContentType::Documents);
@@ -69,6 +70,7 @@ void ContentPeerModel::setContentType(ContentType::Type contentType)
     } else {
         appendPeersForContentType(contentType);
     }
+    Q_EMIT contentTypeChanged();
 }
 
 /*!
@@ -79,14 +81,21 @@ void ContentPeerModel::appendPeersForContentType(ContentType::Type contentType)
 {
     qDebug() << Q_FUNC_INFO;
     const cuc::Type &hubType = ContentType::contentType2HubType(contentType);
-    QVector<cuc::Peer> hubPeers = m_hub->known_sources_for_type(hubType);
+    QVector<cuc::Peer> hubPeers;
+    if (m_handler == ContentHandler::Destination)
+        hubPeers = m_hub->known_destinations_for_type(hubType);
+    else if (m_handler == ContentHandler::Share)
+        hubPeers = m_hub->known_shares_for_type(hubType);
+    else
+        hubPeers = m_hub->known_sources_for_type(hubType);
 
     Q_FOREACH (const cuc::Peer &hubPeer, hubPeers) {
         ContentPeer *qmlPeer = new ContentPeer();
         qmlPeer->setPeer(hubPeer);
+        qmlPeer->setHandler(m_handler);
         m_peers.append(QVariant::fromValue(qmlPeer));
     }
-    Q_EMIT contentTypeChanged();
+    Q_EMIT peersChanged();
 }
 
 /*!
@@ -107,7 +116,8 @@ void ContentPeerModel::setHandler(ContentHandler::Handler handler)
 {
     qDebug() << Q_FUNC_INFO;
     m_handler = handler;
-
+    // FIXME: resetting ContentType just to trigger refreshing the model
+    setContentType(m_contentType);
     Q_EMIT handlerChanged();
 }
 

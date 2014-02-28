@@ -28,9 +28,9 @@ import Ubuntu.Content 0.1
     This component displays a list of applications, devices and services which
     are appropriate for transfering a given content type with.
 */
-Item {
+Page {
     id: root
-
+    title: i18n.tr("Choose from")
     property alias contentType: peerModel.contentType
     property alias handler: peerModel.handler
     property var peer
@@ -79,26 +79,69 @@ Item {
 
     ListItem.Header {
         id: appTitle
-        anchors {
-            left: parent.left
-            right: parent.right
-            top: parent.top
-        }
-        text: "Applications"
+        text: "Apps"
     }
 
-
-    GridView {
-        id: appPeers
+    Rectangle {
+        id: apps
+        color: "#FFFFFF"
+        height: (parent.height / 2.4)
+        width: parent.width
+        radius: 0
         anchors {
             left: parent.left
             right: parent.right
             top: appTitle.bottom
         }
-        cellWidth: units.gu(14)
-        cellHeight: units.gu(16)
-        model: peerModel.peers
-        delegate: peerDelegate
+
+        Flickable {
+            anchors.fill: parent
+
+            GridView {
+                id: appPeers
+                cellWidth: units.gu(14)
+                cellHeight: units.gu(16)
+                model: peerModel.peers
+                delegate: peerDelegate
+            }
+
+        }
     }
+
+    ListItem.Header {
+        id: devTitle
+        anchors {
+            left: parent.left
+            right: parent.right
+            top: apps.bottom
+        }
+        text: "Devices"
+    }
+
+    Rectangle {
+        id: devices
+        color: "#FFFFFF"
+        height: (parent.height / 2.4)
+        width: parent.width
+        radius: 0
+        anchors {
+            left: parent.left
+            right: parent.right
+            top: devTitle.bottom
+        }
+
+        Flickable {
+            anchors.fill: parent
+
+            GridView {
+                id: devPeers
+                cellWidth: units.gu(14)
+                cellHeight: units.gu(16)
+                delegate: peerDelegate
+            }
+
+        }
+    }
+
 
 }

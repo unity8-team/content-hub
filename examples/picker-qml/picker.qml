@@ -5,14 +5,13 @@ import Ubuntu.Content 0.1
 MainView {
     id: root
     applicationName: "picker-qml"
-    width: 300
-    height: 200
+    width: units.gu(100)
+    height: units.gu(75)
 
     property list<ContentItem> importItems
     property var activeTransfer
 
     ContentPeerPicker {
-        anchors.fill: parent
         // Type of handler: Source, Destination, or Share
         handler: ContentHandler.Source
         // well know content type

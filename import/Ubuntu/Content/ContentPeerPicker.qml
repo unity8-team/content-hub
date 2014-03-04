@@ -51,7 +51,7 @@ StyledItem {
     Component {
         id: peerDelegate
         Item {
-            width: units.gu(14)
+            width: units.gu(13.5)
             height: units.gu(16)
             Item {
                 width: icon.width
@@ -95,7 +95,7 @@ StyledItem {
         color: "#FFFFFF"
         height: (parent.height / 2.4)
         width: parent.width
-        radius: 0
+        clip: true
         anchors {
             left: parent.left
             right: parent.right
@@ -106,8 +106,9 @@ StyledItem {
             anchors.fill: parent
 
             GridView {
+                anchors.fill: parent
                 id: appPeers
-                cellWidth: units.gu(14)
+                cellWidth: units.gu(13.5)
                 cellHeight: units.gu(16)
                 model: peerModel.peers
                 delegate: peerDelegate
@@ -143,7 +144,7 @@ StyledItem {
 
             GridView {
                 id: devPeers
-                cellWidth: units.gu(14)
+                cellWidth: units.gu(13.5)
                 cellHeight: units.gu(16)
                 delegate: peerDelegate
             }

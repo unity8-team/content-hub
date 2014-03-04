@@ -45,8 +45,6 @@ struct cuc::Peer::Private
                         icon = QImage(iconName);
                     g_object_unref(ic);
                 }
-
-                g_object_unref(app);
             }
         }
     }

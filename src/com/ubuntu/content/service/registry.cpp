@@ -17,6 +17,7 @@
  */
 
 #include "registry.h"
+#include "utils.cpp"
 
 Registry::Registry() :
     m_defaultSources(new QGSettings("com.ubuntu.content.hub.default",
@@ -28,6 +29,13 @@ Registry::Registry() :
     m_shares(new QGSettings("com.ubuntu.content.hub.share",
                            "/com/ubuntu/content/hub/share/"))
 {
+    /* ensure all default sources are registered as available sources */
+    QList<cuc::Type> types = known_types();
+    Q_FOREACH (cuc::Type type, types)
+    {
+        QString peer_id = m_defaultSources->get(type.id()).toString();
+        install_source_for_type(type, cuc::Peer{peer_id});
+    }
 }
 
 Registry::~Registry() {}
@@ -40,8 +48,6 @@ cuc::Peer Registry::default_source_for_type(cuc::Type type)
     else
         return cuc::Peer();
 }
-
-
 
 void Registry::enumerate_known_peers(const std::function<void(const cuc::Peer&)>&for_each)
 {

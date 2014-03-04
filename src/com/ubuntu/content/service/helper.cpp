@@ -17,6 +17,8 @@
  */
 
 #include <QCoreApplication>
+#include <QDir>
+#include <QStandardPaths>
 
 #include "hook.h"
 
@@ -34,9 +36,16 @@ int main(int argc, char** argv)
             return 1;
     }
 
-    new Hook();
+    QDir contentDir(
+        QStandardPaths::writableLocation(QStandardPaths::GenericDataLocation)
+        + QString("/")
+        + QString("content-hub"));
 
-    app.exec();
+    if (contentDir.exists()) {
+	new Hook();
+
+	app.exec();
+    }
 
     /* We always want to return 0 */
     return 0;

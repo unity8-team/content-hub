@@ -28,14 +28,21 @@ import Ubuntu.Content 0.1
     This component displays a list of applications, devices and services which
     are appropriate for transfering a given content type with.
 */
-Page {
+StyledItem {
     id: root
-    title: i18n.tr("Choose from")
+    anchors.fill: parent
+    visible: false
     property alias contentType: peerModel.contentType
     property alias handler: peerModel.handler
+    property alias showTitle: header.visible
     property var peer
 
     signal peerSelected
+
+    Header {
+        id: header
+        title: (handler === ContentHandler.Source) ? i18n.tr("Choose from") : i18n.tr("Share to")
+    }
 
     ContentPeerModel {
         id: peerModel
@@ -79,6 +86,7 @@ Page {
 
     ListItem.Header {
         id: appTitle
+        anchors.top: header.visible ? header.bottom : parent.top
         text: "Apps"
     }
 
@@ -121,7 +129,7 @@ Page {
     Rectangle {
         id: devices
         color: "#FFFFFF"
-        height: (parent.height / 2.4)
+        height: (parent.height - devTitle.y - devTitle.height - units.gu(1))
         width: parent.width
         radius: 0
         anchors {

@@ -12,6 +12,7 @@ MainView {
     property var activeTransfer
 
     ContentPeerPicker {
+        visible: true
         // Type of handler: Source, Destination, or Share
         handler: ContentHandler.Source
         // well know content type

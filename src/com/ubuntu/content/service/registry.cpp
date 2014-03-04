@@ -86,6 +86,9 @@ void Registry::enumerate_known_sources_for_type(cuc::Type type, const std::funct
 {
     qDebug() << Q_FUNC_INFO << type.id();
 
+    if (type == cuc::Type::unknown())
+        return;
+
     Q_FOREACH (QString k, m_sources->get(type.id()).toStringList())
     {
         qDebug() << Q_FUNC_INFO << k;

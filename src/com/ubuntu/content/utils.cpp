@@ -27,8 +27,21 @@
 #include <nih-dbus/dbus_util.h>
 
 #include "common.h"
+#include "com/ubuntu/content/type.h"
+
+namespace cuc = com::ubuntu::content;
 
 namespace {
+
+QList<cuc::Type> known_types()
+{
+    QList<cuc::Type> types;
+    types << cuc::Type::Known::pictures();
+    types << cuc::Type::Known::music();
+    types << cuc::Type::Known::documents();
+    types << cuc::Type::Known::contacts();
+    return types;
+}
 
 /* sanitize the dbus names */
 QString sanitize_id(const QString& appId)

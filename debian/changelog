@@ -1,6 +1,10 @@
-content-hub (0.0+14.04.20140126.1-0ken1) UNRELEASED; urgency=medium
+content-hub (0.0+14.04.20140304-0preview1) UNRELEASED; urgency=medium
 
-  * 
+  * Support for more handler types, including sharing
+  * Marshal peer details like name and icon from the service, so confined apps
+    can show them.
+  * Improved QML bindings
+  * New ContentPeerPicker QML component
 
  -- Ken VanDine <ken.vandine@canonical.com>  Mon, 27 Jan 2014 14:09:38 -0500
 

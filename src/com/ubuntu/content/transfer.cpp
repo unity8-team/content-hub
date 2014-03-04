@@ -43,7 +43,7 @@ cuc::Transfer::Transfer(const QSharedPointer<cuc::Transfer::Private>& d, QObject
 
 cuc::Transfer::~Transfer()
 {
-    qDebug() << Q_FUNC_INFO;
+    TRACE() << Q_FUNC_INFO;
     purge_store_cache(d->store().uri());
 }
 

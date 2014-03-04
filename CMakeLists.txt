@@ -67,6 +67,8 @@ pkg_check_modules(NIH REQUIRED libnih)
 pkg_check_modules(NIH_DBUS REQUIRED libnih-dbus)
 pkg_check_modules(DBUS REQUIRED dbus-1)
 
+add_definitions( -DDEBUG_ENABLED )
+
 set(CONTENT_HUB_VERSION_MAJOR 0)
 set(CONTENT_HUB_VERSION_MINOR 0)
 set(CONTENT_HUB_VERSION_PATCH 1)

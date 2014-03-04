@@ -17,6 +17,7 @@
  */
 
 #include "common.h"
+#include "debug.h"
 #include "ContentServiceInterface.h"
 #include "ContentHandlerInterface.h"
 #include "handleradaptor.h"
@@ -31,6 +32,7 @@
 #include <com/ubuntu/content/type.h>
 
 #include <QStandardPaths>
+#include <QProcessEnvironment>
 #include <map>
 
 namespace cuc = com::ubuntu::content;
@@ -51,6 +53,15 @@ struct cuc::Hub::Private
 
 cuc::Hub::Hub(QObject* parent) : QObject(parent), d{new cuc::Hub::Private{this}}
 {
+    /* read environment variables */
+    QProcessEnvironment environment = QProcessEnvironment::systemEnvironment();
+    if (environment.contains(QLatin1String("CONTENT_HUB_LOGGING_LEVEL"))) {
+        bool isOk;
+        int value = environment.value(
+            QLatin1String("CONTENT_HUB_LOGGING_LEVEL")).toInt(&isOk);
+        if (isOk)
+            setLoggingLevel(value);
+    }
 }
 
 cuc::Hub::~Hub()
@@ -65,7 +76,7 @@ cuc::Hub* cuc::Hub::Client::instance()
 
 void cuc::Hub::register_import_export_handler(cuc::ImportExportHandler* handler)
 {
-    qDebug() << Q_FUNC_INFO;
+    TRACE() << Q_FUNC_INFO;
     QString id = app_id();
 
     if (id.isEmpty())
@@ -75,7 +86,7 @@ void cuc::Hub::register_import_export_handler(cuc::ImportExportHandler* handler)
     }
 
     QString instance_id = qgetenv("INSTANCE_ID");
-    qDebug() << Q_FUNC_INFO << "INSTANCE_ID: " << instance_id;
+    TRACE() << Q_FUNC_INFO << "INSTANCE_ID: " << instance_id;
 
     auto c = QDBusConnection::sessionBus();
     auto h = new cuc::detail::Handler(c, id, handler);
@@ -220,9 +231,9 @@ cuc::Transfer* cuc::Hub::create_export_to_peer(cuc::Peer peer)
     cuc::Transfer *transfer = cuc::Transfer::Private::make_transfer(reply.value(), this);
 
     QString peerName = peer.id().split("_")[0];
-    qDebug() << Q_FUNC_INFO << "peerName: " << peerName;
+    TRACE() << Q_FUNC_INFO << "peerName: " << peerName;
     const cuc::Store *store = new cuc::Store{QStandardPaths::writableLocation(QStandardPaths::GenericCacheLocation) + "/" + peerName + "/HubIncoming/" + QString::number(transfer->id()), this};
-    qDebug() << Q_FUNC_INFO << "STORE:" << store->uri();
+    TRACE() << Q_FUNC_INFO << "STORE:" << store->uri();
     transfer->setStore(store);
     transfer->start();
     return transfer;
@@ -241,9 +252,9 @@ cuc::Transfer* cuc::Hub::create_share_to_peer(cuc::Peer peer)
 
     cuc::Transfer *transfer = cuc::Transfer::Private::make_transfer(reply.value(), this);
     QString peerName = peer.id().split("_")[0];
-    qDebug() << Q_FUNC_INFO << "peerName: " << peerName;
+    TRACE() << Q_FUNC_INFO << "peerName: " << peerName;
     const cuc::Store *store = new cuc::Store{QStandardPaths::writableLocation(QStandardPaths::GenericCacheLocation) + "/" + peerName + "/HubIncoming/" + QString::number(transfer->id()), this};
-    qDebug() << Q_FUNC_INFO << "STORE:" << store->uri();
+    TRACE() << Q_FUNC_INFO << "STORE:" << store->uri();
     transfer->setStore(store);
     transfer->start();
     return transfer;

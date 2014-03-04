@@ -19,9 +19,9 @@
 #include "transfer_p.h"
 #include "handler.h"
 #include "utils.cpp"
+#include "debug.h"
 
 #include <QObject>
-#include <QDebug>
 
 namespace cucd = com::ubuntu::content::detail;
 namespace cuc = com::ubuntu::content;
@@ -35,7 +35,7 @@ struct cucd::Handler::Private : public QObject
               connection(connection),
               peer_id(peer_id)
     {
-        qDebug() << Q_FUNC_INFO;
+        TRACE() << Q_FUNC_INFO;
     }
 
     QDBusConnection connection;
@@ -45,7 +45,7 @@ struct cucd::Handler::Private : public QObject
 cucd::Handler::Handler(QDBusConnection connection, const QString& peer_id, cuc::ImportExportHandler* handler)
         : d(new Private{connection, peer_id, this})
 {
-    qDebug() << Q_FUNC_INFO;
+    TRACE() << Q_FUNC_INFO;
     m_handler = handler;
 }
 
@@ -55,20 +55,20 @@ cucd::Handler::~Handler() {
 
 void cucd::Handler::HandleImport(const QDBusObjectPath& transfer)
 {
-    qDebug() << Q_FUNC_INFO << transfer.path();
+    TRACE() << Q_FUNC_INFO << transfer.path();
     cuc::Transfer* t = cuc::Transfer::Private::make_transfer(transfer, this);
 
-    qDebug() << Q_FUNC_INFO << "State:" << t->state();
+    TRACE() << Q_FUNC_INFO << "State:" << t->state();
     if (t->state() == cuc::Transfer::charged)
         m_handler->handle_import(t);
 }
 
 void cucd::Handler::HandleExport(const QDBusObjectPath& transfer)
 {
-    qDebug() << Q_FUNC_INFO << transfer.path();
+    TRACE() << Q_FUNC_INFO << transfer.path();
     cuc::Transfer* t = cuc::Transfer::Private::make_transfer(transfer, this);
 
-    qDebug() << Q_FUNC_INFO << "State:" << t->state();
+    TRACE() << Q_FUNC_INFO << "State:" << t->state();
     if (t->state() == cuc::Transfer::initiated)
     {
         t->d->handled();
@@ -78,10 +78,10 @@ void cucd::Handler::HandleExport(const QDBusObjectPath& transfer)
 
 void cucd::Handler::HandleShare(const QDBusObjectPath& transfer)
 {
-    qDebug() << Q_FUNC_INFO;
+    TRACE() << Q_FUNC_INFO;
     cuc::Transfer* t = cuc::Transfer::Private::make_transfer(transfer, this);
 
-    qDebug() << Q_FUNC_INFO << "State:" << t->state();
+    TRACE() << Q_FUNC_INFO << "State:" << t->state();
     if (t->state() == cuc::Transfer::charged)
     {
         m_handler->handle_share(t);

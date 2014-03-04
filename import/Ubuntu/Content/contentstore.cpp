@@ -14,11 +14,10 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
+#include "../../../src/com/ubuntu/content/debug.h"
 #include "contentpeer.h"
 #include "contentstore.h"
 #include "contenttype.h"
-
-#include <QDebug>
 
 /*!
  * \qmltype ContentStore
@@ -35,7 +34,7 @@ ContentStore::ContentStore(QObject *parent)
       m_store(0),
       m_scope(ContentScope::System)
 {
-    qDebug() << Q_FUNC_INFO;
+    TRACE() << Q_FUNC_INFO;
     m_hub = cuc::Hub::Client::instance();
 }
 
@@ -46,7 +45,7 @@ ContentStore::ContentStore(QObject *parent)
  */
 const QString &ContentStore::uri() const
 {
-    qDebug() << Q_FUNC_INFO;
+    TRACE() << Q_FUNC_INFO;
     return m_store->uri();
 }
 
@@ -56,7 +55,7 @@ const QString &ContentStore::uri() const
  */
 const com::ubuntu::content::Store *ContentStore::store() const
 {
-    qDebug() << Q_FUNC_INFO;
+    TRACE() << Q_FUNC_INFO;
     return m_store;
 }
 
@@ -66,7 +65,7 @@ const com::ubuntu::content::Store *ContentStore::store() const
  */
 void ContentStore::setStore(const com::ubuntu::content::Store *store)
 {
-    qDebug() << Q_FUNC_INFO;
+    TRACE() << Q_FUNC_INFO;
     //if (store == m_store)
     //    return;
 
@@ -81,7 +80,7 @@ void ContentStore::setStore(const com::ubuntu::content::Store *store)
  */
 ContentScope::Scope ContentStore::scope()
 {   
-    qDebug() << Q_FUNC_INFO;
+    TRACE() << Q_FUNC_INFO;
     return m_scope;
 }
 
@@ -91,7 +90,7 @@ ContentScope::Scope ContentStore::scope()
  */
 void ContentStore::setScope(ContentScope::Scope scope)
 {   
-    qDebug() << Q_FUNC_INFO;
+    TRACE() << Q_FUNC_INFO;
     m_scope = scope;
 
     Q_EMIT scopeChanged();
@@ -103,7 +102,7 @@ void ContentStore::setScope(ContentScope::Scope scope)
  */
 void ContentStore::updateStore(ContentType::Type contentType)
 {
-    qDebug() << Q_FUNC_INFO;
+    TRACE() << Q_FUNC_INFO;
 
     com::ubuntu::content::Scope hubScope = ContentScope::contentScope2HubScope(m_scope);
     const com::ubuntu::content::Type &hubType = ContentType::contentType2HubType(contentType);

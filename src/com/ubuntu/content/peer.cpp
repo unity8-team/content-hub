@@ -20,6 +20,7 @@
 #include <gio/gdesktopappinfo.h>
 #include <com/ubuntu/content/peer.h>
 #include <QMetaType>
+#include "debug.h"
 
 namespace cuc = com::ubuntu::content;
 
@@ -27,7 +28,7 @@ struct cuc::Peer::Private
 {
     Private (QString id) : id(id)
     {
-        qDebug() << Q_FUNC_INFO << id;
+        TRACE() << Q_FUNC_INFO << id;
         if (name.isEmpty())
         {
             QString desktop_id(id + ".desktop");
@@ -64,7 +65,7 @@ const cuc::Peer& cuc::Peer::unknown()
 
 cuc::Peer::Peer(const QString& id, QObject* parent) : QObject(parent), d(new cuc::Peer::Private{id})
 {
-    qDebug() << Q_FUNC_INFO;
+    TRACE() << Q_FUNC_INFO;
 }
 
 cuc::Peer::Peer(const cuc::Peer& rhs) : QObject(rhs.parent()), d(rhs.d)
@@ -143,7 +144,7 @@ QDBusArgument &operator<<(QDBusArgument &argument, const cuc::Peer& peer)
 
 const QDBusArgument &operator>>(const QDBusArgument &argument, cuc::Peer &peer)
 {
-    qDebug() << Q_FUNC_INFO;
+    TRACE() << Q_FUNC_INFO;
     QString id;
     QString name;
     QByteArray ic;
@@ -156,9 +157,12 @@ const QDBusArgument &operator>>(const QDBusArgument &argument, cuc::Peer &peer)
     QImage icon;
     bool ret = icon.loadFromData(reinterpret_cast<const uchar*>(ic.constData()), ic.size(), "png");
     if (ret)
-        qDebug() << Q_FUNC_INFO << "SUCCESS";
-    else
-        qDebug() << Q_FUNC_INFO << "FAIL";
+    {
+        TRACE() << Q_FUNC_INFO << "SUCCESS";
+    } else
+    {
+        TRACE() << Q_FUNC_INFO << "FAIL";
+    }
 
     peer = cuc::Peer{id};
     peer.setName(name);

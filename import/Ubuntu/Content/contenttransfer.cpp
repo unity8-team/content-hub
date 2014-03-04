@@ -16,10 +16,9 @@
 
 #include "contenttransfer.h"
 #include "contentitem.h"
+#include "../../../src/com/ubuntu/content/debug.h"
 
 #include <com/ubuntu/content/item.h>
-
-#include <QDebug>
 
 /*!
  * \qmltype ContentTransfer
@@ -39,7 +38,7 @@ ContentTransfer::ContentTransfer(QObject *parent)
       m_selectionType(Single),
       m_store(0)
 {
-    qDebug() << Q_FUNC_INFO;
+    TRACE() << Q_FUNC_INFO;
 }
 
 /*!
@@ -76,18 +75,18 @@ ContentTransfer::ContentTransfer(QObject *parent)
  */
 ContentTransfer::State ContentTransfer::state() const
 {
-    qDebug() << Q_FUNC_INFO;
+    TRACE() << Q_FUNC_INFO;
     return m_state;
 }
 
 void ContentTransfer::setState(ContentTransfer::State state)
 {
-    qDebug() << Q_FUNC_INFO << state;
+    TRACE() << Q_FUNC_INFO << state;
     if (!m_transfer)
         return;
 
     if (state == Charged && m_state == InProgress) {
-        qDebug() << Q_FUNC_INFO << "Charged";
+        TRACE() << Q_FUNC_INFO << "Charged";
         QVector<cuc::Item> hubItems;
         hubItems.reserve(m_items.size());
         Q_FOREACH (const ContentItem *citem, m_items) {
@@ -96,7 +95,7 @@ void ContentTransfer::setState(ContentTransfer::State state)
         m_transfer->charge(hubItems);
         return;
     } else if (state == Aborted) {
-        qDebug() << Q_FUNC_INFO << "Aborted";
+        TRACE() << Q_FUNC_INFO << "Aborted";
         m_transfer->abort();
     } else
         updateState();
@@ -153,7 +152,7 @@ ContentTransfer::SelectionType ContentTransfer::selectionType() const
 
 void ContentTransfer::setSelectionType(ContentTransfer::SelectionType type)
 {
-    qDebug() << Q_FUNC_INFO << type;
+    TRACE() << Q_FUNC_INFO << type;
     if (!m_transfer)
         return;
 
@@ -169,7 +168,7 @@ void ContentTransfer::setSelectionType(ContentTransfer::SelectionType type)
  */
 QQmlListProperty<ContentItem> ContentTransfer::items()
 {
-    qDebug() << Q_FUNC_INFO;
+    TRACE() << Q_FUNC_INFO;
     if (m_state == Charged) {
         collectItems();
     }
@@ -183,7 +182,7 @@ QQmlListProperty<ContentItem> ContentTransfer::items()
  */
 bool ContentTransfer::start()
 {
-    qDebug() << Q_FUNC_INFO << m_transfer->id() << ":" << m_state;
+    TRACE() << Q_FUNC_INFO << m_transfer->id() << ":" << m_state;
     if (m_state == Created) {
         return m_transfer->start();
     } else {
@@ -199,7 +198,7 @@ bool ContentTransfer::start()
  */
 bool ContentTransfer::finalize()
 {
-    qDebug() << Q_FUNC_INFO;
+    TRACE() << Q_FUNC_INFO;
     return m_transfer->finalize();
 }
 
@@ -209,13 +208,13 @@ bool ContentTransfer::finalize()
  */
 const QString ContentTransfer::store() const
 {
-    qDebug() << Q_FUNC_INFO;
+    TRACE() << Q_FUNC_INFO;
     return m_transfer->store().uri();
 }
 
 void ContentTransfer::setStore(ContentStore* contentStore)
 {
-    qDebug() << Q_FUNC_INFO;
+    TRACE() << Q_FUNC_INFO;
 
     if (!m_transfer)
     {
@@ -234,7 +233,7 @@ void ContentTransfer::setStore(ContentStore* contentStore)
  */
 com::ubuntu::content::Transfer *ContentTransfer::transfer() const
 {
-    qDebug() << Q_FUNC_INFO;
+    TRACE() << Q_FUNC_INFO;
     return m_transfer;
 }
 
@@ -256,7 +255,7 @@ void ContentTransfer::setTransfer(com::ubuntu::content::Transfer *transfer)
 
     m_transfer = transfer;
     m_direction = static_cast<ContentTransfer::Direction>(transfer->direction());
-    qDebug() << Q_FUNC_INFO << "Direction:" << m_direction;
+    TRACE() << Q_FUNC_INFO << "Direction:" << m_direction;
 
     connect(m_transfer, SIGNAL(selectionTypeChanged()), this, SLOT(updateSelectionType()));
     connect(m_transfer, SIGNAL(storeChanged()), this, SLOT(updateStore()));
@@ -278,7 +277,7 @@ void ContentTransfer::setTransfer(com::ubuntu::content::Transfer *transfer)
  */
 void ContentTransfer::collectItems()
 {
-    qDebug() << Q_FUNC_INFO;
+    TRACE() << Q_FUNC_INFO;
     if (m_state != Charged)
         return;
 
@@ -300,11 +299,11 @@ void ContentTransfer::collectItems()
  */
 void ContentTransfer::updateState()
 {
-    qDebug() << Q_FUNC_INFO << m_transfer->state();
+    TRACE() << Q_FUNC_INFO << m_transfer->state();
 
     if (!m_transfer)
     {
-        qDebug() << Q_FUNC_INFO << "Invalid transfer";
+        TRACE() << Q_FUNC_INFO << "Invalid transfer";
         return;
     }
 
@@ -318,10 +317,10 @@ void ContentTransfer::updateState()
  */
 void ContentTransfer::updateSelectionType()
 {
-    qDebug() << Q_FUNC_INFO;
+    TRACE() << Q_FUNC_INFO;
     if (!m_transfer)
     {
-        qDebug() << Q_FUNC_INFO << "Invalid transfer";
+        TRACE() << Q_FUNC_INFO << "Invalid transfer";
         return;
     }
 
@@ -336,10 +335,10 @@ void ContentTransfer::updateSelectionType()
  */
 void ContentTransfer::updateStore()
 {
-    qDebug() << Q_FUNC_INFO;
+    TRACE() << Q_FUNC_INFO;
     if (!m_transfer)
     {
-        qDebug() << Q_FUNC_INFO << "Invalid transfer";
+        TRACE() << Q_FUNC_INFO << "Invalid transfer";
         return;
     }
 

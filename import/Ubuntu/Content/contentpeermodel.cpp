@@ -14,9 +14,8 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
+#include "../../../src/com/ubuntu/content/debug.h"
 #include "contentpeermodel.h"
-
-#include <QDebug>
 
 namespace cuc = com::ubuntu::content;
 
@@ -37,7 +36,7 @@ ContentPeerModel::ContentPeerModel(QObject *parent)
       m_contentType(ContentType::Unknown),
       m_handler(ContentHandler::Source)
 {
-    qDebug() << Q_FUNC_INFO;
+    TRACE() << Q_FUNC_INFO;
     m_hub = cuc::Hub::Client::instance();
 }
 
@@ -48,7 +47,7 @@ ContentPeerModel::ContentPeerModel(QObject *parent)
  */
 ContentType::Type ContentPeerModel::contentType()
 {
-    qDebug() << Q_FUNC_INFO;
+    TRACE() << Q_FUNC_INFO;
     return m_contentType;
 }
 
@@ -58,7 +57,7 @@ ContentType::Type ContentPeerModel::contentType()
  */
 void ContentPeerModel::setContentType(ContentType::Type contentType)
 {
-    qDebug() << Q_FUNC_INFO;
+    TRACE() << Q_FUNC_INFO;
     m_contentType = contentType;
     m_peers.clear();
     if(contentType == ContentType::All) {
@@ -79,7 +78,7 @@ void ContentPeerModel::setContentType(ContentType::Type contentType)
  */
 void ContentPeerModel::appendPeersForContentType(ContentType::Type contentType)
 {
-    qDebug() << Q_FUNC_INFO;
+    TRACE() << Q_FUNC_INFO;
     const cuc::Type &hubType = ContentType::contentType2HubType(contentType);
     QVector<cuc::Peer> hubPeers;
     if (m_handler == ContentHandler::Destination)
@@ -104,7 +103,7 @@ void ContentPeerModel::appendPeersForContentType(ContentType::Type contentType)
  * Returns the ContentHandler 
  */
 ContentHandler::Handler ContentPeerModel::handler() {
-    qDebug() << Q_FUNC_INFO;
+    TRACE() << Q_FUNC_INFO;
     return m_handler;
 }
 
@@ -114,7 +113,7 @@ ContentHandler::Handler ContentPeerModel::handler() {
  */
 void ContentPeerModel::setHandler(ContentHandler::Handler handler)
 {
-    qDebug() << Q_FUNC_INFO;
+    TRACE() << Q_FUNC_INFO;
     m_handler = handler;
     // FIXME: resetting ContentType just to trigger refreshing the model
     setContentType(m_contentType);
@@ -123,7 +122,7 @@ void ContentPeerModel::setHandler(ContentHandler::Handler handler)
 
 QVariantList ContentPeerModel::peers()
 {
-    qDebug() << Q_FUNC_INFO;
+    TRACE() << Q_FUNC_INFO;
     return m_peers;
 }
 

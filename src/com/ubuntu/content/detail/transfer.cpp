@@ -16,14 +16,13 @@
  * Authored by: Thomas Voß <thomas.voss@canonical.com>
  */
 
+#include "debug.h"
 #include "transfer.h"
 #include "utils.cpp"
 
 #include <com/ubuntu/content/hub.h>
 #include <com/ubuntu/content/store.h>
 #include <com/ubuntu/content/transfer.h>
-
-#include <QDebug>
 
 namespace cuc = com::ubuntu::content;
 namespace cucd = com::ubuntu::content::detail;
@@ -62,51 +61,51 @@ cucd::Transfer::Transfer(const int id,
                          QObject* parent) :
     QObject(parent), d(new Private(id, source, destination, direction))
 {
-    qDebug() << __PRETTY_FUNCTION__;
+    TRACE() << __PRETTY_FUNCTION__;
 }
 
 cucd::Transfer::~Transfer()
 {
-    qDebug() << __PRETTY_FUNCTION__;
+    TRACE() << __PRETTY_FUNCTION__;
     purge_store_cache(d->store);
 }
 
 /* unique id of the transfer */
 int cucd::Transfer::Id()
 {
-    qDebug() << __PRETTY_FUNCTION__;
+    TRACE() << __PRETTY_FUNCTION__;
     return d->id;
 }
 
 /* returns the peer_id of the requested export handler */
 QString cucd::Transfer::source()
 {
-    qDebug() << __PRETTY_FUNCTION__;
+    TRACE() << __PRETTY_FUNCTION__;
     return d->source;
 }
 
 /* returns the peer_id of the application requesting the import */
 QString cucd::Transfer::destination()
 {
-    qDebug() << __PRETTY_FUNCTION__;
+    TRACE() << __PRETTY_FUNCTION__;
     return d->destination;
 }
 
 int cucd::Transfer::Direction()
 {
-    qDebug() << __PRETTY_FUNCTION__;
+    TRACE() << __PRETTY_FUNCTION__;
     return d->direction;
 }
 
 int cucd::Transfer::State()
 {
-    qDebug() << __PRETTY_FUNCTION__;
+    TRACE() << __PRETTY_FUNCTION__;
     return d->state;
 }
 
 void cucd::Transfer::Abort()
 {
-    qDebug() << __PRETTY_FUNCTION__;
+    TRACE() << __PRETTY_FUNCTION__;
 
     if (d->state == cuc::Transfer::aborted)
         return;
@@ -119,7 +118,7 @@ void cucd::Transfer::Abort()
 
 void cucd::Transfer::Start()
 {
-    qDebug() << __PRETTY_FUNCTION__;
+    TRACE() << __PRETTY_FUNCTION__;
 
     if (d->state == cuc::Transfer::initiated)
         return;
@@ -130,7 +129,7 @@ void cucd::Transfer::Start()
 
 void cucd::Transfer::Handled()
 {
-    qDebug() << __PRETTY_FUNCTION__;
+    TRACE() << __PRETTY_FUNCTION__;
 
     if (d->state == cuc::Transfer::in_progress)
         return;
@@ -141,7 +140,7 @@ void cucd::Transfer::Handled()
 
 void cucd::Transfer::Charge(const QStringList& items)
 {
-    qDebug() << __PRETTY_FUNCTION__;
+    TRACE() << __PRETTY_FUNCTION__;
 
     if (d->state == cuc::Transfer::charged)
         return;
@@ -151,7 +150,7 @@ void cucd::Transfer::Charge(const QStringList& items)
         ret.append(copy_to_store(i, d->store));
 
     Q_FOREACH(QString f, ret)
-        qDebug() << Q_FUNC_INFO << "Item:" << f;
+        TRACE() << Q_FUNC_INFO << "Item:" << f;
 
     if (ret.count() <= 0)
     {
@@ -168,7 +167,7 @@ void cucd::Transfer::Charge(const QStringList& items)
 
 QStringList cucd::Transfer::Collect()
 {
-    qDebug() << __PRETTY_FUNCTION__;
+    TRACE() << __PRETTY_FUNCTION__;
 
     if (d->state != cuc::Transfer::collected)
     {
@@ -181,7 +180,7 @@ QStringList cucd::Transfer::Collect()
 
 void cucd::Transfer::Finalize()
 {
-    qDebug() << __PRETTY_FUNCTION__;
+    TRACE() << __PRETTY_FUNCTION__;
 
     if (d->state == cuc::Transfer::finalized)
         return;
@@ -194,13 +193,13 @@ void cucd::Transfer::Finalize()
 
 QString cucd::Transfer::Store()
 {
-    qDebug() << __PRETTY_FUNCTION__;
+    TRACE() << __PRETTY_FUNCTION__;
     return d->store;
 }
 
 void cucd::Transfer::SetStore(QString uri)
 {
-    qDebug() << Q_FUNC_INFO;
+    TRACE() << Q_FUNC_INFO;
 
     if (d->store == uri)
         return;
@@ -211,13 +210,13 @@ void cucd::Transfer::SetStore(QString uri)
 
 int cucd::Transfer::SelectionType()
 {
-    qDebug() << __PRETTY_FUNCTION__;
+    TRACE() << __PRETTY_FUNCTION__;
     return d->selection_type;
 }
 
 void cucd::Transfer::SetSelectionType(int type)
 {
-    qDebug() << Q_FUNC_INFO;
+    TRACE() << Q_FUNC_INFO;
     if (d->state != cuc::Transfer::created)
         return;
     if (d->selection_type == type)
@@ -230,7 +229,7 @@ void cucd::Transfer::SetSelectionType(int type)
 /* returns the object path for the export */
 QString cucd::Transfer::export_path()
 {
-    qDebug() << Q_FUNC_INFO << "source:" << d->source;
+    TRACE() << Q_FUNC_INFO << "source:" << d->source;
     static const QString exporter_path_pattern{"/transfers/%1/export/%2"};
     QString source = exporter_path_pattern
             .arg(sanitize_id(d->source))
@@ -241,7 +240,7 @@ QString cucd::Transfer::export_path()
 /* returns the object path for the import */
 QString cucd::Transfer::import_path()
 {
-    qDebug() << Q_FUNC_INFO << "destination:" << d->destination;
+    TRACE() << Q_FUNC_INFO << "destination:" << d->destination;
     static const QString importer_path_pattern{"/transfers/%1/import/%2"};
     QString destination = importer_path_pattern
             .arg(sanitize_id(d->destination))

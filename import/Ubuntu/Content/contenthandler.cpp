@@ -14,9 +14,8 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
+#include "../../../src/com/ubuntu/content/debug.h"
 #include "contenthandler.h"
-
-#include <QDebug>
 
 /*!
    \qmltype ContentHandler
@@ -41,5 +40,5 @@
 ContentHandler::ContentHandler(QObject *parent)
     : QObject(parent)
 {
-    qDebug() << Q_FUNC_INFO;
+    TRACE() << Q_FUNC_INFO;
 }

@@ -68,6 +68,7 @@ add_library(
   transfer.cpp
   type.cpp
   utils.cpp
+  debug.cpp
 
   detail/app_manager.cpp
   detail/service.cpp

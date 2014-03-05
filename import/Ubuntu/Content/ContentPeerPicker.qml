@@ -28,7 +28,7 @@ import Ubuntu.Content 0.1
     This component displays a list of applications, devices and services which
     are appropriate for transfering a given content type with.
 */
-StyledItem {
+Item {
     id: root
     anchors.fill: parent
     visible: false
@@ -54,7 +54,7 @@ StyledItem {
         Item {
             width: units.gu(13.5)
             height: units.gu(16)
-            Item {
+            AbstractButton {
                 width: icon.width
                 height: icon.height + peerLabel.height
                 anchors.centerIn: parent
@@ -74,12 +74,9 @@ StyledItem {
                     font.weight: Font.Bold
                     text: modelData.name || modelData.appId
                 }
-                MouseArea {
-                    anchors.fill: parent
-                    onClicked: {
+                onClicked: {
                         peer = modelData
                         peerSelected()
-                    }
                 }
             }
         }

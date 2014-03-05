@@ -19,6 +19,7 @@
 #include <QCoreApplication>
 
 #include "hook.h"
+#include "debug.h"
 
 namespace cuc = com::ubuntu::content;
 

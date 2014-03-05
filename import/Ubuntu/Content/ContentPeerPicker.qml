@@ -38,6 +38,7 @@ StyledItem {
     property var peer
 
     signal peerSelected
+    signal cancelPressed
 
     Header {
         id: header
@@ -130,13 +131,14 @@ StyledItem {
     Rectangle {
         id: devices
         color: "#FFFFFF"
-        height: (parent.height - devTitle.y - devTitle.height - units.gu(1))
         width: parent.width
         radius: 0
         anchors {
             left: parent.left
             right: parent.right
             top: devTitle.bottom
+            bottom: cancelButton.top
+            bottomMargin: units.gu(1)
         }
 
         Flickable {
@@ -152,5 +154,21 @@ StyledItem {
         }
     }
 
+    Button {
+        id: cancelButton
+        text: "Cancel"
+        anchors {
+            left: parent.left
+            bottom: parent.bottom
+            margins: units.gu(1)
+        }
+        onClicked: {
+            if(root.activeTransfer) {
+                root.activeTransfer.state = ContentTransfer.Aborted;
+            }
+            root.visible = false;
+            cancelPressed();
+        }
+    }
 
 }

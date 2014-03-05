@@ -21,6 +21,9 @@ MainView {
         onPeerSelected: {
             activeTransfer = peer.request();
         }
+        onCancelPressed: {
+            Qt.quit()
+        }
     }
 
     // Provides overlay showing another app is being used to complete the request

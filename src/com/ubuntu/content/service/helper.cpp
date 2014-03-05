@@ -34,6 +34,16 @@ int main(int argc, char** argv)
             return 1;
     }
 
+    /* read environment variables */
+    QProcessEnvironment environment = QProcessEnvironment::systemEnvironment();
+    if (environment.contains(QLatin1String("CONTENT_HUB_LOGGING_LEVEL"))) {
+        bool isOk;
+        int value = environment.value(
+            QLatin1String("CONTENT_HUB_LOGGING_LEVEL")).toInt(&isOk);
+        if (isOk)
+            setLoggingLevel(value);
+    }
+
     new cuc::detail::Hook();
 
     app.exec();

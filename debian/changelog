@@ -1,4 +1,4 @@
-content-hub (0.0+14.04.20140304-0preview1) UNRELEASED; urgency=medium
+content-hub (0.0+14.04.20140304-0preview1) trusty; urgency=medium
 
   * Support for more handler types, including sharing
   * Marshal peer details like name and icon from the service, so confined apps

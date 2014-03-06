@@ -1,17 +1,17 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <schemalist>
   <schema id="com.ubuntu.content.hub.default" path="/com/ubuntu/content/hub/peers/">
-    <key name="pictures" type="s">
-      <default>"gallery-app"</default>
+    <key name="pictures" type="as">
+      <default>["com.ubuntu.gallery", "gallery", "current-user-version"]</default>
     </key>
-    <key name="music" type="s">
-      <default>"music-app"</default>
+    <key name="music" type="as">
+      <default>[]</default>
     </key>
-    <key name="documents" type="s">
-      <default>"notes-app"</default>
+    <key name="documents" type="as">
+      <default>[]</default>
     </key>
-    <key name="contacts" type="s">
-      <default>"address-book-app"</default>
+    <key name="contacts" type="as">
+      <default>[]</default>
     </key>
   </schema>
   <schema id="com.ubuntu.content.hub.all" path="/com/ubuntu/content/hub/peers/">

@@ -1,3 +1,15 @@
+content-hub (0.0+14.04.20140306-0ubuntu1) trusty; urgency=low
+
+  [ Ken VanDine ]
+  * Added Type::Known::contacts. Note: there is no associated default
+    store for contacts under any scope. Data for contacts doesn't
+    persist.
+  * Changed defaults to a triplet used to build the appid. Bumped build
+    depends for libupstart-app-launch2-dev needed for converting the
+    triplet to an appid.
+
+ -- Ubuntu daily release <ps-jenkins@lists.canonical.com>  Thu, 06 Mar 2014 16:50:24 +0000
+
 content-hub (0.0+14.04.20140304-0preview1) trusty; urgency=medium
 
   * Support for more handler types, including sharing

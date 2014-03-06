@@ -28,7 +28,7 @@ import Ubuntu.Content 0.1
     This component displays a list of applications, devices and services which
     are appropriate for transfering a given content type with.
 */
-StyledItem {
+Item {
     id: root
     anchors.fill: parent
     visible: false
@@ -38,6 +38,7 @@ StyledItem {
     property var peer
 
     signal peerSelected
+    signal cancelPressed
 
     Header {
         id: header
@@ -53,7 +54,7 @@ StyledItem {
         Item {
             width: units.gu(13.5)
             height: units.gu(16)
-            Item {
+            AbstractButton {
                 width: icon.width
                 height: icon.height + peerLabel.height
                 anchors.centerIn: parent
@@ -73,12 +74,9 @@ StyledItem {
                     font.weight: Font.Bold
                     text: modelData.name || modelData.appId
                 }
-                MouseArea {
-                    anchors.fill: parent
-                    onClicked: {
+                onClicked: {
                         peer = modelData
                         peerSelected()
-                    }
                 }
             }
         }
@@ -130,13 +128,14 @@ StyledItem {
     Rectangle {
         id: devices
         color: "#FFFFFF"
-        height: (parent.height - devTitle.y - devTitle.height - units.gu(1))
         width: parent.width
         radius: 0
         anchors {
             left: parent.left
             right: parent.right
             top: devTitle.bottom
+            bottom: cancelButton.top
+            bottomMargin: units.gu(1)
         }
 
         Flickable {
@@ -152,5 +151,21 @@ StyledItem {
         }
     }
 
+    Button {
+        id: cancelButton
+        text: "Cancel"
+        anchors {
+            left: parent.left
+            bottom: parent.bottom
+            margins: units.gu(1)
+        }
+        onClicked: {
+            if(root.activeTransfer) {
+                root.activeTransfer.state = ContentTransfer.Aborted;
+            }
+            root.visible = false;
+            cancelPressed();
+        }
+    }
 
 }

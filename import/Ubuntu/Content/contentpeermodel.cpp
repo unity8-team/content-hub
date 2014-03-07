@@ -36,10 +36,30 @@ namespace cuc = com::ubuntu::content;
 ContentPeerModel::ContentPeerModel(QObject *parent)
     : QObject(parent),
       m_contentType(ContentType::Unknown),
-      m_handler(ContentHandler::Source)
+      m_handler(ContentHandler::Source),
+      m_complete(false)
 {
     qDebug() << Q_FUNC_INFO;
     m_hub = cuc::Hub::Client::instance();
+}
+
+/*!
+ * \brief \reimp
+ * \internal
+ */
+void ContentPeerModel::classBegin()
+{
+
+}
+
+/*!
+ * \brief \reimp
+ * \internal
+ */
+void ContentPeerModel::componentComplete()
+{
+    m_complete = true;
+    QTimer::singleShot(0, this, SLOT(findPeers()));
 }
 
 /*!
@@ -61,7 +81,9 @@ void ContentPeerModel::setContentType(ContentType::Type contentType)
 {
     qDebug() << Q_FUNC_INFO;
     m_contentType = contentType;
+    if (m_complete) {
     QTimer::singleShot(0, this, SLOT(findPeers()));
+    }
     Q_EMIT contentTypeChanged();
 }
 
@@ -141,7 +163,9 @@ void ContentPeerModel::setHandler(ContentHandler::Handler handler)
 {
     qDebug() << Q_FUNC_INFO;
     m_handler = handler;
-    QTimer::singleShot(0, this, SLOT(findPeers()));
+    if (m_complete) {
+        QTimer::singleShot(0, this, SLOT(findPeers()));
+    }
     Q_EMIT handlerChanged();
 }
 

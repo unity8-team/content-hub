@@ -101,20 +101,24 @@ void ContentPeerModel::appendPeersForContentType(ContentType::Type contentType)
         hubPeers = m_hub->known_sources_for_type(hubType);
         cuc::Peer defaultPeer;
         defaultPeer = m_hub->default_source_for_type(hubType);
-        ContentPeer *qmlPeer = new ContentPeer();
-        qmlPeer->setPeer(defaultPeer);
-        qmlPeer->setHandler(m_handler);
-        m_peers.prepend(qmlPeer);
-        Q_EMIT peersChanged();
+        if(!defaultPeer.id().isEmpty()) {
+            ContentPeer *qmlPeer = new ContentPeer();
+            qmlPeer->setPeer(defaultPeer);
+            qmlPeer->setHandler(m_handler);
+            m_peers.prepend(qmlPeer);
+            Q_EMIT peersChanged();
+        }
         QCoreApplication::processEvents();
     }
 
     Q_FOREACH (const cuc::Peer &hubPeer, hubPeers) {
-        ContentPeer *qmlPeer = new ContentPeer();
-        qmlPeer->setPeer(hubPeer);
-        qmlPeer->setHandler(m_handler);
-        m_peers.append(qmlPeer);
-        Q_EMIT peersChanged();
+        if(!hubPeer.id().isEmpty()) {
+            ContentPeer *qmlPeer = new ContentPeer();
+            qmlPeer->setPeer(hubPeer);
+            qmlPeer->setHandler(m_handler);
+            m_peers.append(qmlPeer);
+            Q_EMIT peersChanged();
+        }
         QCoreApplication::processEvents();
     }
 }

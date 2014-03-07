@@ -45,9 +45,9 @@ Registry::~Registry() {}
 cuc::Peer Registry::default_source_for_type(cuc::Type type)
 {
     TRACE() << Q_FUNC_INFO << type.id();
-    if (m_defaultPeers->keys().contains(type.id()))
+    if (m_defaultSources->keys().contains(type.id()))
     {
-        QStringList as(m_defaultPeers->get(type.id()).toStringList());
+        QStringList as(m_defaultSources->get(type.id()).toStringList());
         std::string pkg = as[0].toStdString();
         std::string app = as[1].toStdString();
         std::string ver = as[2].toStdString();

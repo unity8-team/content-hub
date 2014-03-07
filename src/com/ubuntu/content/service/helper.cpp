@@ -41,11 +41,13 @@ int main(int argc, char** argv)
         + QString("/")
         + QString("content-hub"));
 
-    if (contentDir.exists()) {
-	new Hook();
-
-	app.exec();
+    if (!contentDir.exists()) {
+	return 0;
     }
+
+    new Hook();
+
+    app.exec();
 
     /* We always want to return 0 */
     return 0;

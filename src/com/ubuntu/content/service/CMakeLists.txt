@@ -24,6 +24,7 @@ include_directories(
   ${CMAKE_SOURCE_DIR}/src
   ${CMAKE_SOURCE_DIR}/src/com/ubuntu/content
   ${GSETTINGS_INCLUDE_DIRS}
+  ${UPSTART_LAUNCH_INCLUDE_DIRS}
 )
 
 add_executable(
@@ -41,6 +42,7 @@ target_link_libraries(
  
   content-hub
   ${GSETTINGS_LDFLAGS}
+  ${UPSTART_LAUNCH_LDFLAGS}
 )
 
 install(
@@ -74,6 +76,7 @@ target_link_libraries(
  
   content-hub
   ${GSETTINGS_LDFLAGS}
+  ${UPSTART_LAUNCH_LDFLAGS}
 )
 
 install(

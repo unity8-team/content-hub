@@ -125,7 +125,6 @@ cuc::Peer cuc::Hub::default_source_for_type(cuc::Type t)
 
     auto peer = reply.value();
     return qdbus_cast<cuc::Peer>(peer.variant());
-    //return cuc::Peer(qdbus_cast<cuc::Peer>(peer.variant()));
 }
 
 QVector<cuc::Peer> cuc::Hub::known_sources_for_type(cuc::Type t)

@@ -74,9 +74,6 @@ void cuc::Hub::register_import_export_handler(cuc::ImportExportHandler* handler)
         return;
     }
 
-    QString instance_id = qgetenv("INSTANCE_ID");
-    qDebug() << Q_FUNC_INFO << "INSTANCE_ID: " << instance_id;
-
     auto c = QDBusConnection::sessionBus();
     auto h = new cuc::detail::Handler(c, id, handler);
 
@@ -90,7 +87,6 @@ void cuc::Hub::register_import_export_handler(cuc::ImportExportHandler* handler)
     }
 
     d->service->RegisterImportExportHandler(
-                instance_id,
                 id,
                 QDBusObjectPath{handler_path(id)});
 }

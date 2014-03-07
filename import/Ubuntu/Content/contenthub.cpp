@@ -214,7 +214,6 @@ ContentTransfer *ContentHub::importContent(int type)
     qDebug() << Q_FUNC_INFO << static_cast<ContentType::Type>(type);
 
     const cuc::Type &hubType = ContentType::contentType2HubType(type);
-//    FIXME show user a selection of possible peers instead
     cuc::Peer hubPeer = m_hub->default_source_for_type(hubType);
 
     return importContent(hubType, hubPeer);
@@ -245,10 +244,6 @@ ContentTransfer* ContentHub::importContent(const com::ubuntu::content::Type& /*h
                                            const com::ubuntu::content::Peer &hubPeer)
 {
     cuc::Transfer *hubTransfer = m_hub->create_import_from_peer(hubPeer);
-// FIXME update tests so this can be enabled
-//    if (!hubTransfer)
-//        return nullptr;
-
     ContentTransfer *qmlTransfer = new ContentTransfer(this);
     qmlTransfer->setTransfer(hubTransfer);
     m_activeImports.insert(hubTransfer, qmlTransfer);
@@ -287,7 +282,6 @@ ContentTransfer *ContentHub::exportContent(int type)
     qDebug() << Q_FUNC_INFO << static_cast<ContentType::Type>(type);
 
     const cuc::Type &hubType = ContentType::contentType2HubType(type);
-    // FIXME: This is the wrong way to get the default peer for exports
     cuc::Peer hubPeer = m_hub->default_source_for_type(hubType);
     return exportContent(hubType, hubPeer);
 }
@@ -394,12 +388,6 @@ void ContentHub::handleImport(com::ubuntu::content::Transfer *transfer)
         Q_EMIT importRequested(qmlTransfer);
     }
 
-
-
-    // FIXME: maybe we need to emit something else here
-//    if (qmlTransfer->state() == ContentTransfer::Charged)
-//        Q_EMIT importRequested(qmlTransfer);
-
     m_finishedImports.append(qmlTransfer);
     Q_EMIT finishedImportsChanged();
 }
@@ -424,10 +412,6 @@ void ContentHub::handleExport(com::ubuntu::content::Transfer *transfer)
                 this, SLOT(updateState()));
         Q_EMIT exportRequested(qmlTransfer);
     }
-
-    // FIXME: maybe we need to emit something else here
-    //if (qmlTransfer->state() == ContentTransfer::InProgress && qmlTransfer->direction() == ContentTransfer::Import)
-    //    Q_EMIT exportRequested(qmlTransfer);
 
     m_finishedImports.append(qmlTransfer);
     Q_EMIT finishedImportsChanged();
@@ -463,16 +447,6 @@ void ContentHub::handleShare(com::ubuntu::content::Transfer *transfer)
 void ContentHub::updateState()
 {
     qDebug() << Q_FUNC_INFO;
-    /* FIXME
-    ContentTransfer *transfer = static_cast<ContentTransfer*>(sender());
-
-    if (transfer->state() == ContentTransfer::Aborted)
-    {
-        qDebug() << Q_FUNC_INFO << "Aborted transfer, removing:" << transfer->transfer()->id();
-        if (m_activeImports.contains(transfer->transfer()))
-            m_activeImports.remove(transfer->transfer());
-    }    
-    */
 }
 
 /*!

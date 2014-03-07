@@ -27,7 +27,7 @@ int main(int argc, char** argv)
 {
     QCoreApplication app(argc, argv);
 
-    qDebug() << Q_FUNC_INFO;
+    TRACE() << Q_FUNC_INFO;
 
     if (app.arguments().count() > 1)
     {

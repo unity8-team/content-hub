@@ -80,7 +80,6 @@ const QString &ContentPeer::appId() const
 void ContentPeer::setAppId(const QString& appId)
 {
     TRACE() << Q_FUNC_INFO << appId;
-    // FIXME: Not sure if it's a good idea to be able to change the peer
     this->setPeer(cuc::Peer{appId});
     m_explicit_app = true;
 }
@@ -126,7 +125,8 @@ void ContentPeer::setPeer(const cuc::Peer &peer)
  *
  * Returns the ContentHandler 
  */
-ContentHandler::Handler ContentPeer::handler() {
+ContentHandler::Handler ContentPeer::handler() 
+{
     TRACE() << Q_FUNC_INFO;
     return m_handler;
 }

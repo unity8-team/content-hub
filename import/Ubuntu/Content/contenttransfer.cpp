@@ -264,11 +264,6 @@ void ContentTransfer::setTransfer(com::ubuntu::content::Transfer *transfer)
     updateSelectionType();
     updateStore();
     updateState();
-
-
-    // FIXME: is this needed?
-    //if (m_state == Charged && m_direction == Import)
-    //    collectItems();
 }
 
 /*!

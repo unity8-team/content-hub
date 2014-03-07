@@ -18,7 +18,6 @@
 
 #include "debug.h"
 #include "service.h"
-
 #include "peer_registry.h"
 #include "transfer.h"
 #include "transferadaptor.h"
@@ -32,6 +31,7 @@
 #include <QDBusMetaType>
 #include <QCache>
 #include <QCoreApplication>
+#include <QDebug>
 #include <QSharedPointer>
 #include <QUuid>
 
@@ -43,16 +43,14 @@ namespace cuc = com::ubuntu::content;
 
 struct cucd::Service::RegHandler
 {
-    RegHandler(QString id, QString service, QString instance, cuc::dbus::Handler* handler) : id(id),
+    RegHandler(QString id, QString service, cuc::dbus::Handler* handler) : id(id),
         service(service),
-        instance(instance),
         handler(handler)
     {
     }
 
     QString id;
     QString service;
-    QString instance;
     cuc::dbus::Handler* handler;
 };
 
@@ -415,7 +413,7 @@ void cucd::Service::handler_unregistered(const QString& s)
     }
 }
 
-void cucd::Service::RegisterImportExportHandler(const QString& instance_id, const QString& peer_id, const QDBusObjectPath& handler)
+void cucd::Service::RegisterImportExportHandler(const QString& peer_id, const QDBusObjectPath& handler)
 {
     TRACE() << Q_FUNC_INFO << peer_id;
     bool exists = false;
@@ -435,7 +433,6 @@ void cucd::Service::RegisterImportExportHandler(const QString& instance_id, cons
     {
         r = new RegHandler{peer_id,
             this->message().service(),
-            instance_id,
             new cuc::dbus::Handler(
                     this->message().service(),
                     handler.path(),
@@ -450,8 +447,6 @@ void cucd::Service::RegisterImportExportHandler(const QString& instance_id, cons
     Q_FOREACH (cucd::Transfer *t, d->active_transfers)
     {
         TRACE() << Q_FUNC_INFO << "SOURCE: " << t->source() << "DEST:" << t->destination() << "STATE:" << t->State();
-        // FIXME: Don't check instance_id because we can't handle multiple instances yet
-        //if ((t->source() == peer_id) && (t->InstanceId() == instance_id))
         if ((t->source() == peer_id) && (t->State() == cuc::Transfer::initiated))
         {
             TRACE() << Q_FUNC_INFO << "Found source:" << peer_id << "Direction:" << t->Direction();

@@ -15,6 +15,7 @@
  */
 
 #include "contentpeermodel.h"
+#include <stdio.h>
 
 #include <QDebug>
 
@@ -60,17 +61,27 @@ void ContentPeerModel::setContentType(ContentType::Type contentType)
 {
     qDebug() << Q_FUNC_INFO;
     m_contentType = contentType;
+    QTimer::singleShot(0, this, SLOT(findPeers()));
+    Q_EMIT contentTypeChanged();
+}
+
+/*!
+ * \brief ContentPeerModel::findPeers
+ * \internal
+ */
+void ContentPeerModel::findPeers() {
+    qDebug() << Q_FUNC_INFO;
     m_peers.clear();
-    if(contentType == ContentType::All) {
+    QCoreApplication::processEvents();
+    if(m_contentType == ContentType::All) {
         appendPeersForContentType(ContentType::Unknown);
         appendPeersForContentType(ContentType::Documents);
         appendPeersForContentType(ContentType::Pictures);
         appendPeersForContentType(ContentType::Music);
         appendPeersForContentType(ContentType::Contacts);
     } else {
-        appendPeersForContentType(contentType);
+        appendPeersForContentType(m_contentType);
     }
-    Q_EMIT contentTypeChanged();
 }
 
 /*!
@@ -93,7 +104,7 @@ void ContentPeerModel::appendPeersForContentType(ContentType::Type contentType)
         ContentPeer *qmlPeer = new ContentPeer();
         qmlPeer->setPeer(defaultPeer);
         qmlPeer->setHandler(m_handler);
-        m_peers.prepend(QVariant::fromValue(qmlPeer));
+        m_peers.prepend(qmlPeer);
         Q_EMIT peersChanged();
         QCoreApplication::processEvents();
     }
@@ -102,11 +113,10 @@ void ContentPeerModel::appendPeersForContentType(ContentType::Type contentType)
         ContentPeer *qmlPeer = new ContentPeer();
         qmlPeer->setPeer(hubPeer);
         qmlPeer->setHandler(m_handler);
-        m_peers.append(QVariant::fromValue(qmlPeer));
+        m_peers.append(qmlPeer);
         Q_EMIT peersChanged();
         QCoreApplication::processEvents();
     }
-    Q_EMIT peersChanged();
 }
 
 /*!
@@ -127,14 +137,13 @@ void ContentPeerModel::setHandler(ContentHandler::Handler handler)
 {
     qDebug() << Q_FUNC_INFO;
     m_handler = handler;
-    // FIXME: resetting ContentType just to trigger refreshing the model
-    setContentType(m_contentType);
+    QTimer::singleShot(0, this, SLOT(findPeers()));
     Q_EMIT handlerChanged();
 }
 
-QVariantList ContentPeerModel::peers()
+QQmlListProperty<ContentPeer> ContentPeerModel::peers()
 {
     qDebug() << Q_FUNC_INFO;
-    return m_peers;
+    return QQmlListProperty<ContentPeer>(this, m_peers);
 }
 

@@ -23,14 +23,15 @@
 #include <com/ubuntu/content/hub.h>
 
 #include <QObject>
-#include <QVariantList>
+#include <QVariant>
+#include <QQmlListProperty>
 
 class ContentPeerModel : public QObject
 {
     Q_OBJECT
     Q_PROPERTY(ContentType::Type contentType READ contentType WRITE setContentType NOTIFY contentTypeChanged)
     Q_PROPERTY(ContentHandler::Handler handler READ handler WRITE setHandler NOTIFY handlerChanged)
-    Q_PROPERTY(QVariantList peers READ peers NOTIFY peersChanged)
+    Q_PROPERTY(QQmlListProperty<ContentPeer> peers READ peers NOTIFY peersChanged)
 
 public:
     ContentPeerModel(QObject *parent = nullptr);
@@ -40,18 +41,21 @@ public:
     void appendPeersForContentType(ContentType::Type contentType);
     ContentHandler::Handler handler();
     void setHandler(ContentHandler::Handler handler);
-    QVariantList peers();
+    QQmlListProperty<ContentPeer> peers();
 
 Q_SIGNALS:
     void contentTypeChanged();
     void handlerChanged();
     void peersChanged();
 
+public Q_SLOTS:
+    void findPeers();
+
 private:
     com::ubuntu::content::Hub *m_hub;
     ContentType::Type m_contentType;
     ContentHandler::Handler m_handler;
-    QVariantList m_peers;
+    QList<ContentPeer *> m_peers;
 };
 
 #endif // COM_UBUNTU_CONTENTPEERMODEL_H_

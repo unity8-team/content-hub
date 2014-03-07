@@ -32,8 +32,8 @@ Item {
     id: root
     anchors.fill: parent
     visible: false
-    property alias contentType: peerModel.contentType
     property alias handler: peerModel.handler
+    property alias contentType: peerModel.contentType
     property alias showTitle: header.visible
     property var peer
 

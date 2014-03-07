@@ -229,12 +229,6 @@ void ContentHub::handleImport(com::ubuntu::content::Transfer *transfer)
         Q_EMIT importRequested(qmlTransfer);
     }
 
-
-
-    // FIXME: maybe we need to emit something else here
-//    if (qmlTransfer->state() == ContentTransfer::Charged)
-//        Q_EMIT importRequested(qmlTransfer);
-
     m_finishedImports.append(qmlTransfer);
     Q_EMIT finishedImportsChanged();
 }
@@ -259,10 +253,6 @@ void ContentHub::handleExport(com::ubuntu::content::Transfer *transfer)
                 this, SLOT(updateState()));
         Q_EMIT exportRequested(qmlTransfer);
     }
-
-    // FIXME: maybe we need to emit something else here
-    //if (qmlTransfer->state() == ContentTransfer::InProgress && qmlTransfer->direction() == ContentTransfer::Import)
-    //    Q_EMIT exportRequested(qmlTransfer);
 
     m_finishedImports.append(qmlTransfer);
     Q_EMIT finishedImportsChanged();
@@ -298,16 +288,6 @@ void ContentHub::handleShare(com::ubuntu::content::Transfer *transfer)
 void ContentHub::updateState()
 {
     qDebug() << Q_FUNC_INFO;
-    /* FIXME
-    ContentTransfer *transfer = static_cast<ContentTransfer*>(sender());
-
-    if (transfer->state() == ContentTransfer::Aborted)
-    {
-        qDebug() << Q_FUNC_INFO << "Aborted transfer, removing:" << transfer->transfer()->id();
-        if (m_activeImports.contains(transfer->transfer()))
-            m_activeImports.remove(transfer->transfer());
-    }    
-    */
 }
 
 /*!

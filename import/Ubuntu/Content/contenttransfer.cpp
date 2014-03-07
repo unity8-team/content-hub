@@ -265,11 +265,6 @@ void ContentTransfer::setTransfer(com::ubuntu::content::Transfer *transfer)
     updateSelectionType();
     updateStore();
     updateState();
-
-
-    // FIXME: is this needed?
-    //if (m_state == Charged && m_direction == Import)
-    //    collectItems();
 }
 
 /*!
@@ -304,7 +299,7 @@ void ContentTransfer::updateState()
 
     if (!m_transfer)
     {
-        qDebug() << Q_FUNC_INFO << "Invalid transfer";
+        qWarning() << Q_FUNC_INFO << "Invalid transfer";
         return;
     }
 
@@ -321,7 +316,7 @@ void ContentTransfer::updateSelectionType()
     qDebug() << Q_FUNC_INFO;
     if (!m_transfer)
     {
-        qDebug() << Q_FUNC_INFO << "Invalid transfer";
+        qWarning() << Q_FUNC_INFO << "Invalid transfer";
         return;
     }
 
@@ -339,7 +334,7 @@ void ContentTransfer::updateStore()
     qDebug() << Q_FUNC_INFO;
     if (!m_transfer)
     {
-        qDebug() << Q_FUNC_INFO << "Invalid transfer";
+        qWarning() << Q_FUNC_INFO << "Invalid transfer";
         return;
     }
 

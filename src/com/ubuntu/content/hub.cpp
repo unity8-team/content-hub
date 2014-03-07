@@ -74,9 +74,6 @@ void cuc::Hub::register_import_export_handler(cuc::ImportExportHandler* handler)
         return;
     }
 
-    QString instance_id = qgetenv("INSTANCE_ID");
-    qDebug() << Q_FUNC_INFO << "INSTANCE_ID: " << instance_id;
-
     auto c = QDBusConnection::sessionBus();
     auto h = new cuc::detail::Handler(c, id, handler);
 
@@ -90,7 +87,6 @@ void cuc::Hub::register_import_export_handler(cuc::ImportExportHandler* handler)
     }
 
     d->service->RegisterImportExportHandler(
-                instance_id,
                 id,
                 QDBusObjectPath{handler_path(id)});
 }
@@ -129,7 +125,6 @@ cuc::Peer cuc::Hub::default_source_for_type(cuc::Type t)
 
     auto peer = reply.value();
     return qdbus_cast<cuc::Peer>(peer.variant());
-    //return cuc::Peer(qdbus_cast<cuc::Peer>(peer.variant()));
 }
 
 QVector<cuc::Peer> cuc::Hub::known_sources_for_type(cuc::Type t)

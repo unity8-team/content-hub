@@ -115,13 +115,13 @@ void ContentPeerModel::appendPeersForContentType(ContentType::Type contentType)
     qDebug() << Q_FUNC_INFO;
     const cuc::Type &hubType = ContentType::contentType2HubType(contentType);
     QVector<cuc::Peer> hubPeers;
+    cuc::Peer defaultPeer;
     if (m_handler == ContentHandler::Destination) {
         hubPeers = m_hub->known_destinations_for_type(hubType);
     } else if (m_handler == ContentHandler::Share) {
         hubPeers = m_hub->known_shares_for_type(hubType);
     } else {
         hubPeers = m_hub->known_sources_for_type(hubType);
-        cuc::Peer defaultPeer;
         defaultPeer = m_hub->default_source_for_type(hubType);
         if(!defaultPeer.id().isEmpty()) {
             ContentPeer *qmlPeer = new ContentPeer();
@@ -134,7 +134,7 @@ void ContentPeerModel::appendPeersForContentType(ContentType::Type contentType)
     }
 
     Q_FOREACH (const cuc::Peer &hubPeer, hubPeers) {
-        if(!hubPeer.id().isEmpty()) {
+        if(!hubPeer.id().isEmpty() && defaultPeer.id() != hubPeer.id()) {
             ContentPeer *qmlPeer = new ContentPeer();
             qmlPeer->setPeer(hubPeer);
             qmlPeer->setHandler(m_handler);

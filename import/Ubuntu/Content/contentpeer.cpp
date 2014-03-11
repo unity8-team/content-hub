@@ -80,7 +80,6 @@ const QString &ContentPeer::appId() const
 void ContentPeer::setAppId(const QString& appId)
 {
     qDebug() << Q_FUNC_INFO << appId;
-    // FIXME: Not sure if it's a good idea to be able to change the peer
     this->setPeer(cuc::Peer{appId});
     m_explicit_app = true;
 }

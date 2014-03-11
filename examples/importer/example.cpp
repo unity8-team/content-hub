@@ -30,8 +30,7 @@ void Example::create_import()
 {
     auto hub = cuc::Hub::Client::instance();
 
-    //auto peer = hub->default_peer_for_type(cuc::Type::Known::pictures());
-    auto peer = cuc::Peer{"com.ubuntu.developer.ken-vandine.hub-exporter_hub-exporter_0.1"};
+    auto peer = hub->default_source_for_type(cuc::Type::Known::pictures());
 
     qDebug() << Q_FUNC_INFO << "PEER: " << peer.name();
 

@@ -161,14 +161,12 @@ MainView {
         activeTransfer: activeTransfer
     }
 
-    /*
     Connections {
         target: ContentHub
         onExportRequested: {
             activeTransfer = transfer
         }
     }
-    */
 
     ListItem.Empty {
         id: pickerButtons

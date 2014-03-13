@@ -6,13 +6,18 @@ import Ubuntu.Content 0.1
 
 MainView {
     id: root
-    applicationName: "app-exporter"
+    applicationName: "com.ubuntu.developer.ken-vandine.hub-exporter"
     width: units.gu(50)
     height: units.gu(60)
 
     property bool pickMode: activeTransfer.state === ContentTransfer.InProgress
     property var selectedItems: []
     property var activeTransfer
+
+    function __returnResult() {
+        activeTransfer.items = selectedItems;
+        activeTransfer.state = ContentTransfer.Charged;
+    }
 
     ListModel {
         id: images
@@ -117,26 +122,24 @@ MainView {
                     contentWidth: childrenRect.width
 
                     actions: ActionList {
-                        Action {
-                            text: "Open with..."
-                            onTriggered: {
-                                print(text + ": " + src);
-                                activeTransfer = picDest.request();
-                                activeTransfer.items = [ resultComponent.createObject(root, {"url": src}) ];
-                                activeTransfer.state = ContentTransfer.Charged;
-                                actPop.hide();
-                            }
-                        }
-                        Action {
-                            text: "Share"
-                            onTriggered: {
-                                print(text + ": " + src);
-                                activeTransfer = picShare.request();
-                                activeTransfer.items = [ resultComponent.createObject(root, {"url": src}) ];
-                                activeTransfer.state = ContentTransfer.Charged;
-                                actPop.hide();
-                            }
-                        }
+                      Action {
+                          text: "Open with..."
+                          onTriggered: {
+                              print(text + ": " + src);
+                              activeTransfer = ContentHub.exportContent(ContentType.Pictures, picDest);
+                              activeTransfer.items = [ resultComponent.createObject(root, {"url": src}) ];
+                              actPop.hide();
+                          }
+                      }
+                      Action {
+                          text: "Share"
+                          onTriggered: {
+                              print(text + ": " + src);
+                              activeTransfer = ContentHub.shareContent(ContentType.Pictures, picShare);
+                              activeTransfer.items = [ resultComponent.createObject(root, {"url": src}) ];
+                              actPop.hide();
+                          }
+                      }
                     }
                 }
             }
@@ -145,27 +148,15 @@ MainView {
 
     ContentPeer {
         id: picDest
-        // well know content type
-        contentType: ContentType.Pictures
-        // Type of handler: Source, Destination, or Share
-        handler: ContentHandler.Destination
-        // Optional appId, if this isn't specified the hub will use the default
-        //appId: ""
+        appId: "com.ubuntu.developer.ken-vandine.hub-importer_hub-importer_0.2"
     }
 
     ContentPeer {
         id: picShare
-        // well know content type
-        contentType: ContentType.Pictures
-        // Type of handler: Source, Destination, or Share
-        handler: ContentHandler.Share
-        // Optional appId, if this isn't specified the hub will use the default
-        appId: "pkg_app_version"
+        appId: "com.ubuntu.developer.ken-vandine.hub-share_hub-share_0.2"
     }
 
-    // Provides overlay showing another app is being used to complete the request
-    // formerly named ContentImportHint
-    ContentTransferHint {
+    ContentImportHint {
         anchors.fill: parent
         activeTransfer: activeTransfer
     }

@@ -51,6 +51,8 @@ class Peer : public QObject
     Q_INVOKABLE void setName(const QString&);
     Q_INVOKABLE virtual QImage icon() const;
     Q_INVOKABLE void setIcon(const QImage&);
+    Q_INVOKABLE virtual QByteArray iconData() const;
+    Q_INVOKABLE void setIconData(const QByteArray&);
     Q_INVOKABLE virtual QString iconName() const;
     Q_INVOKABLE void setIconName(const QString&);
 

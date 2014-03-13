@@ -39,9 +39,13 @@ struct cuc::Peer::Private
                 if (G_IS_ICON(ic))
                 {
                     iconName = QString::fromUtf8(g_icon_to_string(ic));
-
-                    if (QFile::exists(iconName))
-                        icon = QImage(iconName);
+                    if (QFile::exists(iconName)) {
+                        QFile iconFile(iconName);
+                        if(iconFile.open(QIODevice::ReadOnly)) {
+                            iconData = iconFile.readAll();
+                            iconFile.close();
+                        }
+                    }
                     g_object_unref(ic);
                 }
 
@@ -53,6 +57,7 @@ struct cuc::Peer::Private
     QString id;
     QString name;
     QImage icon;
+    QByteArray iconData;
     QString iconName;
 };
 
@@ -116,6 +121,17 @@ void cuc::Peer::setIcon(const QImage& icon)
         d->icon = icon;
 }
 
+QByteArray cuc::Peer::iconData() const
+{
+    return d->iconData;
+}
+
+void cuc::Peer::setIconData(const QByteArray& iconData)
+{
+    if (iconData != d->iconData)
+        d->iconData = iconData;
+}
+
 QString cuc::Peer::iconName() const
 {
     return d->iconName;
@@ -129,14 +145,8 @@ void cuc::Peer::setIconName(const QString& iconName)
 
 QDBusArgument &operator<<(QDBusArgument &argument, const cuc::Peer& peer)
 {
-    QImage i = peer.icon();
-    QByteArray ba;
-    QBuffer buffer(&ba);
-    buffer.open(QIODevice::WriteOnly);
-    i.save(&buffer,"PNG");
-
     argument.beginStructure();
-    argument << peer.id() << peer.name() << ba << peer.iconName();
+    argument << peer.id() << peer.name() << peer.iconData() << peer.iconName();
     argument.endStructure();
     return argument;
 }
@@ -154,7 +164,7 @@ const QDBusArgument &operator>>(const QDBusArgument &argument, cuc::Peer &peer)
     argument.endStructure();
 
     QImage icon;
-    bool ret = icon.loadFromData(reinterpret_cast<const uchar*>(ic.constData()), ic.size(), "png");
+    bool ret = icon.loadFromData(reinterpret_cast<const uchar*>(ic.constData()), ic.size());
     if (ret)
         qDebug() << Q_FUNC_INFO << "SUCCESS";
     else
@@ -163,6 +173,7 @@ const QDBusArgument &operator>>(const QDBusArgument &argument, cuc::Peer &peer)
     peer = cuc::Peer{id};
     peer.setName(name);
     peer.setIcon(icon);
+    peer.setIconData(ic);
     peer.setIconName(iconName);
     return argument;
 }

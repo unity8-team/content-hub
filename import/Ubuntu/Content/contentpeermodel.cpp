@@ -115,30 +115,27 @@ void ContentPeerModel::appendPeersForContentType(ContentType::Type contentType)
     qDebug() << Q_FUNC_INFO;
     const cuc::Type &hubType = ContentType::contentType2HubType(contentType);
     QVector<cuc::Peer> hubPeers;
-    cuc::Peer defaultPeer;
     if (m_handler == ContentHandler::Destination) {
         hubPeers = m_hub->known_destinations_for_type(hubType);
     } else if (m_handler == ContentHandler::Share) {
         hubPeers = m_hub->known_shares_for_type(hubType);
     } else {
         hubPeers = m_hub->known_sources_for_type(hubType);
-        defaultPeer = m_hub->default_source_for_type(hubType);
-        if(!defaultPeer.id().isEmpty()) {
-            ContentPeer *qmlPeer = new ContentPeer();
-            qmlPeer->setPeer(defaultPeer);
-            qmlPeer->setHandler(m_handler);
-            m_peers.prepend(qmlPeer);
-            Q_EMIT peersChanged();
-        }
-        QCoreApplication::processEvents();
     }
 
-    Q_FOREACH (const cuc::Peer &hubPeer, hubPeers) {
-        if(!hubPeer.id().isEmpty() && defaultPeer.id() != hubPeer.id()) {
+    Q_FOREACH (const cuc::Peer &hubPeer, hubPeers) 
+    {
+        if(!hubPeer.id().isEmpty()) 
+        {
             ContentPeer *qmlPeer = new ContentPeer();
             qmlPeer->setPeer(hubPeer);
             qmlPeer->setHandler(m_handler);
-            m_peers.append(qmlPeer);
+            if(qmlPeer->defaultPeer()) 
+            {
+                m_peers.prepend(qmlPeer);
+            } else {
+                m_peers.append(qmlPeer);
+            }
             Q_EMIT peersChanged();
         }
         QCoreApplication::processEvents();
@@ -150,7 +147,8 @@ void ContentPeerModel::appendPeersForContentType(ContentType::Type contentType)
  *
  * Returns the ContentHandler 
  */
-ContentHandler::Handler ContentPeerModel::handler() {
+ContentHandler::Handler ContentPeerModel::handler() 
+{
     qDebug() << Q_FUNC_INFO;
     return m_handler;
 }

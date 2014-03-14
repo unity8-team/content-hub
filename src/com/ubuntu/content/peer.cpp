@@ -25,7 +25,7 @@ namespace cuc = com::ubuntu::content;
 
 struct cuc::Peer::Private
 {
-    Private (QString id) : id(id)
+    Private (QString id, bool defaultPeer) : id(id), defaultPeer(defaultPeer)
     {
         qDebug() << Q_FUNC_INFO << id;
         if (name.isEmpty())
@@ -58,6 +58,7 @@ struct cuc::Peer::Private
     QString name;
     QByteArray iconData;
     QString iconName;
+    bool defaultPeer;
 };
 
 const cuc::Peer& cuc::Peer::unknown()
@@ -66,7 +67,7 @@ const cuc::Peer& cuc::Peer::unknown()
     return peer;
 }
 
-cuc::Peer::Peer(const QString& id, QObject* parent) : QObject(parent), d(new cuc::Peer::Private{id})
+cuc::Peer::Peer(const QString& id, bool defaultPeer, QObject* parent) : QObject(parent), d(new cuc::Peer::Private{id, defaultPeer})
 {
     qDebug() << Q_FUNC_INFO;
 }
@@ -131,10 +132,15 @@ void cuc::Peer::setIconName(const QString& iconName)
         d->iconName = iconName;
 }
 
+bool cuc::Peer::defaultPeer() const
+{
+    return d->defaultPeer;
+}
+
 QDBusArgument &operator<<(QDBusArgument &argument, const cuc::Peer& peer)
 {
     argument.beginStructure();
-    argument << peer.id() << peer.name() << peer.iconData() << peer.iconName();
+    argument << peer.id() << peer.name() << peer.iconData() << peer.iconName() << peer.defaultPeer();
     argument.endStructure();
     return argument;
 }
@@ -146,12 +152,14 @@ const QDBusArgument &operator>>(const QDBusArgument &argument, cuc::Peer &peer)
     QString name;
     QByteArray ic;
     QString iconName;
+    bool defaultPeer;
 
     argument.beginStructure();
-    argument >> id >> name >> ic >> iconName;
+    argument >> id >> name >> ic >> iconName >> defaultPeer;
     argument.endStructure();
+    qDebug() << "Default peer: " << defaultPeer;
 
-    peer = cuc::Peer{id};
+    peer = cuc::Peer{id, defaultPeer};
     peer.setName(name);
     peer.setIconData(ic);
     peer.setIconName(iconName);

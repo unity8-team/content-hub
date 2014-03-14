@@ -194,6 +194,16 @@ void ContentPeer::setSelectionType(ContentTransfer::SelectionType selectionType)
 }
 
 /*!
+ * \brief ContentPeer::defaultPeer
+ * \internal
+ */
+bool ContentPeer::defaultPeer()
+{
+    qDebug() << Q_FUNC_INFO;
+    return m_peer.defaultPeer();
+}
+
+/*!
  * \qmlmethod ContentPeer::request()
  * \overload ContentPeer::request(ContentStore)
  *

@@ -11,7 +11,7 @@
       <default>[]</default>
     </key>
     <key name="contacts" type="as">
-      <default>["com.ubuntu.address-book", "address-book", "current-user-version"]</default>
+      <default>["address-book-app", "", ""]</default>
     </key>
   </schema>
   <schema id="com.ubuntu.content.hub.source" path="/com/ubuntu/content/hub/source/">

@@ -56,7 +56,6 @@ struct cuc::Peer::Private
 
     QString id;
     QString name;
-    QImage icon;
     QByteArray iconData;
     QString iconName;
 };
@@ -110,17 +109,6 @@ void cuc::Peer::setName(const QString& name)
         d->name = name;
 }
 
-QImage cuc::Peer::icon() const
-{
-    return d->icon;
-}
-
-void cuc::Peer::setIcon(const QImage& icon)
-{
-    if (icon != d->icon)
-        d->icon = icon;
-}
-
 QByteArray cuc::Peer::iconData() const
 {
     return d->iconData;
@@ -163,16 +151,8 @@ const QDBusArgument &operator>>(const QDBusArgument &argument, cuc::Peer &peer)
     argument >> id >> name >> ic >> iconName;
     argument.endStructure();
 
-    QImage icon;
-    bool ret = icon.loadFromData(reinterpret_cast<const uchar*>(ic.constData()), ic.size());
-    if (ret)
-        qDebug() << Q_FUNC_INFO << "SUCCESS";
-    else
-        qDebug() << Q_FUNC_INFO << "FAIL";
-
     peer = cuc::Peer{id};
     peer.setName(name);
-    peer.setIcon(icon);
     peer.setIconData(ic);
     peer.setIconName(iconName);
     return argument;

@@ -107,12 +107,12 @@ void ContentPeer::setPeer(const cuc::Peer &peer)
 {
     qDebug() << Q_FUNC_INFO;
     m_peer = peer;
-    if (peer.icon().isNull())
+    if (peer.iconData().isEmpty())
     {
         if (QIcon::hasThemeIcon(peer.iconName().toUtf8()))
             m_icon = QIcon::fromTheme(peer.iconName().toUtf8()).pixmap(256).toImage();
     } else
-        m_icon = peer.icon();
+        m_icon.loadFromData(peer.iconData());
     ContentIconProvider *iconProvider = ContentIconProvider::instance();
     iconProvider->addImage(appId(), m_icon);
 

@@ -104,6 +104,7 @@ void ContentPeerModel::findPeers() {
     } else {
         appendPeersForContentType(m_contentType);
     }
+    Q_EMIT findPeersCompleted();
 }
 
 /*!

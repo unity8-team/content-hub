@@ -40,6 +40,7 @@ class ContentPeer : public QObject
 
 public:
     ContentPeer(QObject *parent = nullptr);
+    ContentPeer(ContentType::Type type, QObject *parent);
 
     Q_INVOKABLE ContentTransfer* request();
     Q_INVOKABLE ContentTransfer* request(ContentStore *store);
@@ -71,6 +72,8 @@ Q_SIGNALS:
     void selectionTypeChanged();
 
 private:
+    void init();
+
     com::ubuntu::content::Hub *m_hub;
     com::ubuntu::content::Peer m_peer;
     ContentHandler::Handler m_handler;

@@ -46,7 +46,14 @@ ContentStore::ContentStore(QObject *parent)
  */
 const QString &ContentStore::uri() const
 {
+    static const QString __empty;
+
     qDebug() << Q_FUNC_INFO;
+
+    if ( ! m_store) {
+        qWarning() << "Accessing ContentStore uri with NULL internal store";
+        return __empty;
+    }
     return m_store->uri();
 }
 

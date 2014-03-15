@@ -38,16 +38,23 @@
 
 namespace cuc = com::ubuntu::content;
 
-ContentPeer::ContentPeer(QObject *parent)
+
+ContentPeer::ContentPeer(ContentType::Type type,
+			 QObject *parent)
     : QObject(parent),
-      m_peer(0),
-      m_handler(ContentHandler::Source),
-      m_contentType(ContentType::Unknown),
-      m_selectionType(ContentTransfer::Single),
-      m_explicit_app(false)
+      m_peer(0)
 {
     qDebug() << Q_FUNC_INFO;
-    m_hub = cuc::Hub::Client::instance();
+    init();
+    m_contentType = type;
+}
+
+ContentPeer::ContentPeer(QObject *parent)
+    : QObject(parent),
+      m_peer(0)
+{
+    qDebug() << Q_FUNC_INFO;
+    init();
 }
 
 /*!
@@ -245,5 +252,20 @@ ContentTransfer *ContentPeer::request(ContentStore *store)
         qmlTransfer->start();
 
     return qmlTransfer;
+}
+
+/*!
+ * \internal
+ */
+void ContentPeer::init()
+{
+    qDebug() << Q_FUNC_INFO;
+
+    m_handler = ContentHandler::Source;
+    m_contentType = ContentType::Unknown;
+    m_selectionType = ContentTransfer::Single;
+    m_explicit_app = false;
+
+    m_hub = cuc::Hub::Client::instance();
 }
 

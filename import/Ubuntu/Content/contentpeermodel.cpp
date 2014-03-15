@@ -104,6 +104,7 @@ void ContentPeerModel::findPeers() {
     } else {
         appendPeersForContentType(m_contentType);
     }
+    Q_EMIT findPeersCompleted();
 }
 
 /*!
@@ -127,7 +128,7 @@ void ContentPeerModel::appendPeersForContentType(ContentType::Type contentType)
     {
         if(!hubPeer.id().isEmpty()) 
         {
-            ContentPeer *qmlPeer = new ContentPeer();
+            ContentPeer *qmlPeer = new ContentPeer(contentType, nullptr);
             qmlPeer->setPeer(hubPeer);
             qmlPeer->setHandler(m_handler);
             if(qmlPeer->defaultPeer()) 

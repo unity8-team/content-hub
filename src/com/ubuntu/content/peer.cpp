@@ -157,7 +157,6 @@ const QDBusArgument &operator>>(const QDBusArgument &argument, cuc::Peer &peer)
     argument.beginStructure();
     argument >> id >> name >> ic >> iconName >> defaultPeer;
     argument.endStructure();
-    qDebug() << "Default peer: " << defaultPeer;
 
     peer = cuc::Peer{id, defaultPeer};
     peer.setName(name);

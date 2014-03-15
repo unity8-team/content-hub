@@ -131,7 +131,6 @@ void ContentPeerModel::appendPeersForContentType(ContentType::Type contentType)
             ContentPeer *qmlPeer = new ContentPeer(contentType, nullptr);
             qmlPeer->setPeer(hubPeer);
             qmlPeer->setHandler(m_handler);
-            qmlPeer->setHandler(m_handler);
             if(qmlPeer->defaultPeer()) 
             {
                 m_peers.prepend(qmlPeer);

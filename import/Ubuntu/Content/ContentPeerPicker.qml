@@ -127,12 +127,14 @@ Item {
         Flickable {
             anchors.fill: parent
 
-            GridView {
-                anchors.fill: parent
+            ResponsiveGridView {
                 id: appPeers
-                header: Item { height: units.gu(2) }
-                cellWidth: units.gu(13.5)
-                cellHeight: units.gu(16)
+                anchors.fill: parent
+                minimumHorizontalSpacing: units.gu(0.5)
+                maximumNumberOfColumns: 6
+                delegateWidth: units.gu(11)
+                delegateHeight: units.gu(9.5)
+                verticalSpacing: units.gu(2)
                 model: peerModel.peers
                 delegate: peerDelegate
             }

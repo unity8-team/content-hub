@@ -36,7 +36,7 @@ class ContentPeer : public QObject
     Q_PROPERTY(ContentType::Type contentType READ contentType WRITE setContentType NOTIFY contentTypeChanged)
     Q_PROPERTY(ContentTransfer::SelectionType selectionType READ selectionType WRITE setSelectionType NOTIFY selectionTypeChanged)
     Q_PROPERTY(QImage icon READ icon)
-    Q_PROPERTY(bool defaultPeer READ defaultPeer)
+    Q_PROPERTY(bool isDefaultPeer READ isDefaultPeer)
 
 public:
     ContentPeer(QObject *parent = nullptr);
@@ -62,7 +62,7 @@ public:
     ContentTransfer::SelectionType selectionType();
     void setSelectionType(ContentTransfer::SelectionType selectionType);
 
-    bool defaultPeer();
+    bool isDefaultPeer();
 
 Q_SIGNALS:
     void nameChanged();

@@ -35,11 +35,11 @@ class Peer : public QObject
     Q_PROPERTY(QString id READ id)
     Q_PROPERTY(QString name READ name WRITE setName)
     Q_PROPERTY(QString iconName READ iconName WRITE setIconName)
-    Q_PROPERTY(bool defaultPeer READ defaultPeer)
+    Q_PROPERTY(bool isDefaultPeer READ isDefaultPeer)
 
   public:
     static const Peer& unknown();
-    Peer(const QString& id = QString(), bool defaultPeer = false, QObject* parent = nullptr);
+    Peer(const QString& id = QString(), bool isDefaultPeer = false, QObject* parent = nullptr);
     Peer(const Peer& rhs);
     virtual ~Peer();
     
@@ -53,7 +53,7 @@ class Peer : public QObject
     Q_INVOKABLE void setIconData(const QByteArray&);
     Q_INVOKABLE virtual QString iconName() const;
     Q_INVOKABLE void setIconName(const QString&);
-    Q_INVOKABLE virtual bool defaultPeer() const;
+    Q_INVOKABLE virtual bool isDefaultPeer() const;
 
   private:
     struct Private;

@@ -126,7 +126,8 @@ void ContentPeer::setPeer(const cuc::Peer &peer, bool explicitPeer)
  *
  * Returns the ContentHandler 
  */
-ContentHandler::Handler ContentPeer::handler() {
+ContentHandler::Handler ContentPeer::handler()
+{
     qDebug() << Q_FUNC_INFO;
     return m_handler;
 }
@@ -195,13 +196,13 @@ void ContentPeer::setSelectionType(ContentTransfer::SelectionType selectionType)
 }
 
 /*!
- * \brief ContentPeer::defaultPeer
+ * \brief ContentPeer::isDefaultPeer
  * \internal
  */
-bool ContentPeer::defaultPeer()
+bool ContentPeer::isDefaultPeer()
 {
     qDebug() << Q_FUNC_INFO;
-    return m_peer.defaultPeer();
+    return m_peer.isDefaultPeer();
 }
 
 /*!

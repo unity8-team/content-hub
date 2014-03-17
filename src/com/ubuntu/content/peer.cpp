@@ -25,7 +25,7 @@ namespace cuc = com::ubuntu::content;
 
 struct cuc::Peer::Private
 {
-    Private (QString id, bool defaultPeer) : id(id), defaultPeer(defaultPeer)
+    Private (QString id, bool isDefaultPeer) : id(id), isDefaultPeer(isDefaultPeer)
     {
         qDebug() << Q_FUNC_INFO << id;
         if (name.isEmpty())
@@ -58,7 +58,7 @@ struct cuc::Peer::Private
     QString name;
     QByteArray iconData;
     QString iconName;
-    bool defaultPeer;
+    bool isDefaultPeer;
 };
 
 const cuc::Peer& cuc::Peer::unknown()
@@ -67,7 +67,7 @@ const cuc::Peer& cuc::Peer::unknown()
     return peer;
 }
 
-cuc::Peer::Peer(const QString& id, bool defaultPeer, QObject* parent) : QObject(parent), d(new cuc::Peer::Private{id, defaultPeer})
+cuc::Peer::Peer(const QString& id, bool isDefaultPeer, QObject* parent) : QObject(parent), d(new cuc::Peer::Private{id, isDefaultPeer})
 {
     qDebug() << Q_FUNC_INFO;
 }
@@ -132,15 +132,15 @@ void cuc::Peer::setIconName(const QString& iconName)
         d->iconName = iconName;
 }
 
-bool cuc::Peer::defaultPeer() const
+bool cuc::Peer::isDefaultPeer() const
 {
-    return d->defaultPeer;
+    return d->isDefaultPeer;
 }
 
 QDBusArgument &operator<<(QDBusArgument &argument, const cuc::Peer& peer)
 {
     argument.beginStructure();
-    argument << peer.id() << peer.name() << peer.iconData() << peer.iconName() << peer.defaultPeer();
+    argument << peer.id() << peer.name() << peer.iconData() << peer.iconName() << peer.isDefaultPeer();
     argument.endStructure();
     return argument;
 }
@@ -152,13 +152,13 @@ const QDBusArgument &operator>>(const QDBusArgument &argument, cuc::Peer &peer)
     QString name;
     QByteArray ic;
     QString iconName;
-    bool defaultPeer;
+    bool isDefaultPeer;
 
     argument.beginStructure();
-    argument >> id >> name >> ic >> iconName >> defaultPeer;
+    argument >> id >> name >> ic >> iconName >> isDefaultPeer;
     argument.endStructure();
 
-    peer = cuc::Peer{id, defaultPeer};
+    peer = cuc::Peer{id, isDefaultPeer};
     peer.setName(name);
     peer.setIconData(ic);
     peer.setIconName(iconName);

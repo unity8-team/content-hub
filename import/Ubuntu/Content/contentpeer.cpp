@@ -38,23 +38,17 @@
 
 namespace cuc = com::ubuntu::content;
 
-
-ContentPeer::ContentPeer(ContentType::Type type,
-			 QObject *parent)
-    : QObject(parent),
-      m_peer(0)
-{
-    qDebug() << Q_FUNC_INFO;
-    init();
-    m_contentType = type;
-}
-
 ContentPeer::ContentPeer(QObject *parent)
     : QObject(parent),
-      m_peer(0)
+      m_peer(0),
+      m_handler(ContentHandler::Source),
+      m_contentType(ContentType::Unknown),
+      m_selectionType(ContentTransfer::Single),
+      m_explicit_peer(false)
 {
     qDebug() << Q_FUNC_INFO;
-    init();
+
+    m_hub = cuc::Hub::Client::instance();
 }
 
 /*!
@@ -88,7 +82,6 @@ void ContentPeer::setAppId(const QString& appId)
 {
     qDebug() << Q_FUNC_INFO << appId;
     this->setPeer(cuc::Peer{appId});
-    m_explicit_app = true;
 }
 
 QImage &ContentPeer::icon()
@@ -110,10 +103,11 @@ const com::ubuntu::content::Peer &ContentPeer::peer() const
  * \brief ContentPeer::setPeer
  * \internal
  */
-void ContentPeer::setPeer(const cuc::Peer &peer)
+void ContentPeer::setPeer(const cuc::Peer &peer, bool explicitPeer)
 {
     qDebug() << Q_FUNC_INFO;
     m_peer = peer;
+    m_explicit_peer = explicitPeer;
     if (peer.iconData().isEmpty())
     {
         if (QIcon::hasThemeIcon(peer.iconName().toUtf8()))
@@ -169,9 +163,9 @@ void ContentPeer::setContentType(ContentType::Type contentType)
     qDebug() << Q_FUNC_INFO;
     m_contentType = contentType;
 
-    if(!m_explicit_app) {
+    if(!m_explicit_peer) {
         const cuc::Type &hubType = ContentType::contentType2HubType(m_contentType);
-        setPeer(m_hub->default_source_for_type(hubType));
+        setPeer(m_hub->default_source_for_type(hubType), false);
     }
 
     Q_EMIT contentTypeChanged();
@@ -231,6 +225,7 @@ ContentTransfer *ContentPeer::request()
 ContentTransfer *ContentPeer::request(ContentStore *store)
 {
     qDebug() << Q_FUNC_INFO;
+
     ContentHub *contentHub = ContentHub::instance();
     ContentTransfer *qmlTransfer = NULL;
     if(m_handler == ContentHandler::Source) {
@@ -253,19 +248,3 @@ ContentTransfer *ContentPeer::request(ContentStore *store)
 
     return qmlTransfer;
 }
-
-/*!
- * \internal
- */
-void ContentPeer::init()
-{
-    qDebug() << Q_FUNC_INFO;
-
-    m_handler = ContentHandler::Source;
-    m_contentType = ContentType::Unknown;
-    m_selectionType = ContentTransfer::Single;
-    m_explicit_app = false;
-
-    m_hub = cuc::Hub::Client::instance();
-}
-

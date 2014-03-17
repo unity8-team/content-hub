@@ -51,7 +51,7 @@ public:
     QImage &icon();
 
     const com::ubuntu::content::Peer &peer() const;
-    void setPeer(const com::ubuntu::content::Peer &peer);
+    void setPeer(const com::ubuntu::content::Peer &peer, bool explicitPeer = true);
 
     ContentHandler::Handler handler();
     void setHandler(ContentHandler::Handler handler);
@@ -79,7 +79,7 @@ private:
     ContentHandler::Handler m_handler;
     ContentType::Type m_contentType;
     ContentTransfer::SelectionType m_selectionType;
-    bool m_explicit_app;
+    bool m_explicit_peer;
     QImage m_icon;
 };
 

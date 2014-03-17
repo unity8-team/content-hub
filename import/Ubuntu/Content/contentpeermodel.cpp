@@ -82,7 +82,7 @@ void ContentPeerModel::setContentType(ContentType::Type contentType)
     qDebug() << Q_FUNC_INFO;
     m_contentType = contentType;
     if (m_complete) {
-    QTimer::singleShot(0, this, SLOT(findPeers()));
+        findPeers();
     }
     Q_EMIT contentTypeChanged();
 }
@@ -164,7 +164,7 @@ void ContentPeerModel::setHandler(ContentHandler::Handler handler)
     qDebug() << Q_FUNC_INFO;
     m_handler = handler;
     if (m_complete) {
-        QTimer::singleShot(0, this, SLOT(findPeers()));
+        findPeers();
     }
     Q_EMIT handlerChanged();
 }

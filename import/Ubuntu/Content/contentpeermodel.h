@@ -51,6 +51,7 @@ Q_SIGNALS:
     void contentTypeChanged();
     void handlerChanged();
     void peersChanged();
+    void findPeersCompleted();
 
 public Q_SLOTS:
     void findPeers();

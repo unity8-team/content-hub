@@ -44,9 +44,10 @@ ContentPeer::ContentPeer(QObject *parent)
       m_handler(ContentHandler::Source),
       m_contentType(ContentType::Unknown),
       m_selectionType(ContentTransfer::Single),
-      m_explicit_app(false)
+      m_explicit_peer(false)
 {
     TRACE() << Q_FUNC_INFO;
+
     m_hub = cuc::Hub::Client::instance();
 }
 
@@ -81,7 +82,6 @@ void ContentPeer::setAppId(const QString& appId)
 {
     TRACE() << Q_FUNC_INFO << appId;
     this->setPeer(cuc::Peer{appId});
-    m_explicit_app = true;
 }
 
 QImage &ContentPeer::icon()
@@ -103,16 +103,17 @@ const com::ubuntu::content::Peer &ContentPeer::peer() const
  * \brief ContentPeer::setPeer
  * \internal
  */
-void ContentPeer::setPeer(const cuc::Peer &peer)
+void ContentPeer::setPeer(const cuc::Peer &peer, bool explicitPeer)
 {
     TRACE() << Q_FUNC_INFO;
     m_peer = peer;
-    if (peer.icon().isNull())
+    m_explicit_peer = explicitPeer;
+    if (peer.iconData().isEmpty())
     {
         if (QIcon::hasThemeIcon(peer.iconName().toUtf8()))
             m_icon = QIcon::fromTheme(peer.iconName().toUtf8()).pixmap(256).toImage();
     } else
-        m_icon = peer.icon();
+        m_icon.loadFromData(peer.iconData());
     ContentIconProvider *iconProvider = ContentIconProvider::instance();
     iconProvider->addImage(appId(), m_icon);
 
@@ -125,7 +126,7 @@ void ContentPeer::setPeer(const cuc::Peer &peer)
  *
  * Returns the ContentHandler 
  */
-ContentHandler::Handler ContentPeer::handler() 
+ContentHandler::Handler ContentPeer::handler()
 {
     TRACE() << Q_FUNC_INFO;
     return m_handler;
@@ -163,9 +164,9 @@ void ContentPeer::setContentType(ContentType::Type contentType)
     TRACE() << Q_FUNC_INFO;
     m_contentType = contentType;
 
-    if(!m_explicit_app) {
+    if(!m_explicit_peer) {
         const cuc::Type &hubType = ContentType::contentType2HubType(m_contentType);
-        setPeer(m_hub->default_source_for_type(hubType));
+        setPeer(m_hub->default_source_for_type(hubType), false);
     }
 
     Q_EMIT contentTypeChanged();
@@ -195,6 +196,16 @@ void ContentPeer::setSelectionType(ContentTransfer::SelectionType selectionType)
 }
 
 /*!
+ * \brief ContentPeer::isDefaultPeer
+ * \internal
+ */
+bool ContentPeer::isDefaultPeer()
+{
+    TRACE() << Q_FUNC_INFO;
+    return m_peer.isDefaultPeer();
+}
+
+/*!
  * \qmlmethod ContentPeer::request()
  * \overload ContentPeer::request(ContentStore)
  *
@@ -215,6 +226,7 @@ ContentTransfer *ContentPeer::request()
 ContentTransfer *ContentPeer::request(ContentStore *store)
 {
     TRACE() << Q_FUNC_INFO;
+
     ContentHub *contentHub = ContentHub::instance();
     ContentTransfer *qmlTransfer = NULL;
     if(m_handler == ContentHandler::Source) {
@@ -237,4 +249,3 @@ ContentTransfer *ContentPeer::request(ContentStore *store)
 
     return qmlTransfer;
 }
-

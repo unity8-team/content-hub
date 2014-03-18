@@ -14,9 +14,8 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
+#include "../../../src/com/ubuntu/content/debug.h"
 #include "contentscope.h"
-
-#include <QDebug>
 
 /*!
    \qmltype ContentScope
@@ -41,7 +40,7 @@
 ContentScope::ContentScope(QObject *parent)
     : QObject(parent)
 {
-    qDebug() << Q_FUNC_INFO;
+    TRACE() << Q_FUNC_INFO;
 }
 
 /*!
@@ -52,7 +51,7 @@ ContentScope::ContentScope(QObject *parent)
 com::ubuntu::content::Scope ContentScope::contentScope2HubScope(int scope)
 {
     Scope cscope = static_cast<Scope>(scope);
-    qDebug() << Q_FUNC_INFO << cscope;
+    TRACE() << Q_FUNC_INFO << cscope;
     return contentScope2HubScope(cscope);
 }
 

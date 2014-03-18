@@ -14,6 +14,7 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
+#include "../../../src/com/ubuntu/content/debug.h"
 #include "contenthandler.h"
 #include "contenthub.h"
 #include "contenticonprovider.h"
@@ -21,7 +22,6 @@
 #include "contenttype.h"
 
 #include <com/ubuntu/content/peer.h>
-#include <QDebug>
 #include <QIcon>
 
 /*!
@@ -44,9 +44,10 @@ ContentPeer::ContentPeer(QObject *parent)
       m_handler(ContentHandler::Source),
       m_contentType(ContentType::Unknown),
       m_selectionType(ContentTransfer::Single),
-      m_explicit_app(false)
+      m_explicit_peer(false)
 {
-    qDebug() << Q_FUNC_INFO;
+    TRACE() << Q_FUNC_INFO;
+
     m_hub = cuc::Hub::Client::instance();
 }
 
@@ -57,7 +58,7 @@ ContentPeer::ContentPeer(QObject *parent)
  */
 QString ContentPeer::name()
 {
-    qDebug() << Q_FUNC_INFO;
+    TRACE() << Q_FUNC_INFO;
     return m_peer.name();
 }
 
@@ -68,7 +69,7 @@ QString ContentPeer::name()
  */
 const QString &ContentPeer::appId() const
 {
-    qDebug() << Q_FUNC_INFO;
+    TRACE() << Q_FUNC_INFO;
     return m_peer.id();
 }
 
@@ -79,14 +80,13 @@ const QString &ContentPeer::appId() const
  */
 void ContentPeer::setAppId(const QString& appId)
 {
-    qDebug() << Q_FUNC_INFO << appId;
+    TRACE() << Q_FUNC_INFO << appId;
     this->setPeer(cuc::Peer{appId});
-    m_explicit_app = true;
 }
 
 QImage &ContentPeer::icon()
 {
-    qDebug() << Q_FUNC_INFO;
+    TRACE() << Q_FUNC_INFO;
     return m_icon;
 }
 
@@ -103,10 +103,11 @@ const com::ubuntu::content::Peer &ContentPeer::peer() const
  * \brief ContentPeer::setPeer
  * \internal
  */
-void ContentPeer::setPeer(const cuc::Peer &peer)
+void ContentPeer::setPeer(const cuc::Peer &peer, bool explicitPeer)
 {
-    qDebug() << Q_FUNC_INFO;
+    TRACE() << Q_FUNC_INFO;
     m_peer = peer;
+    m_explicit_peer = explicitPeer;
     if (peer.iconData().isEmpty())
     {
         if (QIcon::hasThemeIcon(peer.iconName().toUtf8()))
@@ -125,8 +126,9 @@ void ContentPeer::setPeer(const cuc::Peer &peer)
  *
  * Returns the ContentHandler 
  */
-ContentHandler::Handler ContentPeer::handler() {
-    qDebug() << Q_FUNC_INFO;
+ContentHandler::Handler ContentPeer::handler()
+{
+    TRACE() << Q_FUNC_INFO;
     return m_handler;
 }
 
@@ -136,7 +138,7 @@ ContentHandler::Handler ContentPeer::handler() {
  */
 void ContentPeer::setHandler(ContentHandler::Handler handler)
 {   
-    qDebug() << Q_FUNC_INFO;
+    TRACE() << Q_FUNC_INFO;
     m_handler = handler;
 
     Q_EMIT handlerChanged();
@@ -149,7 +151,7 @@ void ContentPeer::setHandler(ContentHandler::Handler handler)
  */
 ContentType::Type ContentPeer::contentType() 
 {
-    qDebug() << Q_FUNC_INFO;
+    TRACE() << Q_FUNC_INFO;
     return m_contentType;
 }
 
@@ -159,12 +161,12 @@ ContentType::Type ContentPeer::contentType()
  */
 void ContentPeer::setContentType(ContentType::Type contentType)
 {   
-    qDebug() << Q_FUNC_INFO;
+    TRACE() << Q_FUNC_INFO;
     m_contentType = contentType;
 
-    if(!m_explicit_app) {
+    if(!m_explicit_peer) {
         const cuc::Type &hubType = ContentType::contentType2HubType(m_contentType);
-        setPeer(m_hub->default_source_for_type(hubType));
+        setPeer(m_hub->default_source_for_type(hubType), false);
     }
 
     Q_EMIT contentTypeChanged();
@@ -177,7 +179,7 @@ void ContentPeer::setContentType(ContentType::Type contentType)
  */
 ContentTransfer::SelectionType ContentPeer::selectionType()
 {
-    qDebug() << Q_FUNC_INFO;
+    TRACE() << Q_FUNC_INFO;
     return m_selectionType;
 }
 
@@ -187,20 +189,20 @@ ContentTransfer::SelectionType ContentPeer::selectionType()
  */
 void ContentPeer::setSelectionType(ContentTransfer::SelectionType selectionType)
 {
-    qDebug() << Q_FUNC_INFO;
+    TRACE() << Q_FUNC_INFO;
     m_selectionType = selectionType;
 
     Q_EMIT selectionTypeChanged();
 }
 
 /*!
- * \brief ContentPeer::defaultPeer
+ * \brief ContentPeer::isDefaultPeer
  * \internal
  */
-bool ContentPeer::defaultPeer()
+bool ContentPeer::isDefaultPeer()
 {
-    qDebug() << Q_FUNC_INFO;
-    return m_peer.defaultPeer();
+    TRACE() << Q_FUNC_INFO;
+    return m_peer.isDefaultPeer();
 }
 
 /*!
@@ -211,7 +213,7 @@ bool ContentPeer::defaultPeer()
  */
 ContentTransfer *ContentPeer::request()
 {   
-    qDebug() << Q_FUNC_INFO;
+    TRACE() << Q_FUNC_INFO;
     return request(nullptr);
 }
 
@@ -223,7 +225,8 @@ ContentTransfer *ContentPeer::request()
  */
 ContentTransfer *ContentPeer::request(ContentStore *store)
 {
-    qDebug() << Q_FUNC_INFO;
+    TRACE() << Q_FUNC_INFO;
+
     ContentHub *contentHub = ContentHub::instance();
     ContentTransfer *qmlTransfer = NULL;
     if(m_handler == ContentHandler::Source) {
@@ -246,4 +249,3 @@ ContentTransfer *ContentPeer::request(ContentStore *store)
 
     return qmlTransfer;
 }
-

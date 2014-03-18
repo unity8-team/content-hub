@@ -14,14 +14,13 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
+#include "../../../src/com/ubuntu/content/debug.h"
 #include "contenticonprovider.h"
-
-#include <QDebug>
 
 ContentIconProvider::ContentIconProvider()
     : QQuickImageProvider(QQuickImageProvider::Image)
 {
-    qDebug() << Q_FUNC_INFO;
+    TRACE() << Q_FUNC_INFO;
 
     appIdImageMap = new QMap<QString, QImage>();
 }
@@ -39,7 +38,7 @@ ContentIconProvider *ContentIconProvider::instance()
  */
 void ContentIconProvider::addImage(QString appId, QImage image)
 {
-    qDebug() << Q_FUNC_INFO;
+    TRACE() << Q_FUNC_INFO;
     appIdImageMap->insert(appId, image);
 }
 
@@ -51,7 +50,7 @@ void ContentIconProvider::addImage(QString appId, QImage image)
 QImage ContentIconProvider::requestImage(const QString &id, QSize *size, const QSize &requestedSize)
 {
     Q_UNUSED(requestedSize)
-    qDebug() << Q_FUNC_INFO;
+    TRACE() << Q_FUNC_INFO;
 
     QImage image = appIdImageMap->value(id);
     if(size) {

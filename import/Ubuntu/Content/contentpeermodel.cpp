@@ -14,10 +14,9 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
+#include "../../../src/com/ubuntu/content/debug.h"
 #include "contentpeermodel.h"
 #include <stdio.h>
-
-#include <QDebug>
 
 namespace cuc = com::ubuntu::content;
 
@@ -39,7 +38,7 @@ ContentPeerModel::ContentPeerModel(QObject *parent)
       m_handler(ContentHandler::Source),
       m_complete(false)
 {
-    qDebug() << Q_FUNC_INFO;
+    TRACE() << Q_FUNC_INFO;
     m_hub = cuc::Hub::Client::instance();
 }
 
@@ -69,7 +68,7 @@ void ContentPeerModel::componentComplete()
  */
 ContentType::Type ContentPeerModel::contentType()
 {
-    qDebug() << Q_FUNC_INFO;
+    TRACE() << Q_FUNC_INFO;
     return m_contentType;
 }
 
@@ -79,10 +78,10 @@ ContentType::Type ContentPeerModel::contentType()
  */
 void ContentPeerModel::setContentType(ContentType::Type contentType)
 {
-    qDebug() << Q_FUNC_INFO;
+    TRACE() << Q_FUNC_INFO;
     m_contentType = contentType;
     if (m_complete) {
-    QTimer::singleShot(0, this, SLOT(findPeers()));
+        findPeers();
     }
     Q_EMIT contentTypeChanged();
 }
@@ -92,7 +91,7 @@ void ContentPeerModel::setContentType(ContentType::Type contentType)
  * \internal
  */
 void ContentPeerModel::findPeers() {
-    qDebug() << Q_FUNC_INFO;
+    TRACE() << Q_FUNC_INFO;
     m_peers.clear();
     QCoreApplication::processEvents();
     if(m_contentType == ContentType::All) {
@@ -104,6 +103,7 @@ void ContentPeerModel::findPeers() {
     } else {
         appendPeersForContentType(m_contentType);
     }
+    Q_EMIT findPeersCompleted();
 }
 
 /*!
@@ -112,7 +112,7 @@ void ContentPeerModel::findPeers() {
  */
 void ContentPeerModel::appendPeersForContentType(ContentType::Type contentType)
 {
-    qDebug() << Q_FUNC_INFO;
+    TRACE() << Q_FUNC_INFO;
     const cuc::Type &hubType = ContentType::contentType2HubType(contentType);
     QVector<cuc::Peer> hubPeers;
     if (m_handler == ContentHandler::Destination) {
@@ -129,8 +129,9 @@ void ContentPeerModel::appendPeersForContentType(ContentType::Type contentType)
         {
             ContentPeer *qmlPeer = new ContentPeer();
             qmlPeer->setPeer(hubPeer);
+            qmlPeer->setContentType(contentType);
             qmlPeer->setHandler(m_handler);
-            if(qmlPeer->defaultPeer()) 
+            if(qmlPeer->isDefaultPeer()) 
             {
                 m_peers.prepend(qmlPeer);
             } else {
@@ -149,7 +150,7 @@ void ContentPeerModel::appendPeersForContentType(ContentType::Type contentType)
  */
 ContentHandler::Handler ContentPeerModel::handler() 
 {
-    qDebug() << Q_FUNC_INFO;
+    TRACE() << Q_FUNC_INFO;
     return m_handler;
 }
 
@@ -159,17 +160,17 @@ ContentHandler::Handler ContentPeerModel::handler()
  */
 void ContentPeerModel::setHandler(ContentHandler::Handler handler)
 {
-    qDebug() << Q_FUNC_INFO;
+    TRACE() << Q_FUNC_INFO;
     m_handler = handler;
     if (m_complete) {
-        QTimer::singleShot(0, this, SLOT(findPeers()));
+        findPeers();
     }
     Q_EMIT handlerChanged();
 }
 
 QQmlListProperty<ContentPeer> ContentPeerModel::peers()
 {
-    qDebug() << Q_FUNC_INFO;
+    TRACE() << Q_FUNC_INFO;
     return QQmlListProperty<ContentPeer>(this, m_peers);
 }
 

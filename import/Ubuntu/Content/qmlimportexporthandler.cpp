@@ -15,10 +15,9 @@
  */
 
 #include "qmlimportexporthandler.h"
+#include "../../../src/com/ubuntu/content/debug.h"
 
 #include <com/ubuntu/content/transfer.h>
-
-#include <QDebug>
 
 namespace cuc = com::ubuntu::content;
 
@@ -29,7 +28,7 @@ namespace cuc = com::ubuntu::content;
 QmlImportExportHandler::QmlImportExportHandler(QObject *parent)
     : cuc::ImportExportHandler(parent)
 {
-    qDebug() << Q_FUNC_INFO;
+    TRACE() << Q_FUNC_INFO;
 }
 
 /*!
@@ -37,7 +36,7 @@ QmlImportExportHandler::QmlImportExportHandler(QObject *parent)
  */
 void QmlImportExportHandler::handle_import(com::ubuntu::content::Transfer *transfer)
 {
-    qDebug() << Q_FUNC_INFO;
+    TRACE() << Q_FUNC_INFO;
     Q_EMIT importRequested(transfer);
 }
 
@@ -46,7 +45,7 @@ void QmlImportExportHandler::handle_import(com::ubuntu::content::Transfer *trans
  */
 void QmlImportExportHandler::handle_export(com::ubuntu::content::Transfer *transfer)
 {
-    qDebug() << Q_FUNC_INFO;
+    TRACE() << Q_FUNC_INFO;
     Q_EMIT exportRequested(transfer);
 }
 
@@ -55,6 +54,6 @@ void QmlImportExportHandler::handle_export(com::ubuntu::content::Transfer *trans
  */
 void QmlImportExportHandler::handle_share(com::ubuntu::content::Transfer *transfer)
 {
-    qDebug() << Q_FUNC_INFO;
+    TRACE() << Q_FUNC_INFO;
     Q_EMIT shareRequested(transfer);
 }

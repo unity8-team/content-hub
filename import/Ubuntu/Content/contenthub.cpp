@@ -14,6 +14,7 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
+#include "../../../src/com/ubuntu/content/debug.h"
 #include "contenthub.h"
 #include "contentpeer.h"
 #include "contentstore.h"
@@ -26,7 +27,6 @@
 #include <com/ubuntu/content/type.h>
 
 #include <QStringList>
-#include <QDebug>
 
 /*!
  * \qmltype ContentHub
@@ -117,7 +117,7 @@ ContentHub::ContentHub(QObject *parent)
     : QObject(parent),
       m_hub(0)
 {
-    qDebug() << Q_FUNC_INFO;
+    TRACE() << Q_FUNC_INFO;
     m_hub = cuc::Hub::Client::instance();
     m_handler = new QmlImportExportHandler(this);
     m_hub->register_import_export_handler(m_handler);
@@ -132,7 +132,7 @@ ContentHub::ContentHub(QObject *parent)
 
 ContentHub *ContentHub::instance()
 {
-    qDebug() << Q_FUNC_INFO;
+    TRACE() << Q_FUNC_INFO;
     static ContentHub *contentHub = new ContentHub(nullptr);
     return contentHub;
 }
@@ -145,7 +145,7 @@ ContentHub *ContentHub::instance()
  */
 ContentTransfer* ContentHub::importContent(cuc::Peer peer)
 {
-    qDebug() << Q_FUNC_INFO;
+    TRACE() << Q_FUNC_INFO;
 
     cuc::Transfer *hubTransfer = m_hub->create_import_from_peer(peer);
     ContentTransfer *qmlTransfer = new ContentTransfer(this);
@@ -162,7 +162,7 @@ ContentTransfer* ContentHub::importContent(cuc::Peer peer)
  */
 ContentTransfer* ContentHub::exportContent(cuc::Peer peer)
 {
-    qDebug() << Q_FUNC_INFO;
+    TRACE() << Q_FUNC_INFO;
 
     cuc::Transfer *hubTransfer = m_hub->create_export_to_peer(peer);
     ContentTransfer *qmlTransfer = new ContentTransfer(this);
@@ -179,7 +179,7 @@ ContentTransfer* ContentHub::exportContent(cuc::Peer peer)
  */
 ContentTransfer* ContentHub::shareContent(cuc::Peer peer)
 {
-    qDebug() << Q_FUNC_INFO;
+    TRACE() << Q_FUNC_INFO;
 
     cuc::Transfer *hubTransfer = m_hub->create_share_to_peer(peer);
     ContentTransfer *qmlTransfer = new ContentTransfer(this);
@@ -194,7 +194,7 @@ ContentTransfer* ContentHub::shareContent(cuc::Peer peer)
  */
 void ContentHub::restoreImports()
 {
-    qDebug() << Q_FUNC_INFO;
+    TRACE() << Q_FUNC_INFO;
 }
 
 /*!
@@ -203,7 +203,7 @@ void ContentHub::restoreImports()
  */
 QQmlListProperty<ContentTransfer> ContentHub::finishedImports()
 {
-    qDebug() << Q_FUNC_INFO;
+    TRACE() << Q_FUNC_INFO;
     return QQmlListProperty<ContentTransfer>(this, m_finishedImports);
 }
 
@@ -213,7 +213,7 @@ QQmlListProperty<ContentTransfer> ContentHub::finishedImports()
  */
 void ContentHub::handleImport(com::ubuntu::content::Transfer *transfer)
 {
-    qDebug() << Q_FUNC_INFO;
+    TRACE() << Q_FUNC_INFO;
     ContentTransfer *qmlTransfer = nullptr;
     if (m_activeImports.contains(transfer)) {
         qmlTransfer = m_activeImports.take(transfer);
@@ -229,6 +229,12 @@ void ContentHub::handleImport(com::ubuntu::content::Transfer *transfer)
         Q_EMIT importRequested(qmlTransfer);
     }
 
+
+
+    // FIXME: maybe we need to emit something else here
+//    if (qmlTransfer->state() == ContentTransfer::Charged)
+//        Q_EMIT importRequested(qmlTransfer);
+
     m_finishedImports.append(qmlTransfer);
     Q_EMIT finishedImportsChanged();
 }
@@ -239,7 +245,7 @@ void ContentHub::handleImport(com::ubuntu::content::Transfer *transfer)
  */
 void ContentHub::handleExport(com::ubuntu::content::Transfer *transfer)
 {
-    qDebug() << Q_FUNC_INFO;
+    TRACE() << Q_FUNC_INFO;
     ContentTransfer *qmlTransfer = nullptr;
     if (m_activeImports.contains(transfer))
         qmlTransfer = m_activeImports.take(transfer);
@@ -264,7 +270,7 @@ void ContentHub::handleExport(com::ubuntu::content::Transfer *transfer)
  */
 void ContentHub::handleShare(com::ubuntu::content::Transfer *transfer)
 {
-    qDebug() << Q_FUNC_INFO;
+    TRACE() << Q_FUNC_INFO;
     ContentTransfer *qmlTransfer = nullptr;
     if (m_activeImports.contains(transfer))
     {
@@ -287,7 +293,7 @@ void ContentHub::handleShare(com::ubuntu::content::Transfer *transfer)
 
 void ContentHub::updateState()
 {
-    qDebug() << Q_FUNC_INFO;
+    TRACE() << Q_FUNC_INFO;
 }
 
 /*!

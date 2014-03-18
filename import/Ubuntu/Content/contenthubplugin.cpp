@@ -15,6 +15,7 @@
  */
 
 #include "contenthubplugin.h"
+#include "../../../src/com/ubuntu/content/debug.h"
 
 #include "contenthandler.h"
 #include "contenthub.h"
@@ -40,7 +41,7 @@ static QObject *qml_content_hub(QQmlEngine *engine, QJSEngine *scriptEngine)
 {
     Q_UNUSED(engine)
     Q_UNUSED(scriptEngine)
-    qDebug() << Q_FUNC_INFO;
+    TRACE() << Q_FUNC_INFO;
     return ContentHub::instance();
 }
 
@@ -50,7 +51,7 @@ static QObject *qml_content_hub(QQmlEngine *engine, QJSEngine *scriptEngine)
 void ContentHubPlugin::initializeEngine(QQmlEngine * engine, const char * uri)
 {
     Q_UNUSED(uri)
-    qDebug() << Q_FUNC_INFO;
+    TRACE() << Q_FUNC_INFO;
     QIcon::setThemeName("ubuntu-mobile");
     QIcon::setThemeSearchPaths(QStringList() << ("/usr/share/icons/"));
     ContentIconProvider *iconProvider = ContentIconProvider::instance();
@@ -62,7 +63,7 @@ void ContentHubPlugin::initializeEngine(QQmlEngine * engine, const char * uri)
  */
 void ContentHubPlugin::registerTypes(const char *uri)
 {
-    qDebug() << Q_FUNC_INFO;
+    TRACE() << Q_FUNC_INFO;
     Q_ASSERT(uri == QLatin1String("Ubuntu.Content"));
 
     const int versionMajor = 0;

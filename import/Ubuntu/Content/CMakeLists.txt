@@ -63,6 +63,7 @@ set(PLUGIN_SRC
     contenttransfer.cpp
     contenttype.cpp
     qmlimportexporthandler.cpp
+    ../../../src/com/ubuntu/content/debug.cpp
     )
 
 add_library(${PLUGIN} MODULE ${PLUGIN_SRC} ${PLUGIN_HDRS})

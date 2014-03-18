@@ -32,10 +32,11 @@ Item {
     id: root
     anchors.fill: parent
     visible: false
-    property alias handler: peerModel.handler
-    property alias contentType: peerModel.contentType
+    property var handler
+    property var contentType
     property alias showTitle: header.visible
     property var peer
+    property var customPeerModelLoader
 
     signal peerSelected
     signal cancelPressed
@@ -45,8 +46,24 @@ Item {
         title: (handler === ContentHandler.Source) ? i18n.tr("Choose from") : i18n.tr("Share to")
     }
 
-    ContentPeerModel {
-        id: peerModel
+    Loader {
+        id: peerModelLoader
+        active: false
+        sourceComponent: ContentPeerModel {
+            id: peerModel
+        }
+        onLoaded: {
+            item.handler = root.handler
+            item.contentType = root.contentType
+        }
+    }
+
+    Component.onCompleted: {
+        if(customPeerModelLoader) {
+            customPeerModelLoader.active = true;
+        } else {
+            peerModelLoader.active = true;
+        }
     }
 
     Component {
@@ -135,7 +152,7 @@ Item {
                 delegateWidth: units.gu(11)
                 delegateHeight: units.gu(9.5)
                 verticalSpacing: units.gu(2)
-                model: peerModel.peers
+                model: customPeerModelLoader ? customPeerModelLoader.item.peers : peerModelLoader.item.peers
                 delegate: peerDelegate
             }
 

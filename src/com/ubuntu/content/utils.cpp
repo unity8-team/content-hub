@@ -29,6 +29,7 @@
 #include "common.h"
 #include "debug.h"
 #include "com/ubuntu/content/type.h"
+#include <unistd.h>
 
 namespace cuc = com::ubuntu::content;
 
@@ -108,6 +109,15 @@ QString aa_profile(QString uniqueConnectionId)
     return aaProfile;
 }
 
+bool is_persistent(QString store)
+{
+    TRACE() << Q_FUNC_INFO << store;
+    QRegExp rx("*.cache/*/HubIncoming/*");
+    rx.setPatternSyntax(QRegExp::Wildcard);
+    rx.setCaseSensitivity(Qt::CaseSensitive);
+    return not rx.exactMatch(store);
+}
+
 QString copy_to_store(const QString& src, const QString& store)
 {
     TRACE() << Q_FUNC_INFO;
@@ -122,22 +132,23 @@ QString copy_to_store(const QString& src, const QString& store)
         st.mkpath(st.absolutePath());
     QString destFilePath = store + QDir::separator() + fi.fileName();
     TRACE() << Q_FUNC_INFO << destFilePath;
-    bool result = QFile::copy(fi.filePath(), destFilePath);
-    if (not result)
+    bool copy_failed = true;
+    if (not is_persistent(store))
     {
-        qWarning() << "Failed to copy to Store:" << store;
+        if (link( fi.absoluteFilePath().toStdString().c_str(),
+            destFilePath.toStdString().c_str() ) < 0)
+        {
+            qWarning() << "Can't create hard link to Store:" << store;
+        } else
+            copy_failed = false;
+    }
+    if (copy_failed)
+    {
+        if (not QFile::copy(fi.filePath(), destFilePath))
+            qWarning() << "Failed to copy to Store:" << store;
     }
 
     return QUrl::fromLocalFile(destFilePath).toString();
-}
-
-bool is_persistent(QString store)
-{
-    TRACE() << Q_FUNC_INFO << store;
-    QRegExp rx("*.cache/*/HubIncoming/*");
-    rx.setPatternSyntax(QRegExp::Wildcard);
-    rx.setCaseSensitivity(Qt::CaseSensitive);
-    return not rx.exactMatch(store);
 }
 
 bool purge_store_cache(QString store)

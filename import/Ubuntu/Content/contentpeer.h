@@ -36,9 +36,11 @@ class ContentPeer : public QObject
     Q_PROPERTY(ContentType::Type contentType READ contentType WRITE setContentType NOTIFY contentTypeChanged)
     Q_PROPERTY(ContentTransfer::SelectionType selectionType READ selectionType WRITE setSelectionType NOTIFY selectionTypeChanged)
     Q_PROPERTY(QImage icon READ icon)
+    Q_PROPERTY(bool isDefaultPeer READ isDefaultPeer)
 
 public:
     ContentPeer(QObject *parent = nullptr);
+    ContentPeer(ContentType::Type type, QObject *parent);
 
     Q_INVOKABLE ContentTransfer* request();
     Q_INVOKABLE ContentTransfer* request(ContentStore *store);
@@ -49,7 +51,7 @@ public:
     QImage &icon();
 
     const com::ubuntu::content::Peer &peer() const;
-    void setPeer(const com::ubuntu::content::Peer &peer);
+    void setPeer(const com::ubuntu::content::Peer &peer, bool explicitPeer = true);
 
     ContentHandler::Handler handler();
     void setHandler(ContentHandler::Handler handler);
@@ -60,6 +62,8 @@ public:
     ContentTransfer::SelectionType selectionType();
     void setSelectionType(ContentTransfer::SelectionType selectionType);
 
+    bool isDefaultPeer();
+
 Q_SIGNALS:
     void nameChanged();
     void appIdChanged();
@@ -68,12 +72,14 @@ Q_SIGNALS:
     void selectionTypeChanged();
 
 private:
+    void init();
+
     com::ubuntu::content::Hub *m_hub;
     com::ubuntu::content::Peer m_peer;
     ContentHandler::Handler m_handler;
     ContentType::Type m_contentType;
     ContentTransfer::SelectionType m_selectionType;
-    bool m_explicit_app;
+    bool m_explicit_peer;
     QImage m_icon;
 };
 

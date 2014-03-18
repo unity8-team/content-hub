@@ -32,10 +32,11 @@ Item {
     id: root
     anchors.fill: parent
     visible: false
-    property alias handler: peerModel.handler
-    property alias contentType: peerModel.contentType
+    property var handler
+    property var contentType
     property alias showTitle: header.visible
     property var peer
+    property var customPeerModelLoader
 
     signal peerSelected
     signal cancelPressed
@@ -45,8 +46,24 @@ Item {
         title: (handler === ContentHandler.Source) ? i18n.tr("Choose from") : i18n.tr("Share to")
     }
 
-    ContentPeerModel {
-        id: peerModel
+    Loader {
+        id: peerModelLoader
+        active: false
+        sourceComponent: ContentPeerModel {
+            id: peerModel
+        }
+        onLoaded: {
+            item.handler = root.handler
+            item.contentType = root.contentType
+        }
+    }
+
+    Component.onCompleted: {
+        if(customPeerModelLoader) {
+            customPeerModelLoader.active = true;
+        } else {
+            peerModelLoader.active = true;
+        }
     }
 
     Component {
@@ -55,30 +72,54 @@ Item {
             width: units.gu(13.5)
             height: units.gu(16)
             AbstractButton {
-                width: icon.width
-                height: icon.height + peerLabel.height
-                anchors.centerIn: parent
+                width: parent.width
+                height: icon.height + label.height
                 UbuntuShape {
                     id: icon
-                    image: Image {
-                        source: "image://content-hub/" + modelData.appId
+                    anchors {
+                        top: parent.top
+                        horizontalCenter: parent.horizontalCenter
                     }
-                    width: units.gu(12);
-                    height: units.gu(12);
-                }
+                    radius: "medium"
+                    width: units.gu(8)
+                    height: units.gu(7.5)
+                    image: Image {
+                        id: image
+                        objectName: "image"
+                        sourceSize { width: icon.width; height: icon.height }
+                        asynchronous: true
+                        cache: false
+                        source: "image://content-hub/" + modelData.appId
+                        horizontalAlignment: Image.AlignHCenter
+                        verticalAlignment: Image.AlignVCenter
+                    }
+               }
+
                 Label {
-                    id: peerLabel
-                    anchors.top: icon.bottom
-                    width: icon.width
-                    elide: Text.ElideRight
-                    font.weight: Font.Bold
+                    id: label
+                    objectName: "label"
+                    anchors {
+                        baseline: icon.bottom
+                        baselineOffset: units.gu(2)
+                        left: parent.left
+                        right: parent.right
+                        leftMargin: units.gu(1)
+                        rightMargin: units.gu(1)
+                    }
+
+                    opacity: 0.9
+                    fontSize: "small"
+                    elide: Text.ElideMiddle
+                    horizontalAlignment: Text.AlignHCenter
                     text: modelData.name || modelData.appId
                 }
+
                 onClicked: {
                         peer = modelData
                         peerSelected()
                 }
             }
+
         }
     }
 
@@ -103,12 +144,15 @@ Item {
         Flickable {
             anchors.fill: parent
 
-            GridView {
-                anchors.fill: parent
+            ResponsiveGridView {
                 id: appPeers
-                cellWidth: units.gu(13.5)
-                cellHeight: units.gu(16)
-                model: peerModel.peers
+                anchors.fill: parent
+                minimumHorizontalSpacing: units.gu(0.5)
+                maximumNumberOfColumns: 6
+                delegateWidth: units.gu(11)
+                delegateHeight: units.gu(9.5)
+                verticalSpacing: units.gu(2)
+                model: customPeerModelLoader ? customPeerModelLoader.item.peers : peerModelLoader.item.peers
                 delegate: peerDelegate
             }
 
@@ -143,6 +187,7 @@ Item {
 
             GridView {
                 id: devPeers
+                header: Item { height: units.gu(2) }
                 cellWidth: units.gu(13.5)
                 cellHeight: units.gu(16)
                 delegate: peerDelegate
@@ -163,7 +208,6 @@ Item {
             if(root.activeTransfer) {
                 root.activeTransfer.state = ContentTransfer.Aborted;
             }
-            root.visible = false;
             cancelPressed();
         }
     }

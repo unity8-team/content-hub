@@ -16,7 +16,6 @@
  * Authored by: Thomas Voß <thomas.voss@canonical.com>
  */
 
-
 #include <gio/gdesktopappinfo.h>
 #include <com/ubuntu/content/peer.h>
 #include <QMetaType>
@@ -26,7 +25,7 @@ namespace cuc = com::ubuntu::content;
 
 struct cuc::Peer::Private
 {
-    Private (QString id) : id(id)
+    Private (QString id, bool isDefaultPeer) : id(id), isDefaultPeer(isDefaultPeer)
     {
         TRACE() << Q_FUNC_INFO << id;
         if (name.isEmpty())
@@ -40,19 +39,26 @@ struct cuc::Peer::Private
                 if (G_IS_ICON(ic))
                 {
                     iconName = QString::fromUtf8(g_icon_to_string(ic));
-
-                    if (QFile::exists(iconName))
-                        icon = QImage(iconName);
+                    if (QFile::exists(iconName)) {
+                        QFile iconFile(iconName);
+                        if(iconFile.open(QIODevice::ReadOnly)) {
+                            iconData = iconFile.readAll();
+                            iconFile.close();
+                        }
+                    }
                     g_object_unref(ic);
                 }
+
+                g_object_unref(app);
             }
         }
     }
 
     QString id;
     QString name;
-    QImage icon;
+    QByteArray iconData;
     QString iconName;
+    bool isDefaultPeer;
 };
 
 const cuc::Peer& cuc::Peer::unknown()
@@ -61,7 +67,7 @@ const cuc::Peer& cuc::Peer::unknown()
     return peer;
 }
 
-cuc::Peer::Peer(const QString& id, QObject* parent) : QObject(parent), d(new cuc::Peer::Private{id})
+cuc::Peer::Peer(const QString& id, bool isDefaultPeer, QObject* parent) : QObject(parent), d(new cuc::Peer::Private{id, isDefaultPeer})
 {
     TRACE() << Q_FUNC_INFO;
 }
@@ -104,15 +110,15 @@ void cuc::Peer::setName(const QString& name)
         d->name = name;
 }
 
-QImage cuc::Peer::icon() const
+QByteArray cuc::Peer::iconData() const
 {
-    return d->icon;
+    return d->iconData;
 }
 
-void cuc::Peer::setIcon(const QImage& icon)
+void cuc::Peer::setIconData(const QByteArray& iconData)
 {
-    if (icon != d->icon)
-        d->icon = icon;
+    if (iconData != d->iconData)
+        d->iconData = iconData;
 }
 
 QString cuc::Peer::iconName() const
@@ -126,16 +132,15 @@ void cuc::Peer::setIconName(const QString& iconName)
         d->iconName = iconName;
 }
 
+bool cuc::Peer::isDefaultPeer() const
+{
+    return d->isDefaultPeer;
+}
+
 QDBusArgument &operator<<(QDBusArgument &argument, const cuc::Peer& peer)
 {
-    QImage i = peer.icon();
-    QByteArray ba;
-    QBuffer buffer(&ba);
-    buffer.open(QIODevice::WriteOnly);
-    i.save(&buffer,"PNG");
-
     argument.beginStructure();
-    argument << peer.id() << peer.name() << ba << peer.iconName();
+    argument << peer.id() << peer.name() << peer.iconData() << peer.iconName() << peer.isDefaultPeer();
     argument.endStructure();
     return argument;
 }
@@ -147,24 +152,15 @@ const QDBusArgument &operator>>(const QDBusArgument &argument, cuc::Peer &peer)
     QString name;
     QByteArray ic;
     QString iconName;
+    bool isDefaultPeer;
 
     argument.beginStructure();
-    argument >> id >> name >> ic >> iconName;
+    argument >> id >> name >> ic >> iconName >> isDefaultPeer;
     argument.endStructure();
 
-    QImage icon;
-    bool ret = icon.loadFromData(reinterpret_cast<const uchar*>(ic.constData()), ic.size(), "png");
-    if (ret)
-    {
-        TRACE() << Q_FUNC_INFO << "SUCCESS";
-    } else
-    {
-        TRACE() << Q_FUNC_INFO << "FAIL";
-    }
-
-    peer = cuc::Peer{id};
+    peer = cuc::Peer{id, isDefaultPeer};
     peer.setName(name);
-    peer.setIcon(icon);
+    peer.setIconData(ic);
     peer.setIconName(iconName);
     return argument;
 }

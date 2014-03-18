@@ -81,7 +81,7 @@ void ContentPeerModel::setContentType(ContentType::Type contentType)
     TRACE() << Q_FUNC_INFO;
     m_contentType = contentType;
     if (m_complete) {
-    QTimer::singleShot(0, this, SLOT(findPeers()));
+        findPeers();
     }
     Q_EMIT contentTypeChanged();
 }
@@ -103,6 +103,7 @@ void ContentPeerModel::findPeers() {
     } else {
         appendPeersForContentType(m_contentType);
     }
+    Q_EMIT findPeersCompleted();
 }
 
 /*!
@@ -120,24 +121,22 @@ void ContentPeerModel::appendPeersForContentType(ContentType::Type contentType)
         hubPeers = m_hub->known_shares_for_type(hubType);
     } else {
         hubPeers = m_hub->known_sources_for_type(hubType);
-        cuc::Peer defaultPeer;
-        defaultPeer = m_hub->default_source_for_type(hubType);
-        if(!defaultPeer.id().isEmpty()) {
-            ContentPeer *qmlPeer = new ContentPeer();
-            qmlPeer->setPeer(defaultPeer);
-            qmlPeer->setHandler(m_handler);
-            m_peers.prepend(qmlPeer);
-            Q_EMIT peersChanged();
-        }
-        QCoreApplication::processEvents();
     }
 
-    Q_FOREACH (const cuc::Peer &hubPeer, hubPeers) {
-        if(!hubPeer.id().isEmpty()) {
+    Q_FOREACH (const cuc::Peer &hubPeer, hubPeers) 
+    {
+        if(!hubPeer.id().isEmpty()) 
+        {
             ContentPeer *qmlPeer = new ContentPeer();
             qmlPeer->setPeer(hubPeer);
+            qmlPeer->setContentType(contentType);
             qmlPeer->setHandler(m_handler);
-            m_peers.append(qmlPeer);
+            if(qmlPeer->isDefaultPeer()) 
+            {
+                m_peers.prepend(qmlPeer);
+            } else {
+                m_peers.append(qmlPeer);
+            }
             Q_EMIT peersChanged();
         }
         QCoreApplication::processEvents();
@@ -149,7 +148,8 @@ void ContentPeerModel::appendPeersForContentType(ContentType::Type contentType)
  *
  * Returns the ContentHandler 
  */
-ContentHandler::Handler ContentPeerModel::handler() {
+ContentHandler::Handler ContentPeerModel::handler() 
+{
     TRACE() << Q_FUNC_INFO;
     return m_handler;
 }
@@ -163,7 +163,7 @@ void ContentPeerModel::setHandler(ContentHandler::Handler handler)
     TRACE() << Q_FUNC_INFO;
     m_handler = handler;
     if (m_complete) {
-        QTimer::singleShot(0, this, SLOT(findPeers()));
+        findPeers();
     }
     Q_EMIT handlerChanged();
 }

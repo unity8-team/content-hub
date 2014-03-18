@@ -16,8 +16,8 @@
  * Authored by: Ken VanDine <ken.vandine@canonical.com>
  */
 
-#include "registry.h"
 #include "debug.h"
+#include "registry.h"
 #include "utils.cpp"
 #include <upstart-app-launch.h>
 
@@ -35,8 +35,19 @@ Registry::Registry() :
     QList<cuc::Type> types = known_types();
     Q_FOREACH (cuc::Type type, types)
     {
-        QString peer_id = m_defaultSources->get(type.id()).toString();
-        install_source_for_type(type, cuc::Peer{peer_id});
+        if (m_defaultSources->keys().contains(type.id()))
+        {
+            QString peer_id = m_defaultSources->get(type.id()).toString();
+            QStringList as(m_defaultSources->get(type.id()).toStringList());
+            if (!as.isEmpty())
+            {
+                std::string pkg = as[0].toStdString();
+                std::string app = as[1].toStdString();
+                std::string ver = as[2].toStdString();
+                cuc::Peer peer(QString::fromLocal8Bit(upstart_app_launch_triplet_to_app_id(pkg.c_str(), app.c_str(), ver.c_str())));
+                install_source_for_type(type, cuc::Peer{peer.id(), true});
+            }
+        }
     }
 }
 
@@ -48,13 +59,16 @@ cuc::Peer Registry::default_source_for_type(cuc::Type type)
     if (m_defaultSources->keys().contains(type.id()))
     {
         QStringList as(m_defaultSources->get(type.id()).toStringList());
-        std::string pkg = as[0].toStdString();
-        std::string app = as[1].toStdString();
-        std::string ver = as[2].toStdString();
-        return cuc::Peer(QString::fromLocal8Bit(upstart_app_launch_triplet_to_app_id(pkg.c_str(), app.c_str(), ver.c_str())));
+        if (!as.isEmpty())
+        {
+            std::string pkg = as[0].toStdString();
+            std::string app = as[1].toStdString();
+            std::string ver = as[2].toStdString();
+            return cuc::Peer(QString::fromLocal8Bit(upstart_app_launch_triplet_to_app_id(pkg.c_str(), app.c_str(), ver.c_str())), true);
+        }
     }
-    else
-        return cuc::Peer();
+
+    return cuc::Peer();
 }
 
 void Registry::enumerate_known_peers(const std::function<void(const cuc::Peer&)>&for_each)
@@ -100,7 +114,16 @@ void Registry::enumerate_known_sources_for_type(cuc::Type type, const std::funct
     Q_FOREACH (QString k, m_sources->get(type.id()).toStringList())
     {
         TRACE() << Q_FUNC_INFO << k;
-        for_each(cuc::Peer{k});
+        bool defaultPeer = false;
+        QStringList as(m_defaultSources->get(type.id()).toStringList());
+        if (!as.isEmpty())
+        {   
+            std::string pkg = as[0].toStdString();
+            std::string app = as[1].toStdString();
+            std::string ver = as[2].toStdString();
+            defaultPeer = QString::fromLocal8Bit(upstart_app_launch_triplet_to_app_id(pkg.c_str(), app.c_str(), ver.c_str())) == k;
+        }
+        for_each(cuc::Peer{k, defaultPeer});
     }
 }
 

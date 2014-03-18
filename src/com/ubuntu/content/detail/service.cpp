@@ -302,19 +302,23 @@ void cucd::Service::handle_imports(int state)
             {
                 if (t->Id() != transfer->Id())
                 {
-                    if ((t->source() == transfer->source()) || (t->destination() == transfer->destination()))
+                    if ((t->source() == transfer->source()) && (t->State() == cuc::Transfer::in_progress))
                     {
-                        qDebug() << Q_FUNC_INFO << "Peer has pending transfers:" << t->Id();
+                        qDebug() << Q_FUNC_INFO << "Source has pending transfers:" << t->Id();
                         shouldStop = false;
+                    }
+                    if (t->destination() == transfer->destination())
+                    {
+                        qDebug() << Q_FUNC_INFO << "Destination has pending transfers:" << t->Id();
+                        if (should_cancel(t->State()))
+                            shouldStop = false;
                     }
                 }
             }
             if (shouldStop)
-            {
-                d->app_manager->stop_application(transfer->source().toStdString());
-                d->app_manager->invoke_application(transfer->destination().toStdString());
-            }
+                d->app_manager->stop_application(transfer->source().toStdString());            
         }
+        d->app_manager->invoke_application(transfer->destination().toStdString());
     }
 }
 
@@ -375,19 +379,23 @@ void cucd::Service::handle_exports(int state)
             {
                 if (t->Id() != transfer->Id())
                 {
-                    if ((t->source() == transfer->source()) || (t->destination() == transfer->destination()))
+                    if ((t->source() == transfer->source()) && (t->State() == cuc::Transfer::in_progress))
                     {
-                        qDebug() << Q_FUNC_INFO << "Peer has pending transfers:" << t->Id();
+                        qDebug() << Q_FUNC_INFO << "Source has pending transfers:" << t->Id();
                         shouldStop = false;
+                    }
+                    if (t->destination() == transfer->destination())
+                    {
+                        qDebug() << Q_FUNC_INFO << "Destination has pending transfers:" << t->Id();
+                        if (should_cancel(t->State()))
+                            shouldStop = false;
                     }
                 }
             }
             if (shouldStop)
-            {
                 d->app_manager->stop_application(transfer->destination().toStdString());
-                d->app_manager->invoke_application(transfer->source().toStdString());
-            }
         }
+        d->app_manager->invoke_application(transfer->source().toStdString());
     }
 }
 

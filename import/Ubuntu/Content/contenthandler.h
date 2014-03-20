@@ -14,26 +14,24 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#ifndef COM_UBUNTU_CONTENT_PLUGIN_H_
-#define COM_UBUNTU_CONTENT_PLUGIN_H_
+#ifndef COM_UBUNTU_CONTENTHANDLER_H_
+#define COM_UBUNTU_CONTENTHANDLER_H_
 
-#include <QQmlExtensionPlugin>
-#include <QQmlEngine>
+#include <QObject>
 
-class ContentHub;
-
-class ContentHubPlugin : public QQmlExtensionPlugin
+class ContentHandler : public QObject
 {
     Q_OBJECT
-    Q_PLUGIN_METADATA(IID "org.qt-project.Qt.QQmlExtensionInterface")
+    Q_ENUMS(Handler)
 
 public:
-    void initializeEngine(QQmlEngine * engine, const char * uri);
-    void registerTypes(const char *uri);
+    enum Handler {
+        Source = 0,
+        Destination = 1,
+        Share = 2
+    };
 
-private:
-    ContentHub *m_contentHub;
+    ContentHandler(QObject *parent = nullptr);
 };
 
-
-#endif // COM_UBUNTU_CONTENT_PLUGIN_H_
+#endif // COM_UBUNTU_CONTENTHANDLER_H_

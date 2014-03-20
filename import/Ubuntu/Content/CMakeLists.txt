@@ -36,10 +36,14 @@ include_directories(
 )
 
 set(PLUGIN_HDRS
+    contenthandler.h
     contenthub.h
     contenthubplugin.h
+    contenticonprovider.h
     contentitem.h
     contentpeer.h
+    contentpeermodel.h
+    contentscope.h
     contentstore.h
     contenttransfer.h
     contenttype.h
@@ -47,10 +51,14 @@ set(PLUGIN_HDRS
     )
 
 set(PLUGIN_SRC
+    contenthandler.cpp
     contenthub.cpp
     contenthubplugin.cpp
+    contenticonprovider.cpp
     contentitem.cpp
     contentpeer.cpp
+    contentpeermodel.cpp
+    contentscope.cpp
     contentstore.cpp
     contenttransfer.cpp
     contenttype.cpp

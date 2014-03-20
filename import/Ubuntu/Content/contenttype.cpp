@@ -44,7 +44,10 @@
      \li Music
    \row
      \li ContentType.Contacts
-     \li Music
+     \li Contacts
+   \row
+     \li ContentType.All
+     \li Any of the above content types
    \endtable
  */
 

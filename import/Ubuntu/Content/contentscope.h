@@ -14,26 +14,30 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#ifndef COM_UBUNTU_CONTENT_PLUGIN_H_
-#define COM_UBUNTU_CONTENT_PLUGIN_H_
+#ifndef COM_UBUNTU_CONTENTSCOPE_H_
+#define COM_UBUNTU_CONTENTSCOPE_H_
 
-#include <QQmlExtensionPlugin>
-#include <QQmlEngine>
+#include <com/ubuntu/content/scope.h>
 
-class ContentHub;
+#include <QObject>
 
-class ContentHubPlugin : public QQmlExtensionPlugin
+class ContentScope : public QObject
 {
     Q_OBJECT
-    Q_PLUGIN_METADATA(IID "org.qt-project.Qt.QQmlExtensionInterface")
+    Q_ENUMS(Scope)
 
 public:
-    void initializeEngine(QQmlEngine * engine, const char * uri);
-    void registerTypes(const char *uri);
+    enum Scope {
+        System = 0,
+        User = 1,
+        App = 2
+    };
 
-private:
-    ContentHub *m_contentHub;
+    ContentScope(QObject *parent = nullptr);
+
+    static com::ubuntu::content::Scope contentScope2HubScope(int scope);
+    static com::ubuntu::content::Scope contentScope2HubScope(Scope scope);
+
 };
 
-
-#endif // COM_UBUNTU_CONTENT_PLUGIN_H_
+#endif // COM_UBUNTU_CONTENTSCOPE_H_

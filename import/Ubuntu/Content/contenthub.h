@@ -21,10 +21,10 @@
 #include <QList>
 #include <QObject>
 #include <QQmlListProperty>
+#include "contentpeer.h"
+#include "contenttransfer.h"
 
-class ContentPeer;
 class ContentStore;
-class ContentTransfer;
 class QmlImportExportHandler;
 
 namespace com {
@@ -45,25 +45,17 @@ class ContentHub : public QObject
     Q_PROPERTY(QQmlListProperty<ContentTransfer> finishedImports READ finishedImports NOTIFY finishedImportsChanged)
 
 public:
-    ContentHub(QObject *parent = nullptr);
+    ContentHub(const ContentHub&) = delete;
 
-    Q_INVOKABLE ContentPeer *defaultSourceForType(int type);
-    Q_INVOKABLE QVariantList knownSourcesForType(int type);
-
-    Q_INVOKABLE ContentStore *defaultStoreForType(int type);
-
-    Q_INVOKABLE ContentTransfer* importContent(int type);
-    Q_INVOKABLE ContentTransfer* importContent(int type, ContentPeer *peer);
-
-    Q_INVOKABLE ContentTransfer* exportContent(int type);
-    Q_INVOKABLE ContentTransfer* exportContent(int type, ContentPeer *peer);
-
-    Q_INVOKABLE ContentTransfer* shareContent(int type);
-    Q_INVOKABLE ContentTransfer* shareContent(int type, ContentPeer *peer);
+    static ContentHub *instance();
 
     Q_INVOKABLE void restoreImports();
 
     QQmlListProperty<ContentTransfer> finishedImports();
+
+    Q_INVOKABLE ContentTransfer* importContent(com::ubuntu::content::Peer peer);
+    Q_INVOKABLE ContentTransfer* exportContent(com::ubuntu::content::Peer peer);
+    Q_INVOKABLE ContentTransfer* shareContent(com::ubuntu::content::Peer peer);
 
 Q_SIGNALS:
     void importRequested(ContentTransfer *transfer);
@@ -73,24 +65,20 @@ Q_SIGNALS:
     void finishedImportsChanged();
 
 private Q_SLOTS:
-    void handleImport(com::ubuntu::content::Transfer * transfer);
-    void handleExport(com::ubuntu::content::Transfer * transfer);
-    void handleShare(com::ubuntu::content::Transfer * transfer);
+    void handleImport(com::ubuntu::content::Transfer* transfer);
+    void handleExport(com::ubuntu::content::Transfer* transfer);
+    void handleShare(com::ubuntu::content::Transfer* transfer);
     void updateState();
 
 private:
-    ContentTransfer* importContent(const com::ubuntu::content::Type&,
-                                   const com::ubuntu::content::Peer &hubPeer);
-
-    ContentTransfer* exportContent(const com::ubuntu::content::Type&,
-                                   const com::ubuntu::content::Peer &hubPeer);
-    ContentTransfer* shareContent(const com::ubuntu::content::Type&,
-                                   const com::ubuntu::content::Peer &hubPeer);
-
     QList<ContentTransfer *> m_finishedImports;
     QHash<com::ubuntu::content::Transfer *, ContentTransfer *> m_activeImports;
     com::ubuntu::content::Hub *m_hub;
     QmlImportExportHandler *m_handler;
+
+protected:
+    ContentHub(QObject* = nullptr);
+
 };
 
 #endif // COM_UBUNTU_CONTENTHUB_H_

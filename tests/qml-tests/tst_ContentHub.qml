@@ -22,27 +22,42 @@ TestCase {
     name: "ContentHub"
 
     function test_default_import() {
-        var transfer = ContentHub.importContent(ContentType.Pictures)
+        var transfer = sourcePeer.request();
         verify(transfer !== null, "No transer Object returned")
     }
 
     function test_select_for_import() {
-        var peer = ContentHub.defaultSourceForType(ContentType.Pictures)
-//        compare(peer.name, "com_ubuntu_gallery_app", "Wrong peer as default")
-        var transfer = ContentHub.importContent(ContentType.Pictures, peer)
+        var transfer = sourcePeer.request();
         verify(transfer !== null, "No transer Object returned")
     }
 
-//    function test_import_request() {
-//        test.numImports = 0
-//        // trigger import somehow
-//        compare(test.numImports, 1, "No import handled")
-//    }
-
     function test_export_request() {
-        var transfer = ContentHub.importContent(ContentType.Pictures)
-        ContentHub.exportRequested(transfer) // FIXME find better way to simulate the export request
-        compare(test.exportTransfer, transfer, "Transfer object not correcty copied")
+        var filePath = "file:///foo/bar.png";
+        var transfer = destPeer.request();
+        transfer.items = [ resultComponent.createObject(test, {"url": filePath}) ];
+        transfer.state = ContentTransfer.Charged;
+        // This shouldn't be necessary, but without it we compare the results to fast
+        ContentHub.exportRequested(transfer);
+        compare(test.exportTransfer, transfer, "Transfer object not correcty set");
+        compare(test.exportTransfer.items[0].url, filePath, "Transfer contents incorrect");
+    }
+
+    Component {
+        id: resultComponent
+        ContentItem {}
+    }
+
+    ContentPeer {
+        id: sourcePeer
+        handler: ContentHandler.Source
+        contentType: ContentType.Pictures
+    }
+
+    ContentPeer {
+        id: destPeer
+        handler: ContentHandler.Destination
+        contentType: ContentType.Pictures
+        appId: "com.some.dest"
     }
 
     Item {

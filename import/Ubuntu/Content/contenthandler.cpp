@@ -14,26 +14,32 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#ifndef COM_UBUNTU_CONTENT_PLUGIN_H_
-#define COM_UBUNTU_CONTENT_PLUGIN_H_
+#include "contenthandler.h"
 
-#include <QQmlExtensionPlugin>
-#include <QQmlEngine>
+#include <QDebug>
 
-class ContentHub;
+/*!
+   \qmltype ContentHandler
+   \instantiates ContentHandler
+   \inqmlmodule Ubuntu.Content 0.1
 
-class ContentHubPlugin : public QQmlExtensionPlugin
+   \sa ContentHub
+
+   \e {ContentHandler} is an enumeration of handler types:
+   \table
+   \header
+     \li Handler
+   \row
+     \li ContentHandler.Source
+   \row
+     \li ContentHandler.Destination
+   \row
+     \li ContentHandler.Share
+   \endtable
+ */
+
+ContentHandler::ContentHandler(QObject *parent)
+    : QObject(parent)
 {
-    Q_OBJECT
-    Q_PLUGIN_METADATA(IID "org.qt-project.Qt.QQmlExtensionInterface")
-
-public:
-    void initializeEngine(QQmlEngine * engine, const char * uri);
-    void registerTypes(const char *uri);
-
-private:
-    ContentHub *m_contentHub;
-};
-
-
-#endif // COM_UBUNTU_CONTENT_PLUGIN_H_
+    qDebug() << Q_FUNC_INFO;
+}

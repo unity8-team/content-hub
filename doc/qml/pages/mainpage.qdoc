@@ -72,28 +72,45 @@ import Ubuntu.Content 0.1
 
 Rectangle {
   id: root
-  Button {
-      text: "Import from default"
-       onClicked: {
-           var peer = ContentHub.defaultSourceForType(ContentType.Pictures);
-           activeTransfer = ContentHub.importContent(ContentType.Pictures, peer);
+  property list<ContentItem> importItems
+  property var activeTransfer
+
+  ContentPeer {
+      id: picSourceSingle
+      contentType: ContentType.Pictures
+      handler: ContentHandler.Source
+      selectionType: ContentTransfer.Single
+  }
+
+  ContentPeer {
+      id: picSourceMulti
+      contentType: ContentType.Pictures
+      handler: ContentHandler.Source
+      selectionType: ContentTransfer.Multiple
+  }
+
+  Row {
+      Button {
+          text: "Import single item"
+          onClicked: {
+              activeTransfer = picSourceSingle.request()
+          }
+      }
+
+      Button {
+          text: "Import multiple items"
+          onClicked: {
+              activeTransfer = picSourceMulti.request()
+          }
       }
   }
-  Button {
-      text: "Import from a selectable list"
-       onClicked: {
-           activeTransfer = ContentHub.importContent(ContentType.Pictures);
-           activeTransfer.selectionType =ContentTransfer.Multiple;
-           activeTransfer.start();
-      }
-  }
-  ContentImportHint {
-      id: importHint
+
+  ContentTransferHint {
+      id: transferHint
       anchors.fill: parent
       activeTransfer: root.activeTransfer
   }
-  property list<ContentItem> importItems
-  property var activeTransfer
+
   Connections {
       target: root.activeTransfer
       onStateChanged: {
@@ -107,8 +124,12 @@ Rectangle {
 \part General Topics
 \list
     \li \l {ContentHub}
+    \li \l {ContentPeer}
+    \li \l {ContentPeerModel}
+    \li \l {ContentPeerPicker}
+    \li \l {ContentStore}
     \li \l {ContentTransfer}
-    \li \l {ContentImportHint}
+    \li \l {ContentTransferHint}
     \li \l {ContentType}
 \endlist
 

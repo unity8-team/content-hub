@@ -14,26 +14,27 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#ifndef COM_UBUNTU_CONTENT_PLUGIN_H_
-#define COM_UBUNTU_CONTENT_PLUGIN_H_
+#ifndef COM_UBUNTU_CONTENTICONPROVIDER_H_
+#define COM_UBUNTU_CONTENTICONPROVIDER_H_
 
-#include <QQmlExtensionPlugin>
-#include <QQmlEngine>
+#include <QMap>
+#include <QQuickImageProvider>
+#include <QString>
+#include <QImage>
 
-class ContentHub;
-
-class ContentHubPlugin : public QQmlExtensionPlugin
+class ContentIconProvider : public QQuickImageProvider
 {
-    Q_OBJECT
-    Q_PLUGIN_METADATA(IID "org.qt-project.Qt.QQmlExtensionInterface")
 
 public:
-    void initializeEngine(QQmlEngine * engine, const char * uri);
-    void registerTypes(const char *uri);
+    ContentIconProvider();
+
+    static ContentIconProvider *instance();
+
+    QImage requestImage(const QString &id, QSize *size, const QSize &requestedSize);
+    void addImage(QString appId, QImage image);
 
 private:
-    ContentHub *m_contentHub;
+    QMap<QString, QImage> *appIdImageMap;
 };
 
-
-#endif // COM_UBUNTU_CONTENT_PLUGIN_H_
+#endif // COM_UBUNTU_CONTENTICONPROVIDER_H_

@@ -24,7 +24,7 @@ import Ubuntu.Content 0.1
     \inqmlmodule Ubuntu.Content 0.1
     \brief Component that indicates that a transfer is active
 
-    This component shows, that the transfer is currently running, and the source
+    This component shows that the transfer is currently running, and the source
     application is active. It blocks all input during that time.
     Place this component on top of your view.
 
@@ -33,7 +33,14 @@ import Ubuntu.Content 0.1
 Item {
     id: root
 
-    /// The current running transfer
+    /*! 
+        \qmlproperty ContentTransfer ContentTransferHint::activeTransfer
+        \brief The ContentTransfer to monitor the status of.
+
+        This should be set to the currently active ContentTransfer, which
+        will then cause the ContentTransferHint to become visible while
+        the transfer is in progress.
+    */    
     property var activeTransfer
 
     opacity: internal.isTransferRunning ? 1.0 : 0.0

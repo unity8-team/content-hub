@@ -28,6 +28,7 @@
 #include <com/ubuntu/content/type.h>
 #include <com/ubuntu/content/transfer.h>
 
+#include <QDBusMetaType>
 #include <QCache>
 #include <QCoreApplication>
 #include <QDebug>
@@ -46,7 +47,6 @@ struct cucd::Service::RegHandler
         service(service),
         handler(handler)
     {
-
     }
 
     QString id;
@@ -83,6 +83,8 @@ cucd::Service::Service(QDBusConnection connection, const QSharedPointer<cucd::Pe
 {
     assert(!peer_registry.isNull());
 
+    qDBusRegisterMetaType<cuc::Peer>();
+
     m_watcher->setWatchMode(QDBusServiceWatcher::WatchForUnregistration);
     m_watcher->setConnection(d->connection);
     QObject::connect(m_watcher, SIGNAL(serviceUnregistered(const QString&)),
@@ -105,53 +107,53 @@ void cucd::Service::Quit()
     QCoreApplication::instance()->quit();
 }
 
-QStringList cucd::Service::KnownSourcesForType(const QString& type_id)
+QVariantList cucd::Service::KnownSourcesForType(const QString& type_id)
 {
-    QStringList result;
+    QVariantList result;
 
     d->registry->enumerate_known_sources_for_type(
         Type(type_id),
         [&result](const Peer& peer)
         {
-            result.append(peer.id());
+            result.append(QVariant::fromValue(peer));
         });
 
     return result;
 }
 
-QStringList cucd::Service::KnownDestinationsForType(const QString& type_id)
+QVariantList cucd::Service::KnownDestinationsForType(const QString& type_id)
 {
-    QStringList result;
+    QVariantList result;
 
     d->registry->enumerate_known_destinations_for_type(
         Type(type_id),
         [&result](const Peer& peer)
         {
-            result.append(peer.id());
+            result.append(QVariant::fromValue(peer));
         });
 
     return result;
 }
 
-QStringList cucd::Service::KnownSharesForType(const QString& type_id)
+QVariantList cucd::Service::KnownSharesForType(const QString& type_id)
 {
-    QStringList result;
+    QVariantList result;
 
     d->registry->enumerate_known_shares_for_type(
         Type(type_id),
         [&result](const Peer& peer)
         {
-            result.append(peer.id());
+            result.append(QVariant::fromValue(peer));
         });
 
     return result;
 }
 
-QString cucd::Service::DefaultSourceForType(const QString& type_id)
+QDBusVariant cucd::Service::DefaultSourceForType(const QString& type_id)
 {
-    auto peer = d->registry->default_source_for_type(Type(type_id));
+    cuc::Peer peer = d->registry->default_source_for_type(Type(type_id));
 
-    return peer.id();
+    return QDBusVariant(QVariant::fromValue(peer));
 }
 
 QDBusObjectPath cucd::Service::CreateImportFromPeer(const QString& peer_id, const QString& app_id)

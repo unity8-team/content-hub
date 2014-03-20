@@ -21,12 +21,13 @@
 
 #include <QObject>
 #include <QString>
-
+#include <QImage>
 class ContentPeer : public QObject
 {
     Q_OBJECT
     Q_PROPERTY(QString name READ name NOTIFY nameChanged)
     Q_PROPERTY(QString appId READ appId WRITE setAppId NOTIFY appIdChanged)
+    Q_PROPERTY(QImage icon READ icon)
 
 public:
     ContentPeer(QObject *parent = nullptr);
@@ -34,6 +35,7 @@ public:
     QString name();
     const QString &appId() const;
     void setAppId(const QString&);
+    QImage &icon();
 
     const com::ubuntu::content::Peer &peer() const;
     void setPeer(const com::ubuntu::content::Peer &peer);
@@ -44,6 +46,7 @@ Q_SIGNALS:
 
 private:
     com::ubuntu::content::Peer m_peer;
+    QImage m_icon;
 };
 
 #endif // COM_UBUNTU_CONTENTPEER_H_

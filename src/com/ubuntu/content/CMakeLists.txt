@@ -20,6 +20,7 @@ include_directories(
   ${CMAKE_CURRENT_BINARY_DIR}
   ${CMAKE_SOURCE_DIR}/src
   ${CMAKE_SOURCE_DIR}
+  ${CMAKE_SOURCE_DIR}/include
   ${GLIB_INCLUDE_DIRS}
   ${GIO_INCLUDE_DIRS}
   ${NIH_INCLUDE_DIRS}
@@ -91,7 +92,7 @@ set_target_properties(
   AUTOMOC TRUE
 )
 
-qt5_use_modules(content-hub Core DBus)
+qt5_use_modules(content-hub Core DBus Gui)
 
 target_link_libraries(content-hub
     ${UPSTART_LAUNCH_LDFLAGS}

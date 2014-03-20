@@ -15,10 +15,9 @@
  */
 
 #include "contentpeer.h"
-
 #include <com/ubuntu/content/peer.h>
-
 #include <QDebug>
+#include <QIcon>
 
 /*!
  * \qmltype ContentPeer
@@ -74,6 +73,12 @@ void ContentPeer::setAppId(const QString& appId)
     this->setPeer(cuc::Peer{appId});
 }
 
+QImage &ContentPeer::icon()
+{
+    qDebug() << Q_FUNC_INFO;
+    return m_icon;
+}
+
 /*!
  * \brief ContentPeer::peer
  * \internal
@@ -89,7 +94,15 @@ const com::ubuntu::content::Peer &ContentPeer::peer() const
  */
 void ContentPeer::setPeer(const cuc::Peer &peer)
 {
+    qDebug() << Q_FUNC_INFO;
     m_peer = peer;
+    if (peer.icon().isNull())
+    {
+        if (QIcon::hasThemeIcon(peer.iconName().toUtf8()))
+            m_icon = QIcon::fromTheme(peer.iconName().toUtf8()).pixmap(256).toImage();
+    } else
+        m_icon = peer.icon();
+
     Q_EMIT nameChanged();
     Q_EMIT appIdChanged();
 }

@@ -35,7 +35,7 @@ add_executable(
   ${CONTENT_SERVICE_SKELETON}
 )
 
-qt5_use_modules(content-hub-service Core DBus)
+qt5_use_modules(content-hub-service Core DBus Gui)
 
 target_link_libraries(
   content-hub-service
@@ -69,7 +69,7 @@ add_executable(
   hook.cpp
 )
 
-qt5_use_modules(content-hub-peer-hook Core)
+qt5_use_modules(content-hub-peer-hook Core Gui DBus)
 
 target_link_libraries(
   content-hub-peer-hook

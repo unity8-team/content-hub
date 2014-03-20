@@ -54,7 +54,7 @@ ContentPeer::ContentPeer(QObject *parent)
 /*!
  * \qmlproperty string ContentPeer::name
  *
- * Returns user friendly name of the peer
+ * Returns user friendly name of the peer.
  */
 QString ContentPeer::name()
 {
@@ -64,8 +64,7 @@ QString ContentPeer::name()
 
 /*!
  * \qmlproperty string ContentPeer::appId
- *
- * Returns the Application id
+ * When set, this property allows for a specific application to be used as a peer.
  */
 const QString &ContentPeer::appId() const
 {
@@ -75,7 +74,7 @@ const QString &ContentPeer::appId() const
 
 /*!
  * \brief ContentPeer::setAppId
- *
+ * \internal
  * Sets the Application id
  */
 void ContentPeer::setAppId(const QString& appId)
@@ -122,9 +121,8 @@ void ContentPeer::setPeer(const cuc::Peer &peer, bool explicitPeer)
 }
 
 /*!
- * \qmlproperty int ContentPeer::handler
- *
- * Returns the ContentHandler 
+ * \qmlproperty ContentHandler ContentPeer::handler
+ * Specifies which ContentHandler this peer should support (e.g. Source, Destination, Share).
  */
 ContentHandler::Handler ContentPeer::handler()
 {
@@ -145,9 +143,8 @@ void ContentPeer::setHandler(ContentHandler::Handler handler)
 }
 
 /*!
- * \qmlproperty int ContentPeer::contentType
- *
- * Returns the ContentType
+ * \qmlproperty ContentType ContentPeer::contentType
+ * Specifies the ContentType this peer should support.
  */
 ContentType::Type ContentPeer::contentType() 
 {
@@ -173,9 +170,8 @@ void ContentPeer::setContentType(ContentType::Type contentType)
 }
 
 /*!
- * \qmlproperty int ContentPeer::selectionType
- *
- * Returns the ContentTransfer selection type
+ * \qmlproperty ContentTransfer.SelectionType ContentPeer::selectionType
+ * Specifies whether this peer is allowed to return multiple items.
  */
 ContentTransfer::SelectionType ContentPeer::selectionType()
 {
@@ -207,9 +203,8 @@ bool ContentPeer::isDefaultPeer()
 
 /*!
  * \qmlmethod ContentPeer::request()
- * \overload ContentPeer::request(ContentStore)
  *
- * \brief Request to import data from this \a ContentPeer
+ * \brief Request an active transfer from this ContentPeer.
  */
 ContentTransfer *ContentPeer::request()
 {   
@@ -220,8 +215,8 @@ ContentTransfer *ContentPeer::request()
 /*!
  * \qmlmethod ContentPeer::request(ContentStore)
  *
- * \brief Request to import data from this \a ContentPeer and use
- * a \a ContentStore for permanent storage
+ * \brief Request to an active transfer from this ContentPeer and use
+ * a ContentStore for permanent storage.
  */
 ContentTransfer *ContentPeer::request(ContentStore *store)
 {

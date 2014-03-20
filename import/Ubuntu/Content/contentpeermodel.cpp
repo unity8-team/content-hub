@@ -63,9 +63,9 @@ void ContentPeerModel::componentComplete()
 }
 
 /*!
- * \qmlproperty int ContentPeerModel::contentType
+ * \qmlproperty ContentType ContentPeerModel::contentType
  *
- * Returns the ContentType 
+ * Specifies which ContentType discovered peers should support.
  */
 ContentType::Type ContentPeerModel::contentType()
 {
@@ -145,9 +145,9 @@ void ContentPeerModel::appendPeersForContentType(ContentType::Type contentType)
 }
 
 /*!
- * \qmlproperty int ContentPeerModel::handler
+ * \qmlproperty ContentHandler ContentPeerModel::handler
  *
- * Returns the ContentHandler 
+ * Specifies which ContentHandler discovered peers should support.
  */
 ContentHandler::Handler ContentPeerModel::handler() 
 {
@@ -169,6 +169,11 @@ void ContentPeerModel::setHandler(ContentHandler::Handler handler)
     Q_EMIT handlerChanged();
 }
 
+/*!
+ * \qmlproperty list<ContentPeer> ContentPeerModel::peers
+ *
+ * Provides a list of discovered peers matching the requested ContentType and ContentHandler.
+ */
 QQmlListProperty<ContentPeer> ContentPeerModel::peers()
 {
     qDebug() << Q_FUNC_INFO;

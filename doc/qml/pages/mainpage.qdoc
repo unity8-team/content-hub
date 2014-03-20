@@ -126,6 +126,7 @@ Rectangle {
     \li \l {ContentHub}
     \li \l {ContentPeer}
     \li \l {ContentPeerModel}
+    \li \l {ContentPeerPicker}
     \li \l {ContentStore}
     \li \l {ContentTransfer}
     \li \l {ContentTransferHint}

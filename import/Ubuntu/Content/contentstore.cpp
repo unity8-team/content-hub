@@ -24,7 +24,9 @@
  * \instantiates ContentStore
  * \inqmlmodule Ubuntu.Content 0.1
  *
- * See documentation for ContentHub
+ * A ContentStore allows for the permanent storage of a transfered item.
+ *
+ * See documentation for ContentHub and ContentScope
  */
 
 namespace cuc = com::ubuntu::content;
@@ -73,17 +75,14 @@ const com::ubuntu::content::Store *ContentStore::store() const
 void ContentStore::setStore(const com::ubuntu::content::Store *store)
 {
     TRACE() << Q_FUNC_INFO;
-    //if (store == m_store)
-    //    return;
-
     m_store = store;
     Q_EMIT uriChanged();
 }
 
 /*!
- * \qmlproperty int ContentStore::scope
+ * \qmlproperty ContentScope ContentStore::scope
  *
- * Returns the ContentScope
+ * Specifies the ContentScope for this store.
  */
 ContentScope::Scope ContentStore::scope()
 {   

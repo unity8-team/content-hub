@@ -30,6 +30,7 @@ namespace content
 namespace detail
 {
 class Service;
+class Hook;
 }
 class Type : public QObject
 {
@@ -59,6 +60,7 @@ class Type : public QObject
   protected:
     friend struct Known;
     friend class detail::Service;
+    friend class detail::Hook;
 
     explicit Type(const QString&, QObject* = nullptr);
     

@@ -24,6 +24,12 @@ ExampleExporter::ExampleExporter()
     hub->register_import_export_handler(this);
 }
 
+void ExampleExporter::handle_import(cuc::Transfer *transfer)
+{
+    qDebug() << Q_FUNC_INFO << "not implemented";
+    Q_UNUSED(transfer);
+}
+
 void ExampleExporter::handle_export(cuc::Transfer *transfer)
 {
     qDebug() << Q_FUNC_INFO;
@@ -45,7 +51,7 @@ void ExampleExporter::handle_export(cuc::Transfer *transfer)
     qDebug() << Q_FUNC_INFO << "Items:" << items.count();
 }
 
-void ExampleExporter::handle_import(cuc::Transfer *transfer)
+void ExampleExporter::handle_share(cuc::Transfer *transfer)
 {
     qDebug() << Q_FUNC_INFO << "not implemented";
     Q_UNUSED(transfer);

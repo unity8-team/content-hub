@@ -64,6 +64,17 @@ const QString &ContentPeer::appId() const
 }
 
 /*!
+ * \brief ContentPeer::setAppId
+ *
+ * Sets the Application id
+ */
+void ContentPeer::setAppId(const QString& appId)
+{
+    qDebug() << Q_FUNC_INFO << appId;
+    this->setPeer(cuc::Peer{appId});
+}
+
+/*!
  * \brief ContentPeer::peer
  * \internal
  */

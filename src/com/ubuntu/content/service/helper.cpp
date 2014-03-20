@@ -34,7 +34,7 @@ int main(int argc, char** argv)
             return 1;
     }
 
-    new Hook();
+    new cuc::detail::Hook();
 
     app.exec();
 

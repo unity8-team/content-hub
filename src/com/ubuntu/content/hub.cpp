@@ -74,27 +74,19 @@ void cuc::Hub::register_import_export_handler(cuc::ImportExportHandler* handler)
         return;
     }
 
-    QString bus_name = handler_address(id);
-    qDebug() << Q_FUNC_INFO << "BUS_NAME:" << bus_name;
-
     auto c = QDBusConnection::sessionBus();
     auto h = new cuc::detail::Handler(c, id, handler);
 
     new HandlerAdaptor(h);
-    if (not c.registerService(bus_name))
-    {
-        qWarning() << Q_FUNC_INFO << "Failed to register name:" << bus_name;
-        return;
-    }
+
 
     if (not c.registerObject(handler_path(id), h))
     {
-        qWarning() << Q_FUNC_INFO << "Failed to register object for:" << bus_name;
+        qWarning() << Q_FUNC_INFO << "Failed to register object for:" << id;
         return;
     }
 
     d->service->RegisterImportExportHandler(
-                QString(""),
                 id,
                 QDBusObjectPath{handler_path(id)});
 }
@@ -122,9 +114,9 @@ const cuc::Store* cuc::Hub::store_for_scope_and_type(cuc::Scope scope, cuc::Type
     return it->second;
 }
 
-cuc::Peer cuc::Hub::default_peer_for_type(cuc::Type t)
+cuc::Peer cuc::Hub::default_source_for_type(cuc::Type t)
 {
-    auto reply = d->service->DefaultPeerForType(t.id());
+    auto reply = d->service->DefaultSourceForType(t.id());
     reply.waitForFinished();
 
     if (reply.isError())
@@ -133,11 +125,11 @@ cuc::Peer cuc::Hub::default_peer_for_type(cuc::Type t)
     return cuc::Peer(reply.value(), this);
 }
 
-QVector<cuc::Peer> cuc::Hub::known_peers_for_type(cuc::Type t)
+QVector<cuc::Peer> cuc::Hub::known_sources_for_type(cuc::Type t)
 {
     QVector<cuc::Peer> result;
 
-    auto reply = d->service->KnownPeersForType(t.id());
+    auto reply = d->service->KnownSourcesForType(t.id());
     reply.waitForFinished();
 
     if (reply.isError())
@@ -149,16 +141,53 @@ QVector<cuc::Peer> cuc::Hub::known_peers_for_type(cuc::Type t)
     {
         result << cuc::Peer(id, this);
     }
-
     return result;
 }
 
-cuc::Transfer* cuc::Hub::create_import_for_type_from_peer(cuc::Type type, cuc::Peer peer)
+QVector<cuc::Peer> cuc::Hub::known_destinations_for_type(cuc::Type t)
+{
+    QVector<cuc::Peer> result;
+
+    auto reply = d->service->KnownDestinationsForType(t.id());
+    reply.waitForFinished();
+
+    if (reply.isError())
+        return result;
+
+    auto ids = reply.value();
+
+    Q_FOREACH(const QString& id, ids)
+    {
+        result << cuc::Peer(id, this);
+    }
+    return result;
+}
+
+QVector<cuc::Peer> cuc::Hub::known_shares_for_type(cuc::Type t)
+{
+    QVector<cuc::Peer> result;
+
+    auto reply = d->service->KnownSharesForType(t.id());
+    reply.waitForFinished();
+
+    if (reply.isError())
+        return result;
+
+    auto ids = reply.value();
+
+    Q_FOREACH(const QString& id, ids)
+    {
+        result << cuc::Peer(id, this);
+    }
+    return result;
+}
+
+cuc::Transfer* cuc::Hub::create_import_from_peer(cuc::Peer peer)
 {
     /* This needs to be replaced with a better way to get the APP_ID */
     QString id = app_id();
 
-    auto reply = d->service->CreateImportForTypeFromPeer(type.id(), peer.id(), id);
+    auto reply = d->service->CreateImportFromPeer(peer.id(), id);
     reply.waitForFinished();
 
     if (reply.isError())
@@ -167,6 +196,49 @@ cuc::Transfer* cuc::Hub::create_import_for_type_from_peer(cuc::Type type, cuc::P
     cuc::Transfer *transfer = cuc::Transfer::Private::make_transfer(reply.value(), this);
     const cuc::Store *store = new cuc::Store{QStandardPaths::writableLocation(QStandardPaths::CacheLocation) + "/HubIncoming/" + QString::number(transfer->id()), this};
     transfer->setStore(store);
+    return transfer;
+}
+
+cuc::Transfer* cuc::Hub::create_export_to_peer(cuc::Peer peer)
+{
+    /* This needs to be replaced with a better way to get the APP_ID */
+    QString id = app_id();
+
+    auto reply = d->service->CreateExportToPeer(peer.id(), id);
+    reply.waitForFinished();
+
+    if (reply.isError())
+        return nullptr;
+
+    cuc::Transfer *transfer = cuc::Transfer::Private::make_transfer(reply.value(), this);
+
+    QString peerName = peer.id().split("_")[0];
+    qDebug() << Q_FUNC_INFO << "peerName: " << peerName;
+    const cuc::Store *store = new cuc::Store{QStandardPaths::writableLocation(QStandardPaths::GenericCacheLocation) + "/" + peerName + "/HubIncoming/" + QString::number(transfer->id()), this};
+    qDebug() << Q_FUNC_INFO << "STORE:" << store->uri();
+    transfer->setStore(store);
+    transfer->start();
+    return transfer;
+}
+
+cuc::Transfer* cuc::Hub::create_share_to_peer(cuc::Peer peer)
+{
+    /* This needs to be replaced with a better way to get the APP_ID */
+    QString id = app_id();
+
+    auto reply = d->service->CreateShareToPeer(peer.id(), id);
+    reply.waitForFinished();
+
+    if (reply.isError())
+        return nullptr;
+
+    cuc::Transfer *transfer = cuc::Transfer::Private::make_transfer(reply.value(), this);
+    QString peerName = peer.id().split("_")[0];
+    qDebug() << Q_FUNC_INFO << "peerName: " << peerName;
+    const cuc::Store *store = new cuc::Store{QStandardPaths::writableLocation(QStandardPaths::GenericCacheLocation) + "/" + peerName + "/HubIncoming/" + QString::number(transfer->id()), this};
+    qDebug() << Q_FUNC_INFO << "STORE:" << store->uri();
+    transfer->setStore(store);
+    transfer->start();
     return transfer;
 }
 

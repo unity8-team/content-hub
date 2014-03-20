@@ -34,16 +34,22 @@ class Registry : public cucd::PeerRegistry
 public:
     Registry();
     ~Registry();
-    cuc::Peer default_peer_for_type(cuc::Type type);
-    void enumerate_known_peers_for_type(cuc::Type type, const std::function<void(const cuc::Peer&)>& for_each);
+    cuc::Peer default_source_for_type(cuc::Type type);
     void enumerate_known_peers(const std::function<void(const cuc::Peer&)>& for_each);
-    bool install_default_peer_for_type(cuc::Type type, cuc::Peer peer);
-    bool install_peer_for_type(cuc::Type type, cuc::Peer peer);    
+    void enumerate_known_sources_for_type(cuc::Type type, const std::function<void(const cuc::Peer&)>& for_each);   
+    void enumerate_known_destinations_for_type(cuc::Type type, const std::function<void(const cuc::Peer&)>& for_each);
+    void enumerate_known_shares_for_type(cuc::Type type, const std::function<void(const cuc::Peer&)>& for_each);
+    bool install_default_source_for_type(cuc::Type type, cuc::Peer peer);
+    bool install_source_for_type(cuc::Type type, cuc::Peer peer);    
+    bool install_destination_for_type(cuc::Type type, cuc::Peer peer);
+    bool install_share_for_type(cuc::Type type, cuc::Peer peer);
     bool remove_peer(cuc::Peer peer);
 
 private:
-    QScopedPointer<QGSettings> m_defaultPeers;
-    QScopedPointer<QGSettings> m_peers;
+    QScopedPointer<QGSettings> m_defaultSources;
+    QScopedPointer<QGSettings> m_sources;
+    QScopedPointer<QGSettings> m_dests;
+    QScopedPointer<QGSettings> m_shares;
 };
 
 #endif // REGISTRY_H

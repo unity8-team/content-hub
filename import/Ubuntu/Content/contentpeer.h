@@ -17,33 +17,70 @@
 #ifndef COM_UBUNTU_CONTENTPEER_H_
 #define COM_UBUNTU_CONTENTPEER_H_
 
+#include "contenthandler.h"
+#include "contenttransfer.h"
+#include "contenttype.h"
+#include <com/ubuntu/content/hub.h>
 #include <com/ubuntu/content/peer.h>
 
 #include <QObject>
 #include <QString>
+#include <QImage>
 
 class ContentPeer : public QObject
 {
     Q_OBJECT
     Q_PROPERTY(QString name READ name NOTIFY nameChanged)
     Q_PROPERTY(QString appId READ appId WRITE setAppId NOTIFY appIdChanged)
+    Q_PROPERTY(ContentHandler::Handler handler READ handler WRITE setHandler NOTIFY handlerChanged)
+    Q_PROPERTY(ContentType::Type contentType READ contentType WRITE setContentType NOTIFY contentTypeChanged)
+    Q_PROPERTY(ContentTransfer::SelectionType selectionType READ selectionType WRITE setSelectionType NOTIFY selectionTypeChanged)
+    Q_PROPERTY(QImage icon READ icon)
+    Q_PROPERTY(bool isDefaultPeer READ isDefaultPeer)
 
 public:
     ContentPeer(QObject *parent = nullptr);
+    ContentPeer(ContentType::Type type, QObject *parent);
+
+    Q_INVOKABLE ContentTransfer* request();
+    Q_INVOKABLE ContentTransfer* request(ContentStore *store);
 
     QString name();
     const QString &appId() const;
     void setAppId(const QString&);
+    QImage &icon();
 
     const com::ubuntu::content::Peer &peer() const;
-    void setPeer(const com::ubuntu::content::Peer &peer);
+    void setPeer(const com::ubuntu::content::Peer &peer, bool explicitPeer = true);
+
+    ContentHandler::Handler handler();
+    void setHandler(ContentHandler::Handler handler);
+
+    ContentType::Type contentType();
+    void setContentType(ContentType::Type contentType);
+
+    ContentTransfer::SelectionType selectionType();
+    void setSelectionType(ContentTransfer::SelectionType selectionType);
+
+    bool isDefaultPeer();
 
 Q_SIGNALS:
     void nameChanged();
     void appIdChanged();
+    void handlerChanged();
+    void contentTypeChanged();
+    void selectionTypeChanged();
 
 private:
+    void init();
+
+    com::ubuntu::content::Hub *m_hub;
     com::ubuntu::content::Peer m_peer;
+    ContentHandler::Handler m_handler;
+    ContentType::Type m_contentType;
+    ContentTransfer::SelectionType m_selectionType;
+    bool m_explicit_peer;
+    QImage m_icon;
 };
 
 #endif // COM_UBUNTU_CONTENTPEER_H_

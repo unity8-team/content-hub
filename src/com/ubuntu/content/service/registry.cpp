@@ -16,6 +16,7 @@
  * Authored by: Ken VanDine <ken.vandine@canonical.com>
  */
 
+#include "debug.h"
 #include "registry.h"
 #include "utils.cpp"
 #include <upstart-app-launch.h>
@@ -44,7 +45,7 @@ Registry::Registry() :
                 std::string app = as[1].toStdString();
                 std::string ver = as[2].toStdString();
                 cuc::Peer peer(QString::fromLocal8Bit(upstart_app_launch_triplet_to_app_id(pkg.c_str(), app.c_str(), ver.c_str())));
-                install_source_for_type(type, cuc::Peer{peer.id()});
+                install_source_for_type(type, cuc::Peer{peer.id(), true});
             }
         }
     }
@@ -54,7 +55,7 @@ Registry::~Registry() {}
 
 cuc::Peer Registry::default_source_for_type(cuc::Type type)
 {
-    qDebug() << Q_FUNC_INFO << type.id();
+    TRACE() << Q_FUNC_INFO << type.id();
     if (m_defaultSources->keys().contains(type.id()))
     {
         QStringList as(m_defaultSources->get(type.id()).toStringList());
@@ -63,7 +64,7 @@ cuc::Peer Registry::default_source_for_type(cuc::Type type)
             std::string pkg = as[0].toStdString();
             std::string app = as[1].toStdString();
             std::string ver = as[2].toStdString();
-            return cuc::Peer(QString::fromLocal8Bit(upstart_app_launch_triplet_to_app_id(pkg.c_str(), app.c_str(), ver.c_str())));
+            return cuc::Peer(QString::fromLocal8Bit(upstart_app_launch_triplet_to_app_id(pkg.c_str(), app.c_str(), ver.c_str())), true);
         }
     }
 
@@ -72,78 +73,87 @@ cuc::Peer Registry::default_source_for_type(cuc::Type type)
 
 void Registry::enumerate_known_peers(const std::function<void(const cuc::Peer&)>&for_each)
 {
-    qDebug() << Q_FUNC_INFO;
+    TRACE() << Q_FUNC_INFO;
 
     Q_FOREACH (QString type_id, m_sources->keys())
     {
-        qDebug() << Q_FUNC_INFO << type_id;
+        TRACE() << Q_FUNC_INFO << type_id;
         Q_FOREACH (QString k, m_sources->get(type_id).toStringList())
         {
-            qDebug() << Q_FUNC_INFO << k;
-            for_each(k);
+            TRACE() << Q_FUNC_INFO << k;
+            for_each(cuc::Peer{k});
         }
     }
     Q_FOREACH (QString type_id, m_dests->keys())
     {
-        qDebug() << Q_FUNC_INFO << type_id;
+        TRACE() << Q_FUNC_INFO << type_id;
         Q_FOREACH (QString k, m_dests->get(type_id).toStringList())
         {
-            qDebug() << Q_FUNC_INFO << k;
-            for_each(k);
+            TRACE() << Q_FUNC_INFO << k;
+            for_each(cuc::Peer{k});
         }
     }
     Q_FOREACH (QString type_id, m_shares->keys())
     {
-        qDebug() << Q_FUNC_INFO << type_id;
+        TRACE() << Q_FUNC_INFO << type_id;
         Q_FOREACH (QString k, m_shares->get(type_id).toStringList())
         {
-            qDebug() << Q_FUNC_INFO << k;
-            for_each(k);
+            TRACE() << Q_FUNC_INFO << k;
+            for_each(cuc::Peer{k});
         }
     }
 }
 
 void Registry::enumerate_known_sources_for_type(cuc::Type type, const std::function<void(const cuc::Peer&)>&for_each)
 {
-    qDebug() << Q_FUNC_INFO << type.id();
+    TRACE() << Q_FUNC_INFO << type.id();
 
     if (type == cuc::Type::unknown())
         return;
 
     Q_FOREACH (QString k, m_sources->get(type.id()).toStringList())
     {
-        qDebug() << Q_FUNC_INFO << k;
-        for_each(k);
+        TRACE() << Q_FUNC_INFO << k;
+        bool defaultPeer = false;
+        QStringList as(m_defaultSources->get(type.id()).toStringList());
+        if (!as.isEmpty())
+        {   
+            std::string pkg = as[0].toStdString();
+            std::string app = as[1].toStdString();
+            std::string ver = as[2].toStdString();
+            defaultPeer = QString::fromLocal8Bit(upstart_app_launch_triplet_to_app_id(pkg.c_str(), app.c_str(), ver.c_str())) == k;
+        }
+        for_each(cuc::Peer{k, defaultPeer});
     }
 }
 
 void Registry::enumerate_known_destinations_for_type(cuc::Type type, const std::function<void(const cuc::Peer&)>&for_each)
 {
-    qDebug() << Q_FUNC_INFO << type.id();
+    TRACE() << Q_FUNC_INFO << type.id();
     Q_FOREACH (QString k, m_dests->get(type.id()).toStringList())
     {
-        qDebug() << Q_FUNC_INFO << k;
-        for_each(k);
+        TRACE() << Q_FUNC_INFO << k;
+        for_each(cuc::Peer{k});
     }
 }
 
 void Registry::enumerate_known_shares_for_type(cuc::Type type, const std::function<void(const cuc::Peer&)>&for_each)
 {
-    qDebug() << Q_FUNC_INFO << type.id();
+    TRACE() << Q_FUNC_INFO << type.id();
 
     Q_FOREACH (QString k, m_shares->get(type.id()).toStringList())
     {
-        qDebug() << Q_FUNC_INFO << k;
-        for_each(k);
+        TRACE() << Q_FUNC_INFO << k;
+        for_each(cuc::Peer{k});
     }
 }
 
 bool Registry::install_default_source_for_type(cuc::Type type, cuc::Peer peer)
 {
-    qDebug() << Q_FUNC_INFO << "type:" << type.id() << "peer:" << peer.id();
+    TRACE() << Q_FUNC_INFO << "type:" << type.id() << "peer:" << peer.id();
     if (m_defaultSources->keys().contains(type.id()))
     {
-        qDebug() << Q_FUNC_INFO << "Default peer for" << type.id() << "already installed.";
+        TRACE() << Q_FUNC_INFO << "Default peer for" << type.id() << "already installed.";
         return false;
     }
 
@@ -153,7 +163,7 @@ bool Registry::install_default_source_for_type(cuc::Type type, cuc::Peer peer)
 
 bool Registry::install_source_for_type(cuc::Type type, cuc::Peer peer)
 {
-    qDebug() << Q_FUNC_INFO << "type:" << type.id() << "peer:" << peer.id();
+    TRACE() << Q_FUNC_INFO << "type:" << type.id() << "peer:" << peer.id();
     QStringList l = m_sources->get(type.id()).toStringList();
     if (not l.contains(peer.id()))
     {
@@ -165,7 +175,7 @@ bool Registry::install_source_for_type(cuc::Type type, cuc::Peer peer)
 
 bool Registry::install_destination_for_type(cuc::Type type, cuc::Peer peer)
 {
-    qDebug() << Q_FUNC_INFO << "type:" << type.id() << "peer:" << peer.id();
+    TRACE() << Q_FUNC_INFO << "type:" << type.id() << "peer:" << peer.id();
     QStringList l = m_dests->get(type.id()).toStringList();
     if (not l.contains(peer.id()))
     {
@@ -177,7 +187,7 @@ bool Registry::install_destination_for_type(cuc::Type type, cuc::Peer peer)
 
 bool Registry::install_share_for_type(cuc::Type type, cuc::Peer peer)
 {
-    qDebug() << Q_FUNC_INFO << "type:" << type.id() << "peer:" << peer.id();
+    TRACE() << Q_FUNC_INFO << "type:" << type.id() << "peer:" << peer.id();
     QStringList l = m_shares->get(type.id()).toStringList();
     if (not l.contains(peer.id()))
     {
@@ -189,7 +199,7 @@ bool Registry::install_share_for_type(cuc::Type type, cuc::Peer peer)
 
 bool Registry::remove_peer(cuc::Peer peer)
 {
-    qDebug() << Q_FUNC_INFO << "peer:" << peer.id();
+    TRACE() << Q_FUNC_INFO << "peer:" << peer.id();
     bool ret = false;
     Q_FOREACH (QString type_id, m_sources->keys())
     {

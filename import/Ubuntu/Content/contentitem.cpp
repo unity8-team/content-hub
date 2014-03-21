@@ -15,8 +15,7 @@
  */
 
 #include "contentitem.h"
-
-#include <QDebug>
+#include "../../../src/com/ubuntu/content/debug.h"
 
 /*!
  * \qmltype ContentItem
@@ -34,7 +33,7 @@ namespace cuc = com::ubuntu::content;
 ContentItem::ContentItem(QObject *parent)
     : QObject(parent)
 {
-    qDebug() << Q_FUNC_INFO;
+    TRACE() << Q_FUNC_INFO;
 }
 
 /*!
@@ -43,13 +42,13 @@ ContentItem::ContentItem(QObject *parent)
  */
 const QString &ContentItem::name() const
 {
-    qDebug() << Q_FUNC_INFO;
+    TRACE() << Q_FUNC_INFO;
     return m_name;
 }
 
 void ContentItem::setName(const QString &name)
 {
-    qDebug() << Q_FUNC_INFO;
+    TRACE() << Q_FUNC_INFO;
     if (name == m_name)
         return;
 
@@ -64,13 +63,13 @@ void ContentItem::setName(const QString &name)
  */
 const QUrl &ContentItem::url() const
 {
-    qDebug() << Q_FUNC_INFO;
+    TRACE() << Q_FUNC_INFO;
     return m_item.url();
 }
 
 void ContentItem::setUrl(const QUrl &url)
 {
-    qDebug() << Q_FUNC_INFO;
+    TRACE() << Q_FUNC_INFO;
     if (url == this->url())
         return;
 
@@ -84,7 +83,7 @@ void ContentItem::setUrl(const QUrl &url)
  */
 const com::ubuntu::content::Item &ContentItem::item() const
 {
-    qDebug() << Q_FUNC_INFO;
+    TRACE() << Q_FUNC_INFO;
     return m_item;
 }
 
@@ -94,7 +93,7 @@ const com::ubuntu::content::Item &ContentItem::item() const
  */
 void ContentItem::setItem(const com::ubuntu::content::Item &item)
 {
-    qDebug() << Q_FUNC_INFO;
+    TRACE() << Q_FUNC_INFO;
     if (item == m_item)
         return;
 

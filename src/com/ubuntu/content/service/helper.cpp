@@ -19,6 +19,7 @@
 #include <QCoreApplication>
 
 #include "hook.h"
+#include "debug.h"
 
 namespace cuc = com::ubuntu::content;
 
@@ -26,12 +27,22 @@ int main(int argc, char** argv)
 {
     QCoreApplication app(argc, argv);
 
-    qDebug() << Q_FUNC_INFO;
+    TRACE() << Q_FUNC_INFO;
 
     if (app.arguments().count() > 1)
     {
             qWarning() << "Shouldn't have arguments";
             return 1;
+    }
+
+    /* read environment variables */
+    QProcessEnvironment environment = QProcessEnvironment::systemEnvironment();
+    if (environment.contains(QLatin1String("CONTENT_HUB_LOGGING_LEVEL"))) {
+        bool isOk;
+        int value = environment.value(
+            QLatin1String("CONTENT_HUB_LOGGING_LEVEL")).toInt(&isOk);
+        if (isOk)
+            setLoggingLevel(value);
     }
 
     new cuc::detail::Hook();

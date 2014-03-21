@@ -14,6 +14,7 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
+#include "../../../src/com/ubuntu/content/debug.h"
 #include "contenthub.h"
 #include "contentpeer.h"
 #include "contentstore.h"
@@ -26,7 +27,6 @@
 #include <com/ubuntu/content/type.h>
 
 #include <QStringList>
-#include <QDebug>
 
 /*!
  * \qmltype ContentHub
@@ -43,36 +43,45 @@
  *     id: root
  *     width: units.gu(60)
  *     height: units.gu(90)
- *     Button {
- *         anchors {
- *             left: parent.left
- *             margins: units.gu(2)
- *          }
- *         text: "Import from default"
- *          onClicked: {
- *              var peer = ContentHub.defaultSourceForType(ContentType.Pictures);
- *              activeTransfer = ContentHub.importContent(ContentType.Pictures, peer);
+ *     property list<ContentItem> importItems
+ *     property var activeTransfer
+ * 
+ *     ContentPeer {
+ *         id: picSourceSingle
+ *         contentType: ContentType.Pictures
+ *         handler: ContentHandler.Source
+ *         selectionType: ContentTransfer.Single
+ *     }
+ *
+ *     ContentPeer {
+ *         id: picSourceMulti
+ *         contentType: ContentType.Pictures
+ *         handler: ContentHandler.Source
+ *         selectionType: ContentTransfer.Multiple
+ *     }
+ *
+ *     Row {
+ *         Button {
+ *             text: "Import single item"
+ *             onClicked: {
+ *                 activeTransfer = picSourceSingle.request()
+ *             }
+ *         }
+ *
+ *         Button {
+ *             text: "Import multiple items"
+ *             onClicked: {
+ *                 activeTransfer = picSourceMulti.request()
+ *             }
  *         }
  *     }
- *     Button {
- *         anchors {
- *             right: parent.right
- *             margins: units.gu(2)
- *          }
- *         text: "Import from a selectable list"
- *          onClicked: {
- *              activeTransfer = ContentHub.importContent(ContentType.Pictures);
- *              activeTransfer.selectionType =ContentTransfer.Multiple;
- *              activeTransfer.start();
- *         }
- *     }
- *     ContentImportHint {
+ *
+ *     ContentTransferHint {
  *         id: importHint
  *         anchors.fill: parent
  *         activeTransfer: root.activeTransfer
  *     }
- *     property list<ContentItem> importItems
- *     property var activeTransfer
+ *
  *     Connections {
  *         target: root.activeTransfer
  *         onStateChanged: {
@@ -108,6 +117,7 @@ ContentHub::ContentHub(QObject *parent)
     : QObject(parent),
       m_hub(0)
 {
+    TRACE() << Q_FUNC_INFO;
     m_hub = cuc::Hub::Client::instance();
     m_handler = new QmlImportExportHandler(this);
     m_hub->register_import_export_handler(m_handler);
@@ -120,118 +130,11 @@ ContentHub::ContentHub(QObject *parent)
             this, SLOT(handleShare(com::ubuntu::content::Transfer*)));
 }
 
-/*!
- * \qmlmethod ContentHub::defaultSourceForType(ContentType)
- *
- *  Returns the default \a ContentPeer for the given \a ContentType
- */
-ContentPeer *ContentHub::defaultSourceForType(int type)
+ContentHub *ContentHub::instance()
 {
-    qDebug() << Q_FUNC_INFO;
-
-    const cuc::Type &hubType = ContentType::contentType2HubType(type);
-    cuc::Peer hubPeer = m_hub->default_source_for_type(hubType);
-
-    ContentPeer *qmlPeer = new ContentPeer(this);
-    qmlPeer->setPeer(hubPeer);
-
-    return qmlPeer;
-}
-
-/*!
- * \qmlmethod ContentHub::defaultStoreForType(ContentType)
- *
- *  Returns the default \a ContentStore for the given \a ContentType
- */
-ContentStore *ContentHub::defaultStoreForType(int type)
-{
-    qDebug() << Q_FUNC_INFO;
-
-    const cuc::Type &hubType = ContentType::contentType2HubType(type);
-    const cuc::Store *hubStore = m_hub->store_for_scope_and_type(cuc::app, hubType);
-
-    qDebug() << Q_FUNC_INFO << "STORE:" << hubStore->uri();
-
-    ContentStore *qmlStore = new ContentStore(this);
-    qmlStore->setStore(hubStore);
-
-    return qmlStore;
-}
-
-/*!
- * \qmlmethod ContentHub::knownSourcesForType(ContentType)
- *
- *  Returns all possible peers for the given ContentType
- *
- * \qml
- * import QtQuick 2.0
- * import Ubuntu.Components 0.1
- * import Ubuntu.Components.ListItems 0.1 as ListItem
- * import Ubuntu.Content 0.1
- *
- * MainView {
- *     property list<ContentPeer> peers
- *
- *     Component.onCompleted: {
- *         peers = ContentHub.knownSourcesForType(ContentType.Pictures);
- *     }
- *     ListView {
- *         anchors.fill: parent
- *         height: childrenRect.height
- *         model: peers
- *         delegate: ListItem.Standard {
- *             text: modelData.name
- *         }
- *     }
- * }
- * \endqml
- */
-QVariantList ContentHub::knownSourcesForType(int type)
-{
-    qDebug() << Q_FUNC_INFO;
-
-    const cuc::Type &hubType = ContentType::contentType2HubType(type);
-    QVector<cuc::Peer> hubPeers = m_hub->known_sources_for_type(hubType);
-
-    QVariantList qmlPeers;
-    Q_FOREACH (const cuc::Peer &hubPeer, hubPeers) {
-        ContentPeer *qmlPeer = new ContentPeer(this);
-        qmlPeer->setPeer(hubPeer);
-        qmlPeers.append(QVariant::fromValue(qmlPeer));
-    }
-    return qmlPeers;
-}
-
-/*!
- * \qmlmethod ContentHub::importContent(ContentType)
- * \overload ContentHub::importContent(ContentType, ContentPeer)
- *
- * \brief Request to import data of \a ContentType from the default
- * ContentPeer
- */
-ContentTransfer *ContentHub::importContent(int type)
-{
-    qDebug() << Q_FUNC_INFO << static_cast<ContentType::Type>(type);
-
-    const cuc::Type &hubType = ContentType::contentType2HubType(type);
-    cuc::Peer hubPeer = m_hub->default_source_for_type(hubType);
-
-    return importContent(hubType, hubPeer);
-}
-
-/*!
- * \qmlmethod ContentHub::importContent(ContentType, ContentPeer)
- * \overload ContentHub::importContent(ContentType)
- *
- * \brief Request to import data of \a ContentType from the
- * specified \a ContentPeer
- */
-ContentTransfer *ContentHub::importContent(int type, ContentPeer *peer)
-{
-    qDebug() << Q_FUNC_INFO << static_cast<ContentType::Type>(type) << peer;
-
-    const cuc::Type &hubType = ContentType::contentType2HubType(type);
-    return importContent(hubType, peer->peer());
+    TRACE() << Q_FUNC_INFO;
+    static ContentHub *contentHub = new ContentHub(nullptr);
+    return contentHub;
 }
 
 /*!
@@ -240,10 +143,45 @@ ContentTransfer *ContentHub::importContent(int type, ContentPeer *peer)
  * \a peer
  * \internal
  */
-ContentTransfer* ContentHub::importContent(const com::ubuntu::content::Type& /*hubType*/,
-                                           const com::ubuntu::content::Peer &hubPeer)
+ContentTransfer* ContentHub::importContent(cuc::Peer peer)
 {
-    cuc::Transfer *hubTransfer = m_hub->create_import_from_peer(hubPeer);
+    TRACE() << Q_FUNC_INFO;
+
+    cuc::Transfer *hubTransfer = m_hub->create_import_from_peer(peer);
+    ContentTransfer *qmlTransfer = new ContentTransfer(this);
+    qmlTransfer->setTransfer(hubTransfer);
+    m_activeImports.insert(hubTransfer, qmlTransfer);
+    return qmlTransfer;
+}
+
+/*!
+ * \brief ContentHub::exportContent creates a ContentTransfer object
+ * \a type
+ * \a peer
+ * \internal
+ */
+ContentTransfer* ContentHub::exportContent(cuc::Peer peer)
+{
+    TRACE() << Q_FUNC_INFO;
+
+    cuc::Transfer *hubTransfer = m_hub->create_export_to_peer(peer);
+    ContentTransfer *qmlTransfer = new ContentTransfer(this);
+    qmlTransfer->setTransfer(hubTransfer);
+    m_activeImports.insert(hubTransfer, qmlTransfer);
+    return qmlTransfer;
+}
+
+/*!
+ * \brief ContentHub::shareContent creates a ContentTransfer object
+ * \a type
+ * \a peer
+ * \internal
+ */
+ContentTransfer* ContentHub::shareContent(cuc::Peer peer)
+{
+    TRACE() << Q_FUNC_INFO;
+
+    cuc::Transfer *hubTransfer = m_hub->create_share_to_peer(peer);
     ContentTransfer *qmlTransfer = new ContentTransfer(this);
     qmlTransfer->setTransfer(hubTransfer);
     m_activeImports.insert(hubTransfer, qmlTransfer);
@@ -256,7 +194,7 @@ ContentTransfer* ContentHub::importContent(const com::ubuntu::content::Type& /*h
  */
 void ContentHub::restoreImports()
 {
-    qDebug() << Q_FUNC_INFO;
+    TRACE() << Q_FUNC_INFO;
 }
 
 /*!
@@ -265,105 +203,8 @@ void ContentHub::restoreImports()
  */
 QQmlListProperty<ContentTransfer> ContentHub::finishedImports()
 {
-    qDebug() << Q_FUNC_INFO;
+    TRACE() << Q_FUNC_INFO;
     return QQmlListProperty<ContentTransfer>(this, m_finishedImports);
-}
-
-/* EXPORTS */
-/*!
- * \qmlmethod ContentHub::exportContent(ContentType)
- * \overload ContentHub::exportContent(ContentType, ContentPeer)
- *
- * \brief Request to export data of \a ContentType to the default
- * ContentPeer
- */
-ContentTransfer *ContentHub::exportContent(int type)
-{
-    qDebug() << Q_FUNC_INFO << static_cast<ContentType::Type>(type);
-
-    const cuc::Type &hubType = ContentType::contentType2HubType(type);
-    cuc::Peer hubPeer = m_hub->default_source_for_type(hubType);
-    return exportContent(hubType, hubPeer);
-}
-
-/*!
- * \qmlmethod ContentHub::exportContent(ContentType, ContentPeer)
- * \overload ContentHub::exportContent(ContentType)
- *
- * \brief Request to export data of \a ContentType to the
- * specified \a ContentPeer
- */
-ContentTransfer *ContentHub::exportContent(int type, ContentPeer *peer)
-{
-    qDebug() << Q_FUNC_INFO << static_cast<ContentType::Type>(type) << peer;
-
-    const cuc::Type &hubType = ContentType::contentType2HubType(type);
-    return exportContent(hubType, peer->peer());
-}
-
-/*!
- * \brief ContentHub::exportContent creates a ContentTransfer object
- * \a type
- * \a peer
- * \internal
- */
-ContentTransfer* ContentHub::exportContent(const com::ubuntu::content::Type& /*hubType*/,
-                                           const com::ubuntu::content::Peer &hubPeer)
-{
-    cuc::Transfer *hubTransfer = m_hub->create_export_to_peer(hubPeer);
-    ContentTransfer *qmlTransfer = new ContentTransfer(this);
-    qmlTransfer->setTransfer(hubTransfer);
-    m_activeImports.insert(hubTransfer, qmlTransfer);
-    return qmlTransfer;
-}
-
-/* SHARE */
-/*!
- * \qmlmethod ContentHub::shareContent(ContentType)
- * \overload ContentHub::shareContent(ContentType, ContentPeer)
- *
- * \brief Request to share data of \a ContentType to the default
- * ContentPeer
- */
-ContentTransfer *ContentHub::shareContent(int type)
-{
-    qDebug() << Q_FUNC_INFO << static_cast<ContentType::Type>(type);
-
-    const cuc::Type &hubType = ContentType::contentType2HubType(type);
-    // FIXME: This is the wrong way to get the default peer for shares
-    cuc::Peer hubPeer = m_hub->default_source_for_type(hubType);
-    return shareContent(hubType, hubPeer);
-}
-
-/*!
- * \qmlmethod ContentHub::shareContent(ContentType, ContentPeer)
- * \overload ContentHub::shareContent(ContentType)
- *
- * \brief Request to share data of \a ContentType to the
- * specified \a ContentPeer
- */
-ContentTransfer *ContentHub::shareContent(int type, ContentPeer *peer)
-{
-    qDebug() << Q_FUNC_INFO << static_cast<ContentType::Type>(type) << peer;
-
-    const cuc::Type &hubType = ContentType::contentType2HubType(type);
-    return shareContent(hubType, peer->peer());
-}
-
-/*!
- * \brief ContentHub::shareContent creates a ContentTransfer object
- * \a type
- * \a peer
- * \internal
- */
-ContentTransfer* ContentHub::shareContent(const com::ubuntu::content::Type& /*hubType*/,
-                                           const com::ubuntu::content::Peer &hubPeer)
-{
-    cuc::Transfer *hubTransfer = m_hub->create_share_to_peer(hubPeer);
-    ContentTransfer *qmlTransfer = new ContentTransfer(this);
-    qmlTransfer->setTransfer(hubTransfer);
-    m_activeImports.insert(hubTransfer, qmlTransfer);
-    return qmlTransfer;
 }
 
 /*!
@@ -372,7 +213,7 @@ ContentTransfer* ContentHub::shareContent(const com::ubuntu::content::Type& /*hu
  */
 void ContentHub::handleImport(com::ubuntu::content::Transfer *transfer)
 {
-    qDebug() << Q_FUNC_INFO;
+    TRACE() << Q_FUNC_INFO;
     ContentTransfer *qmlTransfer = nullptr;
     if (m_activeImports.contains(transfer)) {
         qmlTransfer = m_activeImports.take(transfer);
@@ -388,6 +229,12 @@ void ContentHub::handleImport(com::ubuntu::content::Transfer *transfer)
         Q_EMIT importRequested(qmlTransfer);
     }
 
+
+
+    // FIXME: maybe we need to emit something else here
+//    if (qmlTransfer->state() == ContentTransfer::Charged)
+//        Q_EMIT importRequested(qmlTransfer);
+
     m_finishedImports.append(qmlTransfer);
     Q_EMIT finishedImportsChanged();
 }
@@ -398,7 +245,7 @@ void ContentHub::handleImport(com::ubuntu::content::Transfer *transfer)
  */
 void ContentHub::handleExport(com::ubuntu::content::Transfer *transfer)
 {
-    qDebug() << Q_FUNC_INFO;
+    TRACE() << Q_FUNC_INFO;
     ContentTransfer *qmlTransfer = nullptr;
     if (m_activeImports.contains(transfer))
         qmlTransfer = m_activeImports.take(transfer);
@@ -423,7 +270,7 @@ void ContentHub::handleExport(com::ubuntu::content::Transfer *transfer)
  */
 void ContentHub::handleShare(com::ubuntu::content::Transfer *transfer)
 {
-    qDebug() << Q_FUNC_INFO;
+    TRACE() << Q_FUNC_INFO;
     ContentTransfer *qmlTransfer = nullptr;
     if (m_activeImports.contains(transfer))
     {
@@ -446,7 +293,7 @@ void ContentHub::handleShare(com::ubuntu::content::Transfer *transfer)
 
 void ContentHub::updateState()
 {
-    qDebug() << Q_FUNC_INFO;
+    TRACE() << Q_FUNC_INFO;
 }
 
 /*!

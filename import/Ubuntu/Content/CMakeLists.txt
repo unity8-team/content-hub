@@ -36,10 +36,14 @@ include_directories(
 )
 
 set(PLUGIN_HDRS
+    contenthandler.h
     contenthub.h
     contenthubplugin.h
+    contenticonprovider.h
     contentitem.h
     contentpeer.h
+    contentpeermodel.h
+    contentscope.h
     contentstore.h
     contenttransfer.h
     contenttype.h
@@ -47,19 +51,24 @@ set(PLUGIN_HDRS
     )
 
 set(PLUGIN_SRC
+    contenthandler.cpp
     contenthub.cpp
     contenthubplugin.cpp
+    contenticonprovider.cpp
     contentitem.cpp
     contentpeer.cpp
+    contentpeermodel.cpp
+    contentscope.cpp
     contentstore.cpp
     contenttransfer.cpp
     contenttype.cpp
     qmlimportexporthandler.cpp
+    ../../../src/com/ubuntu/content/debug.cpp
     )
 
 add_library(${PLUGIN} MODULE ${PLUGIN_SRC} ${PLUGIN_HDRS})
 
-qt5_use_modules(${PLUGIN} Core Qml Quick)
+qt5_use_modules(${PLUGIN} Core Qml Quick DBus)
 target_link_libraries(
     ${PLUGIN}
     content-hub

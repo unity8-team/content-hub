@@ -22,10 +22,10 @@
 #include <QFile>
 #include <QDir>
 #include <QStandardPaths>
-#include <QDebug>
 #include <QTimer>
 #include <com/ubuntu/content/peer.h>
 
+#include "debug.h"
 #include "hook.h"
 
 namespace cucd = com::ubuntu::content::detail;
@@ -45,7 +45,7 @@ cucd::Hook::Hook(com::ubuntu::content::detail::PeerRegistry *registry, QObject *
 
 void cucd::Hook::run()
 {
-    qDebug() << Q_FUNC_INFO;
+    TRACE() << Q_FUNC_INFO;
     /* Looks for files in ${HOME}/.local/share/content-hub/${id} installed
      * by click packages.  These files are JSON, for example:
      *
@@ -76,7 +76,7 @@ void cucd::Hook::run()
 
     Q_FOREACH(QString p, all_peers)
     {
-        qDebug() << Q_FUNC_INFO << "Looking for" << p;
+        TRACE() << Q_FUNC_INFO << "Looking for" << p;
         QStringList pp = contentDir.entryList(QStringList("*"+ p));
         if (pp.isEmpty())
             registry->remove_peer(com::ubuntu::content::Peer{p});
@@ -90,7 +90,7 @@ void cucd::Hook::run()
 
 bool cucd::Hook::add_peer(QFileInfo result)
 {
-    qDebug() << Q_FUNC_INFO << "Hook:" << result.filePath();
+    TRACE() << Q_FUNC_INFO << "Hook:" << result.filePath();
 
     QStringList knownTypes;
     knownTypes << "pictures" << "music" << "contacts" << "documents";
@@ -117,7 +117,7 @@ bool cucd::Hook::add_peer(QFileInfo result)
         if (knownTypes.contains(k))
         {
             if (registry->install_source_for_type(cuc::Type{k}, peer))
-                qDebug() << "Installed source:" << peer.id() << "for type:" << k;
+                TRACE() << "Installed source:" << peer.id() << "for type:" << k;
         }
         else
             qWarning() << "Failed to install" << peer.id() << "unknown type:" << k;
@@ -129,7 +129,7 @@ bool cucd::Hook::add_peer(QFileInfo result)
         if (knownTypes.contains(k))
         {
             if (registry->install_destination_for_type(cuc::Type{k}, peer))
-                qDebug() << "Installed destination:" << peer.id() << "for type:" << k;
+                TRACE() << "Installed destination:" << peer.id() << "for type:" << k;
         }
         else
             qWarning() << "Failed to install" << peer.id() << "unknown type:" << k;
@@ -141,7 +141,7 @@ bool cucd::Hook::add_peer(QFileInfo result)
         if (knownTypes.contains(k))
         {
             if (registry->install_share_for_type(cuc::Type{k}, peer))
-                qDebug() << "Installed share:" << peer.id() << "for type:" << k;
+                TRACE() << "Installed share:" << peer.id() << "for type:" << k;
         }
         else
             qWarning() << "Failed to install" << peer.id() << "unknown type:" << k;

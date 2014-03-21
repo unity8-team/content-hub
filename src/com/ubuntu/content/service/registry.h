@@ -20,7 +20,6 @@
 #define REGISTRY_H
 
 #include <QGSettings/QGSettings>
-#include <QDebug>
 #include <com/ubuntu/content/peer.h>
 #include <com/ubuntu/content/type.h>
 #include "detail/peer_registry.h"

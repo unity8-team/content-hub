@@ -27,6 +27,7 @@
 #include <nih-dbus/dbus_util.h>
 
 #include "common.h"
+#include "debug.h"
 #include "com/ubuntu/content/type.h"
 
 namespace cuc = com::ubuntu::content;
@@ -46,7 +47,7 @@ QList<cuc::Type> known_types()
 /* sanitize the dbus names */
 QString sanitize_id(const QString& appId)
 {
-    qDebug() << Q_FUNC_INFO;
+    TRACE() << Q_FUNC_INFO;
     return QString(nih_dbus_path(NULL,
                                  "",
                                  appId.toLocal8Bit().data(),
@@ -80,7 +81,7 @@ QString app_id()
 
 QString aa_profile(QString uniqueConnectionId)
 {
-    qDebug() << Q_FUNC_INFO << uniqueConnectionId;
+    TRACE() << Q_FUNC_INFO << uniqueConnectionId;
     QDBusMessage msg =
         QDBusMessage::createMethodCall("org.freedesktop.DBus",
                                        "/org/freedesktop/DBus",
@@ -94,7 +95,7 @@ QString aa_profile(QString uniqueConnectionId)
         QDBusConnection::sessionBus().call(msg, QDBus::Block);
     if (reply.type() == QDBusMessage::ReplyMessage) {
         aaProfile = reply.arguments().value(0, QString()).toString();
-        qDebug() << "AppArmor Profile:" << aaProfile;
+        TRACE() << "AppArmor Profile:" << aaProfile;
     } else {
         qWarning() << "Error getting app ID:" << reply.errorName() <<
             reply.errorMessage();
@@ -109,7 +110,7 @@ QString aa_profile(QString uniqueConnectionId)
 
 QString copy_to_store(const QString& src, const QString& store)
 {
-    qDebug() << Q_FUNC_INFO;
+    TRACE() << Q_FUNC_INFO;
     QUrl srcUrl(src);
     if (not srcUrl.isLocalFile())
         return srcUrl.url();
@@ -120,7 +121,7 @@ QString copy_to_store(const QString& src, const QString& store)
     if (not st.exists())
         st.mkpath(st.absolutePath());
     QString destFilePath = store + QDir::separator() + fi.fileName();
-    qDebug() << Q_FUNC_INFO << destFilePath;
+    TRACE() << Q_FUNC_INFO << destFilePath;
     bool result = QFile::copy(fi.filePath(), destFilePath);
     if (not result)
     {
@@ -132,7 +133,7 @@ QString copy_to_store(const QString& src, const QString& store)
 
 bool is_persistent(QString store)
 {
-    qDebug() << Q_FUNC_INFO << store;
+    TRACE() << Q_FUNC_INFO << store;
     QRegExp rx("*.cache/*/HubIncoming/*");
     rx.setPatternSyntax(QRegExp::Wildcard);
     rx.setCaseSensitivity(Qt::CaseSensitive);
@@ -141,18 +142,18 @@ bool is_persistent(QString store)
 
 bool purge_store_cache(QString store)
 {
-    qDebug() << Q_FUNC_INFO << "Store:" << store;
+    TRACE() << Q_FUNC_INFO << "Store:" << store;
 
     if (is_persistent(store))
     {
-        qDebug() << Q_FUNC_INFO << store << "is persistent";
+        TRACE() << Q_FUNC_INFO << store << "is persistent";
         return false;
     }
 
     QDir st(store);
     if (st.exists())
     {
-        qDebug() << Q_FUNC_INFO << store << "isn't persistent, purging";
+        TRACE() << Q_FUNC_INFO << store << "isn't persistent, purging";
         return st.removeRecursively();
     }
 

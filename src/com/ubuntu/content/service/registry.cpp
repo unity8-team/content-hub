@@ -130,6 +130,10 @@ void Registry::enumerate_known_sources_for_type(cuc::Type type, const std::funct
 void Registry::enumerate_known_destinations_for_type(cuc::Type type, const std::function<void(const cuc::Peer&)>&for_each)
 {
     TRACE() << Q_FUNC_INFO << type.id();
+
+    if (type == cuc::Type::unknown())
+        return;
+
     Q_FOREACH (QString k, m_dests->get(type.id()).toStringList())
     {
         TRACE() << Q_FUNC_INFO << k;
@@ -140,6 +144,9 @@ void Registry::enumerate_known_destinations_for_type(cuc::Type type, const std::
 void Registry::enumerate_known_shares_for_type(cuc::Type type, const std::function<void(const cuc::Peer&)>&for_each)
 {
     TRACE() << Q_FUNC_INFO << type.id();
+
+    if (type == cuc::Type::unknown())
+        return;
 
     Q_FOREACH (QString k, m_shares->get(type.id()).toStringList())
     {

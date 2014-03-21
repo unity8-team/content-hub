@@ -59,16 +59,20 @@ struct MockedPeerRegistry : public cucd::PeerRegistry
     {
         using namespace ::testing;
 
-        ON_CALL(*this, default_peer_for_type(_)).WillByDefault(Return(cuc::Peer::unknown()));
-        ON_CALL(*this, install_default_peer_for_type(_,_)).WillByDefault(Return(false));
-        ON_CALL(*this, install_peer_for_type(_,_)).WillByDefault(Return(false));
+        ON_CALL(*this, default_source_for_type(_)).WillByDefault(Return(cuc::Peer::unknown()));
+        ON_CALL(*this, install_default_source_for_type(_,_)).WillByDefault(Return(false));
+        ON_CALL(*this, install_source_for_type(_,_)).WillByDefault(Return(false));
     }
 
-    MOCK_METHOD1(default_peer_for_type, cuc::Peer(cuc::Type t));
-    MOCK_METHOD2(enumerate_known_peers_for_type, void(cuc::Type, const std::function<void(const cuc::Peer&)>&));
+    MOCK_METHOD1(default_source_for_type, cuc::Peer(cuc::Type t));
     MOCK_METHOD1(enumerate_known_peers, void(const std::function<void(const cuc::Peer&)>&));
-    MOCK_METHOD2(install_default_peer_for_type, bool(cuc::Type, cuc::Peer));
-    MOCK_METHOD2(install_peer_for_type, bool(cuc::Type, cuc::Peer));
+    MOCK_METHOD2(enumerate_known_sources_for_type, void(cuc::Type, const std::function<void(const cuc::Peer&)>&));
+    MOCK_METHOD2(enumerate_known_destinations_for_type, void(cuc::Type, const std::function<void(const cuc::Peer&)>&));
+    MOCK_METHOD2(enumerate_known_shares_for_type, void(cuc::Type, const std::function<void(const cuc::Peer&)>&));
+    MOCK_METHOD2(install_default_source_for_type, bool(cuc::Type, cuc::Peer));
+    MOCK_METHOD2(install_source_for_type, bool(cuc::Type, cuc::Peer));
+    MOCK_METHOD2(install_destination_for_type, bool(cuc::Type, cuc::Peer));
+    MOCK_METHOD2(install_share_for_type, bool(cuc::Type, cuc::Peer));
     MOCK_METHOD1(remove_peer, bool(cuc::Peer));
 };
 }
@@ -100,15 +104,15 @@ TEST(Hub, querying_known_peers_returns_correct_value)
         };
         
         auto mock = new MockedPeerRegistry{};
-        EXPECT_CALL(*mock, enumerate_known_peers_for_type(_, _)).
+        EXPECT_CALL(*mock, enumerate_known_sources_for_type(_, _)).
         Times(Exactly(1)).
         WillRepeatedly(Invoke(enumerate));
 
-        EXPECT_CALL(*mock, install_peer_for_type(_, _)).
+        EXPECT_CALL(*mock, install_source_for_type(_, _)).
         Times(Exactly(1)).
         WillRepeatedly(Return(true));
 
-        ASSERT_TRUE(mock->install_peer_for_type(cuc::Type::Known::documents(),
+        ASSERT_TRUE(mock->install_source_for_type(cuc::Type::Known::documents(),
                                                 cuc::Peer("com.does.not.exist.anywhere.application4")));
 
         QSharedPointer<cucd::PeerRegistry> registry{mock};
@@ -141,7 +145,7 @@ TEST(Hub, querying_known_peers_returns_correct_value)
         test::TestHarness harness;
         harness.add_test_case([hub, default_peers]()
         {            
-            auto peers = hub->known_peers_for_type(cuc::Type::Known::documents());
+            auto peers = hub->known_sources_for_type(cuc::Type::Known::documents());
             ASSERT_EQ(default_peers, peers);
         });
         

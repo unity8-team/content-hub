@@ -63,11 +63,15 @@ struct MockedPeerRegistry : public cucd::PeerRegistry
         using namespace ::testing;
     }
 
-    MOCK_METHOD1(default_peer_for_type, cuc::Peer(cuc::Type t));
-    MOCK_METHOD2(enumerate_known_peers_for_type, void(cuc::Type, const std::function<void(const cuc::Peer&)>&));
+    MOCK_METHOD1(default_source_for_type, cuc::Peer(cuc::Type t));
     MOCK_METHOD1(enumerate_known_peers, void(const std::function<void(const cuc::Peer&)>&));
-    MOCK_METHOD2(install_default_peer_for_type, bool(cuc::Type, cuc::Peer));
-    MOCK_METHOD2(install_peer_for_type, bool(cuc::Type, cuc::Peer));
+    MOCK_METHOD2(enumerate_known_sources_for_type, void(cuc::Type, const std::function<void(const cuc::Peer&)>&));
+    MOCK_METHOD2(enumerate_known_destinations_for_type, void(cuc::Type, const std::function<void(const cuc::Peer&)>&));
+    MOCK_METHOD2(enumerate_known_shares_for_type, void(cuc::Type, const std::function<void(const cuc::Peer&)>&));
+    MOCK_METHOD2(install_default_source_for_type, bool(cuc::Type, cuc::Peer));
+    MOCK_METHOD2(install_source_for_type, bool(cuc::Type, cuc::Peer));
+    MOCK_METHOD2(install_destination_for_type, bool(cuc::Type, cuc::Peer));
+    MOCK_METHOD2(install_share_for_type, bool(cuc::Type, cuc::Peer));
     MOCK_METHOD1(remove_peer, bool(cuc::Peer));
 };
 
@@ -76,13 +80,14 @@ struct MockedHandler : public cuc::ImportExportHandler
     MockedHandler() : cuc::ImportExportHandler()
     {
         using namespace ::testing;
-        ON_CALL(*this, handle_export(_)).WillByDefault(Return());
         ON_CALL(*this, handle_import(_)).WillByDefault(Return());
-
+        ON_CALL(*this, handle_export(_)).WillByDefault(Return());
+        ON_CALL(*this, handle_share(_)).WillByDefault(Return());
     }
 
-    MOCK_METHOD1(handle_export, void(cuc::Transfer*));
     MOCK_METHOD1(handle_import, void(cuc::Transfer*));
+    MOCK_METHOD1(handle_export, void(cuc::Transfer*));
+    MOCK_METHOD1(handle_share, void(cuc::Transfer*));
 };
 }
 
@@ -139,9 +144,7 @@ TEST(Handler, handler_on_bus)
 
             qputenv("APP_ID", default_dest_peer_id.toLatin1());
             hub = cuc::Hub::Client::instance();
-            auto transfer = hub->create_import_for_type_from_peer(
-                cuc::Type::Known::pictures(),
-                cuc::Peer(default_peer_id));
+            auto transfer = hub->create_import_from_peer(cuc::Peer(default_peer_id));
             ASSERT_TRUE(transfer != nullptr);
             EXPECT_TRUE(transfer->start());
             EXPECT_EQ(cuc::Transfer::in_progress, transfer->state());

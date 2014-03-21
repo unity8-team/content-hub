@@ -26,7 +26,14 @@ set(CONTENT_HUB_IMPORTS_DIR "${QT_INSTALL_QML}/Ubuntu/Content")
 
 set(PLUGIN ubuntu-content-hub-plugin)
 
-include_directories(${CMAKE_SOURCE_DIR})
+add_definitions(-DQT_NO_KEYWORDS)
+
+include_directories(
+    ${CMAKE_SOURCE_DIR}
+    ${NIH_INCLUDE_DIRS}
+    ${NIH_DBUS_INCLUDE_DIRS}
+    ${DBUS_INCLUDE_DIRS}
+)
 
 set(PLUGIN_HDRS
     contenthub.h
@@ -53,7 +60,12 @@ set(PLUGIN_SRC
 add_library(${PLUGIN} MODULE ${PLUGIN_SRC} ${PLUGIN_HDRS})
 
 qt5_use_modules(${PLUGIN} Core Qml Quick)
-target_link_libraries(${PLUGIN} content-hub)
+target_link_libraries(
+    ${PLUGIN}
+    content-hub
+    ${NIH_LIBRARIES}
+    ${NIH_DBUS_LIBRARIES}
+)
 
 install(TARGETS ${PLUGIN} DESTINATION ${CONTENT_HUB_IMPORTS_DIR})
 install(FILES ${CMAKE_CURRENT_SOURCE_DIR}/qmldir DESTINATION ${CONTENT_HUB_IMPORTS_DIR})

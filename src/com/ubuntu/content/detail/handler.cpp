@@ -21,6 +21,7 @@
 #include "utils.cpp"
 
 #include <QObject>
+#include <QDebug>
 
 namespace cucd = com::ubuntu::content::detail;
 namespace cuc = com::ubuntu::content;
@@ -48,11 +49,13 @@ cucd::Handler::Handler(QDBusConnection connection, const QString& peer_id, cuc::
     m_handler = handler;
 }
 
-cucd::Handler::~Handler() {}
+cucd::Handler::~Handler() {
+    delete m_handler;
+}
 
 void cucd::Handler::HandleImport(const QDBusObjectPath& transfer)
 {
-    qDebug() << Q_FUNC_INFO;
+    qDebug() << Q_FUNC_INFO << transfer.path();
     cuc::Transfer* t = cuc::Transfer::Private::make_transfer(transfer, this);
 
     qDebug() << Q_FUNC_INFO << "State:" << t->state();
@@ -62,7 +65,7 @@ void cucd::Handler::HandleImport(const QDBusObjectPath& transfer)
 
 void cucd::Handler::HandleExport(const QDBusObjectPath& transfer)
 {
-    qDebug() << Q_FUNC_INFO;
+    qDebug() << Q_FUNC_INFO << transfer.path();
     cuc::Transfer* t = cuc::Transfer::Private::make_transfer(transfer, this);
 
     qDebug() << Q_FUNC_INFO << "State:" << t->state();
@@ -70,5 +73,17 @@ void cucd::Handler::HandleExport(const QDBusObjectPath& transfer)
     {
         t->d->handled();
         m_handler->handle_export(t);
+    }
+}
+
+void cucd::Handler::HandleShare(const QDBusObjectPath& transfer)
+{
+    qDebug() << Q_FUNC_INFO;
+    cuc::Transfer* t = cuc::Transfer::Private::make_transfer(transfer, this);
+
+    qDebug() << Q_FUNC_INFO << "State:" << t->state();
+    if (t->state() == cuc::Transfer::charged)
+    {
+        m_handler->handle_share(t);
     }
 }

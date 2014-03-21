@@ -34,6 +34,8 @@ if (EXISTS "/etc/debian_version")
   set(CMAKE_INSTALL_FULL_LIBEXECDIR "${CMAKE_INSTALL_PREFIX}/${CMAKE_INSTALL_LIBEXECDIR}")
 endif()
 
+set(pkglibexecdir "${CMAKE_INSTALL_FULL_LIBEXECDIR}")
+
 
 #####################################################################
 # Enable code coverage calculation with gcov/gcovr/lcov
@@ -63,6 +65,7 @@ pkg_check_modules(UPSTART_LAUNCH REQUIRED upstart-app-launch-2)
 pkg_check_modules(GSETTINGS REQUIRED gsettings-qt)
 pkg_check_modules(NIH REQUIRED libnih)
 pkg_check_modules(NIH_DBUS REQUIRED libnih-dbus)
+pkg_check_modules(DBUS REQUIRED dbus-1)
 
 set(CONTENT_HUB_VERSION_MAJOR 0)
 set(CONTENT_HUB_VERSION_MINOR 0)

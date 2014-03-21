@@ -31,7 +31,7 @@ struct MockedAppManager : public cua::ApplicationManager
 
         ON_CALL(*this, invoke_application(_)).WillByDefault(Return(true));
         ON_CALL(*this, stop_application(_)).WillByDefault(Return(true));
-        ON_CALL(*this, is_application_started(_)).WillByDefault(Return(false));
+        ON_CALL(*this, is_application_started(_)).WillByDefault(Return(true));
     }
 
     MOCK_METHOD1(invoke_application, bool(const std::string &));

@@ -139,7 +139,6 @@ void ContentPeerModel::appendPeersForContentType(ContentType::Type contentType)
             }
             Q_EMIT peersChanged();
         }
-        QCoreApplication::processEvents();
     }
 }
 

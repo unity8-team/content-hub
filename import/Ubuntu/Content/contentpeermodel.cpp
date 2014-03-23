@@ -79,11 +79,13 @@ ContentType::Type ContentPeerModel::contentType()
 void ContentPeerModel::setContentType(ContentType::Type contentType)
 {
     TRACE() << Q_FUNC_INFO;
-    m_contentType = contentType;
-    if (m_complete) {
-        findPeers();
+    if (m_contentType != contentType) {
+        m_contentType = contentType;
+        if (m_complete) {
+            findPeers();
+        }
+        Q_EMIT contentTypeChanged();
     }
-    Q_EMIT contentTypeChanged();
 }
 
 /*!
@@ -160,11 +162,13 @@ ContentHandler::Handler ContentPeerModel::handler()
 void ContentPeerModel::setHandler(ContentHandler::Handler handler)
 {
     TRACE() << Q_FUNC_INFO;
-    m_handler = handler;
-    if (m_complete) {
-        findPeers();
+    if (m_handler != handler) {
+        m_handler = handler;
+        if (m_complete) {
+            findPeers();
+        }
+        Q_EMIT handlerChanged();
     }
-    Q_EMIT handlerChanged();
 }
 
 /*!

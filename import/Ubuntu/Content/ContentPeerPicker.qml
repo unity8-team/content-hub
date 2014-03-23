@@ -126,13 +126,17 @@ Item {
 
     onHandlerChanged: {
         if (!customPeerModelLoader && peerModelLoader.item) {
+            appPeers.model = undefined; // Clear grid view
             peerModelLoader.item.handler = root.handler;
+            appPeers.model = peerModelLoader.item.peers;
         }
     }
 
     onContentTypeChanged: {
         if (!customPeerModelLoader && peerModelLoader.item) {
+            appPeers.model = undefined; // Clear grid view
             peerModelLoader.item.contentType = root.contentType;
+            appPeers.model = peerModelLoader.item.peers;
         }
     }
 

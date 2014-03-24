@@ -97,7 +97,6 @@ void ContentPeerModel::findPeers() {
     m_peers.clear();
     QCoreApplication::processEvents();
     if(m_contentType == ContentType::All) {
-        appendPeersForContentType(ContentType::Unknown);
         appendPeersForContentType(ContentType::Documents);
         appendPeersForContentType(ContentType::Pictures);
         appendPeersForContentType(ContentType::Music);

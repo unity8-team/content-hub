@@ -1,3 +1,22 @@
+content-hub (0.0+14.04.20140321-0ubuntu1) trusty; urgency=low
+
+  [ Ken VanDine ]
+  * Adds support for multiple handler types: source, destination and
+    share. Enforce single transfer per peer, if a second transfer
+    request is made from a peer that already has an unfinished transfer,
+    cancel the previous one. This is needed as long as apps are required
+    to be single instance.
+  * If the transfer isn't persistent, attempt to hardlink instead of
+    copying. If the link fails, fallback to a copy.
+  * If the default source is set to anything other than a click appId
+    triplet, fallback to the legacy APP_ID. Changed default source for
+    contacts to the legacy APP_ID for address-book-app
+
+  [ Ubuntu daily release ]
+  * New rebuild forced
+
+ -- Ubuntu daily release <ps-jenkins@lists.canonical.com>  Fri, 21 Mar 2014 00:46:57 +0000
+
 content-hub (0.0+14.04.20140307-0ubuntu1) trusty; urgency=low
 
   * New rebuild forced

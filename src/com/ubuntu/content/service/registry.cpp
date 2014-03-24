@@ -44,7 +44,11 @@ Registry::Registry() :
                 std::string pkg = as[0].toStdString();
                 std::string app = as[1].toStdString();
                 std::string ver = as[2].toStdString();
-                cuc::Peer peer(QString::fromLocal8Bit(upstart_app_launch_triplet_to_app_id(pkg.c_str(), app.c_str(), ver.c_str())));
+                cuc::Peer peer;
+                if (app.empty() || ver.empty())
+                    peer = QString::fromStdString(pkg);
+                else
+                    peer = QString::fromLocal8Bit(upstart_app_launch_triplet_to_app_id(pkg.c_str(), app.c_str(), ver.c_str()));
                 install_source_for_type(type, cuc::Peer{peer.id(), true});
             }
         }
@@ -64,6 +68,9 @@ cuc::Peer Registry::default_source_for_type(cuc::Type type)
             std::string pkg = as[0].toStdString();
             std::string app = as[1].toStdString();
             std::string ver = as[2].toStdString();
+            cuc::Peer peer;
+            if (app.empty() || ver.empty())
+                return cuc::Peer(QString::fromStdString(pkg));
             return cuc::Peer(QString::fromLocal8Bit(upstart_app_launch_triplet_to_app_id(pkg.c_str(), app.c_str(), ver.c_str())), true);
         }
     }
@@ -121,7 +128,10 @@ void Registry::enumerate_known_sources_for_type(cuc::Type type, const std::funct
             std::string pkg = as[0].toStdString();
             std::string app = as[1].toStdString();
             std::string ver = as[2].toStdString();
-            defaultPeer = QString::fromLocal8Bit(upstart_app_launch_triplet_to_app_id(pkg.c_str(), app.c_str(), ver.c_str())) == k;
+            if (app.empty() || ver.empty())
+                defaultPeer = QString::fromStdString(pkg) == k;
+            else
+                defaultPeer = QString::fromLocal8Bit(upstart_app_launch_triplet_to_app_id(pkg.c_str(), app.c_str(), ver.c_str())) == k;
         }
         for_each(cuc::Peer{k, defaultPeer});
     }

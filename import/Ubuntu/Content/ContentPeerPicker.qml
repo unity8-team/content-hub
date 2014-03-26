@@ -90,7 +90,7 @@ Item {
 
     Header {
         id: header
-        title: (handler === ContentHandler.Source) ? i18n.tr("Choose from") : (handler === ContentHandler.Destination ? i18n.tr("Export to") : i18n.tr("Share to"))
+        title: (handler === ContentHandler.Source) ? i18n.tr("Choose from") : (handler === ContentHandler.Destination ? i18n.tr("Open with") : i18n.tr("Share to"))
     }
 
     Loader {

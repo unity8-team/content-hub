@@ -58,7 +58,7 @@ void ContentPeerModel::classBegin()
 void ContentPeerModel::componentComplete()
 {
     m_complete = true;
-    QTimer::singleShot(0, this, SLOT(findPeers()));
+    findPeers();
 }
 
 /*!

@@ -39,6 +39,7 @@ class ContentTransfer : public QObject
     Q_PROPERTY(SelectionType selectionType READ selectionType WRITE setSelectionType NOTIFY selectionTypeChanged)
     Q_PROPERTY(QString store READ store NOTIFY storeChanged)
     Q_PROPERTY(QQmlListProperty<ContentItem> items READ items NOTIFY itemsChanged)
+    Q_PROPERTY(QString downloadId READ downloadId WRITE setDownloadId NOTIFY downloadIdChanged)
 
 public:
     enum State {
@@ -81,6 +82,9 @@ public:
     com::ubuntu::content::Transfer *transfer() const;
     void setTransfer(com::ubuntu::content::Transfer *transfer);
 
+    QString downloadId();
+    void setDownloadId(QString downloadId);
+
     void collectItems();
 
 Q_SIGNALS:
@@ -88,6 +92,7 @@ Q_SIGNALS:
     void itemsChanged();
     void selectionTypeChanged();
     void storeChanged();
+    void downloadIdChanged();
 
 private Q_SLOTS:
     void updateState();

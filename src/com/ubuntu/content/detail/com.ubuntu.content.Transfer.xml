@@ -41,6 +41,15 @@
     <signal name="SelectionTypeChanged">
       <arg name="selection_type" type="i"/>
     </signal>
+    <method name="DownloadId">
+      <arg name="download_id" type="s" direction="out" />
+    </method>
+    <method name="SetDownloadId">
+      <arg name="download_id" type="s" direction="in" />
+    </method>
+    <signal name="DownloadIdChanged">
+      <arg name="download_id" type="s"/>
+    </signal>
     <method name="Direction">
       <arg name="direction" type="i" direction="out" />
     </method>

@@ -24,6 +24,7 @@
 #include <QObject>
 #include <QSharedPointer>
 #include <QVector>
+#include <QString>
 
 namespace com
 {
@@ -59,6 +60,7 @@ class Transfer : public QObject
     Q_PROPERTY(Store store READ store NOTIFY storeChanged)
     Q_PROPERTY(SelectionType selectionType READ selectionType WRITE setSelectionType NOTIFY selectionTypeChanged)
     Q_PROPERTY(Direction direction READ direction)
+    Q_PROPERTY(QString downloadId READ downloadId WRITE setDownloadId NOTIFY downloadIdChanged)
 
   public:
     enum State
@@ -102,10 +104,13 @@ class Transfer : public QObject
     Q_INVOKABLE virtual Store store() const;
     Q_INVOKABLE virtual bool setStore(const Store*);
     Q_INVOKABLE virtual bool setSelectionType(const SelectionType&);
+    Q_INVOKABLE virtual QString downloadId() const;
+    Q_INVOKABLE virtual bool setDownloadId(const QString);
 
     Q_SIGNAL void stateChanged();
     Q_SIGNAL void storeChanged();
     Q_SIGNAL void selectionTypeChanged();
+    Q_SIGNAL void downloadIdChanged();
 
   private:
     struct Private;

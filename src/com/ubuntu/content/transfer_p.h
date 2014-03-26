@@ -190,6 +190,25 @@ class Transfer::Private : public QObject
         return static_cast<Transfer::Direction>(reply.value());
     }
 
+    QString downloadId()
+    {
+        auto reply = remote_transfer->DownloadId();
+        reply.waitForFinished();
+
+        if (reply.isError())
+            return QString();
+
+        return static_cast<QString>(reply.value());
+    }
+
+    bool setDownloadId(QString downloadId)
+    {
+        auto reply = remote_transfer->SetDownloadId(downloadId);
+        reply.waitForFinished();
+
+        return not reply.isError();
+    }
+
     com::ubuntu::content::dbus::Transfer* remote_transfer;
 };
 }

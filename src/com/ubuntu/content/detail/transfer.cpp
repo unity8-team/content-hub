@@ -52,6 +52,7 @@ struct cucd::Transfer::Private
     int selection_type;
     QStringList items;
     bool source_started_by_content_hub;
+    QString download_id;
 };
 
 cucd::Transfer::Transfer(const int id,
@@ -224,6 +225,22 @@ void cucd::Transfer::SetSelectionType(int type)
 
     d->selection_type = type;
     Q_EMIT(SelectionTypeChanged(d->selection_type));
+}
+
+QString cucd::Transfer::DownloadId()
+{
+    TRACE() << Q_FUNC_INFO;
+    return d->download_id;
+}
+
+void cucd::Transfer::SetDownloadId(QString DownloadId)
+{
+    TRACE() << Q_FUNC_INFO;
+    if (d->download_id == DownloadId)
+        return;
+
+    d->download_id = DownloadId;
+    Q_EMIT(DownloadIdChanged(d->download_id));
 }
 
 /* returns the object path for the export */

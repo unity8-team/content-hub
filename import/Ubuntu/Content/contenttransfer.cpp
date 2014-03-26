@@ -267,6 +267,24 @@ void ContentTransfer::setTransfer(com::ubuntu::content::Transfer *transfer)
 }
 
 /*!
+ * \qmlproperty string ContentTransfer::downloadId
+ * The Download Manager ID of a SingleDownload, which will then be
+ * transfered to the selected peer.
+ */
+QString ContentTransfer::downloadId()
+{
+    TRACE() << Q_FUNC_INFO;
+    return m_transfer->downloadId();
+}
+
+void ContentTransfer::setDownloadId(QString downloadId)
+{
+    TRACE() << Q_FUNC_INFO;
+    m_transfer->setDownloadId(downloadId);
+    Q_EMIT downloadIdChanged();
+} 
+
+/*!
  * \brief ContentTransfer::collectItems gets the items out of the transfer object
  * \internal
  */

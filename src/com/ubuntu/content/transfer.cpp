@@ -106,3 +106,13 @@ cuc::Transfer::Direction cuc::Transfer::direction() const
 {
     return d->direction();
 }
+
+QString cuc::Transfer::downloadId() const
+{
+    return d->downloadId();
+} 
+
+bool cuc::Transfer::setDownloadId(QString downloadId)
+{
+    return d->setDownloadId(downloadId);
+}

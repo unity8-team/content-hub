@@ -26,13 +26,24 @@ set(CONTENT_HUB_IMPORTS_DIR "${QT_INSTALL_QML}/Ubuntu/Content")
 
 set(PLUGIN ubuntu-content-hub-plugin)
 
-include_directories(${CMAKE_SOURCE_DIR})
+add_definitions(-DQT_NO_KEYWORDS)
+
+include_directories(
+    ${CMAKE_SOURCE_DIR}
+    ${NIH_INCLUDE_DIRS}
+    ${NIH_DBUS_INCLUDE_DIRS}
+    ${DBUS_INCLUDE_DIRS}
+)
 
 set(PLUGIN_HDRS
+    contenthandler.h
     contenthub.h
     contenthubplugin.h
+    contenticonprovider.h
     contentitem.h
     contentpeer.h
+    contentpeermodel.h
+    contentscope.h
     contentstore.h
     contenttransfer.h
     contenttype.h
@@ -40,20 +51,30 @@ set(PLUGIN_HDRS
     )
 
 set(PLUGIN_SRC
+    contenthandler.cpp
     contenthub.cpp
     contenthubplugin.cpp
+    contenticonprovider.cpp
     contentitem.cpp
     contentpeer.cpp
+    contentpeermodel.cpp
+    contentscope.cpp
     contentstore.cpp
     contenttransfer.cpp
     contenttype.cpp
     qmlimportexporthandler.cpp
+    ../../../src/com/ubuntu/content/debug.cpp
     )
 
 add_library(${PLUGIN} MODULE ${PLUGIN_SRC} ${PLUGIN_HDRS})
 
-qt5_use_modules(${PLUGIN} Core Qml Quick)
-target_link_libraries(${PLUGIN} content-hub)
+qt5_use_modules(${PLUGIN} Core Qml Quick DBus)
+target_link_libraries(
+    ${PLUGIN}
+    content-hub
+    ${NIH_LIBRARIES}
+    ${NIH_DBUS_LIBRARIES}
+)
 
 install(TARGETS ${PLUGIN} DESTINATION ${CONTENT_HUB_IMPORTS_DIR})
 install(FILES ${CMAKE_CURRENT_SOURCE_DIR}/qmldir DESTINATION ${CONTENT_HUB_IMPORTS_DIR})

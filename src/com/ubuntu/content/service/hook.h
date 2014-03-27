@@ -25,6 +25,14 @@
 
 #include "registry.h"
 
+namespace com
+{
+namespace ubuntu
+{
+namespace content
+{
+namespace detail
+{
 class Hook : public QObject
 {
     Q_OBJECT
@@ -41,5 +49,9 @@ private:
     com::ubuntu::content::detail::PeerRegistry* registry;
     
 };
+}
+}
+}
+}
 
 #endif // HOOK_H

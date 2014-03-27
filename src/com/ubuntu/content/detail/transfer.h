@@ -38,9 +38,10 @@ class Transfer : public QObject
     Q_PROPERTY(int id READ Id)
     Q_PROPERTY(QString source READ source)
     Q_PROPERTY(QString destination READ destination)
+    Q_PROPERTY(int direction READ Direction)
 
   public:
-    Transfer(const int, const QString&, const QString&, QObject* parent = nullptr);
+    Transfer(const int, const QString&, const QString&, const int, QObject* parent = nullptr);
     Transfer(const Transfer&) = delete;
     virtual ~Transfer();
 
@@ -67,6 +68,7 @@ Q_SIGNALS:
     int SelectionType();
     void SetSelectionType(int);
     int Id();
+    int Direction();
     QString source();
     QString destination();
     QString export_path();

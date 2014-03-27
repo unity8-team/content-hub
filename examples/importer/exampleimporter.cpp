@@ -25,11 +25,6 @@ ExampleImporter::ExampleImporter()
     hub->register_import_export_handler(this);
 }
 
-void ExampleImporter::handle_export(cuc::Transfer *transfer)
-{
-    qDebug() << Q_FUNC_INFO << "not implemented";
-    Q_UNUSED(transfer);
-}
 
 void ExampleImporter::handle_import(cuc::Transfer *transfer)
 {
@@ -39,4 +34,16 @@ void ExampleImporter::handle_import(cuc::Transfer *transfer)
     Q_FOREACH(cuc::Item item, items)
         qDebug() << Q_FUNC_INFO << "Item:" << item.url();
     transfer->finalize();
+}
+
+void ExampleImporter::handle_export(cuc::Transfer *transfer)
+{
+    qDebug() << Q_FUNC_INFO << "not implemented";
+    Q_UNUSED(transfer);
+}
+
+void ExampleImporter::handle_share(cuc::Transfer *transfer)
+{
+    qDebug() << Q_FUNC_INFO << "not implemented";
+    Q_UNUSED(transfer);
 }

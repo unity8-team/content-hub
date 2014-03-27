@@ -51,8 +51,9 @@ public:
         Finalized = com::ubuntu::content::Transfer::finalized
     };
     enum Direction {
-        Import,
-        Export
+        Import = com::ubuntu::content::Transfer::Import,
+        Export = com::ubuntu::content::Transfer::Export,
+        Share = com::ubuntu::content::Transfer::Share
     };
     enum SelectionType {
         Single = com::ubuntu::content::Transfer::SelectionType::single,
@@ -78,7 +79,7 @@ public:
     Q_INVOKABLE void setStore(ContentStore *contentStore);
 
     com::ubuntu::content::Transfer *transfer() const;
-    void setTransfer(com::ubuntu::content::Transfer *transfer, Direction direction);
+    void setTransfer(com::ubuntu::content::Transfer *transfer);
 
     void collectItems();
 

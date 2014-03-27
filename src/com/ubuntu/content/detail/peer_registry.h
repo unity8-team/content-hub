@@ -40,12 +40,15 @@ class PeerRegistry
 
     PeerRegistry& operator=(const PeerRegistry&) = delete;
 
-    virtual Peer default_peer_for_type(Type) = 0;
-    virtual void enumerate_known_peers_for_type(Type, const std::function<void(const Peer&)>& for_each) = 0;
+    virtual Peer default_source_for_type(Type) = 0;
     virtual void enumerate_known_peers(const std::function<void(const Peer&)>& for_each) = 0;
-
-    virtual bool install_default_peer_for_type(Type, Peer) = 0;
-    virtual bool install_peer_for_type(Type, Peer) = 0;
+    virtual void enumerate_known_sources_for_type(Type, const std::function<void(const Peer&)>& for_each) = 0;
+    virtual void enumerate_known_destinations_for_type(Type, const std::function<void(const Peer&)>& for_each) = 0;
+    virtual void enumerate_known_shares_for_type(Type, const std::function<void(const Peer&)>& for_each) = 0;
+    virtual bool install_default_source_for_type(Type, Peer) = 0;
+    virtual bool install_source_for_type(Type, Peer) = 0;
+    virtual bool install_destination_for_type(Type, Peer) = 0;
+    virtual bool install_share_for_type(Type, Peer) = 0;
     virtual bool remove_peer(Peer peer) = 0;
 
 

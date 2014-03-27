@@ -17,10 +17,11 @@
  */
 
 #include <QCoreApplication>
-#include <QDebug>
+#include <QProcessEnvironment>
 #include <csignal>
 
 #include "detail/app_manager.h"
+#include "debug.h"
 #include "common.h"
 #include "registry.h"
 #include "detail/service.h"
@@ -36,7 +37,7 @@ namespace {
     {
         /* list known peers for pictures */
         QStringList result;
-        registry->enumerate_known_peers_for_type(
+        registry->enumerate_known_sources_for_type(
             cuc::Type::Known::pictures(),
             [&result](const cuc::Peer& peer)
             {
@@ -44,13 +45,13 @@ namespace {
             });
 
         foreach (QString r, result) {
-            qDebug() << "PEER: " << r;
+            TRACE() << "PEER: " << r;
         }
     }
 
     void shutdown(int sig)
     {
-        qDebug() << Q_FUNC_INFO << sig;
+        TRACE() << Q_FUNC_INFO << sig;
         QCoreApplication::instance()->quit();
     }
 }
@@ -59,6 +60,16 @@ int main(int argc, char** argv)
 {
     int ret = 0;
     QCoreApplication *app = new QCoreApplication(argc, argv);
+
+    /* read environment variables */
+    QProcessEnvironment environment = QProcessEnvironment::systemEnvironment();
+    if (environment.contains(QLatin1String("CONTENT_HUB_LOGGING_LEVEL"))) {
+        bool isOk;
+        int value = environment.value(
+            QLatin1String("CONTENT_HUB_LOGGING_LEVEL")).toInt(&isOk);
+        if (isOk)
+            setLoggingLevel(value);
+    }
 
     auto connection = QDBusConnection::sessionBus();
 
@@ -96,7 +107,7 @@ int main(int argc, char** argv)
         ret = app->exec();
     }
 
-    qDebug() << "Server exiting, cleaning up";
+    TRACE() << "Server exiting, cleaning up";
     delete server;
     return ret;
 }

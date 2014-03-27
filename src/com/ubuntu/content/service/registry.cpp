@@ -37,19 +37,35 @@ Registry::Registry() :
     {
         if (m_defaultSources->keys().contains(type.id()))
         {
-            QString peer_id = m_defaultSources->get(type.id()).toString();
-            QStringList as(m_defaultSources->get(type.id()).toStringList());
-            if (!as.isEmpty())
+            QVariant peer_v = m_defaultSources->get(type.id());
+            // If default isn't a StringList, attempt to reset
+            if (peer_v.type() != QVariant::StringList)
             {
-                std::string pkg = as[0].toStdString();
-                std::string app = as[1].toStdString();
-                std::string ver = as[2].toStdString();
-                cuc::Peer peer;
-                if (app.empty() || ver.empty())
-                    peer = QString::fromStdString(pkg);
-                else
-                    peer = QString::fromLocal8Bit(upstart_app_launch_triplet_to_app_id(pkg.c_str(), app.c_str(), ver.c_str()));
-                install_source_for_type(type, cuc::Peer{peer.id(), true});
+                TRACE() << Q_FUNC_INFO << "Default type for" << type.id() << "is incorrect, resetting";
+                m_defaultSources->reset(type.id());
+                // After reset, lets get a new QVariant
+                peer_v = m_defaultSources->get(type.id());
+            }
+
+            /* Only assume the default is correct if the type is a StringList
+             * The reset above should have ensured it was reset, lets double
+             * check anyway to prevent crashes
+             */
+            if (peer_v.type() == QVariant::StringList)
+            {
+                QStringList as(peer_v.toStringList());
+                if (!as.isEmpty())
+                {
+                    std::string pkg = as[0].toStdString();
+                    std::string app = as[1].toStdString();
+                    std::string ver = as[2].toStdString();
+                    cuc::Peer peer;
+                    if (app.empty() || ver.empty())
+                        peer = QString::fromStdString(pkg);
+                    else
+                        peer = QString::fromLocal8Bit(upstart_app_launch_triplet_to_app_id(pkg.c_str(), app.c_str(), ver.c_str()));
+                    install_source_for_type(type, cuc::Peer{peer.id(), true});
+                }
             }
         }
     }
@@ -62,13 +78,15 @@ cuc::Peer Registry::default_source_for_type(cuc::Type type)
     TRACE() << Q_FUNC_INFO << type.id();
     if (m_defaultSources->keys().contains(type.id()))
     {
-        QStringList as(m_defaultSources->get(type.id()).toStringList());
+        QVariant peer_v = m_defaultSources->get(type.id());
+        if (peer_v.type() != QVariant::StringList)
+            return cuc::Peer(peer_v.toString());
+        QStringList as(peer_v.toStringList());
         if (!as.isEmpty())
         {
             std::string pkg = as[0].toStdString();
             std::string app = as[1].toStdString();
             std::string ver = as[2].toStdString();
-            cuc::Peer peer;
             if (app.empty() || ver.empty())
                 return cuc::Peer(QString::fromStdString(pkg));
             return cuc::Peer(QString::fromLocal8Bit(upstart_app_launch_triplet_to_app_id(pkg.c_str(), app.c_str(), ver.c_str())), true);
@@ -122,16 +140,20 @@ void Registry::enumerate_known_sources_for_type(cuc::Type type, const std::funct
     {
         TRACE() << Q_FUNC_INFO << k;
         bool defaultPeer = false;
-        QStringList as(m_defaultSources->get(type.id()).toStringList());
-        if (!as.isEmpty())
-        {   
-            std::string pkg = as[0].toStdString();
-            std::string app = as[1].toStdString();
-            std::string ver = as[2].toStdString();
-            if (app.empty() || ver.empty())
-                defaultPeer = QString::fromStdString(pkg) == k;
-            else
-                defaultPeer = QString::fromLocal8Bit(upstart_app_launch_triplet_to_app_id(pkg.c_str(), app.c_str(), ver.c_str())) == k;
+        QVariant peer_v = m_defaultSources->get(type.id());
+        if (peer_v.type() == QVariant::StringList)
+        {
+            QStringList as(peer_v.toStringList());
+            if (!as.isEmpty())
+            {
+                std::string pkg = as[0].toStdString();
+                std::string app = as[1].toStdString();
+                std::string ver = as[2].toStdString();
+                if (app.empty() || ver.empty())
+                    defaultPeer = QString::fromStdString(pkg) == k;
+                else
+                    defaultPeer = QString::fromLocal8Bit(upstart_app_launch_triplet_to_app_id(pkg.c_str(), app.c_str(), ver.c_str())) == k;
+            }
         }
         for_each(cuc::Peer{k, defaultPeer});
     }

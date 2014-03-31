@@ -45,6 +45,8 @@ int main(int argc, char** argv)
             QLatin1String("CONTENT_HUB_LOGGING_LEVEL")).toInt(&isOk);
         if (isOk)
             setLoggingLevel(value);
+    }
+
     QDir contentDir(
         QStandardPaths::writableLocation(QStandardPaths::GenericDataLocation)
         + QString("/")

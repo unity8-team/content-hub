@@ -178,6 +178,18 @@ class Transfer::Private : public QObject
         return not reply.isError();
     }
 
+    Direction direction()
+    {
+        auto reply = remote_transfer->Direction();
+        reply.waitForFinished();
+
+        /* if Direction fails, default to import */
+        if (reply.isError())
+            return Transfer::Direction::Import;
+
+        return static_cast<Transfer::Direction>(reply.value());
+    }
+
     com::ubuntu::content::dbus::Transfer* remote_transfer;
 };
 }

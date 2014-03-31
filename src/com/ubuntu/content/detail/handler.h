@@ -48,6 +48,7 @@ class Handler : public QObject
   public Q_SLOTS:
     void HandleImport(const QDBusObjectPath &transfer);
     void HandleExport(const QDBusObjectPath &transfer);
+    void HandleShare(const QDBusObjectPath &transfer);
 
   private:
     struct Private;

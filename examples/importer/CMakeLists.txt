@@ -24,7 +24,7 @@ add_executable(
   example.cpp
 )
 
-qt5_use_modules(importer Core)
+qt5_use_modules(importer Core Gui DBus)
 
 set_target_properties(
   importer

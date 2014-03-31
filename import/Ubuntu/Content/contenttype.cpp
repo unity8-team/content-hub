@@ -15,8 +15,7 @@
  */
 
 #include "contenttype.h"
-
-#include <QDebug>
+#include "../../../src/com/ubuntu/content/debug.h"
 
 /*!
    \qmltype ContentType
@@ -44,7 +43,10 @@
      \li Music
    \row
      \li ContentType.Contacts
-     \li Music
+     \li Contacts
+   \row
+     \li ContentType.All
+     \li Any of the above content types
    \endtable
  */
 
@@ -54,7 +56,7 @@ namespace cuc = com::ubuntu::content;
 ContentType::ContentType(QObject *parent)
     : QObject(parent)
 {
-    qDebug() << Q_FUNC_INFO;
+    TRACE() << Q_FUNC_INFO;
 }
 
 
@@ -66,7 +68,7 @@ ContentType::ContentType(QObject *parent)
 const com::ubuntu::content::Type &ContentType::contentType2HubType(int type)
 {
     Type ctype = static_cast<Type>(type);
-    qDebug() << Q_FUNC_INFO << ctype;
+    TRACE() << Q_FUNC_INFO << ctype;
     return contentType2HubType(ctype);
 }
 

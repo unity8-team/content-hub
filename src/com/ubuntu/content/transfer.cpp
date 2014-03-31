@@ -43,7 +43,7 @@ cuc::Transfer::Transfer(const QSharedPointer<cuc::Transfer::Private>& d, QObject
 
 cuc::Transfer::~Transfer()
 {
-    qDebug() << Q_FUNC_INFO;
+    TRACE() << Q_FUNC_INFO;
     purge_store_cache(d->store().uri());
 }
 
@@ -100,4 +100,9 @@ cuc::Transfer::SelectionType cuc::Transfer::selectionType() const
 bool cuc::Transfer::setSelectionType(const cuc::Transfer::SelectionType& type)
 {
     return d->setSelectionType(type);
+}
+
+cuc::Transfer::Direction cuc::Transfer::direction() const
+{
+    return d->direction();
 }

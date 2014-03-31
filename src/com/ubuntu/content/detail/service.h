@@ -53,22 +53,29 @@ class Service : public QObject, protected QDBusContext
     Service& operator=(const Service&) = delete;
 
   public Q_SLOTS:
-    QString DefaultPeerForType(const QString &type_id);
-    QStringList KnownPeersForType(const QString &type_id);
-    QDBusObjectPath CreateImportForTypeFromPeer(const QString&, const QString&, const QString&);
-    void RegisterImportExportHandler(const QString&, const QString&, const QDBusObjectPath& handler);
+    QDBusVariant DefaultSourceForType(const QString &type_id);
+    QVariantList KnownSourcesForType(const QString &type_id);
+    QVariantList KnownDestinationsForType(const QString &type_id);
+    QVariantList KnownSharesForType(const QString &type_id);
+    QDBusObjectPath CreateImportFromPeer(const QString&, const QString&);
+    QDBusObjectPath CreateExportToPeer(const QString&, const QString&);
+    QDBusObjectPath CreateShareToPeer(const QString&, const QString&);
+
+    void RegisterImportExportHandler(const QString&, const QDBusObjectPath& handler);
     void Quit();
 
   private:
+    bool should_cancel(int);
     struct Private;
+    struct RegHandler;
     QDBusServiceWatcher* m_watcher;
     QScopedPointer<Private> d;
-    void connect_export_handler(const QString&, const QString&);
-    void connect_import_handler(const QString&, const QString&);
 
   private Q_SLOTS:
-    void handle_transfer(int);
-    void handler_registered(const QString&);
+    void handle_imports(int);
+    void handle_exports(int);
+    void handler_unregistered(const QString&);
+    QDBusObjectPath CreateTransfer(const QString&, const QString&, int);
 
 };
 }

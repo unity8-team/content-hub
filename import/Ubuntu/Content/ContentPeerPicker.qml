@@ -171,7 +171,7 @@ Item {
     ListItem.Header {
         id: appTitle
         anchors.top: header.visible ? header.bottom : parent.top
-        text: "Apps"
+        text: i18n.tr("Apps")
     }
 
     Rectangle {
@@ -200,7 +200,6 @@ Item {
                 model: customPeerModelLoader ? customPeerModelLoader.item.peers : peerModelLoader.item.peers
                 delegate: peerDelegate
             }
-
         }
     }
 
@@ -211,7 +210,7 @@ Item {
             right: parent.right
             top: apps.bottom
         }
-        text: "Devices"
+        text: i18n.tr("Devices")
     }
 
     Rectangle {
@@ -230,14 +229,16 @@ Item {
         Flickable {
             anchors.fill: parent
 
-            GridView {
+            ResponsiveGridView {
                 id: devPeers
-                header: Item { height: units.gu(2) }
-                cellWidth: units.gu(13.5)
-                cellHeight: units.gu(16)
+                anchors.fill: parent
+                minimumHorizontalSpacing: units.gu(0.5)
+                maximumNumberOfColumns: 6
+                delegateWidth: units.gu(11)
+                delegateHeight: units.gu(9.5)
+                verticalSpacing: units.gu(2)
                 delegate: peerDelegate
             }
-
         }
     }
 

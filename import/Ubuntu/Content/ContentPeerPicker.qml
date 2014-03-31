@@ -177,7 +177,7 @@ Item {
     Rectangle {
         id: apps
         color: "#FFFFFF"
-        height: (parent.height / 2.4)
+        height: devices.visible ? (parent.height / 2.4) : parent.height
         width: parent.width
         clip: true
         anchors {
@@ -205,6 +205,8 @@ Item {
 
     ListItem.Header {
         id: devTitle
+        // TODO: make this visible when we have a way to populate devices
+        visible: false
         anchors {
             left: parent.left
             right: parent.right
@@ -215,6 +217,8 @@ Item {
 
     Rectangle {
         id: devices
+        // TODO: make this visible when we have a way to populate devices
+        visible: false
         color: "#FFFFFF"
         width: parent.width
         radius: 0

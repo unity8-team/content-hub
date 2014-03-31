@@ -17,6 +17,8 @@
  */
 
 #include <QCoreApplication>
+#include <QDir>
+#include <QStandardPaths>
 
 #include "hook.h"
 #include "debug.h"
@@ -43,6 +45,13 @@ int main(int argc, char** argv)
             QLatin1String("CONTENT_HUB_LOGGING_LEVEL")).toInt(&isOk);
         if (isOk)
             setLoggingLevel(value);
+    QDir contentDir(
+        QStandardPaths::writableLocation(QStandardPaths::GenericDataLocation)
+        + QString("/")
+        + QString("content-hub"));
+
+    if (!contentDir.exists()) {
+	return 0;
     }
 
     new cuc::detail::Hook();

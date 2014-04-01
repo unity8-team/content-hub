@@ -66,6 +66,7 @@ pkg_check_modules(GSETTINGS REQUIRED gsettings-qt)
 pkg_check_modules(NIH REQUIRED libnih)
 pkg_check_modules(NIH_DBUS REQUIRED libnih-dbus)
 pkg_check_modules(DBUS REQUIRED dbus-1)
+pkg_check_modules(UBUNTU_DOWNLOAD_MANAGER REQUIRED ubuntu-download-manager-client)
 
 add_definitions( -DDEBUG_ENABLED )
 

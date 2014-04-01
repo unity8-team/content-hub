@@ -77,6 +77,7 @@ Q_SIGNALS:
     QString import_path();
     QString DownloadId();
     void SetDownloadId(QString DownloadId);
+    void DownloadComplete(QString destFilePath);
 
   private:
     struct Private;

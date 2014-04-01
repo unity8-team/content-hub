@@ -26,6 +26,7 @@ include_directories(
   ${NIH_INCLUDE_DIRS}
   ${NIH_DBUS_INCLUDE_DIRS}
   ${UPSTART_LAUNCH_INCLUDE_DIRS}
+  ${UBUNT_DOWNLOAD_MANAGER_INCLUDE_DIRS}
 )
 
 qt5_add_dbus_interface(
@@ -100,6 +101,7 @@ target_link_libraries(content-hub
     ${NIH_LIBRARIES}
     ${NIH_DBUS_LIBRARIES}
     ${GIO_LIBRARIES}
+    ${UBUNTU_DOWNLOAD_MANAGER_LIBRARIES}
 )
 
 install(

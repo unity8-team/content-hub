@@ -23,6 +23,8 @@
 #include <com/ubuntu/content/hub.h>
 #include <com/ubuntu/content/store.h>
 #include <com/ubuntu/content/transfer.h>
+#include <ubuntu/download_manager/download.h>
+#include <ubuntu/download_manager/manager.h>
 
 namespace cuc = com::ubuntu::content;
 namespace cucd = com::ubuntu::content::detail;
@@ -143,8 +145,26 @@ void cucd::Transfer::Charge(const QStringList& items)
 {
     TRACE() << __PRETTY_FUNCTION__;
 
+    bool download_started = false;
+
     if (d->state == cuc::Transfer::charged)
         return;
+
+    if(!d->download_id.isEmpty()) {
+        Manager *downloadManager = Manager::createSessionManager();
+        auto download = downloadManager->getDownloadForId(d->download_id);
+        if (download == nullptr) {
+            TRACE() << downloadManager->lastError();
+        } else {
+            QDir dir;
+            dir.mkpath(d->store);
+            download->setLocalPath(d->store + QDir::separator() + "download");
+            connect(download, SIGNAL(finished(QString)), this, SLOT(DownloadComplete(QString)));
+            download->start();
+            download_started = true;
+            TRACE() << "Started download to: " << d->store + QDir::separator() + "download";
+        }
+    }
 
     QStringList ret;
     Q_FOREACH(QString i, items)
@@ -153,16 +173,27 @@ void cucd::Transfer::Charge(const QStringList& items)
     Q_FOREACH(QString f, ret)
         TRACE() << Q_FUNC_INFO << "Item:" << f;
 
-    if (ret.count() <= 0)
+    if (!download_started)
     {
-        qWarning() << "Failed to charge items, aborting";
-        d->state = cuc::Transfer::aborted;
+        if (ret.count() <= 0)
+        {
+            qWarning() << "Failed to charge items, aborting";
+            d->state = cuc::Transfer::aborted;
+        }
+        else
+        {
+            d->items = ret;
+            d->state = cuc::Transfer::charged;
+        }
+        Q_EMIT(StateChanged(d->state));
     }
-    else
-    {
-        d->items = ret;
-        d->state = cuc::Transfer::charged;
-    }
+}
+
+void cucd::Transfer::DownloadComplete(QString destFilePath)
+{
+    TRACE() << __PRETTY_FUNCTION__;
+    d->items.append(QUrl::fromLocalFile(destFilePath).toString());
+    d->state = cuc::Transfer::charged;
     Q_EMIT(StateChanged(d->state));
 }
 

@@ -33,22 +33,6 @@ namespace cucd = com::ubuntu::content::detail;
 namespace cuc = com::ubuntu::content;
 
 namespace {
-    void list(QSharedPointer<cucd::PeerRegistry> registry)
-    {
-        /* list known peers for pictures */
-        QStringList result;
-        registry->enumerate_known_sources_for_type(
-            cuc::Type::Known::pictures(),
-            [&result](const cuc::Peer& peer)
-            {
-                result.append(peer.id());
-            });
-
-        foreach (QString r, result) {
-            TRACE() << "PEER: " << r;
-        }
-    }
-
     void shutdown(int sig)
     {
         TRACE() << Q_FUNC_INFO << sig;
@@ -100,12 +84,8 @@ int main(int argc, char** argv)
 
     if (ret == 1)
         app->exit(ret);
-    else
-    {
-        /* list known peers */
-        list(registry);
+    else        
         ret = app->exec();
-    }
 
     TRACE() << "Server exiting, cleaning up";
     delete server;

@@ -46,9 +46,7 @@ struct cuc::Peer::Private
                             iconFile.close();
                         }
                     }
-                    g_object_unref(ic);
                 }
-
                 g_object_unref(app);
             }
         }

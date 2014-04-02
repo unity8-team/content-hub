@@ -115,7 +115,7 @@ Rectangle {
       target: root.activeTransfer
       onStateChanged: {
           if (root.activeTransfer.state === ContentTransfer.Charged)
-              importItmes = root.activeTransfer.items;
+              importItems = root.activeTransfer.items;
       }
   }
 }

@@ -20,7 +20,7 @@
 /*!
    \qmltype ContentScope
    \instantiates ContentScope
-   \inqmlmodule Ubuntu.Content 0.1
+   \inqmlmodule Ubuntu.Content
 
    \sa ContentStore
 

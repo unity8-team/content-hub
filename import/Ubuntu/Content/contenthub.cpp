@@ -31,7 +31,7 @@
 /*!
  * \qmltype ContentHub
  * \instantiates ContentHub
- * \inqmlmodule Ubuntu.Content 0.1
+ * \inqmlmodule Ubuntu.Content
  *
  * Example usage for importing content:
  * \qml

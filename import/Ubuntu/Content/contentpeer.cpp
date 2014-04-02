@@ -27,7 +27,7 @@
 /*!
  * \qmltype ContentPeer
  * \instantiates ContentPeer
- * \inqmlmodule Ubuntu.Content 0.1
+ * \inqmlmodule Ubuntu.Content
  * \brief An application that can export or import a ContentType
  *
  * A ContentPeer is an application that is registered in the ContentHub as

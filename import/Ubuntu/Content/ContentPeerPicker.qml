@@ -68,6 +68,8 @@ Item {
     */
     property var customPeerModelLoader
 
+    property var completed: false
+
     /*! \qmlsignal peerSelected
         \brief Emitted when a user selects a peer.
 
@@ -88,26 +90,53 @@ Item {
 
     Header {
         id: header
-        title: (handler === ContentHandler.Source) ? i18n.tr("Choose from") : i18n.tr("Share to")
+        title: (handler === ContentHandler.Source) ? i18n.tr("Choose from") : (handler === ContentHandler.Destination ? i18n.tr("Open with") : i18n.tr("Share to"))
     }
 
     Loader {
         id: peerModelLoader
         active: false
-        sourceComponent: ContentPeerModel {
-            id: peerModel
-        }
+        sourceComponent: ContentPeerModel { }
         onLoaded: {
-            item.handler = root.handler
-            item.contentType = root.contentType
+            item.handler = root.handler;
+            item.contentType = root.contentType;
         }
     }
 
     Component.onCompleted: {
-        if(customPeerModelLoader) {
-            customPeerModelLoader.active = true;
-        } else {
-            peerModelLoader.active = true;
+        if (root.visible) {
+            if (customPeerModelLoader) {
+                customPeerModelLoader.active = true;
+            } else {
+                peerModelLoader.active = true;
+            }
+        }
+        completed = true;
+    }
+
+    onVisibleChanged: {
+        if (completed) {
+            if (customPeerModelLoader) {
+                customPeerModelLoader.active = true;
+            } else {
+                peerModelLoader.active = true;
+            }
+        }
+    }
+
+    onHandlerChanged: {
+        if (!customPeerModelLoader && peerModelLoader.item) {
+            appPeers.model = undefined; // Clear grid view
+            peerModelLoader.item.handler = root.handler;
+            appPeers.model = peerModelLoader.item.peers;
+        }
+    }
+
+    onContentTypeChanged: {
+        if (!customPeerModelLoader && peerModelLoader.item) {
+            appPeers.model = undefined; // Clear grid view
+            peerModelLoader.item.contentType = root.contentType;
+            appPeers.model = peerModelLoader.item.peers;
         }
     }
 

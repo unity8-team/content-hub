@@ -58,7 +58,7 @@ void ContentPeerModel::classBegin()
 void ContentPeerModel::componentComplete()
 {
     m_complete = true;
-    QTimer::singleShot(0, this, SLOT(findPeers()));
+    findPeers();
 }
 
 /*!
@@ -79,11 +79,13 @@ ContentType::Type ContentPeerModel::contentType()
 void ContentPeerModel::setContentType(ContentType::Type contentType)
 {
     TRACE() << Q_FUNC_INFO;
-    m_contentType = contentType;
-    if (m_complete) {
-        findPeers();
+    if (m_contentType != contentType) {
+        m_contentType = contentType;
+        if (m_complete) {
+            findPeers();
+        }
+        Q_EMIT contentTypeChanged();
     }
-    Q_EMIT contentTypeChanged();
 }
 
 /*!
@@ -95,7 +97,6 @@ void ContentPeerModel::findPeers() {
     m_peers.clear();
     QCoreApplication::processEvents();
     if(m_contentType == ContentType::All) {
-        appendPeersForContentType(ContentType::Unknown);
         appendPeersForContentType(ContentType::Documents);
         appendPeersForContentType(ContentType::Pictures);
         appendPeersForContentType(ContentType::Music);
@@ -139,7 +140,6 @@ void ContentPeerModel::appendPeersForContentType(ContentType::Type contentType)
             }
             Q_EMIT peersChanged();
         }
-        QCoreApplication::processEvents();
     }
 }
 
@@ -161,11 +161,13 @@ ContentHandler::Handler ContentPeerModel::handler()
 void ContentPeerModel::setHandler(ContentHandler::Handler handler)
 {
     TRACE() << Q_FUNC_INFO;
-    m_handler = handler;
-    if (m_complete) {
-        findPeers();
+    if (m_handler != handler) {
+        m_handler = handler;
+        if (m_complete) {
+            findPeers();
+        }
+        Q_EMIT handlerChanged();
     }
-    Q_EMIT handlerChanged();
 }
 
 /*!

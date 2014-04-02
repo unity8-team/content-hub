@@ -20,7 +20,7 @@
 /*!
    \qmltype ContentType
    \instantiates ContentType
-   \inqmlmodule Ubuntu.Content 0.1
+   \inqmlmodule Ubuntu.Content
 
    \sa ContentHub
 

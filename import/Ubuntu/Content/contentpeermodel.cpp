@@ -23,7 +23,7 @@ namespace cuc = com::ubuntu::content;
 /*!
  * \qmltype ContentPeerModel
  * \instantiates ContentPeerModel
- * \inqmlmodule Ubuntu.Content 0.1
+ * \inqmlmodule Ubuntu.Content
  * \brief A list of applications that can export or import a ContentType
  *
  * A ContentPeerModel provides a list of all applications that are registered

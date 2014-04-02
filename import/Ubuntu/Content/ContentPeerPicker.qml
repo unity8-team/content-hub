@@ -22,7 +22,7 @@ import Ubuntu.Content 0.1
 
 /*!
     \qmltype ContentPeerPicker
-    \inqmlmodule Ubuntu.Content 0.1
+    \inqmlmodule Ubuntu.Content
     \brief Component that allows users to select a source/destination for content transfer
 
     This component displays a list of applications, devices and services which

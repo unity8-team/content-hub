@@ -20,7 +20,7 @@
 /*!
  * \qmltype ContentItem
  * \instantiates ContentItem
- * \inqmlmodule Ubuntu.Content 0.1
+ * \inqmlmodule Ubuntu.Content
  * \brief Content that can be imported or exported from a ContentPeer
  *
  * A ContentItem is an item that can be imported or exported from a ContentPeer

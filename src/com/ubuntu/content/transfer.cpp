@@ -116,3 +116,9 @@ bool cuc::Transfer::setDownloadId(QString downloadId)
 {
     return d->setDownloadId(downloadId);
 }
+
+bool cuc::Transfer::download()
+{
+    return d->download();
+}
+

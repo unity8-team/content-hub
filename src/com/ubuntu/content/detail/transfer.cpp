@@ -145,26 +145,21 @@ void cucd::Transfer::Charge(const QStringList& items)
 {
     TRACE() << __PRETTY_FUNCTION__;
 
-    bool download_started = false;
-
     if (d->state == cuc::Transfer::charged)
         return;
 
-    if(!d->download_id.isEmpty()) {
-        Manager *downloadManager = Manager::createSessionManager();
-        auto download = downloadManager->getDownloadForId(d->download_id);
-        if (download == nullptr) {
-            TRACE() << downloadManager->lastError();
-        } else {
-            QDir dir;
-            dir.mkpath(d->store);
-            download->setLocalPath(d->store + QDir::separator() + "download");
-            connect(download, SIGNAL(finished(QString)), this, SLOT(DownloadComplete(QString)));
-            download->start();
-            download_started = true;
-            TRACE() << "Started download to: " << d->store + QDir::separator() + "download";
-        }
+    if (d->state == cuc::Transfer::downloading)
+    {
+        qWarning() << "Unable to charge, download still in progress.";
+        return;
     }
+
+    if (d->state == cuc::Transfer::downloaded)
+    {
+        d->state = cuc::Transfer::charged;
+        Q_EMIT(StateChanged(d->state));
+        return;
+    } 
 
     QStringList ret;
     Q_FOREACH(QString i, items)
@@ -173,18 +168,41 @@ void cucd::Transfer::Charge(const QStringList& items)
     Q_FOREACH(QString f, ret)
         TRACE() << Q_FUNC_INFO << "Item:" << f;
 
-    if (!download_started)
+    if (ret.count() <= 0)
     {
-        if (ret.count() <= 0)
-        {
-            qWarning() << "Failed to charge items, aborting";
-            d->state = cuc::Transfer::aborted;
-        }
-        else
-        {
-            d->items = ret;
-            d->state = cuc::Transfer::charged;
-        }
+        qWarning() << "Failed to charge items, aborting";
+        d->state = cuc::Transfer::aborted;
+    }
+    else
+    {
+        d->items = ret;
+        d->state = cuc::Transfer::charged;
+    }
+    Q_EMIT(StateChanged(d->state));
+}
+
+void cucd::Transfer::Download()
+{
+    TRACE() << __PRETTY_FUNCTION__;
+    if(d->download_id.isEmpty()) 
+    {
+        return;
+    }
+
+    Manager *downloadManager = Manager::createSessionManager();
+    auto download = downloadManager->getDownloadForId(d->download_id);
+    if (download == nullptr) 
+    {
+        TRACE() << downloadManager->lastError();
+    }
+    else
+    {
+        QDir dir;
+        dir.mkpath(d->store);
+        download->setLocalPath(d->store + QDir::separator() + "download");
+        connect(download, SIGNAL(finished(QString)), this, SLOT(DownloadComplete(QString)));
+        download->start();
+        d->state = cuc::Transfer::downloading;
         Q_EMIT(StateChanged(d->state));
     }
 }
@@ -193,7 +211,7 @@ void cucd::Transfer::DownloadComplete(QString destFilePath)
 {
     TRACE() << __PRETTY_FUNCTION__;
     d->items.append(QUrl::fromLocalFile(destFilePath).toString());
-    d->state = cuc::Transfer::charged;
+    d->state = cuc::Transfer::downloaded;
     Q_EMIT(StateChanged(d->state));
 }
 

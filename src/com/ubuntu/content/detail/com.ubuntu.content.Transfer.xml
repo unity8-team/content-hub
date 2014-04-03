@@ -17,6 +17,8 @@
     </method>
     <method name="Finalize">
     </method>
+    <method name="Download">
+    </method>
     <method name="Charge">
       <arg name="items" type="as" direction="in" />
     </method>

@@ -117,7 +117,7 @@ class Transfer::Private : public QObject
 
         return not reply.isError();
     }
-    
+
     QVector<Item> collect()
     {
         QVector<Item> result;
@@ -209,6 +209,14 @@ class Transfer::Private : public QObject
         return not reply.isError();
     }
 
+    bool download()
+    {
+        auto reply = remote_transfer->Download();
+        reply.waitForFinished();
+
+        return not reply.isError();
+    }
+    
     com::ubuntu::content::dbus::Transfer* remote_transfer;
 };
 }

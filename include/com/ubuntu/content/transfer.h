@@ -71,7 +71,9 @@ class Transfer : public QObject
         charged,
         collected,
         aborted,
-        finalized
+        finalized,
+        downloading,
+        downloaded
     };
 
     enum SelectionType
@@ -99,6 +101,7 @@ class Transfer : public QObject
     Q_INVOKABLE virtual bool start();
     Q_INVOKABLE virtual bool abort();
     Q_INVOKABLE virtual bool finalize();
+    Q_INVOKABLE virtual bool download();
     Q_INVOKABLE virtual bool charge(const QVector<Item>& items);
     Q_INVOKABLE virtual QVector<Item> collect();
     Q_INVOKABLE virtual Store store() const;

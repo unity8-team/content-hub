@@ -311,7 +311,7 @@ void cucd::Service::handle_imports(int state)
                     }
                     if (t->destination() == transfer->destination())
                     {
-                        qDebug() << Q_FUNC_INFO << "Destination has pending transfers:" << t->Id();
+                        TRACE() << Q_FUNC_INFO << "Destination has pending transfers:" << t->Id();
                         if (should_cancel(t->State()))
                             shouldStop = false;
                     }
@@ -388,7 +388,7 @@ void cucd::Service::handle_exports(int state)
                     }
                     if (t->destination() == transfer->destination())
                     {
-                        qDebug() << Q_FUNC_INFO << "Destination has pending transfers:" << t->Id();
+                        TRACE() << Q_FUNC_INFO << "Destination has pending transfers:" << t->Id();
                         if (should_cancel(t->State()))
                             shouldStop = false;
                     }

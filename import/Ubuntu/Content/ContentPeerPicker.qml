@@ -22,7 +22,7 @@ import Ubuntu.Content 0.1
 
 /*!
     \qmltype ContentPeerPicker
-    \inqmlmodule Ubuntu.Content 0.1
+    \inqmlmodule Ubuntu.Content
     \brief Component that allows users to select a source/destination for content transfer
 
     This component displays a list of applications, devices and services which
@@ -200,13 +200,13 @@ Item {
     ListItem.Header {
         id: appTitle
         anchors.top: header.visible ? header.bottom : parent.top
-        text: "Apps"
+        text: i18n.tr("Apps")
     }
 
     Rectangle {
         id: apps
         color: "#FFFFFF"
-        height: (parent.height / 2.4)
+        height: devices.visible ? (parent.height / 2.4) : parent.height
         width: parent.width
         clip: true
         anchors {
@@ -229,22 +229,25 @@ Item {
                 model: customPeerModelLoader ? customPeerModelLoader.item.peers : peerModelLoader.item.peers
                 delegate: peerDelegate
             }
-
         }
     }
 
     ListItem.Header {
         id: devTitle
+        // TODO: make this visible when we have a way to populate devices
+        visible: false
         anchors {
             left: parent.left
             right: parent.right
             top: apps.bottom
         }
-        text: "Devices"
+        text: i18n.tr("Devices")
     }
 
     Rectangle {
         id: devices
+        // TODO: make this visible when we have a way to populate devices
+        visible: false
         color: "#FFFFFF"
         width: parent.width
         radius: 0
@@ -259,14 +262,16 @@ Item {
         Flickable {
             anchors.fill: parent
 
-            GridView {
+            ResponsiveGridView {
                 id: devPeers
-                header: Item { height: units.gu(2) }
-                cellWidth: units.gu(13.5)
-                cellHeight: units.gu(16)
+                anchors.fill: parent
+                minimumHorizontalSpacing: units.gu(0.5)
+                maximumNumberOfColumns: 6
+                delegateWidth: units.gu(11)
+                delegateHeight: units.gu(9.5)
+                verticalSpacing: units.gu(2)
                 delegate: peerDelegate
             }
-
         }
     }
 

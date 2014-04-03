@@ -22,7 +22,7 @@
 /*!
  * \qmltype ContentStore
  * \instantiates ContentStore
- * \inqmlmodule Ubuntu.Content 0.1
+ * \inqmlmodule Ubuntu.Content
  *
  * A ContentStore allows for the permanent storage of a transfered item.
  *

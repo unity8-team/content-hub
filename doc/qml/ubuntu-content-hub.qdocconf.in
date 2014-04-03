@@ -1,9 +1,8 @@
 project = Ubuntu Content QML API
 description = Ubuntu Content API
 
-sourcedirs = @CMAKE_CURRENT_SOURCE_DIR@/pages @CMAKE_SOURCE_DIR@/import
-exampledirs = @CMAKE_SOURCE_DIR@/examples/
-imagedirs = @CMAKE_CURRENT_SOURCE_DIR@/../images
+sourcedirs = ../../../doc/qml/pages ../../../import
+exampledirs = ../../../examples/
 
 sources.fileextensions = "*.qdoc *.qml *.cpp"
 headers.fileextensions = "*.h"
@@ -16,7 +15,7 @@ outputformat = HTML
 outputprefixes = QML
 outputprefixes.QML = qml-
 
-HTML.templatedir = @CMAKE_CURRENT_SOURCE_DIR@/
+HTML.templatedir = ../../../doc/
 HTML.nobreadcrumbs = "true"
 		   
 HTML.stylesheets = \

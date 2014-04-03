@@ -21,7 +21,7 @@ import Ubuntu.Content 0.1
 
 /*!
     \qmltype ContentTransferHint
-    \inqmlmodule Ubuntu.Content 0.1
+    \inqmlmodule Ubuntu.Content
     \brief Component that indicates that a transfer is active
 
     This component shows that the transfer is currently running, and the source

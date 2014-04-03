@@ -1,3 +1,38 @@
+content-hub (0.0+14.04.20140402-0ubuntu1) trusty; urgency=low
+
+  [ Loïc Minier ]
+  * Downgrade content-hub Recommends to a Suggests as we don't want
+    content-hub pulled via ubuntu-sdk on developer desktops.
+
+  [ Ken VanDine ]
+  * protect against queries for Type::unknown (LP: #1293463)
+  * Replace a couple missed qDebug lines for logging
+  * Don't unref the g_icon, the value belongs to app
+  * Ensure m_defaultSources is a StringList before attempting to use it
+    as a list
+  * ContentPeerPicker: Make headers translatable and use a
+    ResponsiveGridView for the devices grid to match the apps grid.
+    ContentPeerPicker: hide the devices section until we have a way to
+    populate it
+
+  [ Javier Collado ]
+  * Added README file (LP: #1274899)
+
+  [ Dimitri John Ledkov ]
+  * Exit quicker, if there is nothing to do. (LP: #1287674) (LP:
+    #1287674)
+
+  [ Michael Sheldon ]
+  * Fixes updating of the ContentPeerModel when using Loader and
+    changing ContentType or ContentHandler dynamically and ensures that
+    ContentPeerModel Loader doesn't begin loading the model until the
+    peer picker becomes visible (avoiding delaying app start-up time).
+  * Make qdoc based documentation compatible with the Qt 5.2 version of
+    qdoc.
+  * Fixes version number of import statements in QML documentation.
+
+ -- Ubuntu daily release <ps-jenkins@lists.canonical.com>  Wed, 02 Apr 2014 14:46:54 +0000
+
 content-hub (0.0+14.04.20140321-0ubuntu1) trusty; urgency=low
 
   [ Ken VanDine ]

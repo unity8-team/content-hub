@@ -23,7 +23,7 @@
 /*!
  * \qmltype ContentTransfer
  * \instantiates ContentTransfer
- * \inqmlmodule Ubuntu.Content 0.1
+ * \inqmlmodule Ubuntu.Content
  *
  * See documentation for ContentHub
  */

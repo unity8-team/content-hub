@@ -199,7 +199,7 @@ void cucd::Transfer::Download()
     {
         QDir dir;
         dir.mkpath(d->store);
-        download->setLocalPath(d->store + QDir::separator() + "download");
+        download->setDestinationDir(d->store);
         connect(download, SIGNAL(finished(QString)), this, SLOT(DownloadComplete(QString)));
         download->start();
         d->state = cuc::Transfer::downloading;

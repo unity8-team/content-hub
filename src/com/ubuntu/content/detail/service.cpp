@@ -16,6 +16,9 @@
  * Authored by: Thomas Voß <thomas.voss@canonical.com>
  */
 
+// NEEDED for libnotify include
+#define QT_NO_KEYWORDS
+
 #include "debug.h"
 #include "service.h"
 #include "peer_registry.h"
@@ -23,6 +26,10 @@
 #include "transferadaptor.h"
 #include "utils.cpp"
 #include "ContentHandlerInterface.h"
+
+#include <glib.h>
+#include <unistd.h>
+#include <libnotify/notify.h>
 
 #include <com/ubuntu/content/peer.h>
 #include <com/ubuntu/content/type.h>
@@ -175,6 +182,45 @@ bool cucd::Service::should_cancel (int st)
     return (st != cuc::Transfer::finalized
             && st != cuc::Transfer::collected
             && st != cuc::Transfer::aborted);
+}
+
+void action_accept(NotifyNotification *notification, char *action, gpointer data)
+{
+    TRACE() << Q_FUNC_INFO;
+    Q_UNUSED(notification);
+    Q_UNUSED(action);
+
+    cucd::Transfer* t = (cucd::Transfer*)data;
+    t->Charge(QStringList());
+}
+
+void download_notify (cucd::Transfer* t)
+{
+    TRACE() << Q_FUNC_INFO;
+    notify_init(t->source().toStdString().c_str());
+    NotifyNotification* notification;
+
+    notification = notify_notification_new ("Download Complete",
+                                            NULL,
+                                            NULL);
+    notify_notification_set_hint_string(notification,
+                                        "x-canonical-snap-decisions",
+                                        "true");
+
+
+    notify_notification_add_action (notification,
+                                    "action_accept",
+                                    "Open",
+                                    action_accept,
+                                    t,
+                                    NULL);
+
+    GError *error = NULL;
+    if (!notify_notification_show(notification, &error)) {
+        qWarning() << "Failed to show snap decision:" << error->message;
+        g_error_free (error);
+    }
+
 }
 
 QDBusObjectPath cucd::Service::CreateExportToPeer(const QString& peer_id, const QString& app_id)
@@ -336,6 +382,12 @@ void cucd::Service::handle_exports(int state)
     {
         TRACE() << Q_FUNC_INFO << "Initiated";
         transfer->Handled();
+    }
+
+    if (state == cuc::Transfer::downloaded)
+    {
+        TRACE() << Q_FUNC_INFO << "Downloaded";
+        download_notify(transfer);
     }
 
     if (state == cuc::Transfer::charged)

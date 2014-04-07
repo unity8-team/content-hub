@@ -184,6 +184,14 @@ bool cucd::Service::should_cancel (int st)
             && st != cuc::Transfer::aborted);
 }
 
+void action_dismiss(NotifyNotification *notification, char *action, gpointer data)
+{
+    TRACE() << Q_FUNC_INFO;
+    Q_UNUSED(notification);
+    Q_UNUSED(action);
+    Q_UNUSED(data);
+}
+
 void action_accept(NotifyNotification *notification, char *action, gpointer data)
 {
     TRACE() << Q_FUNC_INFO;
@@ -201,17 +209,24 @@ void download_notify (cucd::Transfer* t)
     NotifyNotification* notification;
 
     notification = notify_notification_new ("Download Complete",
-                                            NULL,
+                                            "",
                                             NULL);
+
     notify_notification_set_hint_string(notification,
                                         "x-canonical-snap-decisions",
                                         "true");
-
 
     notify_notification_add_action (notification,
                                     "action_accept",
                                     "Open",
                                     action_accept,
+                                    t,
+                                    NULL);
+
+    notify_notification_add_action (notification,
+                                    "action_dismiss",
+                                    "Dismiss",
+                                    action_dismiss,
                                     t,
                                     NULL);
 

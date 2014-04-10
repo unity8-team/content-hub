@@ -32,6 +32,7 @@
  * \qmltype ContentHub
  * \instantiates ContentHub
  * \inqmlmodule Ubuntu.Content
+ * \brief The central manager for all content operations
  *
  * Example usage for importing content:
  * \qml

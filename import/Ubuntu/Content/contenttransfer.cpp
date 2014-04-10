@@ -24,6 +24,7 @@
  * \qmltype ContentTransfer
  * \instantiates ContentTransfer
  * \inqmlmodule Ubuntu.Content
+ * \brief Represents a transfer of content between two ContentPeers
  *
  * See documentation for ContentHub
  */

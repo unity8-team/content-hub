@@ -1,6 +1,7 @@
 project = Ubuntu Content QML API
 description = Ubuntu Content API
 
+# QDoc 5.2 will only process these if they're relative paths
 sourcedirs = ../../../doc/qml/pages ../../../import
 exampledirs = ../../../examples/
 
@@ -8,6 +9,9 @@ sources.fileextensions = "*.qdoc *.qml *.cpp"
 headers.fileextensions = "*.h"
 examples.fileextensions = "*.js *.qml"
 examples.imageextensions = "*.png *.jpeg *.jpg"
+
+# But... QDoc 5.2 will also only process this if it's an absolute path
+excludefiles = @CMAKE_SOURCE_DIR@/import/Ubuntu/Content/ResponsiveGridView.qml
 
 outputdir = html
 outputformat = HTML

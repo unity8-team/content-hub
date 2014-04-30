@@ -23,6 +23,7 @@
  * \qmltype ContentStore
  * \instantiates ContentStore
  * \inqmlmodule Ubuntu.Content
+ * \brief Sets the type of location that content should be transferred to
  *
  * A ContentStore allows for the permanent storage of a transfered item.
  *

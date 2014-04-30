@@ -21,6 +21,7 @@
    \qmltype ContentScope
    \instantiates ContentScope
    \inqmlmodule Ubuntu.Content
+   \brief Used with a ContentStore to specify the destination location for a transfer
 
    \sa ContentStore
 

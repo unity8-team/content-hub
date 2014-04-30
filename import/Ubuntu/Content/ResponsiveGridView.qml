@@ -33,9 +33,6 @@ Item {
     property alias delegate: gridView.delegate
     readonly property int cellWidth: gridView.cellWidth
     readonly property int cellHeight: gridView.cellHeight
-    readonly property int totalContentHeight: {
-        return contentHeightForRows(Math.ceil(gridView.model.count / columns))
-    }
     property alias interactive: gridView.interactive
     readonly property alias flicking: gridView.flicking
     readonly property alias moving: gridView.moving
@@ -58,7 +55,10 @@ Item {
             rightMargin: margin/2
             topMargin: verticalSpacing
         }
-        clip: parent.height != totalContentHeight
+
+        onModelChanged: {
+            clip = parent.height != contentHeightForRows(Math.ceil(model.count / columns))
+        }
 
         function pixelToGU(value) {
             return Math.floor(value / units.gu(1));

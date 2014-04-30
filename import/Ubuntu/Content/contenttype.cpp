@@ -21,6 +21,7 @@
    \qmltype ContentType
    \instantiates ContentType
    \inqmlmodule Ubuntu.Content
+   \brief Describes the type of content to transfer
 
    \sa ContentHub
 

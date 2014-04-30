@@ -21,6 +21,7 @@
    \qmltype ContentHandler
    \instantiates ContentHandler
    \inqmlmodule Ubuntu.Content
+   \brief Describes the type of transfer operation to perform
 
    \sa ContentHub
 

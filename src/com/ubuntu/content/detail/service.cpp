@@ -22,6 +22,7 @@
 #include "debug.h"
 #include "service.h"
 #include "peer_registry.h"
+#include "i18n.h"
 #include "transfer.h"
 #include "transferadaptor.h"
 #include "utils.cpp"
@@ -208,9 +209,9 @@ void download_notify (cucd::Transfer* t)
     notify_init(t->source().toStdString().c_str());
     NotifyNotification* notification;
 
-    notification = notify_notification_new ("Download Complete",
+    notification = notify_notification_new (_("Download Complete"),
                                             "",
-                                            "save");
+                                            _("Save"));
 
     notify_notification_set_hint_string(notification,
                                         "x-canonical-snap-decisions",
@@ -223,14 +224,14 @@ void download_notify (cucd::Transfer* t)
 
     notify_notification_add_action (notification,
                                     "action_accept",
-                                    "Open",
+                                    _("Open"),
                                     action_accept,
                                     t,
                                     NULL);
 
     notify_notification_add_action (notification,
                                     "action_dismiss",
-                                    "Dismiss",
+                                    _("Dismiss"),
                                     action_dismiss,
                                     t,
                                     NULL);

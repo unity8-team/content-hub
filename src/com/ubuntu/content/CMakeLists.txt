@@ -76,6 +76,7 @@ add_library(
   detail/service.cpp
   detail/transfer.cpp
   detail/handler.cpp
+  detail/i18n.cpp
 
   ${CONTENT_HUB_MOCS}
   ${CONTENT_SERVICE_STUB}

@@ -71,15 +71,18 @@ pkg_check_modules(NOTIFY REQUIRED libnotify)
 
 add_definitions(-DDEBUG_ENABLED)
 
+set(GETTEXT_PACKAGE "content-hub")
+add_definitions(-DI18N_DOMAIN="${GETTEXT_PACKAGE}")
+
 set(CONTENT_HUB_VERSION_MAJOR 0)
 set(CONTENT_HUB_VERSION_MINOR 0)
 set(CONTENT_HUB_VERSION_PATCH 1)
 set(CONTENT_HUB_VERSION "${CONTENT_HUB_VERSION_MAJOR}.${CONTENT_HUB_VERSION_MINOR}.${CONTENT_HUB_VERSION_PATCH}")
 
-
 include_directories(include)
 
 add_subdirectory(doc)
+add_subdirectory(po)
 add_subdirectory(src)
 add_subdirectory(import)
 add_subdirectory(examples)

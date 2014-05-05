@@ -211,7 +211,7 @@ void download_notify (cucd::Transfer* t)
 
     notification = notify_notification_new (_("Download Complete"),
                                             "",
-                                            _("Save"));
+                                            "save");
 
     notify_notification_set_hint_string(notification,
                                         "x-canonical-snap-decisions",

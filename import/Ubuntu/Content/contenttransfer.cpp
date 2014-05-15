@@ -61,6 +61,12 @@ ContentTransfer::ContentTransfer(QObject *parent)
      \li ContentTransfer.InProgress
      \li Transfer is in progress.
    \row
+     \li ContentTransfer.Downloading
+     \li Transfer is downloading item specified by downloadId.
+   \row
+     \li ContentTransfer.Downloaded
+     \li Download specified by downloadId has completed.
+   \row
      \li ContentTransfer.Charged
      \li Transfer is charged with items and ready to be collected.
    \row
@@ -86,7 +92,7 @@ void ContentTransfer::setState(ContentTransfer::State state)
     if (!m_transfer)
         return;
 
-    if (state == Charged && m_state == InProgress) {
+    if (state == Charged && (m_state == InProgress || m_state == Downloaded)) {
         TRACE() << Q_FUNC_INFO << "Charged";
         QVector<cuc::Item> hubItems;
         hubItems.reserve(m_items.size());
@@ -95,6 +101,8 @@ void ContentTransfer::setState(ContentTransfer::State state)
         }
         m_transfer->charge(hubItems);
         return;
+    } else if (state == Downloading) {
+        m_transfer->download();
     } else if (state == Aborted) {
         TRACE() << Q_FUNC_INFO << "Aborted";
         m_transfer->abort();
@@ -266,6 +274,24 @@ void ContentTransfer::setTransfer(com::ubuntu::content::Transfer *transfer)
     updateStore();
     updateState();
 }
+
+/*!
+ * \qmlproperty string ContentTransfer::downloadId
+ * The Download Manager ID of a SingleDownload, which will then be
+ * transfered to the selected peer.
+ */
+QString ContentTransfer::downloadId()
+{
+    TRACE() << Q_FUNC_INFO;
+    return m_transfer->downloadId();
+}
+
+void ContentTransfer::setDownloadId(QString downloadId)
+{
+    TRACE() << Q_FUNC_INFO;
+    m_transfer->setDownloadId(downloadId);
+    Q_EMIT downloadIdChanged();
+} 
 
 /*!
  * \brief ContentTransfer::collectItems gets the items out of the transfer object

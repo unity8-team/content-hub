@@ -24,6 +24,7 @@
 #include "debug.h"
 #include "common.h"
 #include "registry.h"
+#include "detail/i18n.h"
 #include "detail/service.h"
 #include "detail/peer_registry.h"
 #include "serviceadaptor.h"
@@ -44,6 +45,8 @@ int main(int argc, char** argv)
 {
     int ret = 0;
     QCoreApplication *app = new QCoreApplication(argc, argv);
+
+    cucd::initTr(I18N_DOMAIN, NULL);
 
     /* read environment variables */
     QProcessEnvironment environment = QProcessEnvironment::systemEnvironment();

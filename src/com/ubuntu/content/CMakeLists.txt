@@ -26,6 +26,8 @@ include_directories(
   ${NIH_INCLUDE_DIRS}
   ${NIH_DBUS_INCLUDE_DIRS}
   ${UPSTART_LAUNCH_INCLUDE_DIRS}
+  ${UBUNTU_DOWNLOAD_MANAGER_INCLUDE_DIRS}
+  ${NOTIFY_INCLUDE_DIRS}
 )
 
 qt5_add_dbus_interface(
@@ -74,6 +76,7 @@ add_library(
   detail/service.cpp
   detail/transfer.cpp
   detail/handler.cpp
+  detail/i18n.cpp
 
   ${CONTENT_HUB_MOCS}
   ${CONTENT_SERVICE_STUB}
@@ -100,6 +103,8 @@ target_link_libraries(content-hub
     ${NIH_LIBRARIES}
     ${NIH_DBUS_LIBRARIES}
     ${GIO_LIBRARIES}
+    ${UBUNTU_DOWNLOAD_MANAGER_LIBRARIES}
+    ${NOTIFY_LIBRARIES}
 )
 
 install(

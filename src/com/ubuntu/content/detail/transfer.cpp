@@ -23,6 +23,8 @@
 #include <com/ubuntu/content/hub.h>
 #include <com/ubuntu/content/store.h>
 #include <com/ubuntu/content/transfer.h>
+#include <ubuntu/download_manager/download.h>
+#include <ubuntu/download_manager/manager.h>
 
 namespace cuc = com::ubuntu::content;
 namespace cucd = com::ubuntu::content::detail;
@@ -52,6 +54,7 @@ struct cucd::Transfer::Private
     int selection_type;
     QStringList items;
     bool source_started_by_content_hub;
+    QString download_id;
 };
 
 cucd::Transfer::Transfer(const int id,
@@ -145,6 +148,19 @@ void cucd::Transfer::Charge(const QStringList& items)
     if (d->state == cuc::Transfer::charged)
         return;
 
+    if (d->state == cuc::Transfer::downloading)
+    {
+        qWarning() << "Unable to charge, download still in progress.";
+        return;
+    }
+
+    if (d->state == cuc::Transfer::downloaded)
+    {
+        d->state = cuc::Transfer::charged;
+        Q_EMIT(StateChanged(d->state));
+        return;
+    } 
+
     QStringList ret;
     Q_FOREACH(QString i, items)
         ret.append(copy_to_store(i, d->store));
@@ -162,6 +178,40 @@ void cucd::Transfer::Charge(const QStringList& items)
         d->items = ret;
         d->state = cuc::Transfer::charged;
     }
+    Q_EMIT(StateChanged(d->state));
+}
+
+void cucd::Transfer::Download()
+{
+    TRACE() << __PRETTY_FUNCTION__;
+    if(d->download_id.isEmpty()) 
+    {
+        return;
+    }
+
+    Manager *downloadManager = Manager::createSessionManager();
+    auto download = downloadManager->getDownloadForId(d->download_id);
+    if (download == nullptr) 
+    {
+        TRACE() << downloadManager->lastError();
+    }
+    else
+    {
+        QDir dir;
+        dir.mkpath(d->store);
+        download->setDestinationDir(d->store);
+        connect(download, SIGNAL(finished(QString)), this, SLOT(DownloadComplete(QString)));
+        download->start();
+        d->state = cuc::Transfer::downloading;
+        Q_EMIT(StateChanged(d->state));
+    }
+}
+
+void cucd::Transfer::DownloadComplete(QString destFilePath)
+{
+    TRACE() << __PRETTY_FUNCTION__;
+    d->items.append(QUrl::fromLocalFile(destFilePath).toString());
+    d->state = cuc::Transfer::downloaded;
     Q_EMIT(StateChanged(d->state));
 }
 
@@ -224,6 +274,22 @@ void cucd::Transfer::SetSelectionType(int type)
 
     d->selection_type = type;
     Q_EMIT(SelectionTypeChanged(d->selection_type));
+}
+
+QString cucd::Transfer::DownloadId()
+{
+    TRACE() << Q_FUNC_INFO;
+    return d->download_id;
+}
+
+void cucd::Transfer::SetDownloadId(QString DownloadId)
+{
+    TRACE() << Q_FUNC_INFO;
+    if (d->download_id == DownloadId)
+        return;
+
+    d->download_id = DownloadId;
+    Q_EMIT(DownloadIdChanged(d->download_id));
 }
 
 /* returns the object path for the export */

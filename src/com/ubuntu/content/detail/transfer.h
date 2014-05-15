@@ -35,6 +35,7 @@ class Transfer : public QObject
     Q_PROPERTY(int State READ State NOTIFY StateChanged)
     Q_PROPERTY(QString Store READ Store WRITE SetStore NOTIFY StoreChanged)
     Q_PROPERTY(int SelectionType READ SelectionType WRITE SetSelectionType NOTIFY SelectionTypeChanged)
+    Q_PROPERTY(QString DownloadId READ DownloadId WRITE SetDownloadId NOTIFY DownloadIdChanged)
     Q_PROPERTY(int id READ Id)
     Q_PROPERTY(QString source READ source)
     Q_PROPERTY(QString destination READ destination)
@@ -54,6 +55,7 @@ Q_SIGNALS:
     void StateChanged(int State);
     void StoreChanged(QString Store);
     void SelectionTypeChanged(int SelectionType);
+    void DownloadIdChanged(QString DownloadId);
 
   public Q_SLOTS:
     int State();
@@ -73,6 +75,10 @@ Q_SIGNALS:
     QString destination();
     QString export_path();
     QString import_path();
+    QString DownloadId();
+    void SetDownloadId(QString DownloadId);
+    void DownloadComplete(QString destFilePath);
+    void Download();
 
   private:
     struct Private;

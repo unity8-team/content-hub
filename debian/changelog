@@ -1,3 +1,17 @@
+content-hub (0.0+14.10.20140515.1-0ubuntu1) utopic; urgency=low
+
+  [ Ken VanDine ]
+  * Use libnotify to send a snap decision with an Open action for
+    downloads. Added translation support, needed for the strings in the
+    notification.
+
+  [ Michael Sheldon ]
+  * Use libnotify to send a snap decision with an Open action for
+    downloads. Added translation support, needed for the strings in the
+    notification.
+
+ -- Ubuntu daily release <ps-jenkins@lists.canonical.com>  Thu, 15 May 2014 21:02:30 +0000
+
 content-hub (0.0+14.04.20140415-0ubuntu1) trusty; urgency=low
 
   [ Michael Sheldon ]

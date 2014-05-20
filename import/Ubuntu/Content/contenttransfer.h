@@ -49,9 +49,7 @@ public:
         Charged = com::ubuntu::content::Transfer::charged,
         Collected = com::ubuntu::content::Transfer::collected,
         Aborted = com::ubuntu::content::Transfer::aborted,
-        Finalized = com::ubuntu::content::Transfer::finalized,
-        Downloading = com::ubuntu::content::Transfer::downloading,
-        Downloaded = com::ubuntu::content::Transfer::downloaded
+        Finalized = com::ubuntu::content::Transfer::finalized
     };
     enum Direction {
         Import = com::ubuntu::content::Transfer::Import,

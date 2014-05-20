@@ -3,11 +3,17 @@
     <signal name="StateChanged">
       <arg name="state" type="i"/>
     </signal>
+    <signal name="DownloadStateChanged">
+      <arg name="state" type="i"/>
+    </signal>
     <method name="Id">
       <arg name="id" type="i" direction="out" />
     </method>
     <method name="State">
       <arg name="state" type="i" direction="out" />
+    </method>
+    <method name="DownloadState">
+      <arg name="download_state" type="i" direction="out" />
     </method>
     <method name="Start">
     </method>

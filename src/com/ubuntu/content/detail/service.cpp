@@ -405,8 +405,8 @@ void cucd::Service::handle_exports(int state)
         transfer->Handled();
     }
 
-    if (state == cuc::Transfer::downloaded)
-    {
+    if (state == cuc::Transfer::in_progress && transfer->DownloadState() == cuc::Transfer::downloaded)
+    { 
         TRACE() << Q_FUNC_INFO << "Downloaded";
         download_notify(transfer);
     }

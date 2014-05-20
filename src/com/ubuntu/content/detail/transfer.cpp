@@ -36,6 +36,7 @@ struct cucd::Transfer::Private
             const QString& destination,
             const int direction)    :
         state(cuc::Transfer::created),
+            download_state(cuc::Transfer::downloading),
             id(id),
             source(source),
             destination(destination),
@@ -46,6 +47,7 @@ struct cucd::Transfer::Private
     }
     
     cuc::Transfer::State state;
+    cuc::Transfer::DownloadState download_state;
     const int id;
     const QString source;
     const QString destination;
@@ -106,6 +108,12 @@ int cucd::Transfer::State()
     return d->state;
 }
 
+int cucd::Transfer::DownloadState()
+{
+    TRACE() << __PRETTY_FUNCTION__;
+    return d->download_state;
+}
+
 void cucd::Transfer::Abort()
 {
     TRACE() << __PRETTY_FUNCTION__;
@@ -148,13 +156,13 @@ void cucd::Transfer::Charge(const QStringList& items)
     if (d->state == cuc::Transfer::charged)
         return;
 
-    if (d->state == cuc::Transfer::downloading)
+    if (d->state == cuc::Transfer::in_progress && !d->download_id.isEmpty() && d->download_state != cuc::Transfer::downloaded)
     {
         qWarning() << "Unable to charge, download still in progress.";
         return;
     }
 
-    if (d->state == cuc::Transfer::downloaded)
+    if (d->download_state == cuc::Transfer::downloaded)
     {
         d->state = cuc::Transfer::charged;
         Q_EMIT(StateChanged(d->state));
@@ -202,8 +210,10 @@ void cucd::Transfer::Download()
         download->setDestinationDir(d->store);
         connect(download, SIGNAL(finished(QString)), this, SLOT(DownloadComplete(QString)));
         download->start();
-        d->state = cuc::Transfer::downloading;
+        d->state = cuc::Transfer::in_progress;
+        d->download_state = cuc::Transfer::downloading;
         Q_EMIT(StateChanged(d->state));
+        Q_EMIT(DownloadStateChanged(d->download_state));
     }
 }
 
@@ -211,8 +221,9 @@ void cucd::Transfer::DownloadComplete(QString destFilePath)
 {
     TRACE() << __PRETTY_FUNCTION__;
     d->items.append(QUrl::fromLocalFile(destFilePath).toString());
-    d->state = cuc::Transfer::downloaded;
+    d->download_state = cuc::Transfer::downloaded;
     Q_EMIT(StateChanged(d->state));
+    Q_EMIT(DownloadStateChanged(d->download_state));
 }
 
 QStringList cucd::Transfer::Collect()

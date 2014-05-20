@@ -33,6 +33,7 @@ class Transfer : public QObject
 {
     Q_OBJECT
     Q_PROPERTY(int State READ State NOTIFY StateChanged)
+    Q_PROPERTY(int DownloadState READ DownloadState NOTIFY DownloadStateChanged)
     Q_PROPERTY(QString Store READ Store WRITE SetStore NOTIFY StoreChanged)
     Q_PROPERTY(int SelectionType READ SelectionType WRITE SetSelectionType NOTIFY SelectionTypeChanged)
     Q_PROPERTY(QString DownloadId READ DownloadId WRITE SetDownloadId NOTIFY DownloadIdChanged)
@@ -53,12 +54,14 @@ class Transfer : public QObject
 
 Q_SIGNALS:
     void StateChanged(int State);
+    void DownloadStateChanged(int DownloadState);
     void StoreChanged(QString Store);
     void SelectionTypeChanged(int SelectionType);
     void DownloadIdChanged(QString DownloadId);
 
   public Q_SLOTS:
     int State();
+    int DownloadState();
     void Start();
     void Handled();
     void Charge(const QStringList&);

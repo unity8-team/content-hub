@@ -72,6 +72,17 @@ class Transfer::Private : public QObject
         return static_cast<Transfer::State>(reply.value());
     }
 
+    DownloadState downloadState()
+    {
+        auto reply = remote_transfer->DownloadState();
+        reply.waitForFinished();
+
+        if (reply.isError())
+            return Transfer::downloading;
+
+        return static_cast<Transfer::DownloadState>(reply.value());
+    }
+
     bool start()
     {
         auto reply = remote_transfer->Start();
@@ -216,7 +227,7 @@ class Transfer::Private : public QObject
 
         return not reply.isError();
     }
-    
+
     com::ubuntu::content::dbus::Transfer* remote_transfer;
 };
 }

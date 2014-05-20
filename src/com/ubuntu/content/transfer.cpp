@@ -57,6 +57,11 @@ cuc::Transfer::State cuc::Transfer::state() const
     return d->state();
 }
 
+cuc::Transfer::DownloadState cuc::Transfer::downloadState() const
+{
+    return d->downloadState();
+}
+
 bool cuc::Transfer::start()
 {
     return d->start();

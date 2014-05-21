@@ -101,7 +101,6 @@ class Transfer : public QObject
     Q_INVOKABLE virtual bool start();
     Q_INVOKABLE virtual bool abort();
     Q_INVOKABLE virtual bool finalize();
-    Q_INVOKABLE virtual bool download();
     Q_INVOKABLE virtual bool charge(const QVector<Item>& items);
     Q_INVOKABLE virtual QVector<Item> collect();
     Q_INVOKABLE virtual Store store() const;
@@ -109,6 +108,7 @@ class Transfer : public QObject
     Q_INVOKABLE virtual bool setSelectionType(const SelectionType&);
     Q_INVOKABLE virtual QString downloadId() const;
     Q_INVOKABLE virtual bool setDownloadId(const QString);
+    Q_INVOKABLE virtual bool download();
 
     Q_SIGNAL void stateChanged();
     Q_SIGNAL void storeChanged();

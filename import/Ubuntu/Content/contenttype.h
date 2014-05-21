@@ -34,7 +34,9 @@ public:
         Documents = 1,
         Pictures = 2,
         Music = 3,
-        Contacts = 4
+        Contacts = 4,
+        Videos = 5,
+        Links = 6
     };
 
     ContentType(QObject *parent = nullptr);

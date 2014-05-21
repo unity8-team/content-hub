@@ -46,6 +46,8 @@ class Type : public QObject
         static const Type& pictures();
         static const Type& music();
         static const Type& contacts();
+        static const Type& videos();
+        static const Type& links();
     };
 
     virtual ~Type();

@@ -1,3 +1,14 @@
+content-hub (0.0+14.10.20140521.1-0ubuntu1) utopic; urgency=low
+
+  [ Ken VanDine ]
+  * reorder virtual functions added with download support, to fix abi
+    compatibility. (LP: #1321304)
+
+  [ Michael Sheldon ]
+  * Remove aliases for GridView properties that no longer exist.
+
+ -- Ubuntu daily release <ps-jenkins@lists.canonical.com>  Wed, 21 May 2014 15:01:45 +0000
+
 content-hub (0.0+14.10.20140515.1-0ubuntu1) utopic; urgency=low
 
   [ Ken VanDine ]

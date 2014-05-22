@@ -37,8 +37,6 @@ Item {
     readonly property alias flicking: gridView.flicking
     readonly property alias moving: gridView.moving
     readonly property alias pressDelay: gridView.pressDelay
-    property alias delegateCreationBegin: gridView.delegateCreationBegin
-    property alias delegateCreationEnd: gridView.delegateCreationEnd
     property alias highlightIndex: gridView.highlightIndex
     readonly property alias currentItem: gridView.currentItem
 

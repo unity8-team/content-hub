@@ -244,6 +244,23 @@ void download_notify (cucd::Transfer* t)
 
 }
 
+void cucd::Service::DownloadManagerError(QString errorMessage)
+{
+    notify_init("Download Manager");
+    NotifyNotification* notification;
+
+    notification = notify_notification_new (_("Download Failed"),
+                                            errorMessage.toStdString().c_str(),
+                                            "save");
+
+    GError *error = NULL;
+    if (!notify_notification_show(notification, &error)) {
+        qWarning() << "Failed to show download manager error:" << error->message;
+        g_error_free (error);
+    }
+
+}
+
 QDBusObjectPath cucd::Service::CreateExportToPeer(const QString& peer_id, const QString& app_id)
 {
     TRACE() << Q_FUNC_INFO;
@@ -300,6 +317,8 @@ QDBusObjectPath cucd::Service::CreateTransfer(const QString& dest_id, const QStr
     d->connection.registerObject(destination, transfer);
 
     TRACE() << "Created transfer " << source << " -> " << destination;
+
+    connect(transfer, SIGNAL(DownloadManagerError(QString)), this, SLOT(DownloadManagerError(QString)));
 
     // Content flow is different for import
     if (dir == cuc::Transfer::Import)

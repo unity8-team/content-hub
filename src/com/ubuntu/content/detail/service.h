@@ -63,6 +63,7 @@ class Service : public QObject, protected QDBusContext
 
     void RegisterImportExportHandler(const QString&, const QDBusObjectPath& handler);
     void Quit();
+    void DownloadManagerError(QString);
 
   private:
     bool should_cancel(int);

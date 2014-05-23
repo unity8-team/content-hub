@@ -128,6 +128,5 @@ QUrl ContentItem::toDataURI()
     dataUri.append(contentType);
     dataUri.append(QStringLiteral(";base64,"));
     dataUri.append(QString::fromLatin1(data.toBase64()));
-    qDebug() << Q_FUNC_INFO << "dataUri size:" << dataUri.length();
     return QUrl(dataUri);
 }

@@ -16,6 +16,8 @@
 
 #include "contentitem.h"
 #include "../../../src/com/ubuntu/content/debug.h"
+#include <QMimeDatabase>
+#include <QFile>
 
 /*!
  * \qmltype ContentItem
@@ -99,4 +101,33 @@ void ContentItem::setItem(const com::ubuntu::content::Item &item)
 
     m_item = item;
     Q_EMIT urlChanged();
+}
+
+QUrl ContentItem::toDataURI()
+{
+    TRACE() << Q_FUNC_INFO;
+
+    QString path(m_item.url().toLocalFile());
+
+    if (!QFile::exists(path)) {
+        qWarning() << "File not found" << path;
+        return QUrl();
+    }
+    QByteArray data;
+    QMimeDatabase mdb;
+    QString contentType(mdb.mimeTypeForFile(path).name());
+
+
+    QFile file(path);
+    if(file.open(QIODevice::ReadOnly)) {
+        data = file.readAll();
+        file.close();
+    }
+
+    QString dataUri(QStringLiteral("data:"));
+    dataUri.append(contentType);
+    dataUri.append(QStringLiteral(";base64,"));
+    dataUri.append(QString::fromLatin1(data.toBase64()));
+    qDebug() << Q_FUNC_INFO << "dataUri size:" << dataUri.length();
+    return QUrl(dataUri);
 }

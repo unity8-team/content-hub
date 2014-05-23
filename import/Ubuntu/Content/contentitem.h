@@ -41,6 +41,8 @@ public:
     const com::ubuntu::content::Item &item() const;
     void setItem(const com::ubuntu::content::Item &item);
 
+    Q_INVOKABLE QUrl toDataURI();
+
 Q_SIGNALS:
     void nameChanged();
     void urlChanged();

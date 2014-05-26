@@ -19,7 +19,7 @@
 #include "debug.h"
 #include "registry.h"
 #include "utils.cpp"
-#include <upstart-app-launch.h>
+#include <ubuntu-app-launch.h>
 
 Registry::Registry() :
     m_defaultSources(new QGSettings("com.ubuntu.content.hub.default",
@@ -63,7 +63,7 @@ Registry::Registry() :
                     if (app.empty() || ver.empty())
                         peer = QString::fromStdString(pkg);
                     else
-                        peer = QString::fromLocal8Bit(upstart_app_launch_triplet_to_app_id(pkg.c_str(), app.c_str(), ver.c_str()));
+                        peer = QString::fromLocal8Bit(ubuntu_app_launch_triplet_to_app_id(pkg.c_str(), app.c_str(), ver.c_str()));
                     install_source_for_type(type, cuc::Peer{peer.id(), true});
                 }
             }
@@ -89,7 +89,7 @@ cuc::Peer Registry::default_source_for_type(cuc::Type type)
             std::string ver = as[2].toStdString();
             if (app.empty() || ver.empty())
                 return cuc::Peer(QString::fromStdString(pkg));
-            return cuc::Peer(QString::fromLocal8Bit(upstart_app_launch_triplet_to_app_id(pkg.c_str(), app.c_str(), ver.c_str())), true);
+            return cuc::Peer(QString::fromLocal8Bit(ubuntu_app_launch_triplet_to_app_id(pkg.c_str(), app.c_str(), ver.c_str())), true);
         }
     }
 
@@ -152,7 +152,7 @@ void Registry::enumerate_known_sources_for_type(cuc::Type type, const std::funct
                 if (app.empty() || ver.empty())
                     defaultPeer = QString::fromStdString(pkg) == k;
                 else
-                    defaultPeer = QString::fromLocal8Bit(upstart_app_launch_triplet_to_app_id(pkg.c_str(), app.c_str(), ver.c_str())) == k;
+                    defaultPeer = QString::fromLocal8Bit(ubuntu_app_launch_triplet_to_app_id(pkg.c_str(), app.c_str(), ver.c_str())) == k;
             }
         }
         for_each(cuc::Peer{k, defaultPeer});

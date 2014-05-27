@@ -1,1 +1,2 @@
 src/com/ubuntu/content/detail/service.cpp
+src/com/ubuntu/content/detail/transfer.cpp

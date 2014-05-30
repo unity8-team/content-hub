@@ -31,7 +31,6 @@
 #include <com/ubuntu/content/store.h>
 #include <com/ubuntu/content/type.h>
 
-#include <QGuiApplication>
 #include <QStandardPaths>
 #include <QProcessEnvironment>
 #include <map>

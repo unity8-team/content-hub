@@ -64,7 +64,7 @@ cuc::Hub::Hub(QObject* parent) : QObject(parent), d{new cuc::Hub::Private{this}}
             setLoggingLevel(value);
     }
 
-    if (qApp && (QString(qApp->metaObject()->className()) == "QApplication"))
+    if (qApp)
         qApp->installEventFilter(this);
 }
 

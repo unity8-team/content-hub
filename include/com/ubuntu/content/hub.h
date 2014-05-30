@@ -68,6 +68,9 @@ class Hub : public QObject
   private:
     struct Private;
     QScopedPointer<Private> d;
+
+  private Q_SLOTS:
+    void onApplicationStateChanged(Qt::ApplicationState state);
 };
 }
 }

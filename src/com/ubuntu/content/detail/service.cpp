@@ -554,3 +554,8 @@ void cucd::Service::RegisterImportExportHandler(const QString& peer_id, const QD
         }
     }
 }
+
+void cucd::Service::HandlerActive(const QString& peer_id)
+{
+    TRACE() << Q_FUNC_INFO << peer_id;
+}

@@ -31,6 +31,7 @@
 #include <com/ubuntu/content/store.h>
 #include <com/ubuntu/content/type.h>
 
+#include <QGuiApplication>
 #include <QStandardPaths>
 #include <QProcessEnvironment>
 #include <map>
@@ -62,6 +63,12 @@ cuc::Hub::Hub(QObject* parent) : QObject(parent), d{new cuc::Hub::Private{this}}
         if (isOk)
             setLoggingLevel(value);
     }
+
+    if (qApp && (QString(qApp->metaObject()->className()) == "QApplication"))
+    {
+        connect(qApp, SIGNAL(applicationStateChanged(Qt::ApplicationState)),
+                this, SLOT(onApplicationStateChanged(Qt::ApplicationState)));
+    }
 }
 
 cuc::Hub::~Hub()
@@ -72,6 +79,24 @@ cuc::Hub* cuc::Hub::Client::instance()
 {
     static cuc::Hub* hub = new cuc::Hub(nullptr);
     return hub;
+}
+void cuc::Hub::onApplicationStateChanged(Qt::ApplicationState state)
+{
+    if (state != Qt::ApplicationActive)
+    {
+        TRACE() << Q_FUNC_INFO << qApp->applicationName() << state;
+        return;
+    }
+    TRACE() << Q_FUNC_INFO << qApp->applicationName() << "Active" << state;
+
+    QString id = app_id();
+    if (id.isEmpty())
+    {
+        qWarning() << "APP_ID isn't set, the handler ignored";
+        return;
+    }
+
+    d->service->HandlerActive(id);
 }
 
 void cuc::Hub::register_import_export_handler(cuc::ImportExportHandler* handler)

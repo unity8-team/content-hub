@@ -24,7 +24,7 @@ add_subdirectory(${GMOCK_SOURCE_DIR} "${CMAKE_CURRENT_BINARY_DIR}/gmock")
 include_directories (
   ${CMAKE_SOURCE_DIR}/src
   ${CMAKE_SOURCE_DIR}/src/com/ubuntu/content
-  ${UPSTART_LAUNCH_INCLUDE_DIRS}
+  ${UBUNTU_LAUNCH_INCLUDE_DIRS}
   ${CMAKE_BINARY_DIR}/src
   ${GMOCK_INCLUDE_DIR}
   ${GTEST_INCLUDE_DIR}

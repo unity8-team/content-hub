@@ -31,7 +31,6 @@ import Ubuntu.Content 0.1
 Item {
     id: root
     anchors.fill: parent
-    visible: false
 
     /*!
         \qmlproperty ContentHandler handler

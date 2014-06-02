@@ -205,14 +205,15 @@ Item {
     Rectangle {
         id: apps
         color: "#FFFFFF"
-        height: devices.visible ? (parent.height / 2.4) : parent.height
         width: parent.width
         clip: true
         anchors {
             left: parent.left
             right: parent.right
             top: appTitle.bottom
+            bottom: cancelButton.top
         }
+        anchors.bottomMargin: units.gu(1)
 
         Flickable {
             anchors.fill: parent

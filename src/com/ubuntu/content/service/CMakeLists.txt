@@ -86,8 +86,8 @@ configure_file("content-hub-peer-hook-wrapper.in"
 )
 
 install(
-  FILES content-hub-peer-hook-wrapper
-  RUNTIME DESTINATION "${CMAKE_INSTALL_FULL_LIBEXECDIR}/content-hub"
+  PROGRAMS "${CMAKE_CURRENT_BINARY_DIR}/content-hub-peer-hook-wrapper"
+  DESTINATION "${CMAKE_INSTALL_FULL_LIBEXECDIR}/content-hub"
 )
 
 install(

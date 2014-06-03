@@ -43,6 +43,12 @@ cucd::Hook::Hook(com::ubuntu::content::detail::PeerRegistry *registry, QObject *
 {
 }
 
+void cucd::Hook::quit()
+{
+    TRACE() << Q_FUNC_INFO;
+    QCoreApplication::instance()->quit();
+}
+
 void cucd::Hook::run()
 {
     TRACE() << Q_FUNC_INFO;
@@ -85,7 +91,7 @@ void cucd::Hook::run()
     Q_FOREACH(QFileInfo f, contentDir.entryInfoList(QDir::Files))
         add_peer(f);
 
-    QCoreApplication::instance()->quit();
+    QTimer::singleShot(200, this, SLOT(quit()));
 }
 
 bool cucd::Hook::add_peer(QFileInfo result)

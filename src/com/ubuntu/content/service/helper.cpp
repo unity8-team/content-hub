@@ -58,8 +58,5 @@ int main(int argc, char** argv)
 
     new cuc::detail::Hook();
 
-    app.exec();
-
-    /* We always want to return 0 */
-    return 0;
+    return app.exec();
 }

@@ -43,6 +43,7 @@ public:
 public slots:
     bool return_error(QString err = "");
     void run();
+    void quit();
     bool add_peer(QFileInfo);
 
 private:

@@ -71,7 +71,10 @@ Registry::Registry() :
     }
 }
 
-Registry::~Registry() {}
+Registry::~Registry()
+{
+    TRACE() << Q_FUNC_INFO;
+}
 
 cuc::Peer Registry::default_source_for_type(cuc::Type type)
 {

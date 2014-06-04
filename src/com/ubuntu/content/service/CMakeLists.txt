@@ -80,6 +80,16 @@ target_link_libraries(
   ${UBUNTU_LAUNCH_LDFLAGS}
 )
 
+configure_file("content-hub-peer-hook-wrapper.in"
+  "content-hub-peer-hook-wrapper"
+  @ONLY
+)
+
+install(
+  PROGRAMS "${CMAKE_CURRENT_BINARY_DIR}/content-hub-peer-hook-wrapper"
+  DESTINATION "${CMAKE_INSTALL_FULL_LIBEXECDIR}/content-hub"
+)
+
 install(
   TARGETS content-hub-peer-hook
   RUNTIME DESTINATION "${CMAKE_INSTALL_FULL_LIBEXECDIR}/content-hub"

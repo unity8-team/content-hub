@@ -62,6 +62,9 @@ cuc::Hub::Hub(QObject* parent) : QObject(parent), d{new cuc::Hub::Private{this}}
         if (isOk)
             setLoggingLevel(value);
     }
+
+    if (qApp)
+        qApp->installEventFilter(this);
 }
 
 cuc::Hub::~Hub()
@@ -72,6 +75,26 @@ cuc::Hub* cuc::Hub::Client::instance()
 {
     static cuc::Hub* hub = new cuc::Hub(nullptr);
     return hub;
+}
+
+bool cuc::Hub::eventFilter(QObject *obj, QEvent *event)
+{
+   if (event->type() == QEvent::ApplicationDeactivate)
+       return true;
+
+   if (event->type() == QEvent::ApplicationActivate)
+   {
+       QString id = app_id();
+       if (id.isEmpty())
+       {
+           qWarning() << "APP_ID isn't set, the handler ignored";
+           return true;
+       }
+       TRACE() << Q_FUNC_INFO << id << "Activated";
+       d->service->HandlerActive(id);
+       return true;
+   }
+   return QObject::eventFilter(obj, event);
 }
 
 void cuc::Hub::register_import_export_handler(cuc::ImportExportHandler* handler)

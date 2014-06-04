@@ -583,3 +583,20 @@ void cucd::Service::RegisterImportExportHandler(const QString& peer_id, const QD
         }
     }
 }
+
+void cucd::Service::HandlerActive(const QString& peer_id)
+{
+    TRACE() << Q_FUNC_INFO << peer_id;
+    Q_FOREACH (cucd::Transfer *t, d->active_transfers)
+    {
+        if ((t->destination() == peer_id) && (t->State() == cuc::Transfer::downloaded))
+        {
+            TRACE() << Q_FUNC_INFO << "Found destination:" << peer_id << "Direction:" << t->Direction();
+            if (t->Direction() == cuc::Transfer::Export)
+            {
+                TRACE() << Q_FUNC_INFO << "Found downloaded import, charging";
+                t->Charge(QStringList());
+            }
+        }
+    }
+}

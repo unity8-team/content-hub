@@ -571,5 +571,15 @@ void cucd::Service::RegisterImportExportHandler(const QString& peer_id, const QD
                     r->handler->HandleShare(QDBusObjectPath{t->import_path()});
             }
         }
+        else if ((t->destination() == peer_id) && (t->State() == cuc::Transfer::downloaded))
+        {
+            TRACE() << Q_FUNC_INFO << "Found destination:" << peer_id << "Direction:" << t->Direction();
+            if (t->Direction() == cuc::Transfer::Export)
+            {
+                TRACE() << Q_FUNC_INFO << "Found downloaded import, charging";
+                if (r->handler->isValid())
+                    t->Charge(QStringList());
+            }
+        }
     }
 }

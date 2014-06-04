@@ -20,6 +20,7 @@
 
 #include <QObject>
 #include <QStringList>
+#include <ubuntu/download_manager/error.h>
 
 namespace com
 {
@@ -56,6 +57,7 @@ Q_SIGNALS:
     void StoreChanged(QString Store);
     void SelectionTypeChanged(int SelectionType);
     void DownloadIdChanged(QString DownloadId);
+    void DownloadManagerError(QString ErrorMessage);
 
   public Q_SLOTS:
     int State();
@@ -79,6 +81,7 @@ Q_SIGNALS:
     void SetDownloadId(QString DownloadId);
     void DownloadComplete(QString destFilePath);
     void Download();
+    void DownloadError(Ubuntu::DownloadManager::Error* error);
 
   private:
     struct Private;

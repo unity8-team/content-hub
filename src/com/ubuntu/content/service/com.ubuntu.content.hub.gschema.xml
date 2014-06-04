@@ -13,6 +13,12 @@
     <key name="contacts" type="as">
       <default>["address-book-app", "", ""]</default>
     </key>
+    <key name="videos" type="as">
+      <default>["com.ubuntu.gallery", "gallery", "current-user-version"]</default>
+    </key>
+    <key name="links" type="as">
+      <default>[]</default>
+    </key>
   </schema>
   <schema id="com.ubuntu.content.hub.source" path="/com/ubuntu/content/hub/source/">
     <key name="pictures" type="as">
@@ -25,6 +31,12 @@
       <default>[]</default>
     </key>
     <key name="contacts" type="as">
+      <default>[]</default>
+    </key>
+    <key name="videos" type="as">
+      <default>[]</default>
+    </key>
+    <key name="links" type="as">
       <default>[]</default>
     </key>
   </schema>
@@ -41,6 +53,12 @@
     <key name="contacts" type="as">
       <default>[]</default>
     </key>
+    <key name="videos" type="as">
+      <default>[]</default>
+    </key>
+    <key name="links" type="as">
+      <default>[]</default>
+    </key>
   </schema>
   <schema id="com.ubuntu.content.hub.share" path="/com/ubuntu/content/hub/share/">
     <key name="pictures" type="as">
@@ -53,6 +71,12 @@
       <default>[]</default>
     </key>
     <key name="contacts" type="as">
+      <default>[]</default>
+    </key>
+    <key name="videos" type="as">
+      <default>[]</default>
+    </key>
+    <key name="links" type="as">
       <default>[]</default>
     </key>
   </schema>

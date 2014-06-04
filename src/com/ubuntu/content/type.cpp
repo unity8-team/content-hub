@@ -92,3 +92,15 @@ const cuc::Type& cuc::Type::Known::contacts()
     static cuc::Type t("contacts", nullptr);
     return t;
 }
+
+const cuc::Type& cuc::Type::Known::videos()
+{
+    static cuc::Type t("videos", nullptr);
+    return t;
+}
+
+const cuc::Type& cuc::Type::Known::links()
+{
+    static cuc::Type t("links", nullptr);
+    return t;
+}

@@ -46,6 +46,12 @@
      \li ContentType.Contacts
      \li Contacts
    \row
+     \li ContentType.Videos
+     \li Videos
+   \row
+     \li ContentType.Links
+     \li Links
+   \row
      \li ContentType.All
      \li Any of the above content types
    \endtable
@@ -85,6 +91,8 @@ const com::ubuntu::content::Type &ContentType::contentType2HubType(Type type)
     case Pictures: return cuc::Type::Known::pictures();
     case Music: return cuc::Type::Known::music();
     case Contacts: return cuc::Type::Known::contacts();
+    case Videos: return cuc::Type::Known::videos();
+    case Links: return cuc::Type::Known::links();
     default: return cuc::Type::unknown();
     }
 }

@@ -289,7 +289,7 @@ Item {
     Button {
         id: cancelButton
         objectName: "contentPeerPickerCancelButton"
-        text: "Cancel"
+        text: i18n.tr("Cancel")
         anchors {
             left: parent.left
             bottom: parent.bottom

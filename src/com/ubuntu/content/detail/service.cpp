@@ -182,6 +182,8 @@ bool cucd::Service::should_cancel (int st)
 
     return (st != cuc::Transfer::finalized
             && st != cuc::Transfer::collected
+            && st != cuc::Transfer::downloaded
+            && st != cuc::Transfer::downloading
             && st != cuc::Transfer::aborted);
 }
 

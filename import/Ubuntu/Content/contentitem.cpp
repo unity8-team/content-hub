@@ -109,19 +109,32 @@ QUrl ContentItem::toDataURI()
 
     QString path(m_item.url().toLocalFile());
 
+    /* Don't attempt to create the dataUri if the file isn't local */
     if (!QFile::exists(path)) {
-        qWarning() << "File not found" << path;
+        qWarning() << "File not found:" << path;
         return QUrl();
     }
-    QByteArray data;
     QMimeDatabase mdb;
-    QString contentType(mdb.mimeTypeForFile(path).name());
-
+    QMimeType mt = mdb.mimeTypeForFile(path);
+    /* Don't attempt to create the dataUri if we can't detect the mimetype */
+    if (!mt.isValid()) {
+        qWarning() << "Unknown MimeType for file:" << path;
+        return QUrl();
+    }
+    
+    QString contentType(mt.name());
+    QByteArray data;
 
     QFile file(path);
     if(file.open(QIODevice::ReadOnly)) {
         data = file.readAll();
         file.close();
+    }
+
+    /* Don't attempt to create the dataUri with empty data */
+    if (!data.isEmpty()) {
+        qWarning() << "Failed to read contents of file:" << path;
+        return QUrl();
     }
 
     QString dataUri(QStringLiteral("data:"));

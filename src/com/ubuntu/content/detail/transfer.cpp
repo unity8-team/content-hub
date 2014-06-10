@@ -201,6 +201,7 @@ void cucd::Transfer::Download()
         dir.mkpath(d->store);
         download->setDestinationDir(d->store);
         connect(download, SIGNAL(finished(QString)), this, SLOT(DownloadComplete(QString)));
+        connect(download, SIGNAL(error(Ubuntu::DownloadManager::Error*)), this, SLOT(DownloadError(Ubuntu::DownloadManager::Error*)));
         download->start();
         d->state = cuc::Transfer::downloading;
         Q_EMIT(StateChanged(d->state));
@@ -212,6 +213,16 @@ void cucd::Transfer::DownloadComplete(QString destFilePath)
     TRACE() << __PRETTY_FUNCTION__;
     d->items.append(QUrl::fromLocalFile(destFilePath).toString());
     d->state = cuc::Transfer::downloaded;
+    Q_EMIT(StateChanged(d->state));
+}
+
+void cucd::Transfer::DownloadError(Ubuntu::DownloadManager::Error* error)
+{
+    TRACE() << __PRETTY_FUNCTION__;
+    qWarning() << "Download manager error: " << error->errorString();
+
+    d->state = cuc::Transfer::aborted;
+    Q_EMIT(DownloadManagerError(error->errorString()));
     Q_EMIT(StateChanged(d->state));
 }
 

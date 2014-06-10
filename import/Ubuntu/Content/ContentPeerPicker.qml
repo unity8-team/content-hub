@@ -228,6 +228,17 @@ Item {
                 verticalSpacing: units.gu(2)
                 model: customPeerModelLoader ? customPeerModelLoader.item.peers : peerModelLoader.item.peers
                 delegate: peerDelegate
+
+                Label {
+                    anchors.top: parent.top
+                    anchors.topMargin: units.gu(2.5)
+                    anchors.horizontalCenter: parent.horizontalCenter
+                    width: parent.width - units.gu(5)
+                    wrapMode: Text.WordWrap
+                    horizontalAlignment: Text.AlignHCenter
+                    text: root.handler === ContentHandler.Source ? i18n.tr("Sorry, there aren't currently any apps installed that can provide this type of content.") : i18n.tr("Sorry, there aren't currently any apps installed that can handle this type of content.")
+                    visible: appPeers.model ? appPeers.model.length == 0 : false
+                }
             }
         }
     }

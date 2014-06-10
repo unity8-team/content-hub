@@ -62,7 +62,9 @@ class Service : public QObject, protected QDBusContext
     QDBusObjectPath CreateShareToPeer(const QString&, const QString&);
 
     void RegisterImportExportHandler(const QString&, const QDBusObjectPath& handler);
+    void HandlerActive(const QString&);
     void Quit();
+    void DownloadManagerError(QString);
 
   private:
     bool should_cancel(int);

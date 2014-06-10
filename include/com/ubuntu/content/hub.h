@@ -68,6 +68,7 @@ class Hub : public QObject
   private:
     struct Private;
     QScopedPointer<Private> d;
+    bool eventFilter(QObject *obj, QEvent *event);
 };
 }
 }

@@ -39,6 +39,7 @@ class Hook : public QObject
 public:
     explicit Hook(QObject *parent = 0);
     Hook(com::ubuntu::content::detail::PeerRegistry *registry, QObject *parent = 0);
+    ~Hook();
 
 public slots:
     bool return_error(QString err = "");

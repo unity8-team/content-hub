@@ -25,7 +25,7 @@ include_directories(
   ${GIO_INCLUDE_DIRS}
   ${NIH_INCLUDE_DIRS}
   ${NIH_DBUS_INCLUDE_DIRS}
-  ${UPSTART_LAUNCH_INCLUDE_DIRS}
+  ${UBUNTU_LAUNCH_INCLUDE_DIRS}
   ${UBUNTU_DOWNLOAD_MANAGER_INCLUDE_DIRS}
   ${NOTIFY_INCLUDE_DIRS}
 )
@@ -99,7 +99,7 @@ set_target_properties(
 qt5_use_modules(content-hub Core DBus Gui)
 
 target_link_libraries(content-hub
-    ${UPSTART_LAUNCH_LDFLAGS}
+    ${UBUNTU_LAUNCH_LDFLAGS}
     ${NIH_LIBRARIES}
     ${NIH_DBUS_LIBRARIES}
     ${GIO_LIBRARIES}

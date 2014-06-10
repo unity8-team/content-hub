@@ -43,6 +43,12 @@ cucd::Hook::Hook(com::ubuntu::content::detail::PeerRegistry *registry, QObject *
 {
 }
 
+cucd::Hook::~Hook()
+{
+    TRACE() << Q_FUNC_INFO;
+    delete registry;
+}
+
 void cucd::Hook::run()
 {
     TRACE() << Q_FUNC_INFO;
@@ -85,6 +91,7 @@ void cucd::Hook::run()
     Q_FOREACH(QFileInfo f, contentDir.entryInfoList(QDir::Files))
         add_peer(f);
 
+    deleteLater();
     QCoreApplication::instance()->quit();
 }
 
@@ -93,7 +100,7 @@ bool cucd::Hook::add_peer(QFileInfo result)
     TRACE() << Q_FUNC_INFO << "Hook:" << result.filePath();
 
     QStringList knownTypes;
-    knownTypes << "pictures" << "music" << "contacts" << "documents";
+    knownTypes << "pictures" << "music" << "contacts" << "documents" << "videos" << "links";
     QString app_id = result.fileName();
     auto peer = cuc::Peer(app_id);
 

@@ -1,3 +1,31 @@
+content-hub (0.0+14.10.20140604-0ubuntu1) utopic; urgency=low
+
+  [ Ken VanDine ]
+  * Check for completed downloads when an import handler is registered,
+    charge if necessary. This will trigger an import for completed
+    downloads that might have been dismissed in the notification.
+  * Add a wrapper for the click hook to ensure the dbus session is
+    properly exported (LP: #1324969) (LP: #1324969)
+  * Use an EventFilter to get ApplicationActivate events, to notify the
+    service when a handler gains focus. This is useful to charge
+    completed downloads that have been dismissed in the snap decision.
+  * Added new well known types for videos and links. Set gallery as
+    default for videos.
+
+  [ Michael Sheldon ]
+  * Display errors reported by download manager as notifications
+  * Show a message in the peer picker when no apps are available for the
+    specified content type.
+
+ -- Ubuntu daily release <ps-jenkins@lists.canonical.com>  Wed, 04 Jun 2014 16:50:50 +0000
+
+content-hub (0.0+14.10.20140601-0ubuntu1) utopic; urgency=low
+
+  [ Ted Gould ]
+  * Name change for UAL
+
+ -- Ubuntu daily release <ps-jenkins@lists.canonical.com>  Sun, 01 Jun 2014 20:58:54 +0000
+
 content-hub (0.0+14.10.20140521.1-0ubuntu1) utopic; urgency=low
 
   [ Ken VanDine ]

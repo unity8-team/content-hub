@@ -132,7 +132,7 @@ QUrl ContentItem::toDataURI()
     }
 
     /* Don't attempt to create the dataUri with empty data */
-    if (!data.isEmpty()) {
+    if (data.isEmpty()) {
         qWarning() << "Failed to read contents of file:" << path;
         return QUrl();
     }

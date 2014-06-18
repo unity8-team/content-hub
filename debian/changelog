@@ -1,3 +1,19 @@
+content-hub (0.0+14.10.20140618-0ubuntu1) utopic; urgency=low
+
+  [ Ken VanDine ]
+  * Added objectName to the cancel button in the ContentPeerPicker,
+    it'll be useful for autopilot tests.
+  * Don't abort downloads that haven't been charged yet when a new
+    transfer is created. This will leave multiple transfers from
+    downloads which haven't been charged remain in active_transfers
+    until they have been charged. (LP: #1326535) Having multiple
+    downloaded transfers in active_transfers means when the destination
+    starts or resumes, then all the completed downloads will get charged
+    which will send multiple signals to the destination. (LP: #1326535)
+  * Added toDataURI to ContentItem
+
+ -- Ubuntu daily release <ps-jenkins@lists.canonical.com>  Wed, 18 Jun 2014 15:58:44 +0000
+
 content-hub (0.0+14.10.20140604-0ubuntu1) utopic; urgency=low
 
   [ Ken VanDine ]

@@ -103,6 +103,11 @@ void ContentItem::setItem(const com::ubuntu::content::Item &item)
     Q_EMIT urlChanged();
 }
 
+/*!
+ * \qmlmethod string ContentItem::toDataURI
+ *  Returns the ContentItem base64 encoded with the mimetype as a 
+ *  properly formated dataUri
+ */
 QUrl ContentItem::toDataURI()
 {
     TRACE() << Q_FUNC_INFO;

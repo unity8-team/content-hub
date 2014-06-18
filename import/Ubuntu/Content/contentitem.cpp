@@ -16,6 +16,8 @@
 
 #include "contentitem.h"
 #include "../../../src/com/ubuntu/content/debug.h"
+#include <QMimeDatabase>
+#include <QFile>
 
 /*!
  * \qmltype ContentItem
@@ -99,4 +101,50 @@ void ContentItem::setItem(const com::ubuntu::content::Item &item)
 
     m_item = item;
     Q_EMIT urlChanged();
+}
+
+/*!
+ * \qmlmethod string ContentItem::toDataURI
+ *  Returns the ContentItem base64 encoded with the mimetype as a 
+ *  properly formated dataUri
+ */
+QUrl ContentItem::toDataURI()
+{
+    TRACE() << Q_FUNC_INFO;
+
+    QString path(m_item.url().toLocalFile());
+
+    /* Don't attempt to create the dataUri if the file isn't local */
+    if (!QFile::exists(path)) {
+        qWarning() << "File not found:" << path;
+        return QUrl();
+    }
+    QMimeDatabase mdb;
+    QMimeType mt = mdb.mimeTypeForFile(path);
+    /* Don't attempt to create the dataUri if we can't detect the mimetype */
+    if (!mt.isValid()) {
+        qWarning() << "Unknown MimeType for file:" << path;
+        return QUrl();
+    }
+    
+    QString contentType(mt.name());
+    QByteArray data;
+
+    QFile file(path);
+    if(file.open(QIODevice::ReadOnly)) {
+        data = file.readAll();
+        file.close();
+    }
+
+    /* Don't attempt to create the dataUri with empty data */
+    if (data.isEmpty()) {
+        qWarning() << "Failed to read contents of file:" << path;
+        return QUrl();
+    }
+
+    QString dataUri(QStringLiteral("data:"));
+    dataUri.append(contentType);
+    dataUri.append(QStringLiteral(";base64,"));
+    dataUri.append(QString::fromLatin1(data.toBase64()));
+    return QUrl(dataUri);
 }

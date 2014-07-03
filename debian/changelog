@@ -1,3 +1,14 @@
+content-hub (0.0+14.10.20140703-0ubuntu1) utopic; urgency=low
+
+  [ Michael Sheldon ]
+  * Add Debian friendly locations to content-hub-peer-hooks search
+    locations
+
+  [ Ubuntu daily release ]
+  * New rebuild forced
+
+ -- Ubuntu daily release <ps-jenkins@lists.canonical.com>  Thu, 03 Jul 2014 16:29:32 +0000
+
 content-hub (0.0+14.10.20140618-0ubuntu1) utopic; urgency=low
 
   [ Ken VanDine ]

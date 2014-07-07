@@ -1,3 +1,11 @@
+content-hub (0.0+14.10.20140704-0ubuntu1) utopic; urgency=low
+
+  [ Michael Sheldon ]
+  * Update theme used for resolving system icons (e.g. as used by Debian
+    packages) to use "suru" theme.
+
+ -- Ubuntu daily release <ps-jenkins@lists.canonical.com>  Fri, 04 Jul 2014 14:20:38 +0000
+
 content-hub (0.0+14.10.20140703-0ubuntu1) utopic; urgency=low
 
   [ Michael Sheldon ]

@@ -456,15 +456,6 @@ void cucd::Service::handle_exports(int state)
         }
     }
 
-    if (state == cuc::Transfer::finalized)
-    {
-        TRACE() << Q_FUNC_INFO << "Finalized";
-        if (transfer->WasSourceStartedByContentHub())
-            d->app_manager->stop_application(transfer->destination().toStdString());
-
-        d->app_manager->invoke_application(transfer->source().toStdString());
-    }
-
     if (state == cuc::Transfer::aborted)
     {
         TRACE() << Q_FUNC_INFO << "Aborted";

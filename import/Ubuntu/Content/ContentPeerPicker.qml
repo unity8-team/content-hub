@@ -88,6 +88,11 @@ Item {
     */
     signal cancelPressed
 
+    Rectangle {
+        anchors.fill: parent
+        color: Theme.palette.normal.overlay
+    }
+
     Header {
         id: header
         title: (handler === ContentHandler.Source) ? i18n.tr("Choose from") : (handler === ContentHandler.Destination ? i18n.tr("Open with") : i18n.tr("Share to"))

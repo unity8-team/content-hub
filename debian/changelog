@@ -1,3 +1,13 @@
+content-hub (0.0+14.10.20140709-0ubuntu1) utopic; urgency=low
+
+  [ Michael Sheldon ]
+  * Don't close/switch applications after an export has been finalized.
+  * Don't make the peer picker explicitly invisible, provide a
+    background for the peer picker and anchor the bottom of the app view
+    appropriately rather than calculating height.
+
+ -- Ubuntu daily release <ps-jenkins@lists.canonical.com>  Wed, 09 Jul 2014 17:38:25 +0000
+
 content-hub (0.0+14.10.20140704-0ubuntu1) utopic; urgency=low
 
   [ Michael Sheldon ]

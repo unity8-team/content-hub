@@ -17,7 +17,9 @@
 #include "contentitem.h"
 #include "../../../src/com/ubuntu/content/debug.h"
 #include <QMimeDatabase>
+#include <QDir>
 #include <QFile>
+#include <QFileInfo>
 
 /*!
  * \qmltype ContentItem
@@ -147,4 +149,41 @@ QUrl ContentItem::toDataURI()
     dataUri.append(QStringLiteral(";base64,"));
     dataUri.append(QString::fromLatin1(data.toBase64()));
     return QUrl(dataUri);
+}
+
+/*!
+ * \qmlmethod bool ContentItem::move(dest)
+ * \brief If the url is a local file, move the file to dest
+ *
+ *  If the move is successful, the url property will be changed
+ *  and onUrlChanged will be emitted.
+ *
+ *  Returns true if the file was moved successfully, false 
+ *  on error or if the url wasn't a local file.
+ */
+bool ContentItem::move(const QString &dest)
+{
+    TRACE() << Q_FUNC_INFO << "dest:" << dest;
+
+    QString path(m_item.url().toLocalFile());
+
+    if (!QFile::exists(path)) {
+        qWarning() << "File not found:" << path;
+        return false;
+    }
+
+    QFileInfo fi(path);
+    QDir d(dest);
+    if (not d.exists())
+        d.mkpath(d.absolutePath());
+    QString destFilePath = dest + QDir::separator() + fi.fileName();
+    TRACE() << Q_FUNC_INFO << destFilePath;
+
+    if (not QFile::rename(fi.absoluteFilePath(), destFilePath)) {
+        qWarning() << "Failed to move content to:" << destFilePath;
+        return false;
+    }
+
+    setUrl(QUrl::fromLocalFile(destFilePath));
+    return true;
 }

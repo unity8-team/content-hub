@@ -42,6 +42,7 @@ public:
     void setItem(const com::ubuntu::content::Item &item);
 
     Q_INVOKABLE QUrl toDataURI();
+    Q_INVOKABLE bool move(const QString &dest);
 
 Q_SIGNALS:
     void nameChanged();

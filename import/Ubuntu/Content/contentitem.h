@@ -42,6 +42,8 @@ public:
     void setItem(const com::ubuntu::content::Item &item);
 
     Q_INVOKABLE QUrl toDataURI();
+    Q_INVOKABLE bool move(const QString &dir);
+    Q_INVOKABLE bool move(const QString &dir, const QString &fileName);
 
 Q_SIGNALS:
     void nameChanged();

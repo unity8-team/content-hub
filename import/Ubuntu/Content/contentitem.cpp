@@ -17,7 +17,9 @@
 #include "contentitem.h"
 #include "../../../src/com/ubuntu/content/debug.h"
 #include <QMimeDatabase>
+#include <QDir>
 #include <QFile>
+#include <QFileInfo>
 
 /*!
  * \qmltype ContentItem
@@ -147,4 +149,64 @@ QUrl ContentItem::toDataURI()
     dataUri.append(QStringLiteral(";base64,"));
     dataUri.append(QString::fromLatin1(data.toBase64()));
     return QUrl(dataUri);
+}
+
+/*!
+ * \qmlmethod bool ContentItem::move(dir)
+ * \brief If the url is a local file, move the file to \a dir
+ *
+ *  If the move is successful, the url property will be changed
+ *  and onUrlChanged will be emitted.
+ *
+ *  Returns true if the file was moved successfully, false 
+ *  on error or if the url wasn't a local file.
+ */
+bool ContentItem::move(const QString &dir)
+{
+    TRACE() << Q_FUNC_INFO << "dir:" << dir;
+    return (move(dir, nullptr));
+}
+
+/*!
+ * \qmlmethod bool ContentItem::move(dir, fileName)
+ * \brief If the url is a local file, move the file to \a dir and 
+ *  rename to \a fileName
+ *
+ *  If the move is successful, the url property will be changed
+ *  and onUrlChanged will be emitted.
+ *
+ *  Returns true if the file was moved successfully, false 
+ *  on error or if the url wasn't a local file.
+ */
+bool ContentItem::move(const QString &dir, const QString &fileName)
+{
+    TRACE() << Q_FUNC_INFO << "dir:" << dir << "fileName:" << fileName;
+
+    QString path(m_item.url().toLocalFile());
+
+    if (!QFile::exists(path)) {
+        qWarning() << "File not found:" << path;
+        return false;
+    }
+
+    QFileInfo fi(path);
+    QDir d(dir);
+    if (not d.exists())
+        d.mkpath(d.absolutePath());
+
+    QString destFilePath = "";
+    if (fileName.isEmpty())
+        destFilePath = dir + QDir::separator() + fi.fileName();
+    else
+        destFilePath = dir + QDir::separator() + fileName;
+
+    TRACE() << Q_FUNC_INFO << "New path:" << destFilePath;
+
+    if (not QFile::rename(fi.absoluteFilePath(), destFilePath)) {
+        qWarning() << "Failed to move content to:" << destFilePath;
+        return false;
+    }
+
+    setUrl(QUrl::fromLocalFile(destFilePath));
+    return true;
 }

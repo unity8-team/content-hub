@@ -152,8 +152,8 @@ QUrl ContentItem::toDataURI()
 }
 
 /*!
- * \qmlmethod bool ContentItem::move(dest)
- * \brief If the url is a local file, move the file to dest
+ * \qmlmethod bool ContentItem::move(dir)
+ * \brief If the url is a local file, move the file to \a dir
  *
  *  If the move is successful, the url property will be changed
  *  and onUrlChanged will be emitted.
@@ -161,9 +161,26 @@ QUrl ContentItem::toDataURI()
  *  Returns true if the file was moved successfully, false 
  *  on error or if the url wasn't a local file.
  */
-bool ContentItem::move(const QString &dest)
+bool ContentItem::move(const QString &dir)
 {
-    TRACE() << Q_FUNC_INFO << "dest:" << dest;
+    TRACE() << Q_FUNC_INFO << "dir:" << dir;
+    return (move(dir, nullptr));
+}
+
+/*!
+ * \qmlmethod bool ContentItem::move(dir, fileName)
+ * \brief If the url is a local file, move the file to \a dir and 
+ *  rename to \a fileName
+ *
+ *  If the move is successful, the url property will be changed
+ *  and onUrlChanged will be emitted.
+ *
+ *  Returns true if the file was moved successfully, false 
+ *  on error or if the url wasn't a local file.
+ */
+bool ContentItem::move(const QString &dir, const QString &fileName)
+{
+    TRACE() << Q_FUNC_INFO << "dir:" << dir << "fileName:" << fileName;
 
     QString path(m_item.url().toLocalFile());
 
@@ -173,11 +190,17 @@ bool ContentItem::move(const QString &dest)
     }
 
     QFileInfo fi(path);
-    QDir d(dest);
+    QDir d(dir);
     if (not d.exists())
         d.mkpath(d.absolutePath());
-    QString destFilePath = dest + QDir::separator() + fi.fileName();
-    TRACE() << Q_FUNC_INFO << destFilePath;
+
+    QString destFilePath = "";
+    if (fileName.isEmpty())
+        destFilePath = dir + QDir::separator() + fi.fileName();
+    else
+        destFilePath = dir + QDir::separator() + fileName;
+
+    TRACE() << Q_FUNC_INFO << "New path:" << destFilePath;
 
     if (not QFile::rename(fi.absoluteFilePath(), destFilePath)) {
         qWarning() << "Failed to move content to:" << destFilePath;

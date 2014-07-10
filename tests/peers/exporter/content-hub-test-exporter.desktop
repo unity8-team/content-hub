@@ -1,0 +1,9 @@
+[Desktop Entry]
+Name=Test Auto Exporter
+Comment=Test Auto Exporter
+Exec=content-hub-test-exporter
+Icon=
+Terminal=false
+Type=Application
+X-Ubuntu-Touch=true
+X-Ubuntu-Application-ID=content-hub-test-exporter

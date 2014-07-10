@@ -1,3 +1,11 @@
+content-hub (0.0+14.10.20140710-0ubuntu1) utopic; urgency=low
+
+  [ Ken VanDine ]
+  * Added ContentItem.move function to allow pure QML apps to relocate
+    local files collected.
+
+ -- Ubuntu daily release <ps-jenkins@lists.canonical.com>  Thu, 10 Jul 2014 20:10:35 +0000
+
 content-hub (0.0+14.10.20140709-0ubuntu1) utopic; urgency=low
 
   [ Michael Sheldon ]

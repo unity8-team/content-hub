@@ -31,7 +31,6 @@ import Ubuntu.Content 0.1
 Item {
     id: root
     anchors.fill: parent
-    visible: false
 
     /*!
         \qmlproperty ContentHandler handler
@@ -87,6 +86,11 @@ Item {
         \c onCancelPressed
     */
     signal cancelPressed
+
+    Rectangle {
+        anchors.fill: parent
+        color: Theme.palette.normal.overlay
+    }
 
     Header {
         id: header
@@ -206,13 +210,13 @@ Item {
     Rectangle {
         id: apps
         color: "#FFFFFF"
-        height: devices.visible ? (parent.height / 2.4) : parent.height
-        width: parent.width
         clip: true
         anchors {
             left: parent.left
             right: parent.right
             top: appTitle.bottom
+            bottom: devTitle.visible ? devTitle.top : cancelButton.top
+            bottomMargin: units.gu(1)
         }
 
         Flickable {
@@ -288,7 +292,8 @@ Item {
 
     Button {
         id: cancelButton
-        text: "Cancel"
+        objectName: "contentPeerPickerCancelButton"
+        text: i18n.tr("Cancel")
         anchors {
             left: parent.left
             bottom: parent.bottom

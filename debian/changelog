@@ -1,3 +1,56 @@
+content-hub (0.0+14.10.20140710-0ubuntu1) utopic; urgency=low
+
+  [ Ken VanDine ]
+  * Added ContentItem.move function to allow pure QML apps to relocate
+    local files collected.
+
+ -- Ubuntu daily release <ps-jenkins@lists.canonical.com>  Thu, 10 Jul 2014 20:10:35 +0000
+
+content-hub (0.0+14.10.20140709-0ubuntu1) utopic; urgency=low
+
+  [ Michael Sheldon ]
+  * Don't close/switch applications after an export has been finalized.
+  * Don't make the peer picker explicitly invisible, provide a
+    background for the peer picker and anchor the bottom of the app view
+    appropriately rather than calculating height.
+
+ -- Ubuntu daily release <ps-jenkins@lists.canonical.com>  Wed, 09 Jul 2014 17:38:25 +0000
+
+content-hub (0.0+14.10.20140704-0ubuntu1) utopic; urgency=low
+
+  [ Michael Sheldon ]
+  * Update theme used for resolving system icons (e.g. as used by Debian
+    packages) to use "suru" theme.
+
+ -- Ubuntu daily release <ps-jenkins@lists.canonical.com>  Fri, 04 Jul 2014 14:20:38 +0000
+
+content-hub (0.0+14.10.20140703-0ubuntu1) utopic; urgency=low
+
+  [ Michael Sheldon ]
+  * Add Debian friendly locations to content-hub-peer-hooks search
+    locations
+
+  [ Ubuntu daily release ]
+  * New rebuild forced
+
+ -- Ubuntu daily release <ps-jenkins@lists.canonical.com>  Thu, 03 Jul 2014 16:29:32 +0000
+
+content-hub (0.0+14.10.20140618-0ubuntu1) utopic; urgency=low
+
+  [ Ken VanDine ]
+  * Added objectName to the cancel button in the ContentPeerPicker,
+    it'll be useful for autopilot tests.
+  * Don't abort downloads that haven't been charged yet when a new
+    transfer is created. This will leave multiple transfers from
+    downloads which haven't been charged remain in active_transfers
+    until they have been charged. (LP: #1326535) Having multiple
+    downloaded transfers in active_transfers means when the destination
+    starts or resumes, then all the completed downloads will get charged
+    which will send multiple signals to the destination. (LP: #1326535)
+  * Added toDataURI to ContentItem
+
+ -- Ubuntu daily release <ps-jenkins@lists.canonical.com>  Wed, 18 Jun 2014 15:58:44 +0000
+
 content-hub (0.0+14.10.20140604-0ubuntu1) utopic; urgency=low
 
   [ Ken VanDine ]

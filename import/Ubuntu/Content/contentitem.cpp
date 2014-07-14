@@ -16,6 +16,10 @@
 
 #include "contentitem.h"
 #include "../../../src/com/ubuntu/content/debug.h"
+#include <QMimeDatabase>
+#include <QDir>
+#include <QFile>
+#include <QFileInfo>
 
 /*!
  * \qmltype ContentItem
@@ -101,4 +105,110 @@ void ContentItem::setItem(const com::ubuntu::content::Item &item)
 
     m_item = item;
     Q_EMIT urlChanged();
+}
+
+/*!
+ * \qmlmethod string ContentItem::toDataURI
+ *  Returns the ContentItem base64 encoded with the mimetype as a 
+ *  properly formated dataUri
+ */
+QUrl ContentItem::toDataURI()
+{
+    TRACE() << Q_FUNC_INFO;
+
+    QString path(m_item.url().toLocalFile());
+
+    /* Don't attempt to create the dataUri if the file isn't local */
+    if (!QFile::exists(path)) {
+        qWarning() << "File not found:" << path;
+        return QUrl();
+    }
+    QMimeDatabase mdb;
+    QMimeType mt = mdb.mimeTypeForFile(path);
+    /* Don't attempt to create the dataUri if we can't detect the mimetype */
+    if (!mt.isValid()) {
+        qWarning() << "Unknown MimeType for file:" << path;
+        return QUrl();
+    }
+    
+    QString contentType(mt.name());
+    QByteArray data;
+
+    QFile file(path);
+    if(file.open(QIODevice::ReadOnly)) {
+        data = file.readAll();
+        file.close();
+    }
+
+    /* Don't attempt to create the dataUri with empty data */
+    if (data.isEmpty()) {
+        qWarning() << "Failed to read contents of file:" << path;
+        return QUrl();
+    }
+
+    QString dataUri(QStringLiteral("data:"));
+    dataUri.append(contentType);
+    dataUri.append(QStringLiteral(";base64,"));
+    dataUri.append(QString::fromLatin1(data.toBase64()));
+    return QUrl(dataUri);
+}
+
+/*!
+ * \qmlmethod bool ContentItem::move(dir)
+ * \brief If the url is a local file, move the file to \a dir
+ *
+ *  If the move is successful, the url property will be changed
+ *  and onUrlChanged will be emitted.
+ *
+ *  Returns true if the file was moved successfully, false 
+ *  on error or if the url wasn't a local file.
+ */
+bool ContentItem::move(const QString &dir)
+{
+    TRACE() << Q_FUNC_INFO << "dir:" << dir;
+    return (move(dir, nullptr));
+}
+
+/*!
+ * \qmlmethod bool ContentItem::move(dir, fileName)
+ * \brief If the url is a local file, move the file to \a dir and 
+ *  rename to \a fileName
+ *
+ *  If the move is successful, the url property will be changed
+ *  and onUrlChanged will be emitted.
+ *
+ *  Returns true if the file was moved successfully, false 
+ *  on error or if the url wasn't a local file.
+ */
+bool ContentItem::move(const QString &dir, const QString &fileName)
+{
+    TRACE() << Q_FUNC_INFO << "dir:" << dir << "fileName:" << fileName;
+
+    QString path(m_item.url().toLocalFile());
+
+    if (!QFile::exists(path)) {
+        qWarning() << "File not found:" << path;
+        return false;
+    }
+
+    QFileInfo fi(path);
+    QDir d(dir);
+    if (not d.exists())
+        d.mkpath(d.absolutePath());
+
+    QString destFilePath = "";
+    if (fileName.isEmpty())
+        destFilePath = dir + QDir::separator() + fi.fileName();
+    else
+        destFilePath = dir + QDir::separator() + fileName;
+
+    TRACE() << Q_FUNC_INFO << "New path:" << destFilePath;
+
+    if (not QFile::rename(fi.absoluteFilePath(), destFilePath)) {
+        qWarning() << "Failed to move content to:" << destFilePath;
+        return false;
+    }
+
+    setUrl(QUrl::fromLocalFile(destFilePath));
+    return true;
 }

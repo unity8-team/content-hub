@@ -182,6 +182,8 @@ bool cucd::Service::should_cancel (int st)
 
     return (st != cuc::Transfer::finalized
             && st != cuc::Transfer::collected
+            && st != cuc::Transfer::downloaded
+            && st != cuc::Transfer::downloading
             && st != cuc::Transfer::aborted);
 }
 
@@ -452,15 +454,6 @@ void cucd::Service::handle_exports(int state)
                     r->handler->HandleImport(QDBusObjectPath{transfer->import_path()});
             }
         }
-    }
-
-    if (state == cuc::Transfer::finalized)
-    {
-        TRACE() << Q_FUNC_INFO << "Finalized";
-        if (transfer->WasSourceStartedByContentHub())
-            d->app_manager->stop_application(transfer->destination().toStdString());
-
-        d->app_manager->invoke_application(transfer->source().toStdString());
     }
 
     if (state == cuc::Transfer::aborted)

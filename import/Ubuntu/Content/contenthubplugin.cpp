@@ -52,7 +52,7 @@ void ContentHubPlugin::initializeEngine(QQmlEngine * engine, const char * uri)
 {
     Q_UNUSED(uri)
     TRACE() << Q_FUNC_INFO;
-    QIcon::setThemeName("ubuntu-mobile");
+    QIcon::setThemeName("suru");
     QIcon::setThemeSearchPaths(QStringList() << ("/usr/share/icons/"));
     ContentIconProvider *iconProvider = ContentIconProvider::instance();
     engine->addImageProvider("content-hub", iconProvider);

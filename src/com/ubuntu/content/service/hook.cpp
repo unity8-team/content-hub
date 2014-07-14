@@ -23,6 +23,7 @@
 #include <QDir>
 #include <QStandardPaths>
 #include <QTimer>
+#include <QVector>
 #include <com/ubuntu/content/peer.h>
 
 #include "debug.h"
@@ -66,13 +67,15 @@ void cucd::Hook::run()
      * no JSON file installed in this path.
      */
 
-    QDir contentDir(
+    QVector<QDir> contentDirs;
+
+    contentDirs.append(QDir(
         QStandardPaths::writableLocation(QStandardPaths::GenericDataLocation)
         + QString("/")
-        + QString("content-hub"));
-
-    if (not contentDir.exists())
-        return_error();
+        + QString("content-hub")));
+    
+    contentDirs.append(QDir("/usr/share/content-hub/peers/"));
+    contentDirs.append(QDir("/usr/share/local/content-hub/peers/"));
 
     QStringList all_peers;
     registry->enumerate_known_peers([&all_peers](const com::ubuntu::content::Peer& peer)
@@ -83,13 +86,36 @@ void cucd::Hook::run()
     Q_FOREACH(QString p, all_peers)
     {
         TRACE() << Q_FUNC_INFO << "Looking for" << p;
-        QStringList pp = contentDir.entryList(QStringList("*"+ p));
-        if (pp.isEmpty())
+        bool foundPeer = false;
+        Q_FOREACH(QDir contentDir, contentDirs)
+        {
+            QStringList pp = contentDir.entryList(QStringList("*"+ p));
+            if (!pp.isEmpty()) {
+                foundPeer = true;
+            }
+        }
+        if(!foundPeer) {
             registry->remove_peer(com::ubuntu::content::Peer{p});
+        }
     }
 
-    Q_FOREACH(QFileInfo f, contentDir.entryInfoList(QDir::Files))
-        add_peer(f);
+    bool peerDirsExist = false;
+
+    Q_FOREACH(QDir contentDir, contentDirs)
+    {
+
+        if (contentDir.exists()) 
+        {
+            peerDirsExist = true;
+
+            Q_FOREACH(QFileInfo f, contentDir.entryInfoList(QDir::Files))
+                add_peer(f);
+        }
+
+    }
+
+    if(!peerDirsExist)
+        return_error("No peer setting directories exist.");
 
     deleteLater();
     QCoreApplication::instance()->quit();

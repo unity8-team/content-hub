@@ -18,6 +18,7 @@
 #ifndef COM_UBUNTU_CONTENT_ITEM_H_
 #define COM_UBUNTU_CONTENT_ITEM_H_
 
+#include <QtDBus>
 #include <QObject>
 #include <QSharedPointer>
 #include <QUrl>
@@ -33,6 +34,7 @@ class Item : public QObject
 {
     Q_OBJECT
     Q_PROPERTY(QUrl url READ url())
+    Q_PROPERTY(QString name READ name WRITE setName)
 
   public:
     Item(const QUrl& = QUrl(), QObject* = nullptr);
@@ -43,6 +45,8 @@ class Item : public QObject
     bool operator==(const Item&) const;
 
     Q_INVOKABLE const QUrl& url() const;
+    Q_INVOKABLE const QString& name() const;
+    Q_INVOKABLE void setName(const QString &name) const;
 
   private:
     struct Private;
@@ -52,5 +56,16 @@ class Item : public QObject
 }
 }
 }
+
+Q_DECL_EXPORT
+QDBusArgument &operator<<(QDBusArgument &argument,
+                const com::ubuntu::content::Item &item);
+
+Q_DECL_EXPORT
+const QDBusArgument &operator>>(const QDBusArgument &argument,
+                com::ubuntu::content::Item &item);
+
+Q_DECLARE_METATYPE(com::ubuntu::content::Item)
+
 
 #endif // COM_UBUNTU_CONTENT_ITEM_H_

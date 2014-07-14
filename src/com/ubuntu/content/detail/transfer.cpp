@@ -52,7 +52,7 @@ struct cucd::Transfer::Private
     int direction;
     QString store;
     int selection_type;
-    QStringList items;
+    QVariantList items;
     bool source_started_by_content_hub;
     QString download_id;
 };
@@ -141,7 +141,7 @@ void cucd::Transfer::Handled()
     Q_EMIT(StateChanged(d->state));
 }
 
-void cucd::Transfer::Charge(const QStringList& items)
+void cucd::Transfer::Charge(const QVariantList& items)
 {
     TRACE() << __PRETTY_FUNCTION__;
 
@@ -161,12 +161,14 @@ void cucd::Transfer::Charge(const QStringList& items)
         return;
     } 
 
-    QStringList ret;
-    Q_FOREACH(QString i, items)
-        ret.append(copy_to_store(i, d->store));
-
-    Q_FOREACH(QString f, ret)
-        TRACE() << Q_FUNC_INFO << "Item:" << f;
+    QVariantList ret;
+    Q_FOREACH(QVariant iv, items) {
+        cuc::Item origItem = qdbus_cast<Item>(iv);
+        cuc::Item copiedItem = cuc::Item{QUrl(copy_to_store(origItem.url().toString(), d->store))};
+        copiedItem.setName(origItem.name());
+        TRACE() << Q_FUNC_INFO << "Item:" << copiedItem.url();
+        ret.append(QVariant::fromValue(copiedItem));
+    }
 
     if (ret.count() <= 0)
     {
@@ -211,7 +213,8 @@ void cucd::Transfer::Download()
 void cucd::Transfer::DownloadComplete(QString destFilePath)
 {
     TRACE() << __PRETTY_FUNCTION__;
-    d->items.append(QUrl::fromLocalFile(destFilePath).toString());
+    cuc::Item item = cuc::Item{QUrl::fromLocalFile(destFilePath).toString()};
+    d->items.append(QVariant::fromValue(item));
     d->state = cuc::Transfer::downloaded;
     Q_EMIT(StateChanged(d->state));
 }
@@ -226,7 +229,7 @@ void cucd::Transfer::DownloadError(Ubuntu::DownloadManager::Error* error)
     Q_EMIT(StateChanged(d->state));
 }
 
-QStringList cucd::Transfer::Collect()
+QVariantList cucd::Transfer::Collect()
 {
     TRACE() << __PRETTY_FUNCTION__;
 

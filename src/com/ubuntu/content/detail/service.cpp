@@ -200,7 +200,7 @@ void action_accept(NotifyNotification *notification, char *action, gpointer data
     Q_UNUSED(action);
 
     cucd::Transfer* t = (cucd::Transfer*)data;
-    t->Charge(QStringList());
+    t->Charge(QVariantList());
 }
 
 void download_notify (cucd::Transfer* t)
@@ -578,7 +578,7 @@ void cucd::Service::RegisterImportExportHandler(const QString& peer_id, const QD
             {
                 TRACE() << Q_FUNC_INFO << "Found downloaded import, charging";
                 if (r->handler->isValid())
-                    t->Charge(QStringList());
+                    t->Charge(QVariantList());
             }
         }
     }
@@ -595,7 +595,7 @@ void cucd::Service::HandlerActive(const QString& peer_id)
             if (t->Direction() == cuc::Transfer::Export)
             {
                 TRACE() << Q_FUNC_INFO << "Found downloaded import, charging";
-                t->Charge(QStringList());
+                t->Charge(QVariantList());
             }
         }
     }

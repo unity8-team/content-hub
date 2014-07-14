@@ -19,6 +19,7 @@
 #include <QCoreApplication>
 #include <QProcessEnvironment>
 #include <csignal>
+#include <com/ubuntu/content/item.h>
 
 #include "detail/app_manager.h"
 #include "debug.h"
@@ -79,6 +80,8 @@ int main(int argc, char** argv)
         qWarning() << "Failed to register object on" << HUB_SERVICE_PATH;
         ret = 1;
     }
+
+    qDBusRegisterMetaType<cuc::Item>();
 
     std::signal(SIGTERM, shutdown);
     std::signal(SIGHUP, shutdown);

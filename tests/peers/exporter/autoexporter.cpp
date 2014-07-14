@@ -40,10 +40,10 @@ void AutoExporter::handle_export(cuc::Transfer *transfer)
     }
 
     QVector<cuc::Item> items;
-    items << cuc::Item(QUrl("file:///tmp/test1"));
+    items << cuc::Item(QUrl("file:///usr/share/content-hub/testability/data/webbrowser-app.png"));
 
     if (transfer->selectionType() == cuc::Transfer::SelectionType::multiple) {
-        items << cuc::Item(QUrl("file:///tmp/test2"));
+        items << cuc::Item(QUrl("file:///usr/share/content-hub/testability/data/clock.png"));
     }
 
     transfer->charge(items);

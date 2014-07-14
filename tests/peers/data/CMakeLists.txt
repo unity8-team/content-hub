@@ -1,4 +1,4 @@
-# Copyright © 2014 Canonical Ltd.
+# Copyright © 2013 Canonical Ltd.
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License version 3 as
@@ -14,5 +14,7 @@
 #
 # Authored by: Ken VanDine <ken.vandine@canonical.com>
 
-add_subdirectory(exporter)
-add_subdirectory(data)
+install(
+  FILES webbrowser-app.png clock.png
+  DESTINATION ${CMAKE_INSTALL_DATADIR}/content-hub/testability/data
+)

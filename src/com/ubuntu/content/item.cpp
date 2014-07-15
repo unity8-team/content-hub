@@ -30,7 +30,7 @@ struct cuc::Item::Private
 
     bool operator==(const Private& rhs) const
     {
-        return url == rhs.url;
+        return url == rhs.url && name == rhs.name;
     }
 };
 

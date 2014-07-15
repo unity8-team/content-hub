@@ -81,8 +81,6 @@ int main(int argc, char** argv)
         ret = 1;
     }
 
-    qDBusRegisterMetaType<cuc::Item>();
-
     std::signal(SIGTERM, shutdown);
     std::signal(SIGHUP, shutdown);
     std::signal(SIGKILL, shutdown);

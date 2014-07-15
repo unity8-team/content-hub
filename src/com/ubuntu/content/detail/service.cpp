@@ -32,6 +32,7 @@
 #include <unistd.h>
 #include <libnotify/notify.h>
 
+#include <com/ubuntu/content/item.h>
 #include <com/ubuntu/content/peer.h>
 #include <com/ubuntu/content/type.h>
 #include <com/ubuntu/content/transfer.h>
@@ -92,6 +93,7 @@ cucd::Service::Service(QDBusConnection connection, const QSharedPointer<cucd::Pe
     assert(!peer_registry.isNull());
 
     qDBusRegisterMetaType<cuc::Peer>();
+    qDBusRegisterMetaType<cuc::Item>();
 
     m_watcher->setWatchMode(QDBusServiceWatcher::WatchForUnregistration);
     m_watcher->setConnection(d->connection);

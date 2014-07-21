@@ -15,7 +15,7 @@
  */
 
 import QtQuick 2.0
-import Ubuntu.Components 0.1
+import Ubuntu.Components 1.1
 import Ubuntu.Components.Popups 0.1
 import Ubuntu.Components.ListItems 0.1 as ListItem
 import Ubuntu.Content 0.1
@@ -100,6 +100,22 @@ Item {
     Header {
         id: header
         title: headerText ? headerText : (handler === ContentHandler.Source) ? i18n.tr("Choose from") : (handler === ContentHandler.Destination ? i18n.tr("Open with") : i18n.tr("Share to"))
+        useDeprecatedToolbar: false
+        config: PageHeadConfiguration {
+            backAction: Action {
+                objectName: "cancel"
+
+                iconName: "close"
+                text: i18n.tr("Cancel")
+                onTriggered: {
+                    if(root.activeTransfer) {
+                        root.activeTransfer.state = ContentTransfer.Aborted;
+                    }
+                    cancelPressed()
+                }
+
+            }
+        }
     }
 
     Loader {
@@ -220,7 +236,7 @@ Item {
             left: parent.left
             right: parent.right
             top: appTitle.bottom
-            bottom: devTitle.visible ? devTitle.top : cancelButton.top
+            bottom: devTitle.visible ? devTitle.top : parent.bottom
             bottomMargin: units.gu(1)
         }
 
@@ -275,7 +291,7 @@ Item {
             left: parent.left
             right: parent.right
             top: devTitle.bottom
-            bottom: cancelButton.top
+            bottom: parent.bottom
             bottomMargin: units.gu(1)
         }
 
@@ -292,23 +308,6 @@ Item {
                 verticalSpacing: units.gu(2)
                 delegate: peerDelegate
             }
-        }
-    }
-
-    Button {
-        id: cancelButton
-        objectName: "contentPeerPickerCancelButton"
-        text: i18n.tr("Cancel")
-        anchors {
-            left: parent.left
-            bottom: parent.bottom
-            margins: units.gu(1)
-        }
-        onClicked: {
-            if(root.activeTransfer) {
-                root.activeTransfer.state = ContentTransfer.Aborted;
-            }
-            cancelPressed();
         }
     }
 

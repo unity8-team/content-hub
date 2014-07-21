@@ -67,6 +67,11 @@ Item {
     */
     property var customPeerModelLoader
 
+    /*! \qmlproperty string headerText
+        \brief Text to display in the header.
+    */
+    property string headerText
+
     property var completed: false
 
     /*! \qmlsignal peerSelected
@@ -94,7 +99,7 @@ Item {
 
     Header {
         id: header
-        title: (handler === ContentHandler.Source) ? i18n.tr("Choose from") : (handler === ContentHandler.Destination ? i18n.tr("Open with") : i18n.tr("Share to"))
+        title: headerText ? headerText : (handler === ContentHandler.Source) ? i18n.tr("Choose from") : (handler === ContentHandler.Destination ? i18n.tr("Open with") : i18n.tr("Share to"))
     }
 
     Loader {

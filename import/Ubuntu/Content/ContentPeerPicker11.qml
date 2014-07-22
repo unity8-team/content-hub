@@ -21,75 +21,22 @@ import Ubuntu.Components.ListItems 0.1 as ListItem
 import Ubuntu.Content 1.1
 
 /*!
-    \qmltype ContentPeerPicker
-    \inqmlmodule Ubuntu.Content
-    \brief Component that allows users to select a source/destination for content transfer
-
-    This component displays a list of applications, devices and services which
-    are appropriate for transferring a given content type with.
+  \internal
+  Documentation is in ContentPeerPicker.qdoc
 */
 Item {
     id: root
     anchors.fill: parent
 
-    /*!
-        \qmlproperty ContentHandler handler
-        \brief The ContentHandler to use when finding peers.
-    */
     property var handler
-
-    /*! \qmlproperty ContentType contentType
-        \brief The ContentType to use when finding peers.
-    */
     property var contentType
-
-    /*! \qmlproperty bool showTitle
-        \brief Determines whether the header should be displayed.
-
-        This makes it possible to hide the header, which can be useful
-        if embedding the picker within another page or popup.
-    */
     property alias showTitle: header.visible
-
-    /*! \qmlproperty ContentPeer peer
-        \brief The peer selected by the user.
-
-        Once the peerSelected signal has been sent, this provides the
-        ContentPeer which the user has selected.
-    */
     property var peer
-
-    /*! \qmlproperty Loader customerPeerModelLoader
-        \brief A Loader containing a ContentPeerModel.
-
-        This can optionally be used to provide a pre-populated ContentPeerModel
-        to this ContentPeerPicker.
-    */
     property var customPeerModelLoader
-
-    /*! \qmlproperty string headerText
-        \brief Text to display in the header.
-    */
     property string headerText
-
     property var completed: false
 
-    /*! \qmlsignal peerSelected
-        \brief Emitted when a user selects a peer.
-
-        Once this signal has been emitted the selected peer can be accessed via
-        the peer property.
-        \c onPeerSelected
-    */
     signal peerSelected
-
-    /*! \qmlsignal cancelPressed
-        \brief Emitted when the user clicks the cancel button.
-        
-        The ContentPeerPicker will be hidden automatically when the user cancels
-        the operations and the active ContentTransfer will be set to Aborted.
-        \c onCancelPressed
-    */
     signal cancelPressed
 
     Rectangle {

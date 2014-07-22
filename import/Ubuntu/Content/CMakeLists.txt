@@ -22,7 +22,7 @@ execute_process(
     OUTPUT_VARIABLE QT_INSTALL_QML
     OUTPUT_STRIP_TRAILING_WHITESPACE
 )
-set(CONTENT_HUB_IMPORTS_DIR "${QT_INSTALL_QML}/Ubuntu/Content")
+set(CONTENT_HUB_IMPORTS_DIR "${QT_INSTALL_QML}/Ubuntu/Content.${QML_API_VERSION_MAJOR}")
 
 set(PLUGIN ubuntu-content-hub-plugin)
 

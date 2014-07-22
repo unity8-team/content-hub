@@ -59,7 +59,7 @@ Depends: libcontent-hub0 (= ${binary:Version}),
 Description: content sharing development files
  All the development headers and libraries for the content hub
 
-Package: qtdeclarative5-ubuntu-content0.1
+Package: qtdeclarative5-ubuntu-content1
 Section: libs
 Architecture: any
 Pre-Depends: ${misc:Pre-Depends},
@@ -67,6 +67,8 @@ Depends: libcontent-hub0,
          qtdeclarative5-qtquick2-plugin,
          ${misc:Depends},
          ${shlibs:Depends},
+Replaces: qtdeclarative5-ubuntu-content0.1
+Provides: qtdeclarative5-ubuntu-content0.1
 Description: QML binding for libcontent-hub
  QML bindings for libcontent-hub
 

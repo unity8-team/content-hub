@@ -219,6 +219,9 @@ void download_notify (cucd::Transfer* t)
                                         "x-canonical-snap-decisions",
                                         "true");
 
+    notify_notification_set_hint_string(notification,
+                                        "x-canonical-non-shaped-icon",
+                                        "true");
 
     notify_notification_set_hint_string(notification,
                                         "x-canonical-private-button-tint",

@@ -69,6 +69,7 @@ Depends: libcontent-hub0,
          ${shlibs:Depends},
 Replaces: qtdeclarative5-ubuntu-content0.1
 Provides: qtdeclarative5-ubuntu-content0.1
+Breaks: qtdeclarative5-ubuntu-content0.1
 Description: QML binding for libcontent-hub
  QML bindings for libcontent-hub
 

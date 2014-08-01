@@ -106,13 +106,12 @@ class Transfer::Private : public QObject
 
     bool charge(const QVector<Item>& items)
     {
-        QStringList l;
+        QVariantList itemVariants;
         Q_FOREACH(const Item& item, items)
-        {
-            l << item.url().toDisplayString();
+        {   
+            itemVariants << QVariant::fromValue(item);
         }
-        
-        auto reply = remote_transfer->Charge(l);
+        auto reply = remote_transfer->Charge(itemVariants);
         reply.waitForFinished();
 
         return not reply.isError();
@@ -128,10 +127,13 @@ class Transfer::Private : public QObject
         if (reply.isError())
             return result;
 
-        Q_FOREACH(const QString& url, reply.value())
-        {
-            result << Item(QUrl(url));
+        auto items = reply.value();
+
+        Q_FOREACH(const QVariant& itemVariant, items)
+        {   
+            result << qdbus_cast<Item>(itemVariant);
         }
+
         return result;
     }
 

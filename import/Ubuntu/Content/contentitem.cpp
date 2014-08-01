@@ -47,16 +47,16 @@ ContentItem::ContentItem(QObject *parent)
 const QString &ContentItem::name() const
 {
     TRACE() << Q_FUNC_INFO;
-    return m_name;
+    return m_item.name();
 }
 
 void ContentItem::setName(const QString &name)
 {
     TRACE() << Q_FUNC_INFO;
-    if (name == m_name)
+    if (name == m_item.name())
         return;
 
-    m_name = name;
+    m_item.setName(name);
     Q_EMIT nameChanged();
 }
 
@@ -77,7 +77,9 @@ void ContentItem::setUrl(const QUrl &url)
     if (url == this->url())
         return;
 
+    QString oldName = m_item.name();
     m_item = cuc::Item(url);
+    m_item.setName(oldName);
     Q_EMIT urlChanged();
 }
 

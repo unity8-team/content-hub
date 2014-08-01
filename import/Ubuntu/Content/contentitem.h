@@ -50,7 +50,6 @@ Q_SIGNALS:
     void urlChanged();
 
 private:
-    QString m_name;
     com::ubuntu::content::Item m_item;
 };
 

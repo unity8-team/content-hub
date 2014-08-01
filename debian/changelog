@@ -1,10 +1,26 @@
-content-hub (0.0+14.10.20140710-0ubuntu2) UNRELEASED; urgency=medium
+content-hub (0.0+14.10.20140801.4-0ubuntu1) utopic; urgency=medium
 
+  [ Ken VanDine ]
   * debian/control
     - Renamed the binary for the qml module to qtdeclarative5-ubuntu-content1
       to reflect support for API version 1.x instead of 0.1
 
- -- Ken VanDine <ken.vandine@canonical.com>  Tue, 22 Jul 2014 15:48:20 -0400
+  [ Michael Sheldon ]
+  * Remove the Ubuntu shape from the save icon in the download snap
+    decision. (LP: #1350281)
+  * Transfer entire content Item objects over dbus, instead of just
+    their URL component. Adds name property to C++ backend and connects
+    to existing QML property.
+  * Ignore unused function warnings (new in g++ 4.9), as utils.cpp
+    defines a number of static functions that may not be used
+    everywhere.
+  * Make the ContentPeerPicker's header text customisable and replace
+    the bottom cancel button with new header style cancel.
+
+  [ Ubuntu daily release ]
+  * New rebuild forced
+
+ -- Ubuntu daily release <ps-jenkins@lists.canonical.com>  Fri, 01 Aug 2014 20:07:29 +0000
 
 content-hub (0.0+14.10.20140710-0ubuntu1) utopic; urgency=low
 

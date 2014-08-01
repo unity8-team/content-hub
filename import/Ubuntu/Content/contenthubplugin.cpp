@@ -66,16 +66,24 @@ void ContentHubPlugin::registerTypes(const char *uri)
     TRACE() << Q_FUNC_INFO;
     Q_ASSERT(uri == QLatin1String("Ubuntu.Content"));
 
-    const int versionMajor = 0;
-    const int versionMinor = 1;
+    QVector<QPair<int, int>> versions;
+    versions.append(QPair<int, int>(0, 1));
+    versions.append(QPair<int, int>(1, 0));
+    versions.append(QPair<int, int>(1, 1));
 
-    qmlRegisterUncreatableType<ContentHandler>(uri, versionMajor, versionMinor, "ContentHandler", "Not creatable as an object, use only to retrieve handler enums (e.g. ContentHandler.Source)");
-    qmlRegisterSingletonType<ContentHub>(uri, versionMajor, versionMinor, "ContentHub", qml_content_hub);
-    qmlRegisterType<ContentItem>(uri, versionMajor, versionMinor, "ContentItem");
-    qmlRegisterType<ContentPeer>(uri, versionMajor, versionMinor, "ContentPeer");
-    qmlRegisterType<ContentPeerModel>(uri, versionMajor, versionMinor, "ContentPeerModel");
-    qmlRegisterType<ContentScope>(uri, versionMajor, versionMinor, "ContentScope");
-    qmlRegisterType<ContentStore>(uri, versionMajor, versionMinor, "ContentStore");
-    qmlRegisterUncreatableType<ContentTransfer>(uri, versionMajor, versionMinor, "ContentTransfer", "created by hub");
-    qmlRegisterUncreatableType<ContentType>(uri, versionMajor, versionMinor, "ContentType", "Use only the type");
+    // Register common types for version 0.1, 1.0 and 1.1
+    for(int i = 0; i < versions.length(); i++) {
+        int versionMajor = versions[i].first;
+        int versionMinor = versions[i].second;
+
+        qmlRegisterUncreatableType<ContentHandler>(uri, versionMajor, versionMinor, "ContentHandler", "Not creatable as an object, use only to retrieve handler enums (e.g. ContentHandler.Source)");
+        qmlRegisterSingletonType<ContentHub>(uri, versionMajor, versionMinor, "ContentHub", qml_content_hub);
+        qmlRegisterType<ContentItem>(uri, versionMajor, versionMinor, "ContentItem");
+        qmlRegisterType<ContentPeer>(uri, versionMajor, versionMinor, "ContentPeer");
+        qmlRegisterType<ContentPeerModel>(uri, versionMajor, versionMinor, "ContentPeerModel");
+        qmlRegisterType<ContentScope>(uri, versionMajor, versionMinor, "ContentScope");
+        qmlRegisterType<ContentStore>(uri, versionMajor, versionMinor, "ContentStore");
+        qmlRegisterUncreatableType<ContentTransfer>(uri, versionMajor, versionMinor, "ContentTransfer", "created by hub");
+        qmlRegisterUncreatableType<ContentType>(uri, versionMajor, versionMinor, "ContentType", "Use only the type");
+    }
 }

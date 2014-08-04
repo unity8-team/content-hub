@@ -96,3 +96,26 @@ const com::ubuntu::content::Type &ContentType::contentType2HubType(Type type)
     default: return cuc::Type::unknown();
     }
 }
+
+/*!
+ * \brief ContentType::hubType2contentType converts a 
+ * com::ubuntu::content::Type to a ContentType::Type
+ * \internal
+ */
+ContentType::Type ContentType::hubType2contentType(const QString& type)
+{
+    if (type == cuc::Type::Known::documents().id())
+        return Documents;
+    else if (type ==  cuc::Type::Known::pictures().id())
+        return Pictures;
+    else if (type ==  cuc::Type::Known::music().id())
+        return Music;
+    else if (type ==  cuc::Type::Known::contacts().id())
+        return Contacts;
+    else if (type ==  cuc::Type::Known::videos().id())
+        return Videos;
+    else if (type ==  cuc::Type::Known::links().id())
+        return Links;
+    else
+      return Unknown;
+}

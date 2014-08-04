@@ -34,14 +34,16 @@ struct cucd::Transfer::Private
     Private(const int id,
             const QString& source,
             const QString& destination,
-            const int direction)    :
+            const int direction,
+            const QString& content_type)         :
         state(cuc::Transfer::created),
             id(id),
             source(source),
             destination(destination),
             direction(direction),
             selection_type(cuc::Transfer::single),
-            source_started_by_content_hub(false)
+            source_started_by_content_hub(false),
+            content_type(content_type)
     {
     }
     
@@ -55,15 +57,16 @@ struct cucd::Transfer::Private
     QVariantList items;
     bool source_started_by_content_hub;
     QString download_id;
-    QString type;
+    const QString content_type;
 };
 
 cucd::Transfer::Transfer(const int id,
                          const QString& source,
                          const QString& destination,
                          const int direction,
+                         const QString& content_type,
                          QObject* parent) :
-    QObject(parent), d(new Private(id, source, destination, direction))
+    QObject(parent), d(new Private(id, source, destination, direction, content_type))
 {
     TRACE() << __PRETTY_FUNCTION__;
 }
@@ -341,8 +344,8 @@ bool com::ubuntu::content::detail::Transfer::WasSourceStartedByContentHub() cons
     return d->source_started_by_content_hub;
 }
 
-QString cucd::Transfer::Type()
+QString cucd::Transfer::ContentType()
 {
     TRACE() << __PRETTY_FUNCTION__;
-    return d->type;
+    return d->content_type;
 }

@@ -166,7 +166,7 @@ QDBusVariant cucd::Service::DefaultSourceForType(const QString& type_id)
     return QDBusVariant(QVariant::fromValue(peer));
 }
 
-QDBusObjectPath cucd::Service::CreateImportFromPeer(const QString& peer_id, const QString& app_id)
+QDBusObjectPath cucd::Service::CreateImportFromPeer(const QString& peer_id, const QString& app_id, const QString& type_id)
 {
     TRACE() << Q_FUNC_INFO;
     QString dest_id = app_id;
@@ -175,7 +175,7 @@ QDBusObjectPath cucd::Service::CreateImportFromPeer(const QString& peer_id, cons
         TRACE() << Q_FUNC_INFO << "APP_ID isnt' set, attempting to get it from AppArmor";
         dest_id = aa_profile(this->message().service());
     }
-    return CreateTransfer(dest_id, peer_id, cuc::Transfer::Import);
+    return CreateTransfer(dest_id, peer_id, cuc::Transfer::Import, type_id);
 }
 
 bool cucd::Service::should_cancel (int st)
@@ -268,7 +268,7 @@ void cucd::Service::DownloadManagerError(QString errorMessage)
 
 }
 
-QDBusObjectPath cucd::Service::CreateExportToPeer(const QString& peer_id, const QString& app_id)
+QDBusObjectPath cucd::Service::CreateExportToPeer(const QString& peer_id, const QString& app_id, const QString& type_id)
 {
     TRACE() << Q_FUNC_INFO;
     QString src_id = app_id;
@@ -277,10 +277,10 @@ QDBusObjectPath cucd::Service::CreateExportToPeer(const QString& peer_id, const 
         TRACE() << Q_FUNC_INFO << "APP_ID isnt' set, attempting to get it from AppArmor";
         src_id = aa_profile(this->message().service());
     }
-    return CreateTransfer(peer_id, src_id, cuc::Transfer::Export);
+    return CreateTransfer(peer_id, src_id, cuc::Transfer::Export, type_id);
 }
 
-QDBusObjectPath cucd::Service::CreateShareToPeer(const QString& peer_id, const QString& app_id)
+QDBusObjectPath cucd::Service::CreateShareToPeer(const QString& peer_id, const QString& app_id, const QString& type_id)
 {
     TRACE() << Q_FUNC_INFO;
     QString src_id = app_id;
@@ -289,10 +289,10 @@ QDBusObjectPath cucd::Service::CreateShareToPeer(const QString& peer_id, const Q
         TRACE() << Q_FUNC_INFO << "APP_ID isnt' set, attempting to get it from AppArmor";
         src_id = aa_profile(this->message().service());
     }
-    return CreateTransfer(peer_id, src_id, cuc::Transfer::Share);
+    return CreateTransfer(peer_id, src_id, cuc::Transfer::Share, type_id);
 }
 
-QDBusObjectPath cucd::Service::CreateTransfer(const QString& dest_id, const QString& src_id, int dir)
+QDBusObjectPath cucd::Service::CreateTransfer(const QString& dest_id, const QString& src_id, int dir, const QString& type_id)
 {
     TRACE() << Q_FUNC_INFO << "DEST:" << dest_id << "SRC:" << src_id << "DIRECTION:" << dir;
 
@@ -313,7 +313,7 @@ QDBusObjectPath cucd::Service::CreateTransfer(const QString& dest_id, const QStr
         }
     }
 
-    auto transfer = new cucd::Transfer(import_counter, src_id, dest_id, dir, this);
+    auto transfer = new cucd::Transfer(import_counter, src_id, dest_id, dir, type_id, this);
     new TransferAdaptor(transfer);
     d->active_transfers.insert(transfer);
 

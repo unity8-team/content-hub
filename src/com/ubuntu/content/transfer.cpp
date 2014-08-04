@@ -122,7 +122,7 @@ bool cuc::Transfer::download()
     return d->download();
 }
 
-QString cuc::Transfer::type() const
+QString cuc::Transfer::contentType() const
 {
-    return d->type();
+    return d->contentType();
 }

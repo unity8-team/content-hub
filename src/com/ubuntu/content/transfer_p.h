@@ -218,7 +218,15 @@ class Transfer::Private : public QObject
 
         return not reply.isError();
     }
-    
+
+    QString type()
+    {
+        auto reply = remote_transfer->Type();
+        reply.waitForFinished();
+
+        return static_cast<QString>(reply.value());
+    }
+
     com::ubuntu::content::dbus::Transfer* remote_transfer;
 };
 }

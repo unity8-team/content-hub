@@ -55,6 +55,7 @@ struct cucd::Transfer::Private
     QVariantList items;
     bool source_started_by_content_hub;
     QString download_id;
+    QString type;
 };
 
 cucd::Transfer::Transfer(const int id,
@@ -338,4 +339,10 @@ void cucd::Transfer::SetSourceStartedByContentHub(bool started)
 bool com::ubuntu::content::detail::Transfer::WasSourceStartedByContentHub() const
 {
     return d->source_started_by_content_hub;
+}
+
+QString cucd::Transfer::Type()
+{
+    TRACE() << __PRETTY_FUNCTION__;
+    return d->type;
 }

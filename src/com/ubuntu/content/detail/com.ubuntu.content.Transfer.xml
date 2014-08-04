@@ -55,5 +55,8 @@
     <method name="Direction">
       <arg name="direction" type="i" direction="out" />
     </method>
+    <method name="Type">
+      <arg name="type" type="s" direction="out" />
+    </method>
  </interface>
 </node>

@@ -140,8 +140,8 @@ ContentHub *ContentHub::instance()
 
 /*!
  * \brief ContentHub::importContent creates a ContentTransfer object
- * \a type
  * \a peer
+ * \a type
  * \internal
  */
 ContentTransfer* ContentHub::importContent(cuc::Peer peer, ContentType::Type contentType)
@@ -158,8 +158,8 @@ ContentTransfer* ContentHub::importContent(cuc::Peer peer, ContentType::Type con
 
 /*!
  * \brief ContentHub::exportContent creates a ContentTransfer object
- * \a type
  * \a peer
+ * \a type
  * \internal
  */
 ContentTransfer* ContentHub::exportContent(cuc::Peer peer, ContentType::Type contentType)
@@ -176,8 +176,8 @@ ContentTransfer* ContentHub::exportContent(cuc::Peer peer, ContentType::Type con
 
 /*!
  * \brief ContentHub::shareContent creates a ContentTransfer object
- * \a type
  * \a peer
+ * \a type
  * \internal
  */
 ContentTransfer* ContentHub::shareContent(cuc::Peer peer, ContentType::Type contentType)

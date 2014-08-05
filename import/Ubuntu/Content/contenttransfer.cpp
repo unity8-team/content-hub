@@ -326,7 +326,6 @@ ContentType::Type ContentTransfer::contentType() const
     return ContentType::hubType2contentType(m_transfer->contentType());
 }
 
-
 /*!
  * \brief ContentTransfer::updateState update the state from the hub transfer object
  * \internal

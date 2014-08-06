@@ -222,10 +222,15 @@ QVector<cuc::Peer> cuc::Hub::known_shares_for_type(cuc::Type t)
 
 cuc::Transfer* cuc::Hub::create_import_from_peer(cuc::Peer peer)
 {
+    return this->create_import_from_peer_for_type(peer, cuc::Type::unknown());
+}
+
+cuc::Transfer* cuc::Hub::create_import_from_peer_for_type(cuc::Peer peer, cuc::Type type)
+{
     /* This needs to be replaced with a better way to get the APP_ID */
     QString id = app_id();
 
-    auto reply = d->service->CreateImportFromPeer(peer.id(), id);
+    auto reply = d->service->CreateImportFromPeer(peer.id(), id, type.id());
     reply.waitForFinished();
 
     if (reply.isError())
@@ -239,10 +244,15 @@ cuc::Transfer* cuc::Hub::create_import_from_peer(cuc::Peer peer)
 
 cuc::Transfer* cuc::Hub::create_export_to_peer(cuc::Peer peer)
 {
+    return this->create_export_to_peer_for_type(peer, cuc::Type::unknown());
+}
+
+cuc::Transfer* cuc::Hub::create_export_to_peer_for_type(cuc::Peer peer, cuc::Type type)
+{
     /* This needs to be replaced with a better way to get the APP_ID */
     QString id = app_id();
 
-    auto reply = d->service->CreateExportToPeer(peer.id(), id);
+    auto reply = d->service->CreateExportToPeer(peer.id(), id, type.id());
     reply.waitForFinished();
 
     if (reply.isError())
@@ -261,10 +271,15 @@ cuc::Transfer* cuc::Hub::create_export_to_peer(cuc::Peer peer)
 
 cuc::Transfer* cuc::Hub::create_share_to_peer(cuc::Peer peer)
 {
+    return this->create_share_to_peer_for_type(peer, cuc::Type::unknown());
+}
+
+cuc::Transfer* cuc::Hub::create_share_to_peer_for_type(cuc::Peer peer, cuc::Type type)
+{
     /* This needs to be replaced with a better way to get the APP_ID */
     QString id = app_id();
 
-    auto reply = d->service->CreateShareToPeer(peer.id(), id);
+    auto reply = d->service->CreateShareToPeer(peer.id(), id, type.id());
     reply.waitForFinished();
 
     if (reply.isError())

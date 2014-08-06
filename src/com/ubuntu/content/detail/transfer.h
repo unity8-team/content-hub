@@ -41,9 +41,10 @@ class Transfer : public QObject
     Q_PROPERTY(QString source READ source)
     Q_PROPERTY(QString destination READ destination)
     Q_PROPERTY(int direction READ Direction)
+    Q_PROPERTY(QString ContentType READ ContentType)
 
   public:
-    Transfer(const int, const QString&, const QString&, const int, QObject* parent = nullptr);
+    Transfer(const int, const QString&, const QString&, const int, const QString&, QObject* parent = nullptr);
     Transfer(const Transfer&) = delete;
     virtual ~Transfer();
 
@@ -82,6 +83,7 @@ Q_SIGNALS:
     void DownloadComplete(QString destFilePath);
     void Download();
     void DownloadError(Ubuntu::DownloadManager::Error* error);
+    QString ContentType();
 
   private:
     struct Private;

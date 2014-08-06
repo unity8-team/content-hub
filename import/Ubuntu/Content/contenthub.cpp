@@ -140,15 +140,16 @@ ContentHub *ContentHub::instance()
 
 /*!
  * \brief ContentHub::importContent creates a ContentTransfer object
- * \a type
  * \a peer
+ * \a type
  * \internal
  */
-ContentTransfer* ContentHub::importContent(cuc::Peer peer)
+ContentTransfer* ContentHub::importContent(cuc::Peer peer, ContentType::Type contentType)
 {
     TRACE() << Q_FUNC_INFO;
 
-    cuc::Transfer *hubTransfer = m_hub->create_import_from_peer(peer);
+    const cuc::Type &hubType = ContentType::contentType2HubType(contentType);
+    cuc::Transfer *hubTransfer = m_hub->create_import_from_peer_for_type(peer, hubType);
     ContentTransfer *qmlTransfer = new ContentTransfer(this);
     qmlTransfer->setTransfer(hubTransfer);
     m_activeImports.insert(hubTransfer, qmlTransfer);
@@ -157,15 +158,16 @@ ContentTransfer* ContentHub::importContent(cuc::Peer peer)
 
 /*!
  * \brief ContentHub::exportContent creates a ContentTransfer object
- * \a type
  * \a peer
+ * \a type
  * \internal
  */
-ContentTransfer* ContentHub::exportContent(cuc::Peer peer)
+ContentTransfer* ContentHub::exportContent(cuc::Peer peer, ContentType::Type contentType)
 {
     TRACE() << Q_FUNC_INFO;
 
-    cuc::Transfer *hubTransfer = m_hub->create_export_to_peer(peer);
+    const cuc::Type &hubType = ContentType::contentType2HubType(contentType);
+    cuc::Transfer *hubTransfer = m_hub->create_export_to_peer_for_type(peer, hubType);
     ContentTransfer *qmlTransfer = new ContentTransfer(this);
     qmlTransfer->setTransfer(hubTransfer);
     m_activeImports.insert(hubTransfer, qmlTransfer);
@@ -174,15 +176,16 @@ ContentTransfer* ContentHub::exportContent(cuc::Peer peer)
 
 /*!
  * \brief ContentHub::shareContent creates a ContentTransfer object
- * \a type
  * \a peer
+ * \a type
  * \internal
  */
-ContentTransfer* ContentHub::shareContent(cuc::Peer peer)
+ContentTransfer* ContentHub::shareContent(cuc::Peer peer, ContentType::Type contentType)
 {
     TRACE() << Q_FUNC_INFO;
 
-    cuc::Transfer *hubTransfer = m_hub->create_share_to_peer(peer);
+    const cuc::Type &hubType = ContentType::contentType2HubType(contentType);
+    cuc::Transfer *hubTransfer = m_hub->create_share_to_peer_for_type(peer, hubType);
     ContentTransfer *qmlTransfer = new ContentTransfer(this);
     qmlTransfer->setTransfer(hubTransfer);
     m_activeImports.insert(hubTransfer, qmlTransfer);

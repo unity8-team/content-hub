@@ -225,11 +225,11 @@ ContentTransfer *ContentPeer::request(ContentStore *store)
     ContentHub *contentHub = ContentHub::instance();
     ContentTransfer *qmlTransfer = NULL;
     if(m_handler == ContentHandler::Source) {
-        qmlTransfer = contentHub->importContent(m_peer);
+        qmlTransfer = contentHub->importContent(m_peer, m_contentType);
     } else if (m_handler == ContentHandler::Destination) {
-        qmlTransfer = contentHub->exportContent(m_peer);
+        qmlTransfer = contentHub->exportContent(m_peer, m_contentType);
     } else if (m_handler == ContentHandler::Share) {
-        qmlTransfer = contentHub->shareContent(m_peer);
+        qmlTransfer = contentHub->shareContent(m_peer, m_contentType);
     }
 
     qmlTransfer->setSelectionType(m_selectionType);

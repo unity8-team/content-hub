@@ -101,6 +101,8 @@ void ContentPeerModel::findPeers() {
         appendPeersForContentType(ContentType::Pictures);
         appendPeersForContentType(ContentType::Music);
         appendPeersForContentType(ContentType::Contacts);
+        appendPeersForContentType(ContentType::Videos);
+        appendPeersForContentType(ContentType::Links);
     } else {
         appendPeersForContentType(m_contentType);
     }
@@ -128,16 +130,31 @@ void ContentPeerModel::appendPeersForContentType(ContentType::Type contentType)
     {
         if(!hubPeer.id().isEmpty()) 
         {
+            bool isDefault = false;
+            bool isDupe = false;
+            Q_FOREACH (ContentPeer *p, m_peers)
+            {
+                if (p->peer().id() == hubPeer.id())
+                    isDupe = true;
+            }
+            if (isDupe)
+                continue;
+
             ContentPeer *qmlPeer = new ContentPeer();
             qmlPeer->setPeer(hubPeer);
-            qmlPeer->setContentType(contentType);
             qmlPeer->setHandler(m_handler);
-            if(qmlPeer->isDefaultPeer()) 
-            {
-                m_peers.prepend(qmlPeer);
+            if(m_contentType != ContentType::All) {
+                qmlPeer->setContentType(contentType);
+                isDefault = qmlPeer->isDefaultPeer();
             } else {
-                m_peers.append(qmlPeer);
+                qmlPeer->setContentType(m_contentType);
             }
+
+            if(isDefault)
+                m_peers.prepend(qmlPeer);
+            else
+                m_peers.append(qmlPeer);
+            
             Q_EMIT peersChanged();
         }
     }

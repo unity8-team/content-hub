@@ -67,8 +67,8 @@ other one. We refer to this component as the content hub. \sa {ContentHub}
 
 \qml
 import QtQuick 2.0
-import Ubuntu.Components 0.1
-import Ubuntu.Content 0.1
+import Ubuntu.Components 1.1
+import Ubuntu.Content 1.1
 
 Rectangle {
   id: root
@@ -140,7 +140,7 @@ please file a bug in Ubuntu Content API \l {https://bugs.launchpad.net/content-h
 \part Components
 Available through:
 \code
-    import Ubuntu.Content 0.1
+    import Ubuntu.Content 1.1
 \endcode
 
 */

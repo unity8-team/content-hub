@@ -63,8 +63,8 @@ Q_SIGNALS:
     int State();
     void Start();
     void Handled();
-    void Charge(const QStringList&);
-    QStringList Collect();
+    void Charge(const QVariantList&);
+    QVariantList Collect();
     void Abort();
     void Finalize();
     QString Store();

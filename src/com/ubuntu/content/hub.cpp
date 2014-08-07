@@ -63,6 +63,8 @@ cuc::Hub::Hub(QObject* parent) : QObject(parent), d{new cuc::Hub::Private{this}}
             setLoggingLevel(value);
     }
 
+    qDBusRegisterMetaType<cuc::Item>();
+
     if (qApp)
         qApp->installEventFilter(this);
 }

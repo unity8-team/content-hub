@@ -1,6 +1,10 @@
 {
     "share": [
         "pictures",
-        "contacts"
+        "videos",
+        "documents",
+        "music",
+        "contacts",
+        "links"
     ]
 }

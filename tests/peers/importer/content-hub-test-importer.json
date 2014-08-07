@@ -1,6 +1,10 @@
 {
     "destination": [
         "pictures",
-        "contacts"
+        "videos",
+        "documents",
+        "music",
+        "contacts",
+        "links"
     ]
 }

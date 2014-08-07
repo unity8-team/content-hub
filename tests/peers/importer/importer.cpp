@@ -19,7 +19,7 @@
 #include <QCoreApplication>
 #include <QStringList>
 
-#include "autosharer.h"
+#include "autoimporter.h"
 
 namespace cuc = com::ubuntu::content;
 
@@ -27,10 +27,10 @@ int main(int argc, char *argv[])
 {
     QCoreApplication a(argc, argv);
     if (qgetenv("APP_ID").isEmpty()) {
-        qputenv("APP_ID", "content-hub-test-sharer");
+        qputenv("APP_ID", "content-hub-test-importer");
     }
 
-    AutoSharer sharer;
+    AutoImporter importer;
 
     return a.exec();
 }

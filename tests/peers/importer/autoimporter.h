@@ -16,21 +16,30 @@
  * Authored by: Ken VanDine <ken.vandine@canonical.com>
  */
 
-#include <QCoreApplication>
-#include <QStringList>
+#ifndef AUTOSHARER_H
+#define AUTOSHARER_H
 
-#include "autosharer.h"
+#include <QObject>
+#include <com/ubuntu/content/hub.h>
+#include <com/ubuntu/content/transfer.h>
+#include <com/ubuntu/content/type.h>
+#include <com/ubuntu/content/import_export_handler.h>
+#include <QDebug>
 
 namespace cuc = com::ubuntu::content;
 
-int main(int argc, char *argv[])
+class AutoImporter : public cuc::ImportExportHandler
 {
-    QCoreApplication a(argc, argv);
-    if (qgetenv("APP_ID").isEmpty()) {
-        qputenv("APP_ID", "content-hub-test-sharer");
-    }
+    Q_OBJECT
 
-    AutoSharer sharer;
+public:
+    AutoImporter();
+       
+public slots:
+    Q_INVOKABLE void handle_import(cuc::Transfer*);
+    Q_INVOKABLE void handle_export(cuc::Transfer*);
+    Q_INVOKABLE void handle_share(cuc::Transfer*);
+    Q_INVOKABLE void stateChanged();
+};
 
-    return a.exec();
-}
+#endif // AUTOSHARER_H

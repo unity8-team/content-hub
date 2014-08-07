@@ -15,5 +15,6 @@
 # Authored by: Ken VanDine <ken.vandine@canonical.com>
 
 add_subdirectory(exporter)
+add_subdirectory(importer)
 add_subdirectory(sharer)
 add_subdirectory(data)

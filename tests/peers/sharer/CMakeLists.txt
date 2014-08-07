@@ -52,3 +52,8 @@ install(
   FILES content-hub-test-sharer.desktop
   DESTINATION ${CMAKE_INSTALL_DATADIR}/applications
 )
+
+install(
+  FILES content-hub-test-sharer.png
+  DESTINATION ${CMAKE_INSTALL_DATADIR}/icons/hicolor/512x512/apps/
+)

@@ -1,8 +1,8 @@
 [Desktop Entry]
-Name=Test Auto Sharer
+Name=Auto Sharer
 Comment=Test Auto Sharer
 Exec=content-hub-test-sharer
-Icon=
+Icon=content-hub-test-sharer
 Terminal=false
 Type=Application
 X-Ubuntu-Touch=true

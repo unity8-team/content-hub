@@ -18,6 +18,7 @@
 #define COM_UBUNTU_CONTENTTRANSFER_H_
 
 #include "contentstore.h"
+#include "contenttype.h"
 
 #include <com/ubuntu/content/store.h>
 #include <com/ubuntu/content/transfer.h>
@@ -40,6 +41,7 @@ class ContentTransfer : public QObject
     Q_PROPERTY(QString store READ store NOTIFY storeChanged)
     Q_PROPERTY(QQmlListProperty<ContentItem> items READ items NOTIFY itemsChanged)
     Q_PROPERTY(QString downloadId READ downloadId WRITE setDownloadId NOTIFY downloadIdChanged)
+    Q_PROPERTY(ContentType::Type contentType READ contentType CONSTANT)
 
 public:
     enum State {
@@ -88,6 +90,8 @@ public:
     void setDownloadId(QString downloadId);
 
     void collectItems();
+
+    ContentType::Type contentType() const;
 
 Q_SIGNALS:
     void stateChanged();

@@ -128,13 +128,19 @@ TEST(Hub, transfer_creation_and_states_work)
         {
             QVector<cuc::Item> source_items;
             source_items << cuc::Item(QUrl::fromLocalFile(QFileInfo("file1").absoluteFilePath()));
+            source_items[0].setName("name1");
             source_items << cuc::Item(QUrl::fromLocalFile(QFileInfo("file2").absoluteFilePath()));
+            source_items[1].setName("name2");
             source_items << cuc::Item(QUrl::fromLocalFile(QFileInfo("file3").absoluteFilePath()));
+            source_items[2].setName("name3");
             
             QVector<cuc::Item> expected_items;
             expected_items << cuc::Item(QUrl("file:///tmp/Incoming/file1"));
+            expected_items[0].setName("name1");
             expected_items << cuc::Item(QUrl("file:///tmp/Incoming/file2"));
+            expected_items[1].setName("name2");
             expected_items << cuc::Item(QUrl("file:///tmp/Incoming/file3"));
+            expected_items[2].setName("name3");
 
             /** [Importing pictures] */
             auto hub = cuc::Hub::Client::instance();

@@ -32,6 +32,7 @@
 #include <unistd.h>
 #include <libnotify/notify.h>
 
+#include <com/ubuntu/content/item.h>
 #include <com/ubuntu/content/peer.h>
 #include <com/ubuntu/content/type.h>
 #include <com/ubuntu/content/transfer.h>
@@ -92,6 +93,7 @@ cucd::Service::Service(QDBusConnection connection, const QSharedPointer<cucd::Pe
     assert(!peer_registry.isNull());
 
     qDBusRegisterMetaType<cuc::Peer>();
+    qDBusRegisterMetaType<cuc::Item>();
 
     m_watcher->setWatchMode(QDBusServiceWatcher::WatchForUnregistration);
     m_watcher->setConnection(d->connection);
@@ -202,7 +204,7 @@ void action_accept(NotifyNotification *notification, char *action, gpointer data
     Q_UNUSED(action);
 
     cucd::Transfer* t = (cucd::Transfer*)data;
-    t->Charge(QStringList());
+    t->Charge(QVariantList());
 }
 
 void download_notify (cucd::Transfer* t)
@@ -219,6 +221,9 @@ void download_notify (cucd::Transfer* t)
                                         "x-canonical-snap-decisions",
                                         "true");
 
+    notify_notification_set_hint_string(notification,
+                                        "x-canonical-non-shaped-icon",
+                                        "true");
 
     notify_notification_set_hint_string(notification,
                                         "x-canonical-private-button-tint",
@@ -571,7 +576,7 @@ void cucd::Service::RegisterImportExportHandler(const QString& peer_id, const QD
             {
                 TRACE() << Q_FUNC_INFO << "Found downloaded import, charging";
                 if (r->handler->isValid())
-                    t->Charge(QStringList());
+                    t->Charge(QVariantList());
             }
         }
     }
@@ -588,7 +593,7 @@ void cucd::Service::HandlerActive(const QString& peer_id)
             if (t->Direction() == cuc::Transfer::Export)
             {
                 TRACE() << Q_FUNC_INFO << "Found downloaded import, charging";
-                t->Charge(QStringList());
+                t->Charge(QVariantList());
             }
         }
     }

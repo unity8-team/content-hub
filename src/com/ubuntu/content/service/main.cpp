@@ -19,6 +19,7 @@
 #include <QCoreApplication>
 #include <QProcessEnvironment>
 #include <csignal>
+#include <com/ubuntu/content/item.h>
 
 #include "detail/app_manager.h"
 #include "debug.h"

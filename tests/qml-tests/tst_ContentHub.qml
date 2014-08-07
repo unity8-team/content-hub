@@ -34,12 +34,13 @@ TestCase {
     function test_export_request() {
         var filePath = "file:///foo/bar.png";
         var transfer = destPeer.request();
-        transfer.items = [ resultComponent.createObject(test, {"url": filePath}) ];
+        transfer.items = [ resultComponent.createObject(test, {"url": filePath, "name": "test"}) ];
         transfer.state = ContentTransfer.Charged;
         // This shouldn't be necessary, but without it we compare the results to fast
         ContentHub.exportRequested(transfer);
         compare(test.exportTransfer, transfer, "Transfer object not correcty set");
         compare(test.exportTransfer.items[0].url, filePath, "Transfer contents incorrect");
+        compare(test.exportTransfer.items[0].name, "test", "Transfer name incorrect");
     }
 
     Component {

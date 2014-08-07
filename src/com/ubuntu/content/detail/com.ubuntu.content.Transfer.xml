@@ -20,10 +20,10 @@
     <method name="Download">
     </method>
     <method name="Charge">
-      <arg name="items" type="as" direction="in" />
+      <arg name="items" type="av" direction="in" />
     </method>
     <method name="Collect">
-      <arg name="items" type="as" direction="out" />
+      <arg name="items" type="av" direction="out" />
     </method>
     <method name="Store">
       <arg name="uri" type="s" direction="out" />

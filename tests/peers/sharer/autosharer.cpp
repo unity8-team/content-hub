@@ -16,67 +16,48 @@
  * Authored by: Ken VanDine <ken.vandine@canonical.com>
  */
 
-#include "autoexporter.h"
+#include "autosharer.h"
 
-AutoExporter::AutoExporter()
+AutoSharer::AutoSharer()
 {
     auto hub = cuc::Hub::Client::instance();
     hub->register_import_export_handler(this);
 }
 
-void AutoExporter::handle_import(cuc::Transfer *transfer)
+void AutoSharer::handle_import(cuc::Transfer *transfer)
 {
     qDebug() << Q_FUNC_INFO << "not implemented";
     Q_UNUSED(transfer);
 }
 
-void AutoExporter::handle_export(cuc::Transfer *transfer)
+void AutoSharer::handle_export(cuc::Transfer *transfer)
+{
+    qDebug() << Q_FUNC_INFO << "not implemented";
+    Q_UNUSED(transfer);
+}
+
+void AutoSharer::handle_share(cuc::Transfer *transfer)
 {
     qDebug() << Q_FUNC_INFO;
-    if (transfer == nullptr) {
+    if (transfer == nullptr)
+    {
         qDebug() << Q_FUNC_INFO << "Transfer null";
         return;
     }
 
-    qDebug() << Q_FUNC_INFO << transfer->contentType();
-
-    QVector<cuc::Item> items;
-
-    if (transfer->contentType() == cuc::Type::Known::contacts().id()) {
-        items << cuc::Item(QUrl("file:///usr/share/content-hub/testability/data/Joker.vcf"));
-
-        if (transfer->selectionType() == cuc::Transfer::SelectionType::multiple) {
-            items << cuc::Item(QUrl("file:///usr/share/content-hub/testability/data/Stark,_Tony.vcf"));
-        }
-
-    } else {
-        items << cuc::Item(QUrl("file:///usr/share/content-hub/testability/data/webbrowser-app.png"));
-
-        if (transfer->selectionType() == cuc::Transfer::SelectionType::multiple) {
-            items << cuc::Item(QUrl("file:///usr/share/content-hub/testability/data/clock.png"));
-        }
-    }
-
-    transfer->charge(items);
-
     connect(transfer, SIGNAL(stateChanged()), this, SLOT(stateChanged()));
 
+    QVector<cuc::Item> items;
+    items = transfer->collect();
     qDebug() << Q_FUNC_INFO << "Items:" << items.count();
 }
 
-void AutoExporter::handle_share(cuc::Transfer *transfer)
-{
-    qDebug() << Q_FUNC_INFO << "not implemented";
-    Q_UNUSED(transfer);
-}
-
-void AutoExporter::stateChanged()
+void AutoSharer::stateChanged()
 {
     qDebug() << Q_FUNC_INFO;
     cuc::Transfer *transfer = static_cast<cuc::Transfer*>(sender());
 
     qDebug() << Q_FUNC_INFO << "STATE:" << transfer->state();
-
 
     if (transfer->state() == cuc::Transfer::collected)
         QCoreApplication::instance()->quit();

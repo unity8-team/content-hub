@@ -15,6 +15,6 @@
 # Authored by: Ken VanDine <ken.vandine@canonical.com>
 
 install(
-  FILES webbrowser-app.png clock.png
+  FILES webbrowser-app.png clock.png Joker.vcf Stark,_Tony.vcf
   DESTINATION ${CMAKE_INSTALL_DATADIR}/content-hub/testability/data
 )

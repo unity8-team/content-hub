@@ -1,0 +1,9 @@
+[Desktop Entry]
+Name=Test Auto Sharer
+Comment=Test Auto Sharer
+Exec=content-hub-test-sharer
+Icon=
+Terminal=false
+Type=Application
+X-Ubuntu-Touch=true
+X-Ubuntu-Application-ID=content-hub-test-sharer

@@ -14,6 +14,41 @@
 #
 # Authored by: Ken VanDine <ken.vandine@canonical.com>
 
-add_subdirectory(exporter)
-add_subdirectory(sharer)
-add_subdirectory(data)
+include_directories(${CMAKE_CURRENT_BINARY_DIR})
+
+add_executable(
+  content-hub-test-sharer
+
+  sharer.cpp
+  autosharer.cpp
+)
+
+qt5_use_modules(content-hub-test-sharer Core Gui DBus)
+
+set_target_properties(
+  content-hub-test-sharer
+  PROPERTIES
+  AUTOMOC TRUE
+)
+
+target_link_libraries(
+  content-hub-test-sharer
+ 
+  content-hub 
+)
+
+install(
+  TARGETS content-hub-test-sharer
+  RUNTIME DESTINATION ${CMAKE_INSTALL_BINDIR}
+)
+
+install(
+  FILES content-hub-test-sharer.json
+  DESTINATION ${CMAKE_INSTALL_DATADIR}/content-hub/peers
+  RENAME content-hub-test-sharer
+)
+
+install(
+  FILES content-hub-test-sharer.desktop
+  DESTINATION ${CMAKE_INSTALL_DATADIR}/applications
+)

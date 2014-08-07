@@ -19,7 +19,7 @@
 #include <QCoreApplication>
 #include <QStringList>
 
-#include "autoexporter.h"
+#include "autosharer.h"
 
 namespace cuc = com::ubuntu::content;
 
@@ -27,10 +27,10 @@ int main(int argc, char *argv[])
 {
     QCoreApplication a(argc, argv);
     if (qgetenv("APP_ID").isEmpty()) {
-        qputenv("APP_ID", "content-hub-test-exporter");
+        qputenv("APP_ID", "content-hub-test-sharer");
     }
 
-    AutoExporter exporter;
+    AutoSharer sharer;
 
     QString peerName;
 
@@ -44,8 +44,8 @@ int main(int argc, char *argv[])
 
         auto peer = cuc::Peer{peerName};
         qDebug() << Q_FUNC_INFO << "PEER: " << peer.id();
-        auto transfer = hub->create_export_to_peer(peer);
-        exporter.handle_export(transfer);
+        auto transfer = hub->create_share_to_peer_for_type(peer, cuc::Type::Known::pictures());
+        sharer.handle_share(transfer);
     }
 
     return a.exec();

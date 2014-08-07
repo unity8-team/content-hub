@@ -16,23 +16,24 @@
  * Authored by: Ken VanDine <ken.vandine@canonical.com>
  */
 
-#ifndef AUTOEXPORTER_H
-#define AUTOEXPORTER_H
+#ifndef AUTOSHARER_H
+#define AUTOSHARER_H
 
 #include <QObject>
 #include <com/ubuntu/content/hub.h>
 #include <com/ubuntu/content/transfer.h>
+#include <com/ubuntu/content/type.h>
 #include <com/ubuntu/content/import_export_handler.h>
 #include <QDebug>
 
 namespace cuc = com::ubuntu::content;
 
-class AutoExporter : public cuc::ImportExportHandler
+class AutoSharer : public cuc::ImportExportHandler
 {
     Q_OBJECT
 
 public:
-    AutoExporter();
+    AutoSharer();
        
 public slots:
     Q_INVOKABLE void handle_import(cuc::Transfer*);
@@ -41,4 +42,4 @@ public slots:
     Q_INVOKABLE void stateChanged();
 };
 
-#endif // AUTOEXPORTER_H
+#endif // AUTOSHARER_H

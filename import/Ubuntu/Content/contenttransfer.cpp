@@ -316,6 +316,17 @@ void ContentTransfer::collectItems()
 }
 
 /*!
+ * \qmlproperty ContentType ContentTransfer::contentType
+ * Specifies the ContentType requested.
+ */
+ContentType::Type ContentTransfer::contentType() const
+{
+    TRACE() << Q_FUNC_INFO;
+
+    return ContentType::hubType2contentType(m_transfer->contentType());
+}
+
+/*!
  * \brief ContentTransfer::updateState update the state from the hub transfer object
  * \internal
  */

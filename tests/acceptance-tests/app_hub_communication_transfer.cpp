@@ -178,6 +178,23 @@ TEST(Hub, transfer_creation_and_states_work)
             EXPECT_EQ(cuc::Transfer::aborted, single_transfer->state());
             /* end single transfer test */
 
+
+            /* Test create_import_from_peer_for_type */
+            auto type_transfer = hub->create_import_from_peer_for_type(
+                hub->default_source_for_type(cuc::Type::Known::pictures()),
+                cuc::Type::Known::pictures());
+            ASSERT_TRUE(type_transfer != nullptr);
+            EXPECT_EQ(cuc::Transfer::created, type_transfer->state());
+            EXPECT_TRUE(transfer->setSelectionType(cuc::Transfer::SelectionType::multiple));
+            ASSERT_EQ(cuc::Transfer::SelectionType::multiple, transfer->selectionType());
+            type_transfer->setStore(new cuc::Store{"/tmp/Incoming"});
+            EXPECT_TRUE(type_transfer->start());
+            EXPECT_EQ(cuc::Transfer::initiated, type_transfer->state());
+            ASSERT_EQ(cuc::Type::Known::pictures().id(), type_transfer->contentType());
+            EXPECT_TRUE(type_transfer->abort());
+            EXPECT_EQ(cuc::Transfer::aborted, type_transfer->state());
+            /* end create_import_from_peer_for_type test */
+
             hub->quit();
         });
         EXPECT_EQ(0, QTest::qExec(std::addressof(harness)));

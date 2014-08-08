@@ -1,3 +1,10 @@
+content-hub (0.0+14.10.20140806.2-0ubuntu1) utopic; urgency=low
+
+  [ Ken VanDine ]
+  * Add contentType property to Transfer
+
+ -- Ubuntu daily release <ps-jenkins@lists.canonical.com>  Wed, 06 Aug 2014 20:09:47 +0000
+
 content-hub (0.0+14.10.20140801.4-0ubuntu1) utopic; urgency=medium
 
   [ Ken VanDine ]

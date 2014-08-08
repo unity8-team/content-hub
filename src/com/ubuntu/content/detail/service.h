@@ -57,9 +57,9 @@ class Service : public QObject, protected QDBusContext
     QVariantList KnownSourcesForType(const QString &type_id);
     QVariantList KnownDestinationsForType(const QString &type_id);
     QVariantList KnownSharesForType(const QString &type_id);
-    QDBusObjectPath CreateImportFromPeer(const QString&, const QString&);
-    QDBusObjectPath CreateExportToPeer(const QString&, const QString&);
-    QDBusObjectPath CreateShareToPeer(const QString&, const QString&);
+    QDBusObjectPath CreateImportFromPeer(const QString&, const QString&, const QString&);
+    QDBusObjectPath CreateExportToPeer(const QString&, const QString&, const QString&);
+    QDBusObjectPath CreateShareToPeer(const QString&, const QString&, const QString&);
 
     void RegisterImportExportHandler(const QString&, const QDBusObjectPath& handler);
     void HandlerActive(const QString&);
@@ -77,7 +77,7 @@ class Service : public QObject, protected QDBusContext
     void handle_imports(int);
     void handle_exports(int);
     void handler_unregistered(const QString&);
-    QDBusObjectPath CreateTransfer(const QString&, const QString&, int);
+    QDBusObjectPath CreateTransfer(const QString&, const QString&, int, const QString&);
 
 };
 }

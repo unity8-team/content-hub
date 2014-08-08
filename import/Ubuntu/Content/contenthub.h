@@ -53,9 +53,9 @@ public:
 
     QQmlListProperty<ContentTransfer> finishedImports();
 
-    Q_INVOKABLE ContentTransfer* importContent(com::ubuntu::content::Peer peer);
-    Q_INVOKABLE ContentTransfer* exportContent(com::ubuntu::content::Peer peer);
-    Q_INVOKABLE ContentTransfer* shareContent(com::ubuntu::content::Peer peer);
+    Q_INVOKABLE ContentTransfer* importContent(com::ubuntu::content::Peer peer, ContentType::Type type);
+    Q_INVOKABLE ContentTransfer* exportContent(com::ubuntu::content::Peer peer, ContentType::Type type);
+    Q_INVOKABLE ContentTransfer* shareContent(com::ubuntu::content::Peer peer, ContentType::Type type);
 
 Q_SIGNALS:
     void importRequested(ContentTransfer *transfer);

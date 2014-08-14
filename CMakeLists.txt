@@ -83,6 +83,20 @@ set(QML_API_VERSION_MAJOR 1)
 
 include_directories(include)
 
+file(GLOB_RECURSE I18N_QML_SRC_FILES
+     RELATIVE ${CMAKE_CURRENT_SOURCE_DIR}
+     import/Ubuntu/Content/**.qml)
+list(SORT I18N_QML_SRC_FILES)
+
+file(GLOB_RECURSE I18N_CPP_SRC_FILES
+     RELATIVE ${CMAKE_CURRENT_SOURCE_DIR}
+     src/com/ubuntu/content/detail/**.cpp)
+list(SORT I18N_CPP_SRC_FILES)
+
+# for dh_translations to extract the domain
+# (regarding syntax consistency, see http://pad.lv/1181187)
+set (GETTEXT_PACKAGE "content-hub")
+
 add_subdirectory(doc)
 add_subdirectory(po)
 add_subdirectory(src)

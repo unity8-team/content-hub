@@ -1,14 +1,14 @@
 # SOME DESCRIPTIVE TITLE.
-# Copyright (C) YEAR THE PACKAGE'S COPYRIGHT HOLDER
+# Copyright (C) YEAR Canonical Ltd.
 # This file is distributed under the same license as the PACKAGE package.
 # FIRST AUTHOR <EMAIL@ADDRESS>, YEAR.
 #
 #, fuzzy
 msgid ""
 msgstr ""
-"Project-Id-Version: PACKAGE VERSION\n"
+"Project-Id-Version: content-hub\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2014-05-27 16:00+0100\n"
+"POT-Creation-Date: 2014-08-14 12:39+0100\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -17,18 +17,67 @@ msgstr ""
 "Content-Type: text/plain; charset=CHARSET\n"
 "Content-Transfer-Encoding: 8bit\n"
 
-#: ../src/com/ubuntu/content/detail/service.cpp:212
+#: import/Ubuntu/Content/ContentPeerPicker10.qml:48
+#: import/Ubuntu/Content/ContentPeerPicker11.qml:49
+msgid "Choose from"
+msgstr ""
+
+#: import/Ubuntu/Content/ContentPeerPicker10.qml:48
+#: import/Ubuntu/Content/ContentPeerPicker11.qml:49
+msgid "Open with"
+msgstr ""
+
+#: import/Ubuntu/Content/ContentPeerPicker10.qml:48
+#: import/Ubuntu/Content/ContentPeerPicker11.qml:49
+msgid "Share to"
+msgstr ""
+
+#: import/Ubuntu/Content/ContentPeerPicker10.qml:158
+#: import/Ubuntu/Content/ContentPeerPicker11.qml:175
+msgid "Apps"
+msgstr ""
+
+#: import/Ubuntu/Content/ContentPeerPicker10.qml:194
+#: import/Ubuntu/Content/ContentPeerPicker11.qml:211
+msgid ""
+"Sorry, there aren't currently any apps installed that can provide this type "
+"of content."
+msgstr ""
+
+#: import/Ubuntu/Content/ContentPeerPicker10.qml:194
+#: import/Ubuntu/Content/ContentPeerPicker11.qml:211
+msgid ""
+"Sorry, there aren't currently any apps installed that can handle this type "
+"of content."
+msgstr ""
+
+#: import/Ubuntu/Content/ContentPeerPicker10.qml:210
+#: import/Ubuntu/Content/ContentPeerPicker11.qml:227
+msgid "Devices"
+msgstr ""
+
+#: import/Ubuntu/Content/ContentPeerPicker10.qml:247
+#: import/Ubuntu/Content/ContentPeerPicker11.qml:56
+#: import/Ubuntu/Content/ContentTransferHint.qml:65
+msgid "Cancel"
+msgstr ""
+
+#: import/Ubuntu/Content/ContentTransferHint.qml:52
+msgid "Transfer in progress"
+msgstr ""
+
+#: src/com/ubuntu/content/detail/service.cpp:216
 msgid "Download Complete"
 msgstr ""
 
-#: ../src/com/ubuntu/content/detail/service.cpp:227
+#: src/com/ubuntu/content/detail/service.cpp:234
 msgid "Open"
 msgstr ""
 
-#: ../src/com/ubuntu/content/detail/service.cpp:234
+#: src/com/ubuntu/content/detail/service.cpp:241
 msgid "Dismiss"
 msgstr ""
 
-#: ../src/com/ubuntu/content/detail/service.cpp:252
+#: src/com/ubuntu/content/detail/service.cpp:259
 msgid "Download Failed"
 msgstr ""

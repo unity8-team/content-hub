@@ -49,9 +49,23 @@ Item {
         id: dialog
         Dialog {
             id: dialogue
+            title: i18n.tr("Transfer in progress")
+
             ActivityIndicator {
-                anchors.centerIn: parent
+                id: indicator
+                anchors.top: parent.top
+                anchors.topMargin: units.gu(6)
                 running: internal.isTransferRunning
+            }
+
+            Button {
+                id: cancelTransfer
+                anchors.top: indicator.bottom
+                anchors.topMargin: units.gu(4)
+                text: i18n.tr("Cancel")
+                onClicked: {
+                    root.activeTransfer.state = ContentTransfer.Aborted
+                }
             }
         }
     }

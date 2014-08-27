@@ -326,6 +326,29 @@ ContentType::Type ContentTransfer::contentType() const
     return ContentType::hubType2contentType(m_transfer->contentType());
 }
 
+
+/*!
+ * \qmlproperty QString ContentTransfer::source
+ * Provides the app id of the source application for this transfer
+ */
+QString ContentTransfer::source()
+{
+    TRACE() << Q_FUNC_INFO;
+
+    return m_transfer->source();
+}
+
+/*!
+ * \qmlproperty QString ContentTransfer::destination
+ * Provides the app id of the destination application for this transfer
+ */
+QString ContentTransfer::destination()
+{
+    TRACE() << Q_FUNC_INFO;
+
+    return m_transfer->destination();
+}
+
 /*!
  * \brief ContentTransfer::updateState update the state from the hub transfer object
  * \internal

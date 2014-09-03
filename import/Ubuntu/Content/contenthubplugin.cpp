@@ -83,7 +83,7 @@ void ContentHubPlugin::registerTypes(const char *uri)
         qmlRegisterType<ContentPeerModel>(uri, versionMajor, versionMinor, "ContentPeerModel");
         qmlRegisterType<ContentScope>(uri, versionMajor, versionMinor, "ContentScope");
         qmlRegisterType<ContentStore>(uri, versionMajor, versionMinor, "ContentStore");
-        qmlRegisterUncreatableType<ContentTransfer>(uri, versionMajor, versionMinor, "ContentTransfer", "created by hub");
+        qmlRegisterUncreatableType<ContentTransfer>(uri, versionMajor, versionMinor, "ContentTransfer", "Not creatable as an object, please use ContentPeer::request()");
         qmlRegisterUncreatableType<ContentType>(uri, versionMajor, versionMinor, "ContentType", "Use only the type");
     }
 }

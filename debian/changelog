@@ -1,3 +1,13 @@
+content-hub (0.0+14.10.20141009-0ubuntu1) utopic; urgency=low
+
+  [ Ken VanDine ]
+  * Fall back to a copy if move fails (LP: #1373086)
+
+  [ Michael Sheldon ]
+  * Fix packaging for translations.
+
+ -- Ubuntu daily release <ps-jenkins@lists.canonical.com>  Thu, 09 Oct 2014 14:44:05 +0000
+
 content-hub (0.0+14.10.20141007-0ubuntu1) utopic; urgency=low
 
   [ Sebastien Bacher ]

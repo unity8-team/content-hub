@@ -205,8 +205,11 @@ bool ContentItem::move(const QString &dir, const QString &fileName)
     TRACE() << Q_FUNC_INFO << "New path:" << destFilePath;
 
     if (not QFile::rename(fi.absoluteFilePath(), destFilePath)) {
-        qWarning() << "Failed to move content to:" << destFilePath;
-        return false;
+        qWarning() << "Failed to move content to:" << destFilePath << "falling back to copy";
+        if (not QFile::copy(fi.absoluteFilePath(), destFilePath)) {
+            qWarning() << "Failed to copy content to:" << destFilePath;
+            return false;
+        }
     }
 
     setUrl(QUrl::fromLocalFile(destFilePath));

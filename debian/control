@@ -27,6 +27,7 @@ Homepage: https://launchpad.net/content-hub
 # just go ahead. ~phablet-team will notice and sync up the code again.
 Vcs-Bzr: https://code.launchpad.net/~phablet-team/content-hub/trunk
 Vcs-Browser: https://bazaar.launchpad.net/~phablet-team/content-hub/trunk/files
+X-Ubuntu-Use-Langpack: yes
 
 Package: content-hub
 Architecture: any

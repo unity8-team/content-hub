@@ -45,7 +45,7 @@ Item {
 
     Header {
         id: header
-        title: (handler === ContentHandler.Source) ? i18n.tr("Choose from") : (handler === ContentHandler.Destination ? i18n.tr("Open with") : i18n.tr("Share to"))
+        title: (handler === ContentHandler.Source) ? i18n.dtr("content-hub", "Choose from") : (handler === ContentHandler.Destination ? i18n.dtr("content-hub", "Open with") : i18n.dtr("content-hub", "Share to"))
     }
 
     Loader {
@@ -155,7 +155,7 @@ Item {
     ListItem.Header {
         id: appTitle
         anchors.top: header.visible ? header.bottom : parent.top
-        text: i18n.tr("Apps")
+        text: i18n.dtr("content-hub", "Apps")
     }
 
     Rectangle {
@@ -191,7 +191,7 @@ Item {
                     width: parent.width - units.gu(5)
                     wrapMode: Text.WordWrap
                     horizontalAlignment: Text.AlignHCenter
-                    text: root.handler === ContentHandler.Source ? i18n.tr("Sorry, there aren't currently any apps installed that can provide this type of content.") : i18n.tr("Sorry, there aren't currently any apps installed that can handle this type of content.")
+                    text: root.handler === ContentHandler.Source ? i18n.dtr("content-hub", "Sorry, there aren't currently any apps installed that can provide this type of content.") : i18n.dtr("content-hub", "Sorry, there aren't currently any apps installed that can handle this type of content.")
                     visible: appPeers.model ? appPeers.model.length == 0 : false
                 }
             }
@@ -207,7 +207,7 @@ Item {
             right: parent.right
             top: apps.bottom
         }
-        text: i18n.tr("Devices")
+        text: i18n.dtr("content-hub", "Devices")
     }
 
     Rectangle {
@@ -244,7 +244,7 @@ Item {
     Button {
         id: cancelButton
         objectName: "contentPeerPickerCancelButton"
-        text: i18n.tr("Cancel")
+        text: i18n.dtr("content-hub", "Cancel")
         anchors {
             left: parent.left
             bottom: parent.bottom

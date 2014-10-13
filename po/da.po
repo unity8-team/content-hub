@@ -1,4 +1,4 @@
-# Malay translation for content-hub
+# Danish translation for content-hub
 # Copyright (c) 2014 Rosetta Contributors and Canonical Ltd 2014
 # This file is distributed under the same license as the content-hub package.
 # FIRST AUTHOR <EMAIL@ADDRESS>, 2014.
@@ -8,13 +8,13 @@ msgstr ""
 "Project-Id-Version: content-hub\n"
 "Report-Msgid-Bugs-To: FULL NAME <EMAIL@ADDRESS>\n"
 "POT-Creation-Date: 2014-08-14 12:39+0100\n"
-"PO-Revision-Date: 2014-10-10 02:34+0000\n"
+"PO-Revision-Date: 2014-10-11 11:22+0000\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
-"Language-Team: Malay <ms@li.org>\n"
+"Language-Team: Danish <da@li.org>\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"X-Launchpad-Export-Date: 2014-10-11 05:13+0000\n"
+"X-Launchpad-Export-Date: 2014-10-12 06:55+0000\n"
 "X-Generator: Launchpad (build 17196)\n"
 
 #: import/Ubuntu/Content/ContentPeerPicker10.qml:48
@@ -68,16 +68,16 @@ msgstr ""
 
 #: src/com/ubuntu/content/detail/service.cpp:216
 msgid "Download Complete"
-msgstr "Muat Turun Selesai"
+msgstr ""
 
 #: src/com/ubuntu/content/detail/service.cpp:234
 msgid "Open"
-msgstr "Buka"
+msgstr ""
 
 #: src/com/ubuntu/content/detail/service.cpp:241
 msgid "Dismiss"
-msgstr "Singkir"
+msgstr ""
 
 #: src/com/ubuntu/content/detail/service.cpp:259
 msgid "Download Failed"
-msgstr "Muat Turun Gagal"
+msgstr ""

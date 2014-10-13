@@ -8,13 +8,13 @@ msgstr ""
 "Project-Id-Version: content-hub\n"
 "Report-Msgid-Bugs-To: FULL NAME <EMAIL@ADDRESS>\n"
 "POT-Creation-Date: 2014-08-14 12:39+0100\n"
-"PO-Revision-Date: 2014-10-09 23:50+0000\n"
+"PO-Revision-Date: 2014-10-11 21:30+0000\n"
 "Last-Translator: samson <Unknown>\n"
 "Language-Team: Amharic <am@li.org>\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"X-Launchpad-Export-Date: 2014-10-10 05:22+0000\n"
+"X-Launchpad-Export-Date: 2014-10-12 06:55+0000\n"
 "X-Generator: Launchpad (build 17196)\n"
 
 #: import/Ubuntu/Content/ContentPeerPicker10.qml:48
@@ -42,14 +42,14 @@ msgstr "መተግበሪያዎች"
 msgid ""
 "Sorry, there aren't currently any apps installed that can provide this type "
 "of content."
-msgstr ""
+msgstr "አዝናለሁ ይህን አይነት ይዞታ የሚያቀርብ መተግበሪያ አልተገጠመም"
 
 #: import/Ubuntu/Content/ContentPeerPicker10.qml:194
 #: import/Ubuntu/Content/ContentPeerPicker11.qml:211
 msgid ""
 "Sorry, there aren't currently any apps installed that can handle this type "
 "of content."
-msgstr ""
+msgstr "አዝናለሁ ይህን አይነት ይዞታ የሚያቀርብ መተግበሪያ አልተገጠመም"
 
 #: import/Ubuntu/Content/ContentPeerPicker10.qml:210
 #: import/Ubuntu/Content/ContentPeerPicker11.qml:227
@@ -66,18 +66,18 @@ msgstr "መሰረዣ"
 msgid "Transfer in progress"
 msgstr "ማስተላለፍ በሂደት ላይ"
 
-#: ../src/com/ubuntu/content/detail/service.cpp:216
+#: src/com/ubuntu/content/detail/service.cpp:216
 msgid "Download Complete"
 msgstr "ማውረድ ጨርሷል"
 
-#: ../src/com/ubuntu/content/detail/service.cpp:234
+#: src/com/ubuntu/content/detail/service.cpp:234
 msgid "Open"
 msgstr "መክፈቻ"
 
-#: ../src/com/ubuntu/content/detail/service.cpp:241
+#: src/com/ubuntu/content/detail/service.cpp:241
 msgid "Dismiss"
 msgstr "መደምሰሻ"
 
-#: ../src/com/ubuntu/content/detail/service.cpp:259
+#: src/com/ubuntu/content/detail/service.cpp:259
 msgid "Download Failed"
 msgstr "ማውረድ አልተሳካም"

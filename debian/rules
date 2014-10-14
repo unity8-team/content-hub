@@ -8,3 +8,6 @@ export DPKG_GENSYMBOLS_CHECK_LEVEL=4
 
 override_dh_auto_test:
 	dbus-test-runner -t make -p "-C" -p "build/tests/acceptance-tests" -p test
+	
+override_dh_translations:
+	make -C po content-hub.pot

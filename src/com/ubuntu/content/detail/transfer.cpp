@@ -20,6 +20,7 @@
 #include "transfer.h"
 #include "utils.cpp"
 
+#include <QFileInfo>
 #include <com/ubuntu/content/hub.h>
 #include <com/ubuntu/content/store.h>
 #include <com/ubuntu/content/transfer.h>
@@ -214,11 +215,32 @@ void cucd::Transfer::Download()
     }
 }
 
+void cucd::Transfer::AddItemsFromDir(QDir dir) {
+    QFileInfoList files = dir.entryInfoList(QDir::NoDotAndDotDot | QDir::Dirs | QDir::Files);
+    foreach(const QFileInfo &fileInfo, files) {
+        QString path = fileInfo.absoluteFilePath();
+        if(fileInfo.isDir()) {
+            AddItemsFromDir(QDir(path));
+        } else {
+            cuc::Item item = cuc::Item{QUrl::fromLocalFile(path).toString()};
+            d->items.append(QVariant::fromValue(item));
+        }
+    }
+}
+
 void cucd::Transfer::DownloadComplete(QString destFilePath)
 {
     TRACE() << __PRETTY_FUNCTION__;
-    cuc::Item item = cuc::Item{QUrl::fromLocalFile(destFilePath).toString()};
-    d->items.append(QVariant::fromValue(item));
+    QFileInfo fileInfo(destFilePath);
+    if(fileInfo.isDir()) {
+        // When downloading and deflating zip files, download manager may
+        // send us the path of the directory that multiple files have been
+        // unpacked into.
+        AddItemsFromDir(QDir(destFilePath));
+    } else {
+        cuc::Item item = cuc::Item{QUrl::fromLocalFile(destFilePath).toString()};
+        d->items.append(QVariant::fromValue(item));
+    }
     d->state = cuc::Transfer::downloaded;
     Q_EMIT(StateChanged(d->state));
 }

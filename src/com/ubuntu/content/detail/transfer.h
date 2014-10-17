@@ -20,6 +20,7 @@
 
 #include <QObject>
 #include <QStringList>
+#include <QDir>
 #include <ubuntu/download_manager/error.h>
 
 namespace com
@@ -84,6 +85,7 @@ Q_SIGNALS:
     void Download();
     void DownloadError(Ubuntu::DownloadManager::Error* error);
     QString ContentType();
+    void AddItemsFromDir(QDir dir);
 
   private:
     struct Private;

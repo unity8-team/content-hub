@@ -49,7 +49,7 @@ Item {
         id: dialog
         Dialog {
             id: dialogue
-            title: i18n.tr("Transfer in progress")
+            title: i18n.dtr("content-hub", "Transfer in progress")
 
             ActivityIndicator {
                 id: indicator
@@ -62,7 +62,7 @@ Item {
                 id: cancelTransfer
                 anchors.top: indicator.bottom
                 anchors.topMargin: units.gu(4)
-                text: i18n.tr("Cancel")
+                text: i18n.dtr("content-hub", "Cancel")
                 onClicked: {
                     root.activeTransfer.state = ContentTransfer.Aborted
                 }

@@ -58,5 +58,11 @@
     <method name="ContentType">
       <arg name="content_type" type="s" direction="out" />
     </method>
+    <method name="source">
+      <arg name="source" type="s" direction="out" />
+    </method>
+    <method name="destination">
+      <arg name="destination" type="s" direction="out" />
+    </method>
  </interface>
 </node>

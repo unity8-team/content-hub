@@ -126,3 +126,13 @@ QString cuc::Transfer::contentType() const
 {
     return d->contentType();
 }
+
+QString cuc::Transfer::source() const
+{
+    return d->source();
+}
+
+QString cuc::Transfer::destination() const
+{
+    return d->destination();
+}

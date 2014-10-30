@@ -1,1 +1,5 @@
+examples/picker-qml/picker.qml
+import/Ubuntu/Content/ContentPeerPicker10.qml
+import/Ubuntu/Content/ContentPeerPicker11.qml
+import/Ubuntu/Content/ContentTransferHint.qml
 src/com/ubuntu/content/detail/service.cpp

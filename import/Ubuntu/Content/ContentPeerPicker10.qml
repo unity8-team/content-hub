@@ -40,7 +40,7 @@ Item {
 
     Rectangle {
         anchors.fill: parent
-        color: Theme.palette.normal.overlay
+        color: Theme.palette.normal.background
     }
 
     Header {
@@ -160,7 +160,7 @@ Item {
 
     Rectangle {
         id: apps
-        color: "#FFFFFF"
+        color: Qt.rbga(0.6, 0.6, 0.6, 0.1)
         clip: true
         anchors {
             left: parent.left

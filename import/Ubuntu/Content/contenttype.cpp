@@ -52,6 +52,9 @@
      \li ContentType.Links
      \li Links
    \row
+     \li ContentType.EBooks
+     \li EBooks
+   \row
      \li ContentType.All
      \li Any of the above content types
    \endtable
@@ -93,6 +96,7 @@ const com::ubuntu::content::Type &ContentType::contentType2HubType(Type type)
     case Contacts: return cuc::Type::Known::contacts();
     case Videos: return cuc::Type::Known::videos();
     case Links: return cuc::Type::Known::links();
+    case EBooks: return cuc::Type::Known::ebooks();
     default: return cuc::Type::unknown();
     }
 }
@@ -116,6 +120,8 @@ ContentType::Type ContentType::hubType2contentType(const QString& type)
         return Videos;
     else if (type ==  cuc::Type::Known::links().id())
         return Links;
+    else if (type ==  cuc::Type::Known::ebooks().id())
+        return EBooks;
     else
       return Unknown;
 }

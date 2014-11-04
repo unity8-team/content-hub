@@ -79,7 +79,7 @@ Item {
 
         onIsTransferRunningChanged: {
             if (isTransferRunning) {
-                dialogue = PopupUtils.open(dialog);
+                dialogue = PopupUtils.open(dialog, root);
             } else {
                 PopupUtils.close(dialogue);
             }

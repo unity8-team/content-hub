@@ -1,7 +1,7 @@
 #!/bin/sh 
 
 if test -z "$DBUS_SESSION_BUS_ADDRESS" ; then
-  [ -e $HOME/.cache/upstart/dbus-session ] && . $HOME/.cache/upstart/dbus-session || eval `dbus-launch --sh-syntax`
+  [ -e /run/user/$UID/dbus-session ] && . /run/user/$UID/dbus-session || eval `dbus-launch --sh-syntax`
   [ -n "$DBUS_SESSION_BUS_ADDRESS" ] && export DBUS_SESSION_BUS_ADDRESS
 fi
 

@@ -177,7 +177,7 @@ Item {
 
     Rectangle {
         id: apps
-        color: Qt.rgba(0.6, 0.6, 0.6, 0.0)
+        color: ColorUtils.luminance(Theme.palette.normal.background) >= 0.85 ? "#FFFFFF" : Qt.rgba(0, 0, 0, 0)
         clip: true
         anchors {
             left: parent.left

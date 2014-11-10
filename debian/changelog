@@ -1,3 +1,22 @@
+content-hub (0.0+15.04.20141110-0ubuntu1) vivid; urgency=low
+
+  [ Ken VanDine ]
+  * Added EBooks to well known types (LP: #1383732)
+
+  [ CI bot ]
+  * Resync trunk
+
+  [ Ubuntu daily release ]
+  * New rebuild forced
+
+  [ Michael Sheldon ]
+  * Set the caller on the ContentTransferHint dialog to allow it to be
+    destroyed safely when its parent is destroyed. (LP: #1377334)
+  * Update click hook wrapper to account for change in dbus-session
+    file. (LP: #1390095)
+
+ -- Ubuntu daily release <ps-jenkins@lists.canonical.com>  Mon, 10 Nov 2014 16:31:46 +0000
+
 content-hub (0.0+14.10.20141014-0ubuntu1) 14.09; urgency=low
 
   [ CI bot ]

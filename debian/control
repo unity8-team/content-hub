@@ -31,8 +31,7 @@ X-Ubuntu-Use-Langpack: yes
 
 Package: content-hub
 Architecture: any
-Depends: dbus-x11,
-         ${misc:Depends},
+Depends: ${misc:Depends},
          ${shlibs:Depends},
 Description: content sharing/picking service
  Content sharing/picking infrastructure and service, designed to allow apps to

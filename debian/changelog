@@ -1,3 +1,14 @@
+content-hub (0.0+15.04.20141110~rtm-0ubuntu1) 14.09; urgency=low
+
+  [ Michael Sheldon ]
+  * Update click hook wrapper to account for change in dbus-session
+    file.
+
+  [ Ubuntu daily release ]
+  * New rebuild forced
+
+ -- Ubuntu daily release <ps-jenkins@lists.canonical.com>  Mon, 10 Nov 2014 19:06:52 +0000
+
 content-hub (0.0+14.10.20141104~rtm-0ubuntu1) 14.09; urgency=low
 
   [ Michael Sheldon ]

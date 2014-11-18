@@ -1,3 +1,92 @@
+content-hub (0.0+15.04.20141110-0ubuntu1) vivid; urgency=low
+
+  [ Ken VanDine ]
+  * Added EBooks to well known types (LP: #1383732)
+
+  [ CI bot ]
+  * Resync trunk
+
+  [ Ubuntu daily release ]
+  * New rebuild forced
+
+  [ Michael Sheldon ]
+  * Set the caller on the ContentTransferHint dialog to allow it to be
+    destroyed safely when its parent is destroyed. (LP: #1377334)
+  * Update click hook wrapper to account for change in dbus-session
+    file. (LP: #1390095)
+
+ -- Ubuntu daily release <ps-jenkins@lists.canonical.com>  Mon, 10 Nov 2014 16:31:46 +0000
+
+content-hub (0.0+14.10.20141014-0ubuntu1) 14.09; urgency=low
+
+  [ CI bot ]
+  * Resync trunk
+
+  [ Ubuntu daily release ]
+  * New rebuild forced
+
+  [ Michael Sheldon ]
+  * Add support for receiving directories of unzipped files from
+    download manager. (LP: #1365993)
+
+ -- Ubuntu daily release <ps-jenkins@lists.canonical.com>  Tue, 14 Oct 2014 16:11:13 +0000
+
+content-hub (0.0+14.10.20141010-0ubuntu1) utopic; urgency=low
+
+  [ Sebastien Bacher ]
+  * Include missing sources in the translation template, use the custom
+    rule to update it and load the translations from the correct domain
+
+ -- Ubuntu daily release <ps-jenkins@lists.canonical.com>  Fri, 10 Oct 2014 16:16:32 +0000
+
+content-hub (0.0+14.10.20141009-0ubuntu1) utopic; urgency=low
+
+  [ Ken VanDine ]
+  * Fall back to a copy if move fails (LP: #1373086)
+
+  [ Michael Sheldon ]
+  * Fix packaging for translations.
+
+ -- Ubuntu daily release <ps-jenkins@lists.canonical.com>  Thu, 09 Oct 2014 14:44:05 +0000
+
+content-hub (0.0+14.10.20141007-0ubuntu1) utopic; urgency=low
+
+  [ Sebastien Bacher ]
+  * use X-Ubuntu-Use-Langpack so translations are imported (LP:
+    #1378324)
+
+ -- Ubuntu daily release <ps-jenkins@lists.canonical.com>  Tue, 07 Oct 2014 14:44:14 +0000
+
+content-hub (0.0+14.10.20140919-0ubuntu1) utopic; urgency=low
+
+  [ Ken VanDine ]
+  * Fixed handling of translated strings from
+    g_app_info_get_display_name (LP: #1368770) (LP: #1368770)
+
+ -- Ubuntu daily release <ps-jenkins@lists.canonical.com>  Fri, 19 Sep 2014 14:40:29 +0000
+
+content-hub (0.0+14.10.20140915-0ubuntu1) utopic; urgency=low
+
+  [ Ken VanDine ]
+  * Build with dh_translations (LP: #1359166) (LP: #1359166)
+  * Improved uncreatable message for ContentTransfer
+
+ -- Ubuntu daily release <ps-jenkins@lists.canonical.com>  Mon, 15 Sep 2014 20:50:10 +0000
+
+content-hub (0.0+14.10.20140828-0ubuntu1) utopic; urgency=low
+
+  [ Michael Sheldon ]
+  * Expose the source and destination app IDs on transfers.
+
+ -- Ubuntu daily release <ps-jenkins@lists.canonical.com>  Thu, 28 Aug 2014 03:09:56 +0000
+
+content-hub (0.0+14.10.20140815-0ubuntu1) utopic; urgency=low
+
+  [ Michael Sheldon ]
+  * Add a cancel button to the ContentTransferHint.
+
+ -- Ubuntu daily release <ps-jenkins@lists.canonical.com>  Fri, 15 Aug 2014 17:49:09 +0000
+
 content-hub (0.0+14.10.20140806.2-0ubuntu1) utopic; urgency=low
 
   [ Ken VanDine ]

@@ -62,6 +62,8 @@ class Transfer : public QObject
     Q_PROPERTY(Direction direction READ direction)
     Q_PROPERTY(QString downloadId READ downloadId WRITE setDownloadId NOTIFY downloadIdChanged)
     Q_PROPERTY(QString contentType READ contentType)
+    Q_PROPERTY(QString source READ source)
+    Q_PROPERTY(QString destination READ destination)
 
   public:
     enum State
@@ -111,6 +113,8 @@ class Transfer : public QObject
     Q_INVOKABLE virtual bool setDownloadId(const QString);
     Q_INVOKABLE virtual bool download();
     Q_INVOKABLE virtual QString contentType() const;
+    Q_INVOKABLE virtual QString source() const;
+    Q_INVOKABLE virtual QString destination() const;
 
     Q_SIGNAL void stateChanged();
     Q_SIGNAL void storeChanged();

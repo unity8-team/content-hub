@@ -227,6 +227,22 @@ class Transfer::Private : public QObject
         return static_cast<QString>(reply.value());
     }
 
+    QString source()
+    {
+        auto reply = remote_transfer->source();
+        reply.waitForFinished();
+
+        return static_cast<QString>(reply.value());
+    }
+
+    QString destination()
+    {
+        auto reply = remote_transfer->destination();
+        reply.waitForFinished();
+
+        return static_cast<QString>(reply.value());
+    }
+
     com::ubuntu::content::dbus::Transfer* remote_transfer;
 };
 }

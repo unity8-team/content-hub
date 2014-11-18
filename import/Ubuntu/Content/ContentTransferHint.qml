@@ -49,9 +49,23 @@ Item {
         id: dialog
         Dialog {
             id: dialogue
+            title: i18n.dtr("content-hub", "Transfer in progress")
+
             ActivityIndicator {
-                anchors.centerIn: parent
+                id: indicator
+                anchors.top: parent.top
+                anchors.topMargin: units.gu(6)
                 running: internal.isTransferRunning
+            }
+
+            Button {
+                id: cancelTransfer
+                anchors.top: indicator.bottom
+                anchors.topMargin: units.gu(4)
+                text: i18n.dtr("content-hub", "Cancel")
+                onClicked: {
+                    root.activeTransfer.state = ContentTransfer.Aborted
+                }
             }
         }
     }
@@ -65,7 +79,7 @@ Item {
 
         onIsTransferRunningChanged: {
             if (isTransferRunning) {
-                dialogue = PopupUtils.open(dialog);
+                dialogue = PopupUtils.open(dialog, root);
             } else {
                 PopupUtils.close(dialogue);
             }

@@ -34,7 +34,7 @@ struct cuc::Peer::Private
             GDesktopAppInfo* app = g_desktop_app_info_new(desktop_id.toLocal8Bit().data());
             if (G_IS_APP_INFO(app))
             {
-                name = QString::fromLatin1(g_app_info_get_display_name(G_APP_INFO(app)));
+                name = QString::fromUtf8(g_app_info_get_display_name(G_APP_INFO(app)));
                 GIcon* ic = g_app_info_get_icon(G_APP_INFO(app));
                 if (G_IS_ICON(ic))
                 {

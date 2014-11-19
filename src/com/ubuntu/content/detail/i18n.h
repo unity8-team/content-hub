@@ -31,7 +31,7 @@ namespace detail
 {
 
 void initTr(const char *domain, const char *localeDir);
-QString _(const char *text, const char *domain = 0);
+QString __(const char *text, const char *domain = 0);
 
 }
 }

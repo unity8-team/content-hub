@@ -20,7 +20,7 @@ add_custom_target(${POT_FILE}
                           -D ${CMAKE_SOURCE_DIR}
                           --from-code=UTF-8
                           --c++ --qt --add-comments=TRANSLATORS
-                          --keyword=_
+                          --keyword=__
                           -j
                           --package-name=content-hub
                           --copyright-holder='Canonical Ltd.'

@@ -1,3 +1,10 @@
+content-hub (0.0+15.04.20141120-0ubuntu1) vivid; urgency=low
+
+  [ Ken VanDine ]
+  * Fixed conflict with nih-dbus and our own i18n wrapper (LP: #1394211)
+
+ -- Ubuntu daily release <ps-jenkins@lists.canonical.com>  Thu, 20 Nov 2014 04:22:47 +0000
+
 content-hub (0.0+15.04.20141110-0ubuntu1) vivid; urgency=low
 
   [ Ken VanDine ]

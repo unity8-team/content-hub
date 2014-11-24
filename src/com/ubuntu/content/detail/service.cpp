@@ -207,13 +207,13 @@ void action_accept(NotifyNotification *notification, char *action, gpointer data
     t->Charge(QVariantList());
 }
 
-void download_notify (cucd::Transfer* t)
+void cucd::Service::download_notify (cucd::Transfer* t)
 {
     TRACE() << Q_FUNC_INFO;
     notify_init(t->source().toStdString().c_str());
     NotifyNotification* notification;
 
-    notification = notify_notification_new (_("Download Complete"),
+    notification = notify_notification_new (__("Download Complete").toStdString().c_str(),
                                             "",
                                             "save");
 
@@ -231,14 +231,14 @@ void download_notify (cucd::Transfer* t)
 
     notify_notification_add_action (notification,
                                     "action_accept",
-                                    _("Open"),
+                                    __("Open").toStdString().c_str(),
                                     action_accept,
                                     t,
                                     NULL);
 
     notify_notification_add_action (notification,
                                     "action_dismiss",
-                                    _("Dismiss"),
+                                    __("Dismiss").toStdString().c_str(),
                                     action_dismiss,
                                     t,
                                     NULL);
@@ -256,7 +256,7 @@ void cucd::Service::DownloadManagerError(QString errorMessage)
     notify_init("Download Manager");
     NotifyNotification* notification;
 
-    notification = notify_notification_new (_("Download Failed"),
+    notification = notify_notification_new (__("Download Failed").toStdString().c_str(),
                                             errorMessage.toStdString().c_str(),
                                             "save");
 

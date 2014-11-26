@@ -1,3 +1,13 @@
+content-hub (0.0+15.04.20141126-0ubuntu1) vivid; urgency=low
+
+  [ Ken VanDine ]
+  * Added test peers for automated testing of export, import and shares.
+
+  [ CI bot ]
+  * Resync trunk
+
+ -- Ubuntu daily release <ps-jenkins@lists.canonical.com>  Wed, 26 Nov 2014 15:26:15 +0000
+
 content-hub (0.0+15.04.20141120-0ubuntu1) vivid; urgency=low
 
   [ Ken VanDine ]

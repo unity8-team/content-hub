@@ -1,3 +1,10 @@
+content-hub (0.0+15.04.20141202-0ubuntu1) vivid; urgency=low
+
+  [ Michael Sheldon ]
+  * Handle content peer model loading asynchronously (LP: #1390096)
+
+ -- Ubuntu daily release <ps-jenkins@lists.canonical.com>  Tue, 02 Dec 2014 14:17:57 +0000
+
 content-hub (0.0+15.04.20141126-0ubuntu1) vivid; urgency=low
 
   [ Ken VanDine ]

@@ -51,6 +51,7 @@ Item {
     Loader {
         id: peerModelLoader
         active: false
+        asynchronous: true
         sourceComponent: ContentPeerModel { }
         onLoaded: {
             item.handler = root.handler;

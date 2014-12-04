@@ -14,8 +14,8 @@ msgstr ""
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"X-Launchpad-Export-Date: 2014-10-10 05:22+0000\n"
-"X-Generator: Launchpad (build 17196)\n"
+"X-Launchpad-Export-Date: 2014-12-04 06:35+0000\n"
+"X-Generator: Launchpad (build 17274)\n"
 
 #: import/Ubuntu/Content/ContentPeerPicker10.qml:48
 #: import/Ubuntu/Content/ContentPeerPicker11.qml:49
@@ -70,18 +70,18 @@ msgstr "Скасувати"
 msgid "Transfer in progress"
 msgstr "Передавання даних"
 
-#: ../src/com/ubuntu/content/detail/service.cpp:216
+#: src/com/ubuntu/content/detail/service.cpp:216
 msgid "Download Complete"
 msgstr "Отримання завершено"
 
-#: ../src/com/ubuntu/content/detail/service.cpp:234
+#: src/com/ubuntu/content/detail/service.cpp:234
 msgid "Open"
 msgstr "Відкрити"
 
-#: ../src/com/ubuntu/content/detail/service.cpp:241
+#: src/com/ubuntu/content/detail/service.cpp:241
 msgid "Dismiss"
 msgstr "Відхилити"
 
-#: ../src/com/ubuntu/content/detail/service.cpp:259
+#: src/com/ubuntu/content/detail/service.cpp:259
 msgid "Download Failed"
 msgstr "Помилка під час спроби отримання"

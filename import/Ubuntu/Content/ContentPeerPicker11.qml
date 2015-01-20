@@ -35,13 +35,26 @@ Item {
     property var customPeerModelLoader
     property string headerText
     property var completed: false
+    property alias headerColor: gradHead.color
+    property alias backgroundColor: background.color
+    property alias footerColor: gradFoot.color
+    property var panelColor
 
     signal peerSelected
     signal cancelPressed
 
+    Gradient {
+        id: backgroundGradient
+        GradientStop { id: gradHead; position: 0.0; color: background.color }
+        GradientStop { position: 0.83; color: background.color }
+        GradientStop { id: gradFoot; position: 1.0; color: background.color }
+    }
+
     Rectangle {
+        id: background
         anchors.fill: parent
-        color: Theme.palette.normal.overlay
+        color: Theme.palette.normal.background
+        gradient: color != headerColor || color != footerColor ? backgroundGradient : null
     }
 
     Header {
@@ -159,6 +172,7 @@ Item {
                     elide: Text.ElideMiddle
                     horizontalAlignment: Text.AlignHCenter
                     text: modelData.name || modelData.appId
+                    color: ColorUtils.luminance(apps.color) <= 0.85 ? "#FFFFFF" : UbuntuColors.coolGrey
                 }
 
                 onClicked: {
@@ -178,7 +192,7 @@ Item {
 
     Rectangle {
         id: apps
-        color: "#FFFFFF"
+        color: parent.panelColor !== undefined ? parent.panelColor : (ColorUtils.luminance(background.color) >= 0.85 ? "#FFFFFF" : Qt.darker(background.color))
         clip: true
         anchors {
             left: parent.left
@@ -211,6 +225,7 @@ Item {
                     horizontalAlignment: Text.AlignHCenter
                     text: root.handler === ContentHandler.Source ? i18n.dtr("content-hub", "Sorry, there aren't currently any apps installed that can provide this type of content.") : i18n.dtr("content-hub", "Sorry, there aren't currently any apps installed that can handle this type of content.")
                     visible: appPeers.model ? appPeers.model.length == 0 : false
+                    color: ColorUtils.luminance(apps.color) <= 0.85 ? "#FFFFFF" : UbuntuColors.coolGrey
                 }
             }
         }
@@ -232,7 +247,7 @@ Item {
         id: devices
         // TODO: make this visible when we have a way to populate devices
         visible: false
-        color: "#FFFFFF"
+        color: parent.panelColor !== undefined ? parent.panelColor : (ColorUtils.luminance(background.color) >= 0.85 ? "#FFFFFF" : Qt.darker(background.color))
         width: parent.width
         radius: 0
         anchors {

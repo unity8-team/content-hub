@@ -62,6 +62,26 @@
     \brief Text to display in the header.
 */
 
+/*!
+    \qmlproperty color ContentPeerPicker::headerColor
+    \brief Color of the header's background.
+*/
+/*!
+    \qmlproperty color ContentPeerPicker::backgroundColor
+    \brief Color of the ContentPeerPicker's background
+
+    The background is usually a single color. However if headerColor or 
+    footerColor are set then a gradient of colors will be drawn.
+*/
+/*!
+    \qmlproperty color ContentPeerPicker::footerColor
+    \brief Color of the footer's background.
+*/
+/*!
+    \qmlproperty color ContentPeerPicker::panelColor
+    \brief Color of the apps panel within the ContentPeerPicker
+*/
+
 /*! 
     \qmlsignal ContentPeerPicker::peerSelected
     \brief Emitted when a user selects a peer.

@@ -1,3 +1,15 @@
+content-hub (0.0+15.04.20150120~rtm-0ubuntu1) 14.09; urgency=low
+
+  [ Michael Sheldon ]
+  * Add support for EBook content type (LP: #1383732)
+  * Cherry pick fix for displaying "No applications available" message
+    from trunk (LP: #1390096)
+
+  [ Ubuntu daily release ]
+  * New rebuild forced
+
+ -- Ubuntu daily release <ps-jenkins@lists.canonical.com>  Tue, 20 Jan 2015 21:24:27 +0000
+
 content-hub (0.0+15.04.20141110~rtm-0ubuntu1) 14.09; urgency=low
 
   [ Michael Sheldon ]

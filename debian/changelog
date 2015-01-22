@@ -1,3 +1,10 @@
+content-hub (0.0+15.04.20150122~rtm-0ubuntu1) 14.09; urgency=low
+
+  [ Ken VanDine ]
+  * Fixed conflict with nih-dbus and our own i18n wrapper (LP: #1394211)
+
+ -- Ubuntu daily release <ps-jenkins@lists.canonical.com>  Thu, 22 Jan 2015 20:28:14 +0000
+
 content-hub (0.0+15.04.20150120~rtm-0ubuntu1) 14.09; urgency=low
 
   [ Michael Sheldon ]

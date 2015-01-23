@@ -1,3 +1,11 @@
+content-hub (0.0+15.04.20150123-0ubuntu1) vivid; urgency=low
+
+  [ Michael Sheldon ]
+  * Use the theme background so that fonts are visible with dark apps
+    (LP: #1384490)
+
+ -- Ubuntu daily release <ps-jenkins@lists.canonical.com>  Fri, 23 Jan 2015 16:56:52 +0000
+
 content-hub (0.0+15.04.20141202-0ubuntu1) vivid; urgency=low
 
   [ Michael Sheldon ]

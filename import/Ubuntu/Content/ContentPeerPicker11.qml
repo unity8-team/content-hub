@@ -40,8 +40,9 @@ Item {
     signal cancelPressed
 
     Rectangle {
+        id: background
         anchors.fill: parent
-        color: Theme.palette.normal.overlay
+        color: Theme.palette.normal.background
     }
 
     Header {
@@ -178,7 +179,7 @@ Item {
 
     Rectangle {
         id: apps
-        color: "#FFFFFF"
+        color: ColorUtils.luminance(background.color) >= 0.85 ? "#FFFFFF" : Qt.darker(background.color)
         clip: true
         anchors {
             left: parent.left
@@ -232,7 +233,7 @@ Item {
         id: devices
         // TODO: make this visible when we have a way to populate devices
         visible: false
-        color: "#FFFFFF"
+        color: ColorUtils.luminance(background.color) >= 0.85 ? "#FFFFFF" : Qt.darker(background.color)
         width: parent.width
         radius: 0
         anchors {

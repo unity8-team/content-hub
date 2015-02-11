@@ -59,6 +59,7 @@ struct cucd::Transfer::Private
     bool source_started_by_content_hub;
     QString download_id;
     const QString content_type;
+    QString mir_socket = "";
 };
 
 cucd::Transfer::Transfer(const int id,
@@ -370,4 +371,20 @@ QString cucd::Transfer::ContentType()
 {
     TRACE() << __PRETTY_FUNCTION__;
     return d->content_type;
+}
+
+QString cucd::Transfer::MirSocket()
+{
+    TRACE() << __PRETTY_FUNCTION__;
+    return d->mir_socket;
+}
+
+void cucd::Transfer::SetMirSocket(QString mir_socket)
+{
+    TRACE() << Q_FUNC_INFO;
+
+    if (d->mir_socket == mir_socket)
+        return;
+
+    d->mir_socket = mir_socket;
 }

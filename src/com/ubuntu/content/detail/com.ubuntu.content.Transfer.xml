@@ -64,5 +64,11 @@
     <method name="destination">
       <arg name="destination" type="s" direction="out" />
     </method>
+    <method name="MirSocket">
+      <arg name="mir_socket" type="s" direction="out" />
+    </method>
+    <method name="SetMirSocket">
+      <arg name="mir_socket" type="s" direction="in" />
+    </method>
  </interface>
 </node>

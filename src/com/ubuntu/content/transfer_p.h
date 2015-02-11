@@ -243,6 +243,22 @@ class Transfer::Private : public QObject
         return static_cast<QString>(reply.value());
     }
 
+    QString mirSocket()
+    {
+        auto reply = remote_transfer->MirSocket();
+        reply.waitForFinished();
+
+        return static_cast<QString>(reply.value());
+    }
+
+    bool setMirSocket(QString mir_socket)
+    {
+        auto reply = remote_transfer->SetMirSocket(mir_socket);
+        reply.waitForFinished();
+
+        return not reply.isError();
+    }
+
     com::ubuntu::content::dbus::Transfer* remote_transfer;
 };
 }

@@ -14,5 +14,23 @@
 #
 # Authored by: Thomas Voss <thomas.voss@canonical.com>
 
-add_subdirectory(com)
-add_subdirectory(helper)
+include_directories(${CMAKE_CURRENT_BINARY_DIR})
+
+add_executable(
+  exec-tool
+
+  exec-tool.cpp
+)
+
+qt5_use_modules(exec-tool Core)
+
+target_link_libraries(
+  exec-tool
+ 
+  ${UBUNTU_LAUNCH_LDFLAGS}
+)
+
+install(
+  PROGRAMS "${CMAKE_CURRENT_BINARY_DIR}/exec-tool"
+  DESTINATION "${CMAKE_INSTALL_FULL_LIBEXECDIR}/ubuntu-app-launch/content-hub"
+)

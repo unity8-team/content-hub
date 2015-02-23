@@ -33,6 +33,40 @@ bool cucd::AppManager::invoke_application(const std::string &app_id)
     return static_cast<bool>(ok);
 }
 
+bool cucd::AppManager::invoke_application_with_socket(const std::string &app_id, const std::string &socket)
+{
+    TRACE() << Q_FUNC_INFO << "APP_ID:" << app_id.c_str();
+    QVector<const gchar*> uris;
+    uris.append(g_strdup_printf("MIR_SOCKET=%s", socket.c_str()));
+    uris.append(NULL);
+    gchar *instanceId = ubuntu_app_launch_start_multiple_helper("content-hub",
+                                                                app_id.c_str(),
+                                                                uris.constData());
+
+    if (instanceId == NULL) {
+        g_free(instanceId);
+        return false;
+    }
+    g_free(instanceId);
+    return true;
+}
+
+bool cucd::AppManager::invoke_application_with_helper(const std::string &app_id)
+{
+    TRACE() << Q_FUNC_INFO << "APP_ID:" << app_id.c_str();
+    gchar ** uris = NULL;
+    gchar *instanceId = ubuntu_app_launch_start_multiple_helper("content-hub",
+                                                                app_id.c_str(),
+                                                                (const gchar * const *)uris);
+
+    if (instanceId == NULL) {
+        g_free(instanceId);
+        return false;
+    }
+    g_free(instanceId);
+    return true;
+}
+
 /*!
  * \reimp
  */

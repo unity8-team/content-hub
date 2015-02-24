@@ -33,6 +33,7 @@ include_directories(
     ${NIH_INCLUDE_DIRS}
     ${NIH_DBUS_INCLUDE_DIRS}
     ${DBUS_INCLUDE_DIRS}
+    ${MIRCLIENT_INCLUDE_DIRS}
 )
 
 set(PLUGIN_HDRS
@@ -47,6 +48,7 @@ set(PLUGIN_HDRS
     contentstore.h
     contenttransfer.h
     contenttype.h
+    mir-helper.h
     qmlimportexporthandler.h
     )
 
@@ -62,6 +64,7 @@ set(PLUGIN_SRC
     contentstore.cpp
     contenttransfer.cpp
     contenttype.cpp
+    mir-helper.cpp
     qmlimportexporthandler.cpp
     ../../../src/com/ubuntu/content/debug.cpp
     )
@@ -74,6 +77,7 @@ target_link_libraries(
     content-hub
     ${NIH_LIBRARIES}
     ${NIH_DBUS_LIBRARIES}
+    ${MIRCLIENT_LIBRARIES}
 )
 
 install(TARGETS ${PLUGIN} DESTINATION ${CONTENT_HUB_IMPORTS_DIR})

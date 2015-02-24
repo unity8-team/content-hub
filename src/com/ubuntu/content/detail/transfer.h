@@ -43,7 +43,7 @@ class Transfer : public QObject
     Q_PROPERTY(QString destination READ destination)
     Q_PROPERTY(int direction READ Direction)
     Q_PROPERTY(QString ContentType READ ContentType)
-    Q_PROPERTY(QString MirSocket READ MirSocket WRITE SetMirSocket)
+    Q_PROPERTY(QString MirSocket READ MirSocket WRITE SetMirSocket NOTIFY MirSocketChanged)
 
   public:
     Transfer(const int, const QString&, const QString&, const int, const QString&, QObject* parent = nullptr);
@@ -61,6 +61,7 @@ Q_SIGNALS:
     void SelectionTypeChanged(int SelectionType);
     void DownloadIdChanged(QString DownloadId);
     void DownloadManagerError(QString ErrorMessage);
+    void MirSocketChanged(QString MirSocket);
 
   public Q_SLOTS:
     int State();
@@ -88,7 +89,7 @@ Q_SIGNALS:
     QString ContentType();
     void AddItemsFromDir(QDir dir);
     QString MirSocket();
-    void SetMirSocket(QString);
+    void SetMirSocket(QString MirSocket);
 
   private:
     struct Private;

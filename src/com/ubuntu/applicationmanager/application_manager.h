@@ -38,6 +38,14 @@ class ApplicationManager
      * \param app_id ID for the application (for example "gallery-app" - used for the desktop)
      */
     virtual bool invoke_application(const std::string &app_id) = 0;
+
+    /*!
+     * \brief invoke_application_with_socket starts an application without a trusted session
+     * \param app_id ID for the application (for example "gallery-app" - used for the desktop)
+     * \param socket path to MIR_SOCKET
+     */
+    virtual bool invoke_application_with_socket(const std::string &app_id, const std::string &socket) = 0;
+
     /*!
      * \brief stop_application stops an application started by ubuntu
      * \param app_id ID for the application (for example "gallery-app" - used for the desktop)

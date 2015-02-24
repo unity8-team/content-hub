@@ -70,5 +70,8 @@
     <method name="SetMirSocket">
       <arg name="mir_socket" type="s" direction="in" />
     </method>
+    <signal name="MirSocketChanged">
+      <arg name="mir_socket" type="s"/>
+    </signal>
  </interface>
 </node>

@@ -387,4 +387,5 @@ void cucd::Transfer::SetMirSocket(QString mir_socket)
         return;
 
     d->mir_socket = mir_socket;
+    Q_EMIT(MirSocketChanged(d->mir_socket));
 }

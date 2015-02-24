@@ -136,3 +136,13 @@ QString cuc::Transfer::destination() const
 {
     return d->destination();
 }
+
+QString cuc::Transfer::mirSocket() const
+{
+    return d->mirSocket();
+}
+
+bool cuc::Transfer::setMirSocket(QString socket)
+{
+    return d->setMirSocket(socket);
+}

@@ -248,6 +248,9 @@ class Transfer::Private : public QObject
         auto reply = remote_transfer->MirSocket();
         reply.waitForFinished();
 
+        if (reply.isError())
+            return QString();
+
         return static_cast<QString>(reply.value());
     }
 

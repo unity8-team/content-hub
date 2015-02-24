@@ -365,7 +365,10 @@ void cucd::Service::handle_imports(int state)
             }
         }
 
-        d->app_manager->invoke_application(transfer->source().toStdString());
+        if (transfer->MirSocket().isEmpty())
+            d->app_manager->invoke_application(transfer->source().toStdString());
+        else
+            d->app_manager->invoke_application_with_socket(transfer->source().toStdString(), transfer->MirSocket().toStdString());
     }
 
     if (state == cuc::Transfer::charged)

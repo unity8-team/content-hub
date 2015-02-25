@@ -156,6 +156,7 @@ void MirHelperPrivate::onSessionStopped(MirPromptSession *mirSession)
 PromptSession *MirHelperPrivate::createPromptSession(pid_t initiatorPid)
 {
     if (Q_UNLIKELY(!m_connection)) return 0;
+    if (Q_UNLIKELY(!mir_connection_is_valid(m_connection))) return 0; 
 
     MirPromptSession *mirSession =
         mir_connection_create_prompt_session_sync(m_connection,

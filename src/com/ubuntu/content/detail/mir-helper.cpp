@@ -14,7 +14,7 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#include "../../../src/com/ubuntu/content/debug.h"
+#include "debug.h"
 #include "mir-helper.h"
 
 #include <mir_toolkit/mir_client_library.h>

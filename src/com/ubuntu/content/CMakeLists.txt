@@ -28,6 +28,7 @@ include_directories(
   ${UBUNTU_LAUNCH_INCLUDE_DIRS}
   ${UBUNTU_DOWNLOAD_MANAGER_INCLUDE_DIRS}
   ${NOTIFY_INCLUDE_DIRS}
+  ${MIRCLIENT_INCLUDE_DIRS}
 )
 
 qt5_add_dbus_interface(
@@ -77,6 +78,7 @@ add_library(
   detail/transfer.cpp
   detail/handler.cpp
   detail/i18n.cpp
+  detail/mir-helper.cpp
 
   ${CONTENT_HUB_MOCS}
   ${CONTENT_SERVICE_STUB}
@@ -105,6 +107,7 @@ target_link_libraries(content-hub
     ${GIO_LIBRARIES}
     ${UBUNTU_DOWNLOAD_MANAGER_LIBRARIES}
     ${NOTIFY_LIBRARIES}
+    ${MIRCLIENT_LIBRARIES}
 )
 
 install(

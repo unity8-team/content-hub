@@ -139,30 +139,6 @@ ContentHub *ContentHub::instance()
 }
 
 /*!
- * \brief ContentHub::setupPromptSession creates a trust session
- * \internal
- */
-QString ContentHub::setupPromptSession()
-{
-    auto clientPid = qApp->applicationPid();
-    PromptSessionP session =
-        MirHelper::instance()->createPromptSession(clientPid);
-    if (!session) return "";
-
-    QString mirSocket = session->requestSocket();
-    if (!mirSocket.isEmpty()) {
-        m_promptSession = session;
-    }
-
-    /*
-    QObject::connect(m_promptSession.data(), SIGNAL(finished()),
-                     q, SIGNAL(finished()));
-    */
-
-    return mirSocket;
-}
-
-/*!
  * \brief ContentHub::importContent creates a ContentTransfer object
  * \a peer
  * \a type
@@ -175,9 +151,6 @@ ContentTransfer* ContentHub::importContent(cuc::Peer peer, ContentType::Type con
     const cuc::Type &hubType = ContentType::contentType2HubType(contentType);
     cuc::Transfer *hubTransfer = m_hub->create_import_from_peer_for_type(peer, hubType);
     ContentTransfer *qmlTransfer = new ContentTransfer(this);
-    auto mirSocket = this->setupPromptSession();
-    if (!mirSocket.isEmpty())
-        hubTransfer->setMirSocket(mirSocket);
     qmlTransfer->setTransfer(hubTransfer);
     m_activeImports.insert(hubTransfer, qmlTransfer);
     return qmlTransfer;

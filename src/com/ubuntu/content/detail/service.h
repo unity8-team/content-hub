@@ -28,6 +28,7 @@
 
 #include <com/ubuntu/applicationmanager/application_manager.h>
 #include "handler.h"
+#include "mir-helper.h"
 #include "transfer.h"
 
 namespace com
@@ -80,7 +81,7 @@ class Service : public QObject, protected QDBusContext
     void handler_unregistered(const QString&);
     QDBusObjectPath CreateTransfer(const QString&, const QString&, int, const QString&);
     void download_notify (com::ubuntu::content::detail::Transfer*);
-
+    QString setupPromptSession(uint);
 };
 }
 }

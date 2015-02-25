@@ -23,7 +23,6 @@
 #include <QQmlListProperty>
 #include "contentpeer.h"
 #include "contenttransfer.h"
-#include "mir-helper.h"
 
 class ContentStore;
 class QmlImportExportHandler;
@@ -77,7 +76,6 @@ private:
     QHash<com::ubuntu::content::Transfer *, ContentTransfer *> m_activeImports;
     com::ubuntu::content::Hub *m_hub;
     QmlImportExportHandler *m_handler;
-    PromptSessionP m_promptSession;
 
 protected:
     ContentHub(QObject* = nullptr);

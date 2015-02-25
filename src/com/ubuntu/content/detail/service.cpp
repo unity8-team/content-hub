@@ -168,7 +168,7 @@ QDBusVariant cucd::Service::DefaultSourceForType(const QString& type_id)
 
 QDBusObjectPath cucd::Service::CreateImportFromPeer(const QString& peer_id, const QString& app_id, const QString& type_id)
 {
-    TRACE() << Q_FUNC_INFO;
+    TRACE() << Q_FUNC_INFO << "APP_ID:" << app_id << "SERVICE:" << this->message().service();
     QString dest_id = app_id;
     if (dest_id.isEmpty())
     {
@@ -314,6 +314,12 @@ QDBusObjectPath cucd::Service::CreateTransfer(const QString& dest_id, const QStr
     }
 
     auto transfer = new cucd::Transfer(import_counter, src_id, dest_id, dir, type_id, this);
+    if (dir == cuc::Transfer::Import) {
+        uint clientPid = d->connection.interface()->servicePid(this->message().service());
+        auto mirSocket = setupPromptSession(clientPid);
+        if (!mirSocket.isEmpty())
+            transfer->SetMirSocket(mirSocket);
+    }
     new TransferAdaptor(transfer);
     d->active_transfers.insert(transfer);
 
@@ -365,32 +371,34 @@ void cucd::Service::handle_imports(int state)
     if (state == cuc::Transfer::initiated)
     {
         TRACE() << Q_FUNC_INFO << "initiated";
-        if (d->app_manager->is_application_started(transfer->source().toStdString()))
-            transfer->SetSourceStartedByContentHub(false);
-        else
-            transfer->SetSourceStartedByContentHub(true);
-
-        Q_FOREACH (RegHandler *r, d->handlers)
-        {
-            TRACE() << Q_FUNC_INFO << "ID:" << r->id << "Handler: " << r->service << "Transfer: " << transfer->source();
-            if (r->id == transfer->source())
-            {
-                TRACE() << Q_FUNC_INFO << "Found handler for initiated transfer" << r->id;
-                if (r->handler->isValid())
-                    r->handler->HandleExport(QDBusObjectPath{transfer->export_path()});
-                else
-                    TRACE() << Q_FUNC_INFO << "Handler invalid";
-            }
-        }
-
-        uint clientPid = d->connection.interface()->servicePid(message().service());
-        auto mirSocket = setupPromptSession(clientPid);
-        if (!mirSocket.isEmpty()) {
-            transfer->SetMirSocket(mirSocket);
+        
+        //uint clientPid = d->connection.interface()->servicePid(this->message().service());
+        //uint clientPid = d->connection.interface()->servicePid(QString(transfer->destination()));
+        //auto mirSocket = setupPromptSession(clientPid);
+        if (!transfer->MirSocket().isEmpty()) {
+            //transfer->SetMirSocket(mirSocket);
             d->app_manager->invoke_application_with_socket(transfer->source().toStdString(), transfer->MirSocket().toStdString());
-        }
-        else
+        } else {
+            if (d->app_manager->is_application_started(transfer->source().toStdString()))
+                transfer->SetSourceStartedByContentHub(false);
+            else
+                transfer->SetSourceStartedByContentHub(true);
+
+            Q_FOREACH (RegHandler *r, d->handlers)
+            {
+                TRACE() << Q_FUNC_INFO << "ID:" << r->id << "Handler: " << r->service << "Transfer: " << transfer->source();
+                if (r->id == transfer->source())
+                {
+                    TRACE() << Q_FUNC_INFO << "Found handler for initiated transfer" << r->id;
+                    if (r->handler->isValid())
+                        r->handler->HandleExport(QDBusObjectPath{transfer->export_path()});
+                    else
+                        TRACE() << Q_FUNC_INFO << "Handler invalid";
+                }
+            }
+
             d->app_manager->invoke_application(transfer->source().toStdString());
+        }
     }
 
     if (state == cuc::Transfer::charged)

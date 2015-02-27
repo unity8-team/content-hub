@@ -14,20 +14,26 @@
 #
 # Authored by: Thomas Voss <thomas.voss@canonical.com>
 
-include_directories(${CMAKE_CURRENT_BINARY_DIR})
+include_directories(
+  ${CMAKE_CURRENT_BINARY_DIR}
+  ${UBUNTU_LAUNCH_INCLUDE_DIRS}
+  ${GLIB_INCLUDE_DIRS}
+  ${CLICK_INCLUDE_DIRS}
+)
 
 add_executable(
   exec-tool
 
-  exec-tool.cpp
+  exec-tool.c
 )
-
-qt5_use_modules(exec-tool Core)
 
 target_link_libraries(
   exec-tool
  
   ${UBUNTU_LAUNCH_LDFLAGS}
+  ${CLICK_LDFLAGS}
+  ${GLIB_LDFLAGS}
+  ${GIO_LDFLAGS}
 )
 
 install(

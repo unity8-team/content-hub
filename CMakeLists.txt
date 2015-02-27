@@ -16,7 +16,7 @@
 
 cmake_minimum_required(VERSION 2.8)
 
-project(content-hub)
+project (content-hub C CXX)
 
 set(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} ${CMAKE_CURRENT_SOURCE_DIR}/cmake)
 
@@ -24,7 +24,7 @@ include (GNUInstallDirs)
 include (EnableCoverageReport)
 include (GSettings)
 
-set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -Werror -Wall -pedantic -Wextra -fPIC -pthread")
+set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -Werror -Wall -std=c99 -pedantic -Wextra -fPIC -pthread")
 set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++11 -Werror -Wall -fno-strict-aliasing -pedantic -Wextra -fPIC -pthread -Wno-unused-function")
 set(CMAKE_SHARED_LINKER_FLAGS "${CMAKE_SHARED_LINKER_FLAGS} -Wl,--no-undefined")
 
@@ -69,6 +69,7 @@ pkg_check_modules(DBUS REQUIRED dbus-1)
 pkg_check_modules(UBUNTU_DOWNLOAD_MANAGER REQUIRED ubuntu-download-manager-client)
 pkg_check_modules(NOTIFY REQUIRED libnotify)
 pkg_check_modules(MIRCLIENT REQUIRED mirclient)
+pkg_check_modules(CLICK REQUIRED click-0.4)
 
 add_definitions(-DDEBUG_ENABLED)
 

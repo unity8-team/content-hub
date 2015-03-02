@@ -54,11 +54,15 @@ build_exec_envvar (const gchar * appid)
 		return NULL;
 	}
 
-	gchar * exec = g_key_file_get_string(keyfile, "Desktop Entry", "Exec", NULL);
-	g_key_file_free(keyfile);
+        gchar * exec = g_key_file_get_string(keyfile, "Desktop Entry", "Exec", NULL);
+        g_key_file_free(keyfile);
 
-	gchar * envvar = g_strdup_printf("APP_EXEC=%s", exec);
-	g_free(exec);
+        gchar * prepend = g_strdup_printf("%s %s", SOCKET_TOOL, exec);
+        g_free(exec);
+        g_debug("Final Exec line: %s", prepend);
+
+        gchar * envvar = g_strdup_printf("APP_EXEC=%s", prepend);
+        g_free(prepend);
 
 	return envvar;
 }
@@ -83,7 +87,7 @@ build_uri_envvar(const gchar * appuris, gchar ** euri, gchar ** esocket)
 		return FALSE;
 	}
 
-	*esocket = g_strdup_printf("MIR_SOCKET=%s", argv[0]);
+	*esocket = g_strdup_printf("MIR_SOCKET=%s", g_shell_quote(argv[0]));
 	gchar * quoted = g_shell_quote(argv[1]);
 	*euri = g_strdup_printf("APP_URIS=%s", quoted);
 	

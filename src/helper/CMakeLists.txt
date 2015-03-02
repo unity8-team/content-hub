@@ -14,13 +14,32 @@
 #
 # Authored by: Thomas Voss <thomas.voss@canonical.com>
 
+set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++11 -g -fPIE ${GCOV_FLAGS}")
+
 include_directories(
   ${CMAKE_CURRENT_BINARY_DIR}
   ${UBUNTU_LAUNCH_INCLUDE_DIRS}
+  ${GIO_INCLUDE_DIRS}
   ${GLIB_INCLUDE_DIRS}
   ${CLICK_INCLUDE_DIRS}
 )
 
+###########################
+# Mir Connection Demangler
+###########################
+
+add_executable(mir-connection-demangler mir-connection-demangler.c)
+target_link_libraries(mir-connection-demangler ${GLIB_LDFLAGS} ${GIO_LDFLAGS})
+#install(
+#  RUNTIME "${CMAKE_CURRENT_BINARY_DIR}/mir-connection-demangler"
+#  DESTINATION "${CMAKE_INSTALL_FULL_PKGLIBEXECDIR}"
+#)
+
+#############################
+# Untrusted Helper Exec Tool
+#############################
+
+add_definitions(-DSOCKET_TOOL="${CMAKE_INSTALL_FULL_LIBEXECDIR}/ubuntu-app-launch/content-hub/mir-connection-demangler")
 add_executable(
   exec-tool
 
@@ -37,6 +56,6 @@ target_link_libraries(
 )
 
 install(
-  PROGRAMS "${CMAKE_CURRENT_BINARY_DIR}/exec-tool"
+  PROGRAMS "${CMAKE_CURRENT_BINARY_DIR}/exec-tool" "${CMAKE_CURRENT_BINARY_DIR}/mir-connection-demangler"
   DESTINATION "${CMAKE_INSTALL_FULL_LIBEXECDIR}/ubuntu-app-launch/content-hub"
 )

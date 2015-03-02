@@ -40,6 +40,7 @@ bool cucd::AppManager::invoke_application_with_socket(const std::string &app_id,
     TRACE() << Q_FUNC_INFO << "APP_ID:" << app_id.c_str();
     QVector<const gchar*> uris;
     uris.append(g_strdup_printf("%s", socket.c_str()));
+    uris.append("");
     uris.append(NULL);
     TRACE() << Q_FUNC_INFO << "URIS:" << g_strdup_printf("%s", socket.c_str());
     gchar *instanceId = ubuntu_app_launch_start_multiple_helper("content-hub",

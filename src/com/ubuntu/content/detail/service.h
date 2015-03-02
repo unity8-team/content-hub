@@ -25,6 +25,7 @@
 #include <QtDBus/QDBusMessage>
 #include <QtDBus/QDBusServiceWatcher>
 #include <QtDBus/QDBusContext>
+#include <QDBusUnixFileDescriptor>
 
 #include <com/ubuntu/applicationmanager/application_manager.h>
 #include "handler.h"
@@ -67,6 +68,7 @@ class Service : public QObject, protected QDBusContext
     void HandlerActive(const QString&);
     void Quit();
     void DownloadManagerError(QString);
+    QDBusUnixFileDescriptor GetMirSocket(int);
 
   private:
     bool should_cancel(int);

@@ -24,7 +24,7 @@ include (GNUInstallDirs)
 include (EnableCoverageReport)
 include (GSettings)
 
-set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -Werror -Wall -std=c99 -pedantic -Wextra -fPIC -pthread")
+#set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -Werror -Wall -std=c99 -pedantic -Wextra -fPIC -pthread")
 set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++11 -Werror -Wall -fno-strict-aliasing -pedantic -Wextra -fPIC -pthread -Wno-unused-function")
 set(CMAKE_SHARED_LINKER_FLAGS "${CMAKE_SHARED_LINKER_FLAGS} -Wl,--no-undefined")
 

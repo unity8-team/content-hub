@@ -631,3 +631,9 @@ void cucd::Service::HandlerActive(const QString& peer_id)
         }
     }
 }
+
+QDBusUnixFileDescriptor cucd::Service::GetMirSocket(int fd_id)
+{
+    TRACE() << Q_FUNC_INFO << fd_id;
+    return QDBusUnixFileDescriptor(fd_id);
+}

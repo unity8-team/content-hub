@@ -87,7 +87,7 @@ build_uri_envvar(const gchar * appuris, gchar ** euri, gchar ** esocket)
 		return FALSE;
 	}
 
-	*esocket = g_strdup_printf("MIR_SOCKET=%s", g_shell_quote(argv[0]));
+	*esocket = g_strdup_printf("CONTENT_HUB_MIR_SOCKET=%s", g_shell_quote(argv[0]));
 	gchar * quoted = g_shell_quote(argv[1]);
 	*euri = g_strdup_printf("APP_URIS=%s", quoted);
 	

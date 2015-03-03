@@ -49,7 +49,7 @@ main (int argc, char * argv[])
 
 	retval = g_dbus_connection_call_with_unix_fd_list_sync(
 		bus,
-		"com.ubuntu.content",
+		"com.ubuntu.content.dbus.Service",
 		mir_socket,
 		"com.ubuntu.content.dbus.Service",
 		"GetMirSocket",

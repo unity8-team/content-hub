@@ -50,10 +50,10 @@ main (int argc, char * argv[])
 	retval = g_dbus_connection_call_with_unix_fd_list_sync(
 		bus,
 		"com.ubuntu.content.dbus.Service",
-		mir_socket,
+		"/",
 		"com.ubuntu.content.dbus.Service",
 		"GetMirSocket",
-		NULL,
+		mir_socket,
 		G_VARIANT_TYPE("(h)"),
 		G_DBUS_CALL_FLAGS_NO_AUTO_START,
 		-1, /* timeout */

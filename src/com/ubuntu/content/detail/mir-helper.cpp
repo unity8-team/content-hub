@@ -103,7 +103,7 @@ QString PromptSession::requestSocket()
     mir_wait_for(mir_prompt_session_new_fds_for_prompt_providers(
         d->m_mirSession, 1, client_fd_callback, d));
     if (!d->m_fds.isEmpty()) {
-        return QString("fd://%1").arg(d->m_fds[0]);
+        return QString(d->m_fds[0]);
     } else {
         return QString();
     }

@@ -47,13 +47,19 @@ main (int argc, char * argv[])
 	GVariant * retval;
 	GUnixFDList * fdlist;
 
+        /* Index into fds */
+        GVariant* id = g_variant_new_int32(g_strtod(mir_socket, NULL));
+        GVariant* params = g_variant_new_tuple(&id, 1);
+	g_variant_unref(id);
+
+
 	retval = g_dbus_connection_call_with_unix_fd_list_sync(
 		bus,
 		"com.ubuntu.content.dbus.Service",
 		"/",
 		"com.ubuntu.content.dbus.Service",
 		"GetMirSocket",
-		mir_socket,
+		params,
 		G_VARIANT_TYPE("(h)"),
 		G_DBUS_CALL_FLAGS_NO_AUTO_START,
 		-1, /* timeout */
@@ -69,6 +75,7 @@ main (int argc, char * argv[])
 		g_error_free(error);
 		return -1;
 	}
+	g_variant_unref(params);
 
 	GVariant * outhandle = g_variant_get_child_value(retval, 0);
 

@@ -100,6 +100,7 @@ cucd::Service::Service(QDBusConnection connection, const QSharedPointer<cucd::Pe
     QObject::connect(m_watcher, SIGNAL(serviceUnregistered(const QString&)),
             this,
             SLOT(handler_unregistered(const QString&)));
+    m_mirHelper = MirHelper::instance();
 }
 
 cucd::Service::~Service()

@@ -209,11 +209,13 @@ MirHelper *MirHelper::instance()
 PromptSessionP MirHelper::createPromptSession(pid_t initiatorPid)
 {
     Q_D(MirHelper);
-    TRACE() << Q_FUNC_INFO;
+    TRACE() << Q_FUNC_INFO << initiatorPid;
     PromptSessionP session = d->m_sessions.value(initiatorPid);
     if (session.isNull()) {
+        TRACE() << Q_FUNC_INFO << "Session is NULL";
         PromptSession *s = d->createPromptSession(initiatorPid);
         if (s) {
+            TRACE() << Q_FUNC_INFO << "Creating new session";
             session = PromptSessionP(s);
             d->m_sessions.insert(initiatorPid, session);
         }

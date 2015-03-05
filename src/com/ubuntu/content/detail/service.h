@@ -84,7 +84,7 @@ class Service : public QObject, protected QDBusContext
     void handler_unregistered(const QString&);
     QDBusObjectPath CreateTransfer(const QString&, const QString&, int, const QString&);
     void download_notify (com::ubuntu::content::detail::Transfer*);
-    QString setupPromptSession(uint);
+    QString setupPromptSession(com::ubuntu::content::detail::Transfer*, uint);
 };
 }
 }

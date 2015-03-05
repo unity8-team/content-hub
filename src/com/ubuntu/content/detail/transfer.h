@@ -18,6 +18,7 @@
 #ifndef TRANSFER_H_
 #define TRANSFER_H_
 
+#include "mir-helper.h"
 #include <QObject>
 #include <QStringList>
 #include <QDir>
@@ -90,6 +91,8 @@ Q_SIGNALS:
     void AddItemsFromDir(QDir dir);
     QString MirSocket();
     void SetMirSocket(QString MirSocket);
+    PromptSessionP PromptSession();
+    void SetPromptSession(PromptSessionP promptSession);
 
   private:
     struct Private;

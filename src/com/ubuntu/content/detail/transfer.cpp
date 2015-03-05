@@ -17,6 +17,7 @@
  */
 
 #include "debug.h"
+#include "mir-helper.h"
 #include "transfer.h"
 #include "utils.cpp"
 
@@ -60,6 +61,7 @@ struct cucd::Transfer::Private
     QString download_id;
     const QString content_type;
     QString mir_socket = "";
+    PromptSessionP promptSession;
 };
 
 cucd::Transfer::Transfer(const int id,
@@ -388,4 +390,20 @@ void cucd::Transfer::SetMirSocket(QString mir_socket)
 
     d->mir_socket = mir_socket;
     Q_EMIT(MirSocketChanged(d->mir_socket));
+}
+
+PromptSessionP cucd::Transfer::PromptSession()
+{
+    TRACE() << __PRETTY_FUNCTION__;
+    return d->promptSession;
+}
+
+void cucd::Transfer::SetPromptSession(PromptSessionP promptSession)
+{
+    TRACE() << Q_FUNC_INFO;
+
+    if (d->promptSession == promptSession)
+        return;
+
+    d->promptSession = promptSession;
 }

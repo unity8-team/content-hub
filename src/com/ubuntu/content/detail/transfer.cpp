@@ -79,6 +79,7 @@ cucd::Transfer::~Transfer()
 {
     TRACE() << __PRETTY_FUNCTION__;
     purge_store_cache(d->store);
+    d->promptSession = 0;
 }
 
 /* unique id of the transfer */

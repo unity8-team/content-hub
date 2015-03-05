@@ -76,6 +76,7 @@ class Service : public QObject, protected QDBusContext
     struct RegHandler;
     QDBusServiceWatcher* m_watcher;
     QScopedPointer<Private> d;
+    MirHelper* m_mirHelper = 0;
 
   private Q_SLOTS:
     void handle_imports(int);

@@ -64,6 +64,7 @@ PromptSessionPrivate::PromptSessionPrivate(MirPromptSession *session,
     m_mirSession(session),
     m_initiatorPid(initiatorPid)
 {
+    TRACE() << Q_FUNC_INFO;
 }
 
 PromptSessionPrivate::~PromptSessionPrivate()
@@ -75,11 +76,13 @@ PromptSessionPrivate::~PromptSessionPrivate()
 PromptSession::PromptSession(PromptSessionPrivate *priv):
     d_ptr(priv)
 {
+    TRACE() << Q_FUNC_INFO;
     priv->q_ptr = this;
 }
 
 PromptSession::~PromptSession()
 {
+    TRACE() << Q_FUNC_INFO;
     Q_D(PromptSession);
     MirHelperPrivate *helperPrivate = MirHelper::instance()->d_ptr;
     helperPrivate->m_sessions.remove(d->m_initiatorPid);
@@ -89,6 +92,7 @@ PromptSession::~PromptSession()
 static void client_fd_callback(MirPromptSession *, size_t count,
                                int const *fds, void *context)
 {
+    TRACE() << Q_FUNC_INFO;
     PromptSessionPrivate *priv = (PromptSessionPrivate *)context;
     for (size_t i = 0; i < count; i++) {
         priv->m_fds.append(fds[i]);
@@ -97,6 +101,7 @@ static void client_fd_callback(MirPromptSession *, size_t count,
 
 QString PromptSession::requestSocket()
 {
+    TRACE() << Q_FUNC_INFO;
     Q_D(PromptSession);
 
     d->m_fds.clear();
@@ -113,6 +118,7 @@ MirHelperPrivate::MirHelperPrivate(MirHelper *helper):
     QObject(helper),
     q_ptr(helper)
 {
+    TRACE() << Q_FUNC_INFO;
     QString mirSocket =
         QStandardPaths::writableLocation(QStandardPaths::RuntimeLocation) +
         "/mir_socket_trusted";
@@ -127,6 +133,7 @@ MirHelperPrivate::MirHelperPrivate(MirHelper *helper):
 
 MirHelperPrivate::~MirHelperPrivate()
 {
+    TRACE() << Q_FUNC_INFO;
     if (m_connection) {
         mir_connection_release(m_connection);
         m_connection = 0;
@@ -137,6 +144,7 @@ static void session_event_callback(MirPromptSession *mirSession,
                                    MirPromptSessionState state,
                                    void *self)
 {
+    TRACE() << Q_FUNC_INFO;
     MirHelperPrivate *helper = reinterpret_cast<MirHelperPrivate*>(self);
     TRACE() << "Prompt Session state updated to" << state;
     if (state == mir_prompt_session_state_stopped) {
@@ -146,6 +154,7 @@ static void session_event_callback(MirPromptSession *mirSession,
 
 void MirHelperPrivate::onSessionStopped(MirPromptSession *mirSession)
 {
+    TRACE() << Q_FUNC_INFO;
     Q_FOREACH(PromptSessionP session, m_sessions) {
         if (mirSession == session->d_ptr->m_mirSession) {
             session->d_ptr->emitFinished();
@@ -155,6 +164,7 @@ void MirHelperPrivate::onSessionStopped(MirPromptSession *mirSession)
 
 PromptSession *MirHelperPrivate::createPromptSession(pid_t initiatorPid)
 {
+    TRACE() << Q_FUNC_INFO << initiatorPid;
     if (Q_UNLIKELY(!m_connection)) return 0;
     if (Q_UNLIKELY(!mir_connection_is_valid(m_connection))) return 0; 
 
@@ -178,15 +188,18 @@ MirHelper::MirHelper(QObject *parent):
     QObject(parent),
     d_ptr(new MirHelperPrivate(this))
 {
+    TRACE() << Q_FUNC_INFO;
 }
 
 MirHelper::~MirHelper()
 {
+    TRACE() << Q_FUNC_INFO;
     m_instance = 0;
 }
 
 MirHelper *MirHelper::instance()
 {
+    TRACE() << Q_FUNC_INFO;
     if (!m_instance) {
         m_instance = new MirHelper;
     }
@@ -196,6 +209,7 @@ MirHelper *MirHelper::instance()
 PromptSessionP MirHelper::createPromptSession(pid_t initiatorPid)
 {
     Q_D(MirHelper);
+    TRACE() << Q_FUNC_INFO;
     PromptSessionP session = d->m_sessions.value(initiatorPid);
     if (session.isNull()) {
         PromptSession *s = d->createPromptSession(initiatorPid);

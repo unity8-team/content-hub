@@ -347,8 +347,10 @@ QDBusObjectPath cucd::Service::CreateTransfer(const QString& dest_id, const QStr
 QString cucd::Service::setupPromptSession(uint clientPid)
 {
     TRACE() << Q_FUNC_INFO << "PID:" << clientPid;
+    if (!m_mirHelper)
+        m_mirHelper = MirHelper::instance();
     PromptSessionP session =
-        MirHelper::instance()->createPromptSession(clientPid);
+        m_mirHelper->createPromptSession(clientPid);
     if (!session) return "";
 
     QString mirSocket = session->requestSocket();
@@ -371,12 +373,7 @@ void cucd::Service::handle_imports(int state)
     if (state == cuc::Transfer::initiated)
     {
         TRACE() << Q_FUNC_INFO << "initiated";
-        
-        //uint clientPid = d->connection.interface()->servicePid(this->message().service());
-        //uint clientPid = d->connection.interface()->servicePid(QString(transfer->destination()));
-        //auto mirSocket = setupPromptSession(clientPid);
         if (!transfer->MirSocket().isEmpty()) {
-            //transfer->SetMirSocket(mirSocket);
             d->app_manager->invoke_application_with_socket(transfer->source().toStdString(), transfer->MirSocket().toStdString());
         } else {
             if (d->app_manager->is_application_started(transfer->source().toStdString()))

@@ -73,7 +73,6 @@ main (int argc, char * argv[])
 		g_error_free(error);
 		return -1;
 	}
-	g_variant_unref(params);
 
 	GVariant * outhandle = g_variant_get_child_value(retval, 0);
 

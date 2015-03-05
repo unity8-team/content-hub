@@ -347,10 +347,11 @@ QDBusObjectPath cucd::Service::CreateTransfer(const QString& dest_id, const QStr
 QString cucd::Service::setupPromptSession(uint clientPid)
 {
     TRACE() << Q_FUNC_INFO << "PID:" << clientPid;
-    if (!m_mirHelper)
+    if (!m_mirHelper) {
+        TRACE() << "No MirHelper, creating one";
         m_mirHelper = MirHelper::instance();
-    PromptSessionP session =
-        m_mirHelper->createPromptSession(clientPid);
+    }
+    PromptSessionP session = m_mirHelper->createPromptSession(clientPid);
     if (!session) return "";
 
     QString mirSocket = session->requestSocket();

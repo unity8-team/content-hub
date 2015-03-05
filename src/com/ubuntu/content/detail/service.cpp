@@ -355,7 +355,7 @@ QString cucd::Service::setupPromptSession(cucd::Transfer* t, uint clientPid)
     PromptSessionP session = m_mirHelper->createPromptSession(clientPid);
     if (!session) return "";
 
-    t->SetPromptSession(session);
+    t->SetPromptSession(&session);
     QString mirSocket = session->requestSocket();
     TRACE() << Q_FUNC_INFO << "mirSocket:" << mirSocket;
 

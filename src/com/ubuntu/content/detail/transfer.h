@@ -91,8 +91,8 @@ Q_SIGNALS:
     void AddItemsFromDir(QDir dir);
     QString MirSocket();
     void SetMirSocket(QString MirSocket);
-    PromptSessionP PromptSession();
-    void SetPromptSession(PromptSessionP promptSession);
+    PromptSessionP* PromptSession();
+    void SetPromptSession(PromptSessionP* promptSession);
 
   private:
     struct Private;

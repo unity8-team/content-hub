@@ -50,8 +50,6 @@ main (int argc, char * argv[])
         /* Index into fds */
         GVariant* id = g_variant_new_int32(g_strtod(mir_socket, NULL));
         GVariant* params = g_variant_new_tuple(&id, 1);
-	g_variant_unref(id);
-
 
 	retval = g_dbus_connection_call_with_unix_fd_list_sync(
 		bus,

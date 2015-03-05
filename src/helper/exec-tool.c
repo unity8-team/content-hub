@@ -25,7 +25,8 @@ gchar *
 build_exec_envvar (const gchar * appid)
 {
 	gchar * appid_desktop = g_strdup_printf("%s.desktop", appid);
-	gchar * desktopfilepath = g_build_filename(g_get_user_data_dir(), "applications", appid_desktop, NULL);
+	/* FIXME: We need our hook to create our own symlink to the desktop file to use */
+	gchar * desktopfilepath = g_build_filename(g_get_user_cache_dir(), "ubuntu-app-launch", "desktop", appid_desktop, NULL);
 	g_free(appid_desktop);
 
 	if (!g_file_test(desktopfilepath, G_FILE_TEST_EXISTS)) {

@@ -61,7 +61,7 @@ struct cucd::Transfer::Private
     QString download_id;
     const QString content_type;
     QString mir_socket = "";
-    PromptSessionP* promptSession;
+    PromptSessionP promptSession;
 };
 
 cucd::Transfer::Transfer(const int id,
@@ -79,7 +79,6 @@ cucd::Transfer::~Transfer()
 {
     TRACE() << __PRETTY_FUNCTION__;
     purge_store_cache(d->store);
-    delete d->promptSession;
 }
 
 /* unique id of the transfer */
@@ -393,13 +392,13 @@ void cucd::Transfer::SetMirSocket(QString mir_socket)
     Q_EMIT(MirSocketChanged(d->mir_socket));
 }
 
-PromptSessionP* cucd::Transfer::PromptSession()
+PromptSessionP cucd::Transfer::PromptSession()
 {
     TRACE() << __PRETTY_FUNCTION__;
     return d->promptSession;
 }
 
-void cucd::Transfer::SetPromptSession(PromptSessionP* promptSession)
+void cucd::Transfer::SetPromptSession(PromptSessionP promptSession)
 {
     TRACE() << Q_FUNC_INFO;
 

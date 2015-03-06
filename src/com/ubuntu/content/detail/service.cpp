@@ -100,7 +100,6 @@ cucd::Service::Service(QDBusConnection connection, const QSharedPointer<cucd::Pe
     QObject::connect(m_watcher, SIGNAL(serviceUnregistered(const QString&)),
             this,
             SLOT(handler_unregistered(const QString&)));
-    m_mirHelper = MirHelper::instance();
 }
 
 cucd::Service::~Service()
@@ -355,8 +354,8 @@ QString cucd::Service::setupPromptSession(cucd::Transfer* t, uint clientPid)
     PromptSessionP session = m_mirHelper->createPromptSession(clientPid);
     if (!session) return "";
 
-    t->SetPromptSession(&session);
     QString mirSocket = session->requestSocket();
+    t->SetPromptSession(session);
     TRACE() << Q_FUNC_INFO << "mirSocket:" << mirSocket;
 
     /*

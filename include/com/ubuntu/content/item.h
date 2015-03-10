@@ -35,6 +35,7 @@ class Item : public QObject
     Q_OBJECT
     Q_PROPERTY(QUrl url READ url())
     Q_PROPERTY(QString name READ name WRITE setName)
+    Q_PROPERTY(QString data READ data WRITE setData)
 
   public:
     Item(const QUrl& = QUrl(), QObject* = nullptr);
@@ -47,6 +48,8 @@ class Item : public QObject
     Q_INVOKABLE const QUrl& url() const;
     Q_INVOKABLE const QString& name() const;
     Q_INVOKABLE void setName(const QString &name) const;
+    Q_INVOKABLE const QString& data() const;
+    Q_INVOKABLE void setData(const QString &data) const;
 
   private:
     struct Private;

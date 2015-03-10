@@ -27,14 +27,15 @@ struct cuc::Item::Private
 {
     QUrl url;
     QString name;
+    QString data;
 
     bool operator==(const Private& rhs) const
     {
-        return url == rhs.url && name == rhs.name;
+        return url == rhs.url && name == rhs.name && data == rhs.data;
     }
 };
 
-cuc::Item::Item(const QUrl& url, QObject* parent) : QObject(parent), d{new cuc::Item::Private{url, QString()}}
+cuc::Item::Item(const QUrl& url, QObject* parent) : QObject(parent), d{new cuc::Item::Private{url, QString(), QString()}}
 {
 }
 
@@ -76,10 +77,21 @@ void cuc::Item::setName(const QString& newName) const
         d->name = newName;
 }
 
+const QString& cuc::Item::data() const
+{
+    return d->data;
+}
+
+void cuc::Item::setData(const QString& newData) const
+{
+    if (newData != d->data)
+        d->data = newData;
+}
+
 QDBusArgument &operator<<(QDBusArgument &argument, const cuc::Item& item)
 {
     argument.beginStructure();
-    argument << item.name() << item.url().toDisplayString();
+    argument << item.data() << item.name() << item.url().toDisplayString();
     argument.endStructure();
     return argument;
 }
@@ -89,14 +101,15 @@ const QDBusArgument &operator>>(const QDBusArgument &argument, cuc::Item &item)
     TRACE() << Q_FUNC_INFO;
     QString name;
     QString urlString;
-
+    QString data;
 
     argument.beginStructure();
-    argument >> name >> urlString;
+    argument >> data >> name >> urlString;
     argument.endStructure();
 
     item = cuc::Item{QUrl(urlString)};
     item.setName(name);
+    item.setData(data);
     return argument;
 }
 

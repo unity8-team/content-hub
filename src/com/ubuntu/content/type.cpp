@@ -110,3 +110,9 @@ const cuc::Type& cuc::Type::Known::ebooks()
     static cuc::Type t("ebooks", nullptr);
     return t;
 }
+
+const cuc::Type& cuc::Type::Known::text()
+{
+    static cuc::Type t("text", nullptr);
+    return t;
+}

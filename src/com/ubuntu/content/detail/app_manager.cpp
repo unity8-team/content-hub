@@ -29,6 +29,13 @@ bool cucd::AppManager::invoke_application(const std::string &app_id)
 {
     TRACE() << Q_FUNC_INFO << "APP_ID:" << app_id.c_str();
     QVector<const gchar*> uris;
+    /* Always append this to uris, it's used by the StateSaver via the 
+       UriHandler in the toolkit to clear the saved state on start.  
+       Otherwise the state of the app could be restored instead of 
+       updating the UI to handle the transfer.  The UriHandler 
+       filters our specific URI preventing apps from handling
+       it unnecessarily.
+    */
     uris.append("content-hub://true");
     uris.append(NULL);
 

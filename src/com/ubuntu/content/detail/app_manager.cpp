@@ -28,8 +28,11 @@ namespace cucd = com::ubuntu::content::detail;
 bool cucd::AppManager::invoke_application(const std::string &app_id)
 {
     TRACE() << Q_FUNC_INFO << "APP_ID:" << app_id.c_str();
-    gchar ** uris = NULL;
-    gboolean ok = ubuntu_app_launch_start_application(app_id.c_str(), (const gchar * const *)uris);
+    QVector<const gchar*> uris;
+    uris.append("content-hub://true");
+    uris.append(NULL);
+
+    gboolean ok = ubuntu_app_launch_start_application(app_id.c_str(), uris.constData());
     return static_cast<bool>(ok);
 }
 

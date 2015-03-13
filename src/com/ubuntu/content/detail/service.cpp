@@ -375,36 +375,42 @@ void cucd::Service::handle_imports(int state)
     if (state == cuc::Transfer::initiated)
     {
         TRACE() << Q_FUNC_INFO << "initiated";
-        if (!transfer->MirSocket().isEmpty()) {
-            d->app_manager->invoke_application_with_socket(transfer->source().toStdString(), transfer->MirSocket().toStdString());
-        } else {
-            if (d->app_manager->is_application_started(transfer->source().toStdString()))
-                transfer->SetSourceStartedByContentHub(false);
-            else
-                transfer->SetSourceStartedByContentHub(true);
+        if (d->app_manager->is_application_started(transfer->source().toStdString()))
+            transfer->SetSourceStartedByContentHub(false);
+        else
+            transfer->SetSourceStartedByContentHub(true);
 
-            Q_FOREACH (RegHandler *r, d->handlers)
+        Q_FOREACH (RegHandler *r, d->handlers)
+        {
+            TRACE() << Q_FUNC_INFO << "ID:" << r->id << "Handler: " << r->service << "Transfer: " << transfer->source();
+            if (r->id == transfer->source())
             {
-                TRACE() << Q_FUNC_INFO << "ID:" << r->id << "Handler: " << r->service << "Transfer: " << transfer->source();
-                if (r->id == transfer->source())
-                {
-                    TRACE() << Q_FUNC_INFO << "Found handler for initiated transfer" << r->id;
-                    if (r->handler->isValid())
-                        r->handler->HandleExport(QDBusObjectPath{transfer->export_path()});
-                    else
-                        TRACE() << Q_FUNC_INFO << "Handler invalid";
-                }
+                TRACE() << Q_FUNC_INFO << "Found handler for initiated transfer" << r->id;
+                if (r->handler->isValid())
+                    r->handler->HandleExport(QDBusObjectPath{transfer->export_path()});
+                else
+                    TRACE() << Q_FUNC_INFO << "Handler invalid";
             }
-
-            d->app_manager->invoke_application(transfer->source().toStdString());
         }
+
+        if (!transfer->MirSocket().isEmpty() && !transfer->WasSourceStartedByContentHub())
+            d->app_manager->invoke_application_with_socket(transfer->source().toStdString(), transfer->MirSocket().toStdString());
+        else
+            d->app_manager->invoke_application(transfer->source().toStdString());
     }
 
     if (state == cuc::Transfer::charged)
     {
         TRACE() << Q_FUNC_INFO << "Charged";
-        if (transfer->WasSourceStartedByContentHub())
+        if (transfer->WasSourceStartedByContentHub()) {
             d->app_manager->stop_application(transfer->source().toStdString());
+            PromptSessionP pSession = transfer->PromptSession();
+            PromptSession* session = pSession.data();
+            if (session) {
+                session->release();
+            }
+            pSession.clear();
+        }
         
         d->app_manager->invoke_application(transfer->destination().toStdString());
 

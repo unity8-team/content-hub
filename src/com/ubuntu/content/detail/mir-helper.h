@@ -31,6 +31,7 @@ public:
     ~PromptSession();
 
     QString requestSocket();
+    void release();
 
 Q_SIGNALS:
     void finished();

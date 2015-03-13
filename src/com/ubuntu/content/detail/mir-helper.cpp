@@ -99,6 +99,15 @@ static void client_fd_callback(MirPromptSession *, size_t count,
     }
 }
 
+void PromptSession::release()
+{
+    TRACE() << Q_FUNC_INFO;
+    Q_D(PromptSession);
+    if (d->m_mirSession)
+        mir_prompt_session_release_sync(d->m_mirSession);
+        d->m_mirSession = NULL;
+}
+
 QString PromptSession::requestSocket()
 {
     TRACE() << Q_FUNC_INFO;

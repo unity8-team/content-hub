@@ -32,8 +32,12 @@ main (int argc, char * argv[])
 		g_error("Unable to find Mir connection from Content Hub");
 		return -1;
 	}
-
-	g_print("Mir Connection Path: %s\n", mir_socket);
+	gchar * mir_socket_unquoted = g_shell_unquote(mir_socket, NULL);
+	if (mir_socket_unquoted == NULL) {
+		mir_socket_unquoted = g_strdup(mir_socket);
+	}
+ 
+        g_print("Mir Connection Path: %s\n", mir_socket_unquoted);
 
 	GError * error = NULL;
 	GDBusConnection * bus = g_bus_get_sync(G_BUS_TYPE_SESSION, NULL, &error);
@@ -48,7 +52,8 @@ main (int argc, char * argv[])
 	GUnixFDList * fdlist;
 
         /* Index into fds */
-        GVariant* id = g_variant_new_int32(g_strtod(mir_socket, NULL));
+        GVariant* id = g_variant_new_int32(g_strtod(mir_socket_unquoted, NULL));
+        g_free(mir_socket_unquoted);
         GVariant* params = g_variant_new_tuple(&id, 1);
 
 	retval = g_dbus_connection_call_with_unix_fd_list_sync(

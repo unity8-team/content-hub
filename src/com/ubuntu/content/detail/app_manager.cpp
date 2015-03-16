@@ -36,7 +36,7 @@ bool cucd::AppManager::invoke_application(const std::string &app_id)
        filters our specific URI preventing apps from handling
        it unnecessarily.
     */
-    uris.append("content-hub://true");
+    uris.append("--no-restore-state");
     uris.append(NULL);
 
     gboolean ok = ubuntu_app_launch_start_application(app_id.c_str(), uris.constData());

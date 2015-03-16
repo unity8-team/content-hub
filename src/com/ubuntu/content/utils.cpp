@@ -132,6 +132,10 @@ QString copy_to_store(const QString& src, const QString& store)
         st.mkpath(st.absolutePath());
     QString destFilePath = store + QDir::separator() + fi.fileName();
     TRACE() << Q_FUNC_INFO << destFilePath;
+    if (QFile::exists(destFilePath)) {
+            qWarning() << "Destination file already exists, aborting:" << destFilePath;
+            return QString();
+    }
     bool copy_failed = true;
     if (not is_persistent(store))
     {

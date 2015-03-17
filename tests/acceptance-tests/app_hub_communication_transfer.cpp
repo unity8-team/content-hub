@@ -39,7 +39,6 @@
 #include <QCoreApplication>
 #include <QtDBus/QDBusConnection>
 #include <QStandardPaths>
-#include <QTemporaryFile>
 #include <QtTest/QTest>
 
 #include <thread>

@@ -39,6 +39,7 @@
 #include <QCoreApplication>
 #include <QtDBus/QDBusConnection>
 #include <QStandardPaths>
+#include <QTemporaryDir>
 #include <QtTest/QTest>
 
 #include <thread>
@@ -49,22 +50,6 @@ namespace cucd = com::ubuntu::content::detail;
 
 void PrintTo(const QString& s, ::std::ostream* os) {
     *os << std::string(qPrintable(s));
-}
-
-std::string random_string( size_t length )
-{
-    auto randchar = []() -> char
-    {
-        const char charset[] =
-        "0123456789"
-        "ABCDEFGHIJKLMNOPQRSTUVWXYZ"
-        "abcdefghijklmnopqrstuvwxyz";
-        const size_t max_index = (sizeof(charset) - 1);
-        return charset[ rand() % max_index ];
-    };
-    std::string str(length,0);
-    std::generate_n( str.begin(), length, randchar );
-    return str;
 }
 
 namespace
@@ -133,7 +118,6 @@ TEST(Hub, transfer_creation_and_states_work)
 
     auto child = [&sync]()
     {
-        srand(time(0));
         int argc = 0;
         QCoreApplication app(argc, nullptr);
         app.setApplicationName("com.some.test.app");
@@ -143,8 +127,7 @@ TEST(Hub, transfer_creation_and_states_work)
         test::TestHarness harness;
         harness.add_test_case([]()
         {
-            QString store_path = "/tmp/" + QString(random_string(20).c_str());
-
+            QTemporaryDir store_dir;
             QVector<cuc::Item> source_items;
             source_items << cuc::Item(QUrl::fromLocalFile(QFileInfo("file1").absoluteFilePath()));
             source_items[0].setName("name1");
@@ -154,11 +137,11 @@ TEST(Hub, transfer_creation_and_states_work)
             source_items[2].setName("name3");
             
             QVector<cuc::Item> expected_items;
-            expected_items << cuc::Item(QUrl("file://" + store_path + "/file1"));
+            expected_items << cuc::Item(QUrl("file://" + store_dir.path() + "/file1"));
             expected_items[0].setName("name1");
-            expected_items << cuc::Item(QUrl("file://" + store_path + "/file2"));
+            expected_items << cuc::Item(QUrl("file://" + store_dir.path() + "/file2"));
             expected_items[1].setName("name2");
-            expected_items << cuc::Item(QUrl("file://" + store_path + "/file3"));
+            expected_items << cuc::Item(QUrl("file://" + store_dir.path() + "/file3"));
             expected_items[2].setName("name3");
 
             /** [Importing pictures] */
@@ -169,7 +152,7 @@ TEST(Hub, transfer_creation_and_states_work)
             EXPECT_EQ(cuc::Transfer::created, transfer->state());
             EXPECT_TRUE(transfer->setSelectionType(cuc::Transfer::SelectionType::multiple));
             ASSERT_EQ(cuc::Transfer::SelectionType::multiple, transfer->selectionType());
-            transfer->setStore(new cuc::Store{store_path});
+            transfer->setStore(new cuc::Store{store_dir.path()});
             EXPECT_TRUE(transfer->start());
             EXPECT_EQ(cuc::Transfer::initiated, transfer->state());
             EXPECT_TRUE(transfer->setSelectionType(cuc::Transfer::SelectionType::single));
@@ -186,7 +169,7 @@ TEST(Hub, transfer_creation_and_states_work)
             EXPECT_EQ(cuc::Transfer::created, dupe_transfer->state());
             EXPECT_TRUE(dupe_transfer->setSelectionType(cuc::Transfer::SelectionType::multiple));
             ASSERT_EQ(cuc::Transfer::SelectionType::multiple, dupe_transfer->selectionType());
-            dupe_transfer->setStore(new cuc::Store{store_path});
+            dupe_transfer->setStore(new cuc::Store{store_dir.path()});
             EXPECT_TRUE(dupe_transfer->start());
             EXPECT_EQ(cuc::Transfer::initiated, dupe_transfer->state());
             EXPECT_TRUE(dupe_transfer->charge(source_items));

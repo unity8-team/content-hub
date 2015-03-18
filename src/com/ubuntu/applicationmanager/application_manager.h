@@ -47,6 +47,12 @@ class ApplicationManager
     virtual bool invoke_application_with_socket(const std::string &app_id, const std::string &socket) = 0;
 
     /*!
+     * \brief stop_application_with_helper stops an application started by the content-hub helper
+     * \param app_id ID for the application (for example "gallery-app" - used for the desktop)
+     */
+    virtual bool stop_application_with_helper(const std::string &app_id) = 0;
+
+    /*!
      * \brief stop_application stops an application started by ubuntu
      * \param app_id ID for the application (for example "gallery-app" - used for the desktop)
      */

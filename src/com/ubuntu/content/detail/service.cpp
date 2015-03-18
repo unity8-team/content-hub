@@ -393,23 +393,26 @@ void cucd::Service::handle_imports(int state)
             }
         }
 
-        if (!transfer->MirSocket().isEmpty() && !transfer->WasSourceStartedByContentHub())
-            d->app_manager->invoke_application_with_socket(transfer->source().toStdString(), transfer->MirSocket().toStdString());
-        else
+        if (transfer->MirSocket().isEmpty() || !transfer->WasSourceStartedByContentHub())
             d->app_manager->invoke_application(transfer->source().toStdString());
+        else
+            d->app_manager->invoke_application_with_socket(transfer->source().toStdString(), transfer->MirSocket().toStdString());
     }
 
     if (state == cuc::Transfer::charged)
     {
         TRACE() << Q_FUNC_INFO << "Charged";
         if (transfer->WasSourceStartedByContentHub()) {
-            d->app_manager->stop_application(transfer->source().toStdString());
-            PromptSessionP pSession = transfer->PromptSession();
-            PromptSession* session = pSession.data();
-            if (session) {
-                session->release();
+            if (!transfer->MirSocket().isEmpty()) {
+                PromptSessionP pSession = transfer->PromptSession();
+                PromptSession* session = pSession.data();
+                if (session)
+                    session->release();
+                pSession.clear();
+                d->app_manager->stop_application_with_helper(transfer->source().toStdString());
             }
-            pSession.clear();
+            else
+                d->app_manager->stop_application(transfer->source().toStdString());
         }
         
         d->app_manager->invoke_application(transfer->destination().toStdString());

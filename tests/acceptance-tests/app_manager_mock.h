@@ -31,12 +31,14 @@ struct MockedAppManager : public cua::ApplicationManager
 
         ON_CALL(*this, invoke_application(_)).WillByDefault(Return(true));
         ON_CALL(*this, invoke_application_with_socket(_,_)).WillByDefault(Return(true));
+        ON_CALL(*this, stop_application_with_helper(_)).WillByDefault(Return(true));
         ON_CALL(*this, stop_application(_)).WillByDefault(Return(true));
         ON_CALL(*this, is_application_started(_)).WillByDefault(Return(true));
     }
 
     MOCK_METHOD1(invoke_application, bool(const std::string &));
     MOCK_METHOD2(invoke_application_with_socket, bool(const std::string &, const std::string &));
+    MOCK_METHOD1(stop_application_with_helper, bool(const std::string &));
     MOCK_METHOD1(stop_application, bool(const std::string &));
     MOCK_METHOD1(is_application_started, bool(const std::string &));
 };

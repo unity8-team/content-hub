@@ -360,12 +360,14 @@ QString cucd::Transfer::import_path()
 /* sets, if the source app is freshly started by the content hub */
 void cucd::Transfer::SetSourceStartedByContentHub(bool started)
 {
+    TRACE() << Q_FUNC_INFO << started;
     d->source_started_by_content_hub = started;
 }
 
 /* returns if the source app was started by the content hub */
 bool com::ubuntu::content::detail::Transfer::WasSourceStartedByContentHub() const
 {
+    TRACE() << Q_FUNC_INFO << d->source_started_by_content_hub;;
     return d->source_started_by_content_hub;
 }
 
@@ -377,13 +379,13 @@ QString cucd::Transfer::ContentType()
 
 QString cucd::Transfer::MirSocket()
 {
-    TRACE() << __PRETTY_FUNCTION__;
+    TRACE() << Q_FUNC_INFO << d->mir_socket;
     return d->mir_socket;
 }
 
 void cucd::Transfer::SetMirSocket(QString mir_socket)
 {
-    TRACE() << Q_FUNC_INFO;
+    TRACE() << Q_FUNC_INFO << mir_socket;
 
     if (d->mir_socket == mir_socket)
         return;
@@ -394,7 +396,7 @@ void cucd::Transfer::SetMirSocket(QString mir_socket)
 
 PromptSessionP cucd::Transfer::PromptSession()
 {
-    TRACE() << __PRETTY_FUNCTION__;
+    TRACE() << Q_FUNC_INFO;
     return d->promptSession;
 }
 

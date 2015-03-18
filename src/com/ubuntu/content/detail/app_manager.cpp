@@ -43,22 +43,21 @@ bool cucd::AppManager::invoke_application_with_socket(const std::string &app_id,
     uris.append("");
     uris.append(NULL);
     TRACE() << Q_FUNC_INFO << "URIS:" << g_strdup_printf("%s", socket.c_str());
-    /*
-    gchar *instanceId = ubuntu_app_launch_start_multiple_helper("content-hub",
-                                                                app_id.c_str(),
-                                                                uris.constData());
-
-    if (instanceId == NULL) {
-        g_free(instanceId);
-        return false;
-    }
-    g_free(instanceId);
-
-    return true;
-    */
     gboolean ok = ubuntu_app_launch_start_helper("content-hub",
                                                  app_id.c_str(),
                                                  uris.constData());
+    return static_cast<bool>(ok);
+}
+
+/*!
+ * \reimp
+ */
+bool cucd::AppManager::stop_application_with_helper(const std::string &app_id)
+{
+    TRACE() << Q_FUNC_INFO << "APP_ID:" << app_id.c_str();
+
+    gboolean ok = ubuntu_app_launch_stop_helper("content-hub",
+                                                app_id.c_str());
     return static_cast<bool>(ok);
 }
 

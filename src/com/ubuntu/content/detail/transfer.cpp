@@ -175,6 +175,9 @@ void cucd::Transfer::Charge(const QVariantList& items)
             copiedItem.setName(origItem.name());
             TRACE() << Q_FUNC_INFO << "Item:" << copiedItem.url();
             ret.append(QVariant::fromValue(copiedItem));
+        } else {
+            ret.clear();
+            break;
         }
     }
 

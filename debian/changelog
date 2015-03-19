@@ -1,3 +1,11 @@
+content-hub (0.0+15.04.20150319-0ubuntu1) vivid; urgency=medium
+
+  [ Ken VanDine ]
+  * Abort transfers when a file already exists matching the requested
+    name and ContentStore. (LP: #1429687)
+
+ -- CI Train Bot <ci-train-bot@canonical.com>  Thu, 19 Mar 2015 15:27:11 +0000
+
 content-hub (0.0+15.04.20150123-0ubuntu1) vivid; urgency=low
 
   [ Michael Sheldon ]

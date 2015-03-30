@@ -39,6 +39,7 @@
 #include <QCoreApplication>
 #include <QtDBus/QDBusConnection>
 #include <QStandardPaths>
+#include <QTemporaryDir>
 #include <QtTest/QTest>
 
 #include <thread>
@@ -126,6 +127,7 @@ TEST(Hub, transfer_creation_and_states_work)
         test::TestHarness harness;
         harness.add_test_case([]()
         {
+            QTemporaryDir store_dir;
             QVector<cuc::Item> source_items;
             source_items << cuc::Item(QUrl::fromLocalFile(QFileInfo("file1").absoluteFilePath()));
             source_items[0].setName("name1");
@@ -135,11 +137,11 @@ TEST(Hub, transfer_creation_and_states_work)
             source_items[2].setName("name3");
             
             QVector<cuc::Item> expected_items;
-            expected_items << cuc::Item(QUrl("file:///tmp/Incoming/file1"));
+            expected_items << cuc::Item(QUrl("file://" + store_dir.path() + "/file1"));
             expected_items[0].setName("name1");
-            expected_items << cuc::Item(QUrl("file:///tmp/Incoming/file2"));
+            expected_items << cuc::Item(QUrl("file://" + store_dir.path() + "/file2"));
             expected_items[1].setName("name2");
-            expected_items << cuc::Item(QUrl("file:///tmp/Incoming/file3"));
+            expected_items << cuc::Item(QUrl("file://" + store_dir.path() + "/file3"));
             expected_items[2].setName("name3");
 
             /** [Importing pictures] */
@@ -150,7 +152,7 @@ TEST(Hub, transfer_creation_and_states_work)
             EXPECT_EQ(cuc::Transfer::created, transfer->state());
             EXPECT_TRUE(transfer->setSelectionType(cuc::Transfer::SelectionType::multiple));
             ASSERT_EQ(cuc::Transfer::SelectionType::multiple, transfer->selectionType());
-            transfer->setStore(new cuc::Store{"/tmp/Incoming"});
+            transfer->setStore(new cuc::Store{store_dir.path()});
             EXPECT_TRUE(transfer->start());
             EXPECT_EQ(cuc::Transfer::initiated, transfer->state());
             EXPECT_TRUE(transfer->setSelectionType(cuc::Transfer::SelectionType::single));
@@ -160,6 +162,19 @@ TEST(Hub, transfer_creation_and_states_work)
             EXPECT_EQ(expected_items, transfer->collect());
             /** [Importing pictures] */
 
+            /** Test that the transfer aborts when destination file exists */
+            auto dupe_transfer = hub->create_import_from_peer(
+                hub->default_source_for_type(cuc::Type::Known::pictures()));
+            ASSERT_TRUE(dupe_transfer != nullptr);
+            EXPECT_EQ(cuc::Transfer::created, dupe_transfer->state());
+            EXPECT_TRUE(dupe_transfer->setSelectionType(cuc::Transfer::SelectionType::multiple));
+            ASSERT_EQ(cuc::Transfer::SelectionType::multiple, dupe_transfer->selectionType());
+            dupe_transfer->setStore(new cuc::Store{store_dir.path()});
+            EXPECT_TRUE(dupe_transfer->start());
+            EXPECT_EQ(cuc::Transfer::initiated, dupe_transfer->state());
+            EXPECT_TRUE(dupe_transfer->charge(source_items));
+            EXPECT_EQ(cuc::Transfer::aborted, dupe_transfer->state());
+            /* end dest exists test */
 
             /* Test that only a single transfer exists for the same peer */
             auto single_transfer = hub->create_import_from_peer(
@@ -178,7 +193,6 @@ TEST(Hub, transfer_creation_and_states_work)
             EXPECT_EQ(cuc::Transfer::aborted, single_transfer->state());
             /* end single transfer test */
 
-
             /* Test create_import_from_peer_for_type */
             auto type_transfer = hub->create_import_from_peer_for_type(
                 hub->default_source_for_type(cuc::Type::Known::pictures()),
@@ -187,7 +201,6 @@ TEST(Hub, transfer_creation_and_states_work)
             EXPECT_EQ(cuc::Transfer::created, type_transfer->state());
             EXPECT_TRUE(transfer->setSelectionType(cuc::Transfer::SelectionType::multiple));
             ASSERT_EQ(cuc::Transfer::SelectionType::multiple, transfer->selectionType());
-            type_transfer->setStore(new cuc::Store{"/tmp/Incoming"});
             EXPECT_TRUE(type_transfer->start());
             EXPECT_EQ(cuc::Transfer::initiated, type_transfer->state());
             ASSERT_EQ(cuc::Type::Known::pictures().id(), type_transfer->contentType());

@@ -1,3 +1,12 @@
+content-hub (0.0+15.04.20150331-0ubuntu1) vivid; urgency=medium
+
+  [ Ken VanDine ]
+  * When requesting an import from an unknown peer, abort the transfer.
+    This is most likely to occur when requesting the default peer for a
+    ContentType that has no default registered. (LP: #1429695)
+
+ -- CI Train Bot <ci-train-bot@canonical.com>  Tue, 31 Mar 2015 14:10:11 +0000
+
 content-hub (0.0+15.04.20150319-0ubuntu1) vivid; urgency=medium
 
   [ Ken VanDine ]

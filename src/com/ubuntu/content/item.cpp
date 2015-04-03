@@ -27,15 +27,16 @@ struct cuc::Item::Private
 {
     QUrl url;
     QString name;
-    QString data;
+    QByteArray stream;
+    QString streamType;
 
     bool operator==(const Private& rhs) const
     {
-        return url == rhs.url && name == rhs.name && data == rhs.data;
+        return url == rhs.url && name == rhs.name && stream == rhs.stream && streamType == rhs.streamType;
     }
 };
 
-cuc::Item::Item(const QUrl& url, QObject* parent) : QObject(parent), d{new cuc::Item::Private{url, QString(), QString()}}
+cuc::Item::Item(const QUrl& url, QObject* parent) : QObject(parent), d{new cuc::Item::Private{url, QString(), QByteArray(), QString("x-url")}}
 {
 }
 
@@ -66,6 +67,15 @@ const QUrl& cuc::Item::url() const
     return d->url;
 }
 
+void cuc::Item::setUrl(const QUrl& newUrl) const
+{
+    if (newUrl == d->url)
+        return;
+
+    d->url = newUrl;
+    d->streamType = QString("x-url");
+}
+
 const QString& cuc::Item::name() const
 {
     return d->name;
@@ -77,21 +87,48 @@ void cuc::Item::setName(const QString& newName) const
         d->name = newName;
 }
 
-const QString& cuc::Item::data() const
+const QString cuc::Item::text() const
 {
-    return d->data;
+    if (d->streamType == "plain/text")
+        return QString(d->stream);
+    return QString();
 }
 
-void cuc::Item::setData(const QString& newData) const
+void cuc::Item::setText(const QString& text) const
 {
-    if (newData != d->data)
-        d->data = newData;
+    if (text == QString(d->stream))
+        return;
+
+    setStream(QByteArray::fromStdString(text.toStdString()));
+    d->streamType = QString("plain/text");
+}
+
+const QByteArray& cuc::Item::stream() const
+{
+    return d->stream;
+}
+
+void cuc::Item::setStream(const QByteArray& newStream) const
+{
+    if (newStream != d->stream)
+        d->stream = newStream;
+}
+
+const QString& cuc::Item::streamType() const
+{   
+    return d->streamType;
+}
+
+void cuc::Item::setStreamType(const QString& newStreamType) const
+{
+    if (newStreamType != d->streamType)
+        d->streamType = newStreamType;
 }
 
 QDBusArgument &operator<<(QDBusArgument &argument, const cuc::Item& item)
 {
     argument.beginStructure();
-    argument << item.data() << item.name() << item.url().toDisplayString();
+    argument << item.streamType() << item.stream() << item.name() << item.url().toDisplayString();
     argument.endStructure();
     return argument;
 }
@@ -101,15 +138,16 @@ const QDBusArgument &operator>>(const QDBusArgument &argument, cuc::Item &item)
     TRACE() << Q_FUNC_INFO;
     QString name;
     QString urlString;
-    QString data;
+    QByteArray stream;
+    QString streamType;
 
     argument.beginStructure();
-    argument >> data >> name >> urlString;
+    argument >> streamType >> stream >> name >> urlString;
     argument.endStructure();
 
     item = cuc::Item{QUrl(urlString)};
     item.setName(name);
-    item.setData(data);
+    item.setStream(stream);
+    item.setStreamType(streamType);
     return argument;
 }
-

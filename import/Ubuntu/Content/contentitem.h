@@ -28,7 +28,7 @@ class ContentItem : public QObject
     Q_OBJECT
     Q_PROPERTY(QString name READ name WRITE setName NOTIFY nameChanged)
     Q_PROPERTY(QUrl url READ url WRITE setUrl NOTIFY urlChanged)
-    Q_PROPERTY(QString data READ data WRITE setData NOTIFY dataChanged)
+    Q_PROPERTY(QString text READ text WRITE setText NOTIFY textChanged)
 
 public:
     ContentItem(QObject *parent = nullptr);
@@ -39,8 +39,8 @@ public:
     const QUrl &url() const;
     void setUrl(const QUrl &url);
 
-    const QString &data() const;
-    void setData(const QString &data);
+    QString text();
+    void setText(const QString &text);
 
     const com::ubuntu::content::Item &item() const;
     void setItem(const com::ubuntu::content::Item &item);
@@ -52,7 +52,7 @@ public:
 Q_SIGNALS:
     void nameChanged();
     void urlChanged();
-    void dataChanged();
+    void textChanged();
 
 private:
     com::ubuntu::content::Item m_item;

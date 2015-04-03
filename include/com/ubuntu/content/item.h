@@ -33,9 +33,11 @@ namespace content
 class Item : public QObject
 {
     Q_OBJECT
-    Q_PROPERTY(QUrl url READ url())
+    Q_PROPERTY(QUrl url READ url() WRITE setUrl)
     Q_PROPERTY(QString name READ name WRITE setName)
-    Q_PROPERTY(QString data READ data WRITE setData)
+    Q_PROPERTY(QString text READ text WRITE setText)
+    Q_PROPERTY(QByteArray stream READ stream WRITE setStream)
+    Q_PROPERTY(QString streamType READ streamType WRITE setStreamType)
 
   public:
     Item(const QUrl& = QUrl(), QObject* = nullptr);
@@ -46,10 +48,15 @@ class Item : public QObject
     bool operator==(const Item&) const;
 
     Q_INVOKABLE const QUrl& url() const;
+    Q_INVOKABLE void setUrl(const QUrl &url) const;
     Q_INVOKABLE const QString& name() const;
     Q_INVOKABLE void setName(const QString &name) const;
-    Q_INVOKABLE const QString& data() const;
-    Q_INVOKABLE void setData(const QString &data) const;
+    Q_INVOKABLE const QString text() const;
+    Q_INVOKABLE void setText(const QString &text) const;
+    Q_INVOKABLE const QByteArray& stream() const;
+    Q_INVOKABLE void setStream(const QByteArray &stream) const;
+    Q_INVOKABLE const QString& streamType() const;
+    Q_INVOKABLE void setStreamType(const QString &type) const;
 
   private:
     struct Private;

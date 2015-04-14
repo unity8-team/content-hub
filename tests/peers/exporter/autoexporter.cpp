@@ -62,6 +62,12 @@ void AutoExporter::handle_export(cuc::Transfer *transfer)
     connect(transfer, SIGNAL(stateChanged()), this, SLOT(stateChanged()));
 
     qDebug() << Q_FUNC_INFO << "Items:" << items.count();
+    Q_FOREACH(cuc::Item item, items) {
+        qDebug() << Q_FUNC_INFO << "URL:" << item.url();
+        qDebug() << Q_FUNC_INFO << "Name:" << item.name();
+        qDebug() << Q_FUNC_INFO << "Text:" << item.text();
+        qDebug() << Q_FUNC_INFO << "StreamType:" << item.streamType();
+    }
 }
 
 void AutoExporter::handle_share(cuc::Transfer *transfer)

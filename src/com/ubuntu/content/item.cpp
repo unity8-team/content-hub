@@ -36,7 +36,7 @@ struct cuc::Item::Private
     }
 };
 
-cuc::Item::Item(const QUrl& url, QObject* parent) : QObject(parent), d{new cuc::Item::Private{url, QString(), QByteArray(), QString("x-url")}}
+cuc::Item::Item(const QUrl& url, QObject* parent) : QObject(parent), d{new cuc::Item::Private{url, QString(), QByteArray(), QString()}}
 {
 }
 
@@ -73,7 +73,6 @@ void cuc::Item::setUrl(const QUrl& newUrl) const
         return;
 
     d->url = newUrl;
-    d->streamType = QString("x-url");
 }
 
 const QString& cuc::Item::name() const

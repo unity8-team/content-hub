@@ -22,6 +22,9 @@
     <key name="ebooks" type="as">
       <default>[]</default>
     </key>
+    <key name="text" type="as">
+      <default>[]</default>
+    </key>
   </schema>
   <schema id="com.ubuntu.content.hub.source" path="/com/ubuntu/content/hub/source/">
     <key name="pictures" type="as">
@@ -43,6 +46,9 @@
       <default>[]</default>
     </key>
     <key name="ebooks" type="as">
+      <default>[]</default>
+    </key>
+    <key name="text" type="as">
       <default>[]</default>
     </key>
   </schema>
@@ -68,6 +74,9 @@
     <key name="ebooks" type="as">
       <default>[]</default>
     </key>
+    <key name="text" type="as">
+      <default>[]</default>
+    </key>
   </schema>
   <schema id="com.ubuntu.content.hub.share" path="/com/ubuntu/content/hub/share/">
     <key name="pictures" type="as">
@@ -89,6 +98,9 @@
       <default>[]</default>
     </key>
     <key name="ebooks" type="as">
+      <default>[]</default>
+    </key>
+    <key name="text" type="as">
       <default>[]</default>
     </key>
   </schema>

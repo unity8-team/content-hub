@@ -46,7 +46,11 @@ void ExampleExporter::handle_export(cuc::Transfer *transfer)
 
     QVector<cuc::Item> items;
     items << cuc::Item(QUrl("file:///tmp/test1"));
-    items << cuc::Item(QUrl("file:///tmp/test2"));
+    auto i = cuc::Item();
+    i.setName("Test2");
+    i.setText("Test Two");
+    items << i;
+
     transfer->charge(items);
     qDebug() << Q_FUNC_INFO << "Items:" << items.count();
 }

@@ -84,6 +84,26 @@ void ContentItem::setUrl(const QUrl &url)
 }
 
 /*!
+ * \qmlproperty string ContentItem::text
+ * Content of the transfer
+ */
+QString ContentItem::text()
+{
+    TRACE() << Q_FUNC_INFO;
+    return QString(m_item.text());
+}
+
+void ContentItem::setText(const QString &text)
+{
+    TRACE() << Q_FUNC_INFO;
+    if (text == QString(m_item.text()))
+        return;
+
+    m_item.setText(text);
+    Q_EMIT textChanged();
+}
+
+/*!
  * \brief ContentItem::item
  * \internal
  */

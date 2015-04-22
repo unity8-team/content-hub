@@ -90,10 +90,3 @@ Depends: ${misc:Depends},
          ${shlibs:Depends},
 Description: content sharing testability
  Files and utilities needed for automated testing of content-hub
-
-Package: content-hub-tools
-Architecture: any
-Depends: ${misc:Depends},
-         ${shlibs:Depends},
-Description: content sharing tools
- Useful tools for content-hub

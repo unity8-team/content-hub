@@ -1,0 +1,8 @@
+[Desktop Entry]
+Name=Auto Importer
+Comment=Test Auto Importer
+Exec=content-hub-test-importer
+Icon=content-hub-test-importer
+Terminal=false
+Type=Application
+X-Ubuntu-Touch=true

@@ -14,8 +14,8 @@ msgstr ""
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"X-Launchpad-Export-Date: 2014-10-10 05:22+0000\n"
-"X-Generator: Launchpad (build 17196)\n"
+"X-Launchpad-Export-Date: 2015-04-08 05:46+0000\n"
+"X-Generator: Launchpad (build 17413)\n"
 
 #: import/Ubuntu/Content/ContentPeerPicker10.qml:48
 #: import/Ubuntu/Content/ContentPeerPicker11.qml:49
@@ -68,18 +68,18 @@ msgstr "Encaboxar"
 msgid "Transfer in progress"
 msgstr "Tresferencia en procesu"
 
-#: ../src/com/ubuntu/content/detail/service.cpp:216
+#: src/com/ubuntu/content/detail/service.cpp:216
 msgid "Download Complete"
 msgstr "Baxada completa"
 
-#: ../src/com/ubuntu/content/detail/service.cpp:234
+#: src/com/ubuntu/content/detail/service.cpp:234
 msgid "Open"
 msgstr "Abrir"
 
-#: ../src/com/ubuntu/content/detail/service.cpp:241
+#: src/com/ubuntu/content/detail/service.cpp:241
 msgid "Dismiss"
 msgstr "Descartar"
 
-#: ../src/com/ubuntu/content/detail/service.cpp:259
+#: src/com/ubuntu/content/detail/service.cpp:259
 msgid "Download Failed"
 msgstr "Falló la descarga"

@@ -95,7 +95,6 @@ void ContentPeerModel::setContentType(ContentType::Type contentType)
 void ContentPeerModel::findPeers() {
     TRACE() << Q_FUNC_INFO;
     m_peers.clear();
-    QCoreApplication::processEvents();
     if(m_contentType == ContentType::All) {
         appendPeersForContentType(ContentType::Documents);
         appendPeersForContentType(ContentType::Pictures);
@@ -103,6 +102,7 @@ void ContentPeerModel::findPeers() {
         appendPeersForContentType(ContentType::Contacts);
         appendPeersForContentType(ContentType::Videos);
         appendPeersForContentType(ContentType::Links);
+        appendPeersForContentType(ContentType::EBooks);
     } else {
         appendPeersForContentType(m_contentType);
     }

@@ -1,4 +1,4 @@
-usr/bin
+usr/bin/content-hub-service
 usr/lib/*/content-hub
 usr/share/click/hooks
 usr/share/dbus-1

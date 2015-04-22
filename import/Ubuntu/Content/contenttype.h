@@ -36,7 +36,8 @@ public:
         Music = 3,
         Contacts = 4,
         Videos = 5,
-        Links = 6
+        Links = 6,
+        EBooks = 7
     };
 
     ContentType(QObject *parent = nullptr);

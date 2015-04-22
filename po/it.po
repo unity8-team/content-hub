@@ -14,28 +14,28 @@ msgstr ""
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"X-Launchpad-Export-Date: 2014-10-10 05:22+0000\n"
-"X-Generator: Launchpad (build 17196)\n"
+"X-Launchpad-Export-Date: 2015-04-08 05:46+0000\n"
+"X-Generator: Launchpad (build 17413)\n"
 
 #: import/Ubuntu/Content/ContentPeerPicker10.qml:48
 #: import/Ubuntu/Content/ContentPeerPicker11.qml:49
 msgid "Choose from"
-msgstr ""
+msgstr "Scegli da"
 
 #: import/Ubuntu/Content/ContentPeerPicker10.qml:48
 #: import/Ubuntu/Content/ContentPeerPicker11.qml:49
 msgid "Open with"
-msgstr ""
+msgstr "Apri con"
 
 #: import/Ubuntu/Content/ContentPeerPicker10.qml:48
 #: import/Ubuntu/Content/ContentPeerPicker11.qml:49
 msgid "Share to"
-msgstr ""
+msgstr "Condividi con"
 
 #: import/Ubuntu/Content/ContentPeerPicker10.qml:158
 #: import/Ubuntu/Content/ContentPeerPicker11.qml:175
 msgid "Apps"
-msgstr ""
+msgstr "App"
 
 #: import/Ubuntu/Content/ContentPeerPicker10.qml:194
 #: import/Ubuntu/Content/ContentPeerPicker11.qml:211
@@ -43,6 +43,7 @@ msgid ""
 "Sorry, there aren't currently any apps installed that can provide this type "
 "of content."
 msgstr ""
+"Non ci sono app installate che possano fornire questo tipo di contenuto."
 
 #: import/Ubuntu/Content/ContentPeerPicker10.qml:194
 #: import/Ubuntu/Content/ContentPeerPicker11.qml:211
@@ -50,34 +51,35 @@ msgid ""
 "Sorry, there aren't currently any apps installed that can handle this type "
 "of content."
 msgstr ""
+"Non ci sono app installate che possano gestire questo tipo di contenuto."
 
 #: import/Ubuntu/Content/ContentPeerPicker10.qml:210
 #: import/Ubuntu/Content/ContentPeerPicker11.qml:227
 msgid "Devices"
-msgstr ""
+msgstr "Dispositivi"
 
 #: import/Ubuntu/Content/ContentPeerPicker10.qml:247
 #: import/Ubuntu/Content/ContentPeerPicker11.qml:56
 #: import/Ubuntu/Content/ContentTransferHint.qml:65
 msgid "Cancel"
-msgstr ""
+msgstr "Annulla"
 
 #: import/Ubuntu/Content/ContentTransferHint.qml:52
 msgid "Transfer in progress"
-msgstr ""
+msgstr "Trasferimento in corso"
 
-#: ../src/com/ubuntu/content/detail/service.cpp:216
+#: src/com/ubuntu/content/detail/service.cpp:216
 msgid "Download Complete"
-msgstr ""
+msgstr "Scaricamento completato"
 
-#: ../src/com/ubuntu/content/detail/service.cpp:234
+#: src/com/ubuntu/content/detail/service.cpp:234
 msgid "Open"
-msgstr ""
+msgstr "Apri"
 
-#: ../src/com/ubuntu/content/detail/service.cpp:241
+#: src/com/ubuntu/content/detail/service.cpp:241
 msgid "Dismiss"
-msgstr ""
+msgstr "Chiudi"
 
-#: ../src/com/ubuntu/content/detail/service.cpp:259
+#: src/com/ubuntu/content/detail/service.cpp:259
 msgid "Download Failed"
-msgstr ""
+msgstr "Scaricamento non riuscito"

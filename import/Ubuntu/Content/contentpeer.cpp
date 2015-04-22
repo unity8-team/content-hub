@@ -221,7 +221,6 @@ ContentTransfer *ContentPeer::request()
 ContentTransfer *ContentPeer::request(ContentStore *store)
 {
     TRACE() << Q_FUNC_INFO;
-
     ContentHub *contentHub = ContentHub::instance();
     ContentTransfer *qmlTransfer = NULL;
     if(m_handler == ContentHandler::Source) {
@@ -239,8 +238,15 @@ ContentTransfer *ContentPeer::request(ContentStore *store)
     }
     
     /* We only need to start it for import requests */
-    if (m_handler == ContentHandler::Source)
-        qmlTransfer->start();
+    if (m_handler == ContentHandler::Source) {
+        // If there peer isn't known, don't request content
+        if (m_peer == cuc::Peer::unknown()) {
+            qWarning() << "Unknown source for type:" << m_contentType;
+            qmlTransfer->transfer()->abort();
+        } else {
+            qmlTransfer->start();
+        }
+    }
 
     return qmlTransfer;
 }

@@ -82,3 +82,11 @@ Depends: libcontent-hub-dev (>= ${source:Version}),
          ${misc:Depends},
 Description: Documentation files for libcontent-hub-dev
  Documentation files for the libcontent-hub development
+
+Package: content-hub-testability
+Section: libdevel
+Architecture: any
+Depends: ${misc:Depends},
+         ${shlibs:Depends},
+Description: content sharing testability
+ Files and utilities needed for automated testing of content-hub

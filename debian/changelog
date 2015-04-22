@@ -1,3 +1,71 @@
+content-hub (0.0+15.04.20150331-0ubuntu1) vivid; urgency=medium
+
+  [ Ken VanDine ]
+  * When requesting an import from an unknown peer, abort the transfer.
+    This is most likely to occur when requesting the default peer for a
+    ContentType that has no default registered. (LP: #1429695)
+
+ -- CI Train Bot <ci-train-bot@canonical.com>  Tue, 31 Mar 2015 14:10:11 +0000
+
+content-hub (0.0+15.04.20150319-0ubuntu1) vivid; urgency=medium
+
+  [ Ken VanDine ]
+  * Abort transfers when a file already exists matching the requested
+    name and ContentStore. (LP: #1429687)
+
+ -- CI Train Bot <ci-train-bot@canonical.com>  Thu, 19 Mar 2015 15:27:11 +0000
+
+content-hub (0.0+15.04.20150123-0ubuntu1) vivid; urgency=low
+
+  [ Michael Sheldon ]
+  * Use the theme background so that fonts are visible with dark apps
+    (LP: #1384490)
+
+ -- Ubuntu daily release <ps-jenkins@lists.canonical.com>  Fri, 23 Jan 2015 16:56:52 +0000
+
+content-hub (0.0+15.04.20141202-0ubuntu1) vivid; urgency=low
+
+  [ Michael Sheldon ]
+  * Handle content peer model loading asynchronously (LP: #1390096)
+
+ -- Ubuntu daily release <ps-jenkins@lists.canonical.com>  Tue, 02 Dec 2014 14:17:57 +0000
+
+content-hub (0.0+15.04.20141126-0ubuntu1) vivid; urgency=low
+
+  [ Ken VanDine ]
+  * Added test peers for automated testing of export, import and shares.
+
+  [ CI bot ]
+  * Resync trunk
+
+ -- Ubuntu daily release <ps-jenkins@lists.canonical.com>  Wed, 26 Nov 2014 15:26:15 +0000
+
+content-hub (0.0+15.04.20141120-0ubuntu1) vivid; urgency=low
+
+  [ Ken VanDine ]
+  * Fixed conflict with nih-dbus and our own i18n wrapper (LP: #1394211)
+
+ -- Ubuntu daily release <ps-jenkins@lists.canonical.com>  Thu, 20 Nov 2014 04:22:47 +0000
+
+content-hub (0.0+15.04.20141110-0ubuntu1) vivid; urgency=low
+
+  [ Ken VanDine ]
+  * Added EBooks to well known types (LP: #1383732)
+
+  [ CI bot ]
+  * Resync trunk
+
+  [ Ubuntu daily release ]
+  * New rebuild forced
+
+  [ Michael Sheldon ]
+  * Set the caller on the ContentTransferHint dialog to allow it to be
+    destroyed safely when its parent is destroyed. (LP: #1377334)
+  * Update click hook wrapper to account for change in dbus-session
+    file. (LP: #1390095)
+
+ -- Ubuntu daily release <ps-jenkins@lists.canonical.com>  Mon, 10 Nov 2014 16:31:46 +0000
+
 content-hub (0.0+14.10.20141014-0ubuntu1) 14.09; urgency=low
 
   [ CI bot ]

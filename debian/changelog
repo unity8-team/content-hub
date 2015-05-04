@@ -1,3 +1,14 @@
+content-hub (0.0+15.04.20150422-0ubuntu1) vivid; urgency=medium
+
+  [ Ken VanDine ]
+  * Added ContentType.Text as a well known type Added ContentItem.text
+    property for serialized content (LP: #1430460)
+  * Don't use a unicode apostrophe in the docs
+  * Fixed qdoc syntax error for the ContentPeerPicker::peerSelected and
+    ContentPeerPicker::cancelPressed signals
+
+ -- CI Train Bot <ci-train-bot@canonical.com>  Wed, 22 Apr 2015 16:45:39 +0000
+
 content-hub (0.0+15.04.20150331-0ubuntu1) vivid; urgency=medium
 
   [ Ken VanDine ]

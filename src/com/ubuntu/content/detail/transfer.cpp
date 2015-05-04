@@ -168,16 +168,19 @@ void cucd::Transfer::Charge(const QVariantList& items)
 
     QVariantList ret;
     Q_FOREACH(QVariant iv, items) {
-        cuc::Item origItem = qdbus_cast<Item>(iv);
-        QString newItem = copy_to_store(origItem.url().toString(), d->store);
-        if (!newItem.isEmpty()) {
-            cuc::Item copiedItem = cuc::Item{QUrl(newItem)};
-            copiedItem.setName(origItem.name());
-            TRACE() << Q_FUNC_INFO << "Item:" << copiedItem.url();
-            ret.append(QVariant::fromValue(copiedItem));
+        cuc::Item item = qdbus_cast<Item>(iv);
+        if (item.url().isEmpty()) {
+            ret.append(QVariant::fromValue(item));
         } else {
-            ret.clear();
-            break;
+            QString newUrl = copy_to_store(item.url().toString(), d->store);
+            if (!newUrl.isEmpty()) {
+                item.setUrl(QUrl(newUrl));
+                TRACE() << Q_FUNC_INFO << "Item:" << item.url();
+                ret.append(QVariant::fromValue(item));
+            } else {
+                ret.clear();
+                break;
+            }
         }
     }
 

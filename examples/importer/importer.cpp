@@ -41,6 +41,7 @@ int main(int argc, char *argv[])
         auto peer = cuc::Peer{peerName};
         qDebug() << Q_FUNC_INFO << "PEER: " << peer.id();
         auto transfer = hub->create_import_from_peer(peer);
+        transfer->setSelectionType(cuc::Transfer::SelectionType::multiple);
         transfer->start();
     }
 

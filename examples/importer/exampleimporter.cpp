@@ -25,14 +25,17 @@ ExampleImporter::ExampleImporter()
     hub->register_import_export_handler(this);
 }
 
-
 void ExampleImporter::handle_import(cuc::Transfer *transfer)
 {
     qDebug() << Q_FUNC_INFO;
     auto items = transfer->collect();
     qDebug() << Q_FUNC_INFO << "Items:" << items.count();
-    Q_FOREACH(cuc::Item item, items)
-        qDebug() << Q_FUNC_INFO << "Item:" << item.url();
+    Q_FOREACH(cuc::Item item, items) {
+        qDebug() << Q_FUNC_INFO << "URL:" << item.url();
+        qDebug() << Q_FUNC_INFO << "Name:" << item.name();
+        qDebug() << Q_FUNC_INFO << "Text:" << item.text();
+        qDebug() << Q_FUNC_INFO << "StreamType:" << item.streamType();
+    }
     transfer->finalize();
 }
 

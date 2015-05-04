@@ -63,7 +63,7 @@
 */
 
 /*! 
-    \qmlsignal ContentPeerPicker::peerSelected
+    \qmlsignal ContentPeerPicker::peerSelected()
     \brief Emitted when a user selects a peer.
 
     Once this signal has been emitted the selected peer can be accessed via
@@ -72,7 +72,7 @@
 */
 
 /*! 
-    \qmlsignal ContentPeerPicker::cancelPressed
+    \qmlsignal ContentPeerPicker::cancelPressed()
     \brief Emitted when the user clicks the cancel button.
     
     The ContentPeerPicker will be hidden automatically when the user cancels

@@ -31,7 +31,7 @@ TestCase {
         verify(transfer !== null, "No transer Object returned")
     }
 
-    function test_export_request() {
+    function test_export_request_pictures() {
         var filePath = "file:///foo/bar.png";
         var transfer = destPeer.request();
         transfer.items = [ resultComponent.createObject(test, {"url": filePath, "name": "test"}) ];
@@ -39,13 +39,30 @@ TestCase {
         // This shouldn't be necessary, but without it we compare the results to fast
         ContentHub.exportRequested(transfer);
         compare(test.exportTransfer, transfer, "Transfer object not correcty set");
-        compare(test.exportTransfer.items[0].url, filePath, "Transfer contents incorrect");
+        compare(test.exportTransfer.items[0].url, filePath, "Transfer url incorrect");
         compare(test.exportTransfer.items[0].name, "test", "Transfer name incorrect");
+    }
+
+    function test_export_request_text() {
+        var transfer = textPeer.request();
+        transfer.items = [ resultComponent.createObject(test, {"url": "", "name": "test", "text": "some text"}) ];
+        transfer.state = ContentTransfer.Charged;
+        // This shouldn't be necessary, but without it we compare the results to fast
+        ContentHub.exportRequested(transfer);
+        compare(test.exportTransfer, transfer, "Transfer object not correcty set");
+        compare(test.exportTransfer.items[0].text, "some text", "Transfer text incorrect");
     }
 
     Component {
         id: resultComponent
         ContentItem {}
+    }
+
+    ContentPeer {
+        id: textPeer
+        handler: ContentHandler.Destination
+        contentType: ContentType.Text
+        appId: "com.some.dest"
     }
 
     ContentPeer {

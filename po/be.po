@@ -1,41 +1,41 @@
-# Czech translation for content-hub
-# Copyright (c) 2014 Rosetta Contributors and Canonical Ltd 2014
+# Belarusian translation for content-hub
+# Copyright (c) 2015 Rosetta Contributors and Canonical Ltd 2015
 # This file is distributed under the same license as the content-hub package.
-# FIRST AUTHOR <EMAIL@ADDRESS>, 2014.
+# FIRST AUTHOR <EMAIL@ADDRESS>, 2015.
 #
 msgid ""
 msgstr ""
 "Project-Id-Version: content-hub\n"
 "Report-Msgid-Bugs-To: FULL NAME <EMAIL@ADDRESS>\n"
 "POT-Creation-Date: 2014-08-14 12:39+0100\n"
-"PO-Revision-Date: 2015-05-06 19:23+0000\n"
-"Last-Translator: Vojtěch Daněk <vdanek@outlook.com>\n"
-"Language-Team: Czech <cs@li.org>\n"
+"PO-Revision-Date: 2015-05-11 08:35+0000\n"
+"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
+"Language-Team: Belarusian <be@li.org>\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"X-Launchpad-Export-Date: 2015-05-07 05:35+0000\n"
-"X-Generator: Launchpad (build 17474)\n"
+"X-Launchpad-Export-Date: 2015-05-12 05:33+0000\n"
+"X-Generator: Launchpad (build 17487)\n"
 
 #: import/Ubuntu/Content/ContentPeerPicker10.qml:48
 #: import/Ubuntu/Content/ContentPeerPicker11.qml:49
 msgid "Choose from"
-msgstr "Vybrat z"
+msgstr ""
 
 #: import/Ubuntu/Content/ContentPeerPicker10.qml:48
 #: import/Ubuntu/Content/ContentPeerPicker11.qml:49
 msgid "Open with"
-msgstr "Otevřít s"
+msgstr "Адкрыць з"
 
 #: import/Ubuntu/Content/ContentPeerPicker10.qml:48
 #: import/Ubuntu/Content/ContentPeerPicker11.qml:49
 msgid "Share to"
-msgstr "Sdílet"
+msgstr ""
 
 #: import/Ubuntu/Content/ContentPeerPicker10.qml:158
 #: import/Ubuntu/Content/ContentPeerPicker11.qml:175
 msgid "Apps"
-msgstr "Aplikace"
+msgstr "Прыкладанні"
 
 #: import/Ubuntu/Content/ContentPeerPicker10.qml:194
 #: import/Ubuntu/Content/ContentPeerPicker11.qml:211
@@ -43,8 +43,6 @@ msgid ""
 "Sorry, there aren't currently any apps installed that can provide this type "
 "of content."
 msgstr ""
-"Omlouváme se, ale v současné době nejsou nainstalovány žádné aplikace, které "
-"mohou poskytovat tento typ obsahu."
 
 #: import/Ubuntu/Content/ContentPeerPicker10.qml:194
 #: import/Ubuntu/Content/ContentPeerPicker11.qml:211
@@ -52,36 +50,34 @@ msgid ""
 "Sorry, there aren't currently any apps installed that can handle this type "
 "of content."
 msgstr ""
-"Omlouváme se, ale v současné době nejsou nainstalovány žádné aplikace, které "
-"mohou zvládnout tento typ obsahu."
 
 #: import/Ubuntu/Content/ContentPeerPicker10.qml:210
 #: import/Ubuntu/Content/ContentPeerPicker11.qml:227
 msgid "Devices"
-msgstr "Zařízení"
+msgstr "Прыстасаванні"
 
 #: import/Ubuntu/Content/ContentPeerPicker10.qml:247
 #: import/Ubuntu/Content/ContentPeerPicker11.qml:56
 #: import/Ubuntu/Content/ContentTransferHint.qml:65
 msgid "Cancel"
-msgstr "Zrušit"
+msgstr "Скасаваць"
 
 #: import/Ubuntu/Content/ContentTransferHint.qml:52
 msgid "Transfer in progress"
-msgstr "Probíhá přenos"
+msgstr ""
 
 #: src/com/ubuntu/content/detail/service.cpp:216
 msgid "Download Complete"
-msgstr "Stahování dokončeno"
+msgstr "Запампоўка скончана"
 
 #: src/com/ubuntu/content/detail/service.cpp:234
 msgid "Open"
-msgstr "Otevřít"
+msgstr ""
 
 #: src/com/ubuntu/content/detail/service.cpp:241
 msgid "Dismiss"
-msgstr "Zrušit"
+msgstr ""
 
 #: src/com/ubuntu/content/detail/service.cpp:259
 msgid "Download Failed"
-msgstr "Stahování selhalo"
+msgstr ""

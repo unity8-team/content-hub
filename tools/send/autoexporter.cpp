@@ -45,13 +45,9 @@ void AutoExporter::handle_export(cuc::Transfer *transfer)
     }
 
     QVector<cuc::Item> items;
-
     items << cuc::Item(QUrl(url));
-
     transfer->charge(items);
-
     connect(transfer, SIGNAL(stateChanged()), this, SLOT(stateChanged()));
-
     TRACE() << Q_FUNC_INFO << "Items:" << items.count();
 }
 
@@ -63,14 +59,9 @@ void AutoExporter::handle_share(cuc::Transfer *transfer)
 
 void AutoExporter::stateChanged()
 {
-    TRACE() << Q_FUNC_INFO;
     cuc::Transfer *transfer = static_cast<cuc::Transfer*>(sender());
-
     TRACE() << Q_FUNC_INFO << "STATE:" << transfer->state();
-
 
     if (transfer->state() == cuc::Transfer::collected)
         QCoreApplication::instance()->quit();
 }
-
-

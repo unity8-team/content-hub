@@ -16,6 +16,7 @@
 
 include_directories(
   ${CMAKE_CURRENT_BINARY_DIR}
+  ${CMAKE_SOURCE_DIR}/src/com/ubuntu/content
   ${UBUNTU_LAUNCH_INCLUDE_DIRS}
 )
 
@@ -24,6 +25,7 @@ add_executable(
 
   exporter.cpp
   autoexporter.cpp
+  ${CMAKE_SOURCE_DIR}/src/com/ubuntu/content/debug.cpp
 )
 
 qt5_use_modules(content-hub-send Core Gui DBus)

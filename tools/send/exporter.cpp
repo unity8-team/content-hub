@@ -22,6 +22,7 @@
 #include <ubuntu-app-launch.h>
 
 #include "autoexporter.h"
+#include "debug.h"
 
 namespace cuc = com::ubuntu::content;
 
@@ -37,10 +38,14 @@ int main(int argc, char *argv[])
     std::string ver = "current-user-version";
     QString url, peerName;
 
-    //content-hub:?pkg=foo&app=bar&ver=0.1&url=path
+    /* URL handled looks like:
+     * content:?pkg=foo&app=bar&ver=0.1&url=path
+     * pkg and app are required, if ver isn't included we use the appid 
+     * wildcard of current-user-version
+     */
 
     QUrlQuery* query = new QUrlQuery(a.arguments().at(1).split("?").at(1));
-    qDebug() << "QUERY:" << query->query();
+    TRACE() << "Handling URL:" << query->query();
 
     if (query->hasQueryItem("pkg"))
         pkg = query->queryItemValue("pkg").toStdString();
@@ -51,13 +56,12 @@ int main(int argc, char *argv[])
     if (query->hasQueryItem("handler"))
         handler = query->queryItemValue("handler").toStdString();
     url = query->queryItemValue("url");
-    qDebug() << "URL:" << url;
-    qDebug() << "PKG:" << pkg.c_str();
-    qDebug() << "APP:" << app.c_str();
-    qDebug() << "VER:" << ver.c_str();
-    qDebug() << "handler:" << handler.c_str();
+    TRACE() << "URL:" << url;
+    TRACE() << "PKG:" << pkg.c_str();
+    TRACE() << "APP:" << app.c_str();
+    TRACE() << "VER:" << ver.c_str();
+    TRACE() << "HANDLER:" << handler.c_str();
     peerName = QString::fromLocal8Bit(ubuntu_app_launch_triplet_to_app_id(pkg.c_str(), app.c_str(), ver.c_str()));
-
 
     if (url.isEmpty())
     {
@@ -74,11 +78,10 @@ int main(int argc, char *argv[])
         return 1;
     }
 
-    qDebug() << "PEER:" << peerName;
+    TRACE() << "PEER:" << peerName;
 
     auto hub = cuc::Hub::Client::instance();
     auto peer = cuc::Peer{peerName};
-    qDebug() << Q_FUNC_INFO << "PEER: " << peer.id();
     if (handler == "share") {
         auto transfer = hub->create_share_to_peer(peer);
         exporter.handle_export(transfer);

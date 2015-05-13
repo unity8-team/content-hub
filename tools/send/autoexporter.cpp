@@ -17,7 +17,7 @@
  */
 
 #include "autoexporter.h"
-#include <QDebug>
+#include "debug.h"
 
 AutoExporter::AutoExporter()
 {
@@ -32,15 +32,15 @@ void AutoExporter::setUrl(const QString& newUrl)
 
 void AutoExporter::handle_import(cuc::Transfer *transfer)
 {
-    qDebug() << Q_FUNC_INFO << "not implemented";
+    TRACE() << Q_FUNC_INFO << "not implemented";
     Q_UNUSED(transfer);
 }
 
 void AutoExporter::handle_export(cuc::Transfer *transfer)
 {
-    qDebug() << Q_FUNC_INFO;
+    TRACE() << Q_FUNC_INFO;
     if (transfer == nullptr) {
-        qDebug() << Q_FUNC_INFO << "Transfer null";
+        TRACE() << Q_FUNC_INFO << "Transfer null";
         return;
     }
 
@@ -52,21 +52,21 @@ void AutoExporter::handle_export(cuc::Transfer *transfer)
 
     connect(transfer, SIGNAL(stateChanged()), this, SLOT(stateChanged()));
 
-    qDebug() << Q_FUNC_INFO << "Items:" << items.count();
+    TRACE() << Q_FUNC_INFO << "Items:" << items.count();
 }
 
 void AutoExporter::handle_share(cuc::Transfer *transfer)
 {
-    qDebug() << Q_FUNC_INFO << "not implemented";
+    TRACE() << Q_FUNC_INFO << "not implemented";
     Q_UNUSED(transfer);
 }
 
 void AutoExporter::stateChanged()
 {
-    qDebug() << Q_FUNC_INFO;
+    TRACE() << Q_FUNC_INFO;
     cuc::Transfer *transfer = static_cast<cuc::Transfer*>(sender());
 
-    qDebug() << Q_FUNC_INFO << "STATE:" << transfer->state();
+    TRACE() << Q_FUNC_INFO << "STATE:" << transfer->state();
 
 
     if (transfer->state() == cuc::Transfer::collected)

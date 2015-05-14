@@ -7,4 +7,3 @@ usr/share/glib-2.0/schemas
 usr/share/locale/*/LC_MESSAGES/content-hub.mo
 usr/share/applications/content-hub-send.desktop
 usr/share/url-dispatcher/urls/content-hub-send.url-dispatcher
-

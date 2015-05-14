@@ -30,6 +30,11 @@ void AutoExporter::setUrl(const QString& newUrl)
     url = newUrl;
 }
 
+void AutoExporter::setText(const QString& newText)
+{
+    text = newText;
+}
+
 void AutoExporter::handle_import(cuc::Transfer *transfer)
 {
     TRACE() << Q_FUNC_INFO << "not implemented";
@@ -44,8 +49,15 @@ void AutoExporter::handle_export(cuc::Transfer *transfer)
         return;
     }
 
+    cuc::Item item;
+
+    if (!url.isEmpty())
+        item.setUrl(QUrl(url));
+    if (!text.isEmpty())
+        item.setText(text);
+
     QVector<cuc::Item> items;
-    items << cuc::Item(QUrl(url));
+    items << item;
     transfer->charge(items);
     connect(transfer, SIGNAL(stateChanged()), this, SLOT(stateChanged()));
     TRACE() << Q_FUNC_INFO << "Items:" << items.count();

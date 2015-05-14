@@ -40,9 +40,11 @@ public slots:
     Q_INVOKABLE void handle_share(cuc::Transfer*);
     Q_INVOKABLE void stateChanged();
     void setUrl(const QString&);
+    void setText(const QString&);
 
 private:
     QString url;
+    QString text;
 };
 
 #endif // AUTOEXPORTER_H

@@ -33,55 +33,72 @@ int main(int argc, char *argv[])
         qputenv("APP_ID", "content-hub-send-file");
     }
 
-    std::string pkg, app;
+    /* read environment variables */
+    QProcessEnvironment environment = QProcessEnvironment::systemEnvironment();
+    if (environment.contains(QLatin1String("CONTENT_HUB_LOGGING_LEVEL"))) {
+        bool isOk;
+        int value = environment.value(
+            QLatin1String("CONTENT_HUB_LOGGING_LEVEL")).toInt(&isOk);
+        if (isOk)
+            setLoggingLevel(value);
+    }
+
     std::string handler = "export";
-    std::string ver = "current-user-version";
-    QString url, peerName;
+    QString url, text, appId;
+    gchar* pkg = NULL;
+    gchar* app = NULL;
+    gchar* ver = NULL;
 
     /* URL handled looks like:
-     * content:?pkg=foo&app=bar&ver=0.1&url=path
-     * pkg and app are required, if ver isn't included we use the appid 
-     * wildcard of current-user-version
+     * content:?pkg=foo&app=bar&ver=0.1&url=path&text=text
+     * Only pkg is required.
      */
 
     QUrlQuery* query = new QUrlQuery(a.arguments().at(1).split("?").at(1));
     TRACE() << "Handling URL:" << query->query();
 
     if (query->hasQueryItem("pkg"))
-        pkg = query->queryItemValue("pkg").toStdString();
+        pkg = g_strdup(query->queryItemValue("pkg").toStdString().c_str());
+    else {
+        qWarning() << "PKG is required";
+        return 1;
+    }
     if (query->hasQueryItem("app"))
-        app = query->queryItemValue("app").toStdString();
+        app = g_strdup(query->queryItemValue("app").toStdString().c_str());
     if (query->hasQueryItem("ver"))
-        ver = query->queryItemValue("ver").toStdString();
+        ver = g_strdup(query->queryItemValue("ver").toStdString().c_str());
     if (query->hasQueryItem("handler"))
         handler = query->queryItemValue("handler").toStdString();
     url = query->queryItemValue("url");
+    text = query->queryItemValue("text");
     TRACE() << "URL:" << url;
-    TRACE() << "PKG:" << pkg.c_str();
-    TRACE() << "APP:" << app.c_str();
-    TRACE() << "VER:" << ver.c_str();
+    TRACE() << "PKG:" << pkg;
+    TRACE() << "APP:" << app;
+    TRACE() << "VER:" << ver;
     TRACE() << "HANDLER:" << handler.c_str();
-    peerName = QString::fromLocal8Bit(ubuntu_app_launch_triplet_to_app_id(pkg.c_str(), app.c_str(), ver.c_str()));
 
-    if (url.isEmpty())
-    {
-        qWarning() << "URL is required";
-        return 1;
-    }
 
-    AutoExporter exporter;
-    exporter.setUrl(url);
+    appId = QString::fromLocal8Bit(ubuntu_app_launch_triplet_to_app_id(pkg, app, ver));
+    if (appId.isNull())
+        appId = QString(pkg);
 
-    if (peerName.isEmpty())
+    if (appId.isEmpty())
     {
         qWarning() << "Unable to determine peer";
         return 1;
     }
 
-    TRACE() << "PEER:" << peerName;
+    AutoExporter exporter;
+    if (!url.isEmpty())
+        exporter.setUrl(url);
+
+    if (!text.isEmpty())
+        exporter.setText(text);
+
+    TRACE() << "APP_ID:" << appId;
 
     auto hub = cuc::Hub::Client::instance();
-    auto peer = cuc::Peer{peerName};
+    auto peer = cuc::Peer{appId};
     if (handler == "share") {
         auto transfer = hub->create_share_to_peer(peer);
         exporter.handle_export(transfer);

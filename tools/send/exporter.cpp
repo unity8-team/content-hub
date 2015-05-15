@@ -70,13 +70,22 @@ int main(int argc, char *argv[])
     if (query->hasQueryItem("handler"))
         handler = query->queryItemValue("handler").toStdString();
     url = query->queryItemValue("url");
+
+    /* Don't support file transfers via url-dispatcher
+     * it would allow unconfined access to any file simply
+     * by constructing an evil file url
+     */
+    if (url.startsWith("file")) {
+        qWarning() << "File transfers are not supported";
+        return 1;
+    }
+
     text = query->queryItemValue("text");
     TRACE() << "URL:" << url;
     TRACE() << "PKG:" << pkg;
     TRACE() << "APP:" << app;
     TRACE() << "VER:" << ver;
     TRACE() << "HANDLER:" << handler.c_str();
-
 
     appId = QString::fromLocal8Bit(ubuntu_app_launch_triplet_to_app_id(pkg, app, ver));
     if (appId.isNull())

@@ -8,19 +8,19 @@ msgstr ""
 "Project-Id-Version: content-hub\n"
 "Report-Msgid-Bugs-To: FULL NAME <EMAIL@ADDRESS>\n"
 "POT-Creation-Date: 2014-08-14 12:39+0100\n"
-"PO-Revision-Date: 2014-10-21 11:23+0000\n"
-"Last-Translator: Martin Pitt <martin.pitt@ubuntu.com>\n"
+"PO-Revision-Date: 2015-05-16 19:58+0000\n"
+"Last-Translator: Ettore Atalan <atalanttore@googlemail.com>\n"
 "Language-Team: German <de@li.org>\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"X-Launchpad-Export-Date: 2015-04-30 05:30+0000\n"
-"X-Generator: Launchpad (build 17453)\n"
+"X-Launchpad-Export-Date: 2015-05-17 05:23+0000\n"
+"X-Generator: Launchpad (build 17493)\n"
 
 #: import/Ubuntu/Content/ContentPeerPicker10.qml:48
 #: import/Ubuntu/Content/ContentPeerPicker11.qml:49
 msgid "Choose from"
-msgstr "Wähle aus"
+msgstr "Auswählen aus"
 
 #: import/Ubuntu/Content/ContentPeerPicker10.qml:48
 #: import/Ubuntu/Content/ContentPeerPicker11.qml:49

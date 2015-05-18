@@ -103,6 +103,7 @@ add_subdirectory(src)
 add_subdirectory(import)
 add_subdirectory(examples)
 add_subdirectory(tests)
+add_subdirectory(tools)
 
 install(DIRECTORY include DESTINATION ${CMAKE_INSTALL_PREFIX})
 

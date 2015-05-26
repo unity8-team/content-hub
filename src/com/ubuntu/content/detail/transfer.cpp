@@ -36,7 +36,8 @@ struct cucd::Transfer::Private
             const QString& source,
             const QString& destination,
             const int direction,
-            const QString& content_type)         :
+            const QString& content_type,
+            const QString& profile):
         state(cuc::Transfer::created),
             id(id),
             source(source),
@@ -44,7 +45,8 @@ struct cucd::Transfer::Private
             direction(direction),
             selection_type(cuc::Transfer::single),
             source_started_by_content_hub(false),
-            content_type(content_type)
+            content_type(content_type),
+            profile(profile)
     {
     }
     
@@ -59,6 +61,7 @@ struct cucd::Transfer::Private
     bool source_started_by_content_hub;
     QString download_id;
     const QString content_type;
+    const QString profile;
 };
 
 cucd::Transfer::Transfer(const int id,
@@ -66,8 +69,9 @@ cucd::Transfer::Transfer(const int id,
                          const QString& destination,
                          const int direction,
                          const QString& content_type,
+                         const QString& profile,
                          QObject* parent) :
-    QObject(parent), d(new Private(id, source, destination, direction, content_type))
+    QObject(parent), d(new Private(id, source, destination, direction, content_type, profile))
 {
     TRACE() << __PRETTY_FUNCTION__;
 }
@@ -172,6 +176,19 @@ void cucd::Transfer::Charge(const QVariantList& items)
         if (item.url().isEmpty()) {
             ret.append(QVariant::fromValue(item));
         } else {
+            TRACE() << Q_FUNC_INFO;
+            if (d->profile.toStdString() != QString("unconfined").toStdString() &&
+                item.url().isLocalFile()) {
+                TRACE() << Q_FUNC_INFO << "IS LOCAL FILE";
+                QString file(item.url().toLocalFile());
+                TRACE() << Q_FUNC_INFO << "FILE:" << file;
+                // Verify app has read access to local file before transfer
+                if (not check_profile_read(d->profile, file)) {
+                    // If failed to access file, abort
+                    ret.clear();
+                    goto abort;
+                }
+            }
             QString newUrl = copy_to_store(item.url().toString(), d->store);
             if (!newUrl.isEmpty()) {
                 item.setUrl(QUrl(newUrl));
@@ -179,11 +196,12 @@ void cucd::Transfer::Charge(const QVariantList& items)
                 ret.append(QVariant::fromValue(item));
             } else {
                 ret.clear();
-                break;
+                goto abort;
             }
         }
     }
 
+abort:
     if (ret.count() <= 0)
     {
         qWarning() << "Failed to charge items, aborting";

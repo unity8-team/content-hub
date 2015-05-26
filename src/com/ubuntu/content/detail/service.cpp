@@ -313,7 +313,8 @@ QDBusObjectPath cucd::Service::CreateTransfer(const QString& dest_id, const QStr
         }
     }
 
-    auto transfer = new cucd::Transfer(import_counter, src_id, dest_id, dir, type_id, this);
+    QString profile = aa_profile(this->message().service());
+    auto transfer = new cucd::Transfer(import_counter, src_id, dest_id, dir, type_id, profile, this);
     new TransferAdaptor(transfer);
     d->active_transfers.insert(transfer);
 

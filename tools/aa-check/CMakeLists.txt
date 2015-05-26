@@ -14,5 +14,33 @@
 #
 # Authored by: Ken VanDine <ken.vandine@canonical.com>
 
-add_subdirectory(aa-check)
-add_subdirectory(send)
+include_directories(
+  ${CMAKE_CURRENT_BINARY_DIR}
+  ${APPARMOR_INCLUDE_DIRS}
+)
+
+add_executable(
+  content-hub-aa-check
+
+  main.cpp
+)
+
+qt5_use_modules(content-hub-aa-check Core)
+pkg_check_modules(APPARMOR REQUIRED libapparmor)
+
+set_target_properties(
+  content-hub-aa-check
+  PROPERTIES
+  AUTOMOC TRUE
+)
+
+target_link_libraries(
+  content-hub-aa-check
+ 
+  ${APPARMOR_LDFLAGS}
+)
+
+install(
+  TARGETS content-hub-aa-check
+  RUNTIME DESTINATION ${CMAKE_INSTALL_BINDIR}
+)

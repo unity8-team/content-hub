@@ -45,7 +45,7 @@ class Transfer : public QObject
     Q_PROPERTY(QString ContentType READ ContentType)
 
   public:
-    Transfer(const int, const QString&, const QString&, const int, const QString&, QObject* parent = nullptr);
+    Transfer(const int, const QString&, const QString&, const int, const QString&, const QString&, QObject* parent = nullptr);
     Transfer(const Transfer&) = delete;
     virtual ~Transfer();
 

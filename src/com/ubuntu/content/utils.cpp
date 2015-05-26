@@ -16,12 +16,14 @@
  * Authored by: Ken VanDine <ken.vandine@canonical.com>
  */
 
+#include <QCoreApplication>
+#include <QDir>
+#include <QFile>
+#include <QFileInfo>
+#include <QProcess>
 #include <QtCore>
 #include <QtDBus/QDBusMessage>
 #include <QtDBus/QDBusConnection>
-#include <QFile>
-#include <QDir>
-#include <QFileInfo>
 #include <QUrl>
 #include <nih/alloc.h>
 #include <nih-dbus/dbus_util.h>
@@ -102,10 +104,6 @@ QString aa_profile(QString uniqueConnectionId)
             reply.errorMessage();
     }
 
-    if (aaProfile.toStdString() == QString("unconfined").toStdString())
-    {
-        return QString("");
-    }
     return aaProfile;
 }
 
@@ -172,6 +170,36 @@ bool purge_store_cache(QString store)
         return st.removeRecursively();
     }
 
+    return false;
+}
+
+bool check_profile_read(QString profile, QString path)
+{
+    TRACE() << Q_FUNC_INFO << "PROFILE:" << profile;
+
+    // If app is unconfined it has access
+    if (profile.toStdString() == QString("unconfined").toStdString())
+        return true;
+
+    QString dir(QCoreApplication::instance()->applicationDirPath());
+    QString command(dir + "/content-hub-aa-check");
+    QStringList arguments;
+    arguments << profile << path;
+    QProcess *checkProcess = new QProcess();
+    checkProcess->start(command, arguments);
+    QObject::connect(checkProcess,
+            static_cast<void (QProcess::*)(int, QProcess::ExitStatus)>(&QProcess::finished),
+            [](int exitCode, QProcess::ExitStatus exitStatus)
+            {
+                Q_UNUSED(exitStatus);
+                TRACE() << "EXIT CODE:" << exitCode;
+            });
+    // Allow a max of 1 second
+    checkProcess->waitForFinished(1000);
+    TRACE() << "EXIT STATUS:" << checkProcess->exitStatus();
+    TRACE() << "EXIT CODE:" << checkProcess->exitCode();
+    if (checkProcess->exitCode() == 0)
+        return true;
     return false;
 }
 

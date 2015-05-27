@@ -14,5 +14,4 @@
 #
 # Authored by: Ken VanDine <ken.vandine@canonical.com>
 
-add_subdirectory(aa-check)
 add_subdirectory(send)

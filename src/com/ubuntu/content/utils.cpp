@@ -33,6 +33,11 @@
 #include "com/ubuntu/content/type.h"
 #include <unistd.h>
 
+#include <sys/apparmor.h>
+/* need to be exposed in libapparmor but for now ... */
+#define AA_CLASS_FILE 2
+#define AA_MAY_READ (1 << 2)
+
 namespace cuc = com::ubuntu::content;
 
 namespace {
@@ -181,26 +186,33 @@ bool check_profile_read(QString profile, QString path)
     if (profile.toStdString() == QString("unconfined").toStdString())
         return true;
 
-    QString dir(QCoreApplication::instance()->applicationDirPath());
-    QString command(dir + "/content-hub-aa-check");
-    QStringList arguments;
-    arguments << profile << path;
-    QProcess *checkProcess = new QProcess();
-    checkProcess->start(command, arguments);
-    QObject::connect(checkProcess,
-            static_cast<void (QProcess::*)(int, QProcess::ExitStatus)>(&QProcess::finished),
-            [](int exitCode, QProcess::ExitStatus exitStatus)
-            {
-                Q_UNUSED(exitStatus);
-                TRACE() << "EXIT CODE:" << exitCode;
-            });
-    // Allow a max of 1 second
-    checkProcess->waitForFinished(1000);
-    TRACE() << "EXIT STATUS:" << checkProcess->exitStatus();
-    TRACE() << "EXIT CODE:" << checkProcess->exitCode();
-    if (checkProcess->exitCode() == 0)
+    int audited, allowed;
+    char *query;
+    const char *label = profile.toStdString().c_str();
+                
+    /* + 1 for null separator and then + 1 AA_CLASS_FILE */
+    int label_size = strlen(label);
+    int size = label_size + 1 + strlen(path.toStdString().c_str()) + AA_QUERY_CMD_LABEL_SIZE + 1;
+    /* +1 for null terminator used by strcpy, yes we could drop this
+     * using memcpy */
+    query = (char*)malloc(size + 1);
+    if (!query)
+        return -1;
+    /* we want the null terminator here */
+    strcpy(query + AA_QUERY_CMD_LABEL_SIZE, label);
+    query[AA_QUERY_CMD_LABEL_SIZE + label_size + 1] = AA_CLASS_FILE;
+    strcpy(query + AA_QUERY_CMD_LABEL_SIZE + label_size + 2, path.toStdString().c_str());
+    aa_query_label(AA_MAY_READ, query, size , &allowed, &audited);
+    free(query);
+
+
+    if (allowed) {
+        TRACE() << "ALLOWED:" << QString::number(allowed);
         return true;
+    }
+    TRACE() << "NOT ALLOWED:" << QString::number(allowed);
     return false;
+
 }
 
 }

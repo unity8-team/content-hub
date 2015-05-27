@@ -36,8 +36,7 @@ struct cucd::Transfer::Private
             const QString& source,
             const QString& destination,
             const int direction,
-            const QString& content_type,
-            const QString& profile):
+            const QString& content_type):
         state(cuc::Transfer::created),
             id(id),
             source(source),
@@ -45,8 +44,7 @@ struct cucd::Transfer::Private
             direction(direction),
             selection_type(cuc::Transfer::single),
             source_started_by_content_hub(false),
-            content_type(content_type),
-            profile(profile)
+            content_type(content_type)
     {
     }
     
@@ -61,7 +59,6 @@ struct cucd::Transfer::Private
     bool source_started_by_content_hub;
     QString download_id;
     const QString content_type;
-    const QString profile;
 };
 
 cucd::Transfer::Transfer(const int id,
@@ -69,9 +66,8 @@ cucd::Transfer::Transfer(const int id,
                          const QString& destination,
                          const int direction,
                          const QString& content_type,
-                         const QString& profile,
                          QObject* parent) :
-    QObject(parent), d(new Private(id, source, destination, direction, content_type, profile))
+    QObject(parent), d(new Private(id, source, destination, direction, content_type))
 {
     TRACE() << __PRETTY_FUNCTION__;
 }
@@ -170,6 +166,9 @@ void cucd::Transfer::Charge(const QVariantList& items)
         return;
     } 
 
+    QString profile = aa_profile(message().service());
+    TRACE() << Q_FUNC_INFO << "PROFILE:" << profile;
+
     QVariantList ret;
     Q_FOREACH(QVariant iv, items) {
         cuc::Item item = qdbus_cast<Item>(iv);
@@ -177,13 +176,13 @@ void cucd::Transfer::Charge(const QVariantList& items)
             ret.append(QVariant::fromValue(item));
         } else {
             TRACE() << Q_FUNC_INFO;
-            if (d->profile.toStdString() != QString("unconfined").toStdString() &&
+            if (profile.toStdString() != QString("unconfined").toStdString() &&
                 item.url().isLocalFile()) {
                 TRACE() << Q_FUNC_INFO << "IS LOCAL FILE";
                 QString file(item.url().toLocalFile());
                 TRACE() << Q_FUNC_INFO << "FILE:" << file;
                 // Verify app has read access to local file before transfer
-                if (not check_profile_read(d->profile, file)) {
+                if (not check_profile_read(profile, file)) {
                     // If failed to access file, abort
                     ret.clear();
                     goto abort;

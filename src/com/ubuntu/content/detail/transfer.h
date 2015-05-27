@@ -18,9 +18,11 @@
 #ifndef TRANSFER_H_
 #define TRANSFER_H_
 
+#include <QDir>
 #include <QObject>
 #include <QStringList>
-#include <QDir>
+#include <QtDBus/QDBusMessage>
+#include <QtDBus/QDBusContext>
 #include <ubuntu/download_manager/error.h>
 
 namespace com
@@ -31,7 +33,7 @@ namespace content
 {
 namespace detail
 {
-class Transfer : public QObject
+class Transfer : public QObject, protected QDBusContext
 {
     Q_OBJECT
     Q_PROPERTY(int State READ State NOTIFY StateChanged)
@@ -45,7 +47,7 @@ class Transfer : public QObject
     Q_PROPERTY(QString ContentType READ ContentType)
 
   public:
-    Transfer(const int, const QString&, const QString&, const int, const QString&, const QString&, QObject* parent = nullptr);
+    Transfer(const int, const QString&, const QString&, const int, const QString&, QObject* parent = nullptr);
     Transfer(const Transfer&) = delete;
     virtual ~Transfer();
 

@@ -49,6 +49,4 @@ TEST(Utils, purge_store_cache)
 
     EXPECT_FALSE(purge_store_cache(persistent_store.absolutePath()));
     EXPECT_TRUE(persistent_store.exists());
-    EXPECT_FALSE(check_profile_read("testbad", "/etc/issue"));
-    EXPECT_TRUE(check_profile_read("unconfined", "/etc/issue"));
 }

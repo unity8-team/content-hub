@@ -178,21 +178,14 @@ bool purge_store_cache(QString store)
     return false;
 }
 
-bool check_profile_read(QString profile, QString path)
+int query_file(const char *label, const char *path, int *allowed)
 {
-    TRACE() << Q_FUNC_INFO << "PROFILE:" << profile;
-
-    // If app is unconfined it has access
-    if (profile.toStdString() == QString("unconfined").toStdString())
-        return true;
-
-    int audited, allowed;
+    int rc, audited;
     char *query;
-    const char *label = profile.toStdString().c_str();
-                
+
     /* + 1 for null separator and then + 1 AA_CLASS_FILE */
     int label_size = strlen(label);
-    int size = label_size + 1 + strlen(path.toStdString().c_str()) + AA_QUERY_CMD_LABEL_SIZE + 1;
+    int size = label_size + 1 + strlen(path) + AA_QUERY_CMD_LABEL_SIZE + 1;
     /* +1 for null terminator used by strcpy, yes we could drop this
      * using memcpy */
     query = (char*)malloc(size + 1);
@@ -201,10 +194,26 @@ bool check_profile_read(QString profile, QString path)
     /* we want the null terminator here */
     strcpy(query + AA_QUERY_CMD_LABEL_SIZE, label);
     query[AA_QUERY_CMD_LABEL_SIZE + label_size + 1] = AA_CLASS_FILE;
-    strcpy(query + AA_QUERY_CMD_LABEL_SIZE + label_size + 2, path.toStdString().c_str());
-    aa_query_label(AA_MAY_READ, query, size , &allowed, &audited);
+    strcpy(query + AA_QUERY_CMD_LABEL_SIZE + label_size + 2, path);
+    rc = aa_query_label(AA_MAY_READ, query, size , allowed, &audited);
     free(query);
+    return rc;
+}
 
+bool check_profile_read(QString profile, QString path)
+{
+    TRACE() << Q_FUNC_INFO << "PROFILE:" << profile;
+
+    // If app is unconfined it has access
+    if (profile.toStdString() == QString("unconfined").toStdString())
+        return true;
+
+    int allowed;
+    if (query_file(profile.toStdString().c_str(), path.toStdString().c_str(), &allowed) == -1) {
+        qWarning() << "error:" << strerror(errno) << path;
+        return false;
+    }
+   
     if (allowed) {
         TRACE() << "ALLOWED:" << QString::number(allowed);
         return true;

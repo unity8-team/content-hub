@@ -91,5 +91,6 @@ Section: libdevel
 Architecture: any
 Depends: ${misc:Depends},
          ${shlibs:Depends},
+         content-hub,
 Description: content sharing testability
  Files and utilities needed for automated testing of content-hub

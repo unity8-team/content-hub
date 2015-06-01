@@ -1,0 +1,3 @@
+Tests: aa-check
+Depends: content-hub-testability
+Restrictions: allow-stderr

@@ -1,0 +1,27 @@
+#!/bin/sh
+
+oktests="content-hub-test-ok"
+badtests="content-hub-test-bad"
+FAILED=""
+
+for a in $oktests; do
+    content-hub-test-exporter content-hub-test-importer file:///etc/issue $a 2>/dev/null
+    if [ $? -ne 0 ]; then
+        FAILED="$FAILED $a"
+    fi
+done
+
+for b in $badtests; do
+    content-hub-test-exporter content-hub-test-importer file:///etc/issue $b 2>/dev/null
+    if [ $? -eq 0 ]; then
+        FAILED="$FAILED $b"
+    fi
+done
+
+if [ -z "$FAILED" ]; then
+    echo "All tests passed"
+    exit 0
+else
+    echo "$FAILED failed"
+    exit 1
+fi

@@ -1,0 +1,15 @@
+# vim:syntax=apparmor
+# Author: Ken VanDine <ken.vandine@canonical.com>
+#
+#include <tunables/global>
+
+profile "content-hub-test-ok" {
+    #include <abstractions/base>
+    #include <abstractions/dbus-session>
+    /etc/issue r,
+}
+profile "content-hub-test-bad" {
+    #include <abstractions/base>
+    #include <abstractions/dbus-session>
+    audit deny /etc/issue r,
+}

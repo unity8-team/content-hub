@@ -205,7 +205,6 @@ bool check_profile_read(QString profile, QString path)
     aa_query_label(AA_MAY_READ, query, size , &allowed, &audited);
     free(query);
 
-
     if (allowed) {
         TRACE() << "ALLOWED:" << QString::number(allowed);
         return true;

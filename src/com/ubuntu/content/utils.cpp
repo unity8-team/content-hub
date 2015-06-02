@@ -204,10 +204,6 @@ bool check_profile_read(QString profile, QString path)
 {
     TRACE() << Q_FUNC_INFO << "PROFILE:" << profile;
 
-    // If app is unconfined it has access
-    if (profile.toStdString() == QString("unconfined").toStdString())
-        return true;
-
     int allowed;
     if (query_file(profile.toStdString().c_str(), path.toStdString().c_str(), &allowed) == -1) {
         qWarning() << "error:" << strerror(errno) << path;

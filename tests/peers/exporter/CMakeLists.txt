@@ -24,6 +24,7 @@ add_executable(
 )
 
 qt5_use_modules(content-hub-test-exporter Core Gui DBus)
+pkg_check_modules(APPARMOR REQUIRED libapparmor)
 
 set_target_properties(
   content-hub-test-exporter
@@ -35,6 +36,7 @@ target_link_libraries(
   content-hub-test-exporter
  
   content-hub 
+  ${APPARMOR_LDFLAGS}
 )
 
 install(

@@ -1,3 +1,12 @@
+content-hub (0.0+15.10.20150603-0ubuntu1) wily; urgency=medium
+
+  [ Ken VanDine ]
+  * SECURITY UPDATE: file disclosure via unchecked AppArmor profile (LP:
+    #1456628) Don't allow exporting of files that aren't allowed by the
+    source apparmor profile CVE-2015-1327 (LP: #1456628)
+
+ -- CI Train Bot <ci-train-bot@canonical.com>  Wed, 03 Jun 2015 17:45:36 +0000
+
 content-hub (0.0+15.10.20150518-0ubuntu1) wily; urgency=medium
 
   [ Ken VanDine ]

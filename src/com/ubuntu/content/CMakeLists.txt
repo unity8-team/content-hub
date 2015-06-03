@@ -28,6 +28,7 @@ include_directories(
   ${UBUNTU_LAUNCH_INCLUDE_DIRS}
   ${UBUNTU_DOWNLOAD_MANAGER_INCLUDE_DIRS}
   ${NOTIFY_INCLUDE_DIRS}
+  ${APPARMOR_INCLUDE_DIRS}
 )
 
 qt5_add_dbus_interface(
@@ -105,6 +106,7 @@ target_link_libraries(content-hub
     ${GIO_LIBRARIES}
     ${UBUNTU_DOWNLOAD_MANAGER_LIBRARIES}
     ${NOTIFY_LIBRARIES}
+    ${APPARMOR_LDFLAGS}
 )
 
 install(

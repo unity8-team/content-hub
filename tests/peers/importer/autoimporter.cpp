@@ -65,6 +65,9 @@ void AutoImporter::stateChanged()
 
     qDebug() << Q_FUNC_INFO << "STATE:" << transfer->state();
 
+    if (transfer->state() == cuc::Transfer::aborted)
+        QCoreApplication::instance()->exit(1);
+
     if (transfer->state() == cuc::Transfer::collected)
-        QCoreApplication::instance()->quit();
+        QCoreApplication::instance()->exit(0);
 }

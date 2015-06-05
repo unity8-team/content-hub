@@ -25,6 +25,11 @@ if [ $? -ne 0 ]; then
     FAILED="$FAILED import"
 fi
 
+content-hub-send "content:?pkg=content-hub-test-importer&handler=export&url=file:///etc/issue" 2>/dev/null
+if [ $? -eq 0 ]; then
+    FAILED="$FAILED reject-files"
+fi
+
 if [ -z "$FAILED" ]; then
     echo "All tests passed"
     exit 0

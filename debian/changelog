@@ -1,3 +1,11 @@
+content-hub (0.0+15.04.20150608-0ubuntu1) vivid; urgency=medium
+
+  [ Ken VanDine ]
+  * Make the import and share testability peers return 1 if the transfer
+    is aborted. Added url-dispatcher autopkgtest.
+
+ -- CI Train Bot <ci-train-bot@canonical.com>  Mon, 08 Jun 2015 16:49:53 +0000
+
 content-hub (0.0+15.04.20150603-0ubuntu1) vivid; urgency=medium
 
   [ Ken VanDine ]

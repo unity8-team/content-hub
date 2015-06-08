@@ -42,6 +42,7 @@ class Type : public QObject
 
     struct Known
     {
+        static const Type& all();
         static const Type& documents();
         static const Type& pictures();
         static const Type& music();

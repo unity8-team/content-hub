@@ -138,8 +138,10 @@ void Registry::enumerate_known_sources_for_type(cuc::Type type, const std::funct
 
     if (type == cuc::Type::unknown())
         return;
-
-    Q_FOREACH (QString k, m_sources->get(type.id()).toStringList())
+    QStringList peers;
+    peers << m_sources->get("all").toStringList();
+    peers << m_sources->get(type.id()).toStringList();
+    Q_FOREACH (QString k, peers)
     {
         TRACE() << Q_FUNC_INFO << k;
         bool defaultPeer = false;
@@ -169,7 +171,10 @@ void Registry::enumerate_known_destinations_for_type(cuc::Type type, const std::
     if (type == cuc::Type::unknown())
         return;
 
-    Q_FOREACH (QString k, m_dests->get(type.id()).toStringList())
+    QStringList peers;
+    peers << m_dests->get("all").toStringList();
+    peers << m_dests->get(type.id()).toStringList();
+    Q_FOREACH (QString k, peers)
     {
         TRACE() << Q_FUNC_INFO << k;
         for_each(cuc::Peer{k});

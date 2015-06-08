@@ -69,6 +69,12 @@ const cuc::Type& cuc::Type::unknown()
     return t;
 }
 
+const cuc::Type& cuc::Type::Known::all()
+{
+    static cuc::Type t("all", nullptr);
+    return t;
+}
+
 const cuc::Type& cuc::Type::Known::documents()
 {
     static cuc::Type t("documents", nullptr);

@@ -39,10 +39,10 @@ class Type : public QObject
   public:
     
     static const Type& unknown();
+    static const Type& all();
 
     struct Known
     {
-        static const Type& all();
         static const Type& documents();
         static const Type& pictures();
         static const Type& music();

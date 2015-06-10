@@ -69,7 +69,7 @@ const cuc::Type& cuc::Type::unknown()
     return t;
 }
 
-const cuc::Type& cuc::Type::Known::all()
+const cuc::Type& cuc::Type::all()
 {
     static cuc::Type t("all", nullptr);
     return t;

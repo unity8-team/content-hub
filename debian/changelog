@@ -1,3 +1,11 @@
+content-hub (0.0+15.10.20150615.3-0ubuntu1) wily; urgency=medium
+
+  [ Ken VanDine ]
+  * Added support for registering a source or destination as handlers
+    for Type::all
+
+ -- CI Train Bot <ci-train-bot@canonical.com>  Mon, 15 Jun 2015 18:21:22 +0000
+
 content-hub (0.0+15.10.20150608-0ubuntu1) wily; urgency=medium
 
   [ Ken VanDine ]

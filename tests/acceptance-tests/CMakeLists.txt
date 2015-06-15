@@ -60,6 +60,7 @@ add_executable(
   ${CMAKE_SOURCE_DIR}/src/com/ubuntu/content/service/registry.cpp
   good.json
   bad.json
+  source_all.json
 )
 
 qt5_use_modules(app_hub_communication_default_source Core Gui DBus Test)
@@ -93,7 +94,7 @@ set_target_properties(
   AUTOMOC TRUE
 )
 
-file(COPY good.json bad.json DESTINATION .)
+file(COPY good.json bad.json source_all.json DESTINATION .)
 
 add_custom_command(
   OUTPUT transfer_files

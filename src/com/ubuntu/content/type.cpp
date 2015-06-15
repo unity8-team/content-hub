@@ -53,6 +53,14 @@ bool cuc::Type::operator==(const cuc::Type& rhs) const
     return d->id == rhs.d->id;
 }
 
+bool cuc::Type::operator!=(const cuc::Type& rhs) const
+{
+    if (d == rhs.d)
+        return false;
+
+    return d->id != rhs.d->id;
+}
+
 bool cuc::Type::operator<(const cuc::Type& rhs) const
 {
     return d->id < rhs.d->id;
@@ -66,6 +74,12 @@ const QString& cuc::Type::id() const
 const cuc::Type& cuc::Type::unknown()
 {
     static cuc::Type t("unknown", nullptr);
+    return t;
+}
+
+const cuc::Type& cuc::Type::all()
+{
+    static cuc::Type t("all", nullptr);
     return t;
 }
 

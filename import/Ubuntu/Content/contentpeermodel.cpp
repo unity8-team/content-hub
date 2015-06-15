@@ -103,6 +103,8 @@ void ContentPeerModel::findPeers() {
         appendPeersForContentType(ContentType::Videos);
         appendPeersForContentType(ContentType::Links);
         appendPeersForContentType(ContentType::EBooks);
+        appendPeersForContentType(ContentType::Text);
+        appendPeersForContentType(ContentType::Unknown);
     } else {
         appendPeersForContentType(m_contentType);
     }

@@ -39,6 +39,7 @@ class Type : public QObject
   public:
     
     static const Type& unknown();
+    static const Type& all();
 
     struct Known
     {
@@ -57,6 +58,7 @@ class Type : public QObject
     
     Type& operator=(const Type&);    
     bool operator==(const Type&) const;
+    bool operator!=(const Type&) const;
     bool operator<(const Type&) const;
 
     Q_INVOKABLE virtual const QString& id() const;

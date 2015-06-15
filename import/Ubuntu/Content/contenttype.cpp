@@ -31,7 +31,7 @@
      \li Type
      \li Description
    \row
-     \li ContentType.Uknown
+     \li ContentType.Unknown
      \li Unknown type
    \row
      \li ContentType.Documents

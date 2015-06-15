@@ -53,6 +53,14 @@ bool cuc::Type::operator==(const cuc::Type& rhs) const
     return d->id == rhs.d->id;
 }
 
+bool cuc::Type::operator!=(const cuc::Type& rhs) const
+{
+    if (d == rhs.d)
+        return false;
+
+    return d->id != rhs.d->id;
+}
+
 bool cuc::Type::operator<(const cuc::Type& rhs) const
 {
     return d->id < rhs.d->id;

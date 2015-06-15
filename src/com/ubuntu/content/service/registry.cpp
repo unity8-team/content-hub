@@ -144,7 +144,9 @@ void Registry::enumerate_known_sources_for_type(cuc::Type type, const std::funct
     {
         TRACE() << Q_FUNC_INFO << k;
         bool defaultPeer = false;
-        QVariant peer_v = m_defaultSources->get(type.id());
+        QVariant peer_v;
+        if (type != cuc::Type::unknown())
+            peer_v = m_defaultSources->get(type.id());
         if (peer_v.type() == QVariant::StringList)
         {
             QStringList as(peer_v.toStringList());

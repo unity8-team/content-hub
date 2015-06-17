@@ -396,7 +396,7 @@ void cucd::Service::handle_imports(int state)
         if (transfer->MirSocket().isEmpty() || !transfer->WasSourceStartedByContentHub())
             d->app_manager->invoke_application(transfer->source().toStdString());
         else
-            d->app_manager->invoke_application_with_socket(transfer->source().toStdString(), transfer->MirSocket().toStdString());
+            d->app_manager->invoke_application_with_session(transfer->source().toStdString(), transfer->PromptSession());
     }
 
     if (state == cuc::Transfer::charged)

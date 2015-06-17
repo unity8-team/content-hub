@@ -22,24 +22,9 @@ include_directories(
   ${GIO_INCLUDE_DIRS}
   ${GLIB_INCLUDE_DIRS}
   ${CLICK_INCLUDE_DIRS}
+  ${MIRCLIENT_INCLUDE_DIRS}
 )
 
-###########################
-# Mir Connection Demangler
-###########################
-
-add_executable(mir-connection-demangler mir-connection-demangler.c)
-target_link_libraries(mir-connection-demangler ${GLIB_LDFLAGS} ${GIO_LDFLAGS})
-#install(
-#  RUNTIME "${CMAKE_CURRENT_BINARY_DIR}/mir-connection-demangler"
-#  DESTINATION "${CMAKE_INSTALL_FULL_PKGLIBEXECDIR}"
-#)
-
-#############################
-# Untrusted Helper Exec Tool
-#############################
-
-add_definitions(-DSOCKET_TOOL="${CMAKE_INSTALL_FULL_LIBEXECDIR}/ubuntu-app-launch/content-hub/mir-connection-demangler")
 add_executable(
   exec-tool
 
@@ -53,9 +38,10 @@ target_link_libraries(
   ${CLICK_LDFLAGS}
   ${GLIB_LDFLAGS}
   ${GIO_LDFLAGS}
+  ${MIRCLIENT_LDFLAGS}
 )
 
 install(
-  PROGRAMS "${CMAKE_CURRENT_BINARY_DIR}/exec-tool" "${CMAKE_CURRENT_BINARY_DIR}/mir-connection-demangler"
+  PROGRAMS "${CMAKE_CURRENT_BINARY_DIR}/exec-tool"
   DESTINATION "${CMAKE_INSTALL_FULL_LIBEXECDIR}/ubuntu-app-launch/content-hub"
 )

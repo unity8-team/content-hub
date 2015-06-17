@@ -17,6 +17,7 @@
 #define COM_UBUNTU_APPLICATION_MANAGER_H_
 
 #include <string>
+#include "../content/detail/mir-helper.h"
 
 namespace com
 {
@@ -40,11 +41,11 @@ class ApplicationManager
     virtual bool invoke_application(const std::string &app_id) = 0;
 
     /*!
-     * \brief invoke_application_with_socket starts an application without a trusted session
+     * \brief invoke_application_with_session starts an application without a trusted session
      * \param app_id ID for the application (for example "gallery-app" - used for the desktop)
-     * \param socket path to MIR_SOCKET
+     * \param session
      */
-    virtual bool invoke_application_with_socket(const std::string &app_id, const std::string &socket) = 0;
+    virtual bool invoke_application_with_session(const std::string &app_id, const PromptSessionP &session) = 0;
 
     /*!
      * \brief stop_application_with_helper stops an application started by the content-hub helper

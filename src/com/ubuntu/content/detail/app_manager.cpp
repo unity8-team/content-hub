@@ -16,6 +16,7 @@
 
 #include "app_manager.h"
 #include "debug.h"
+#include "mir-helper.h"
 
 #include <ubuntu-app-launch.h>
 
@@ -35,18 +36,17 @@ bool cucd::AppManager::invoke_application(const std::string &app_id)
 /*!
  * \reimp
  */
-bool cucd::AppManager::invoke_application_with_socket(const std::string &app_id, const std::string &socket)
+bool cucd::AppManager::invoke_application_with_session(const std::string &app_id, const PromptSessionP &session)
 {
     TRACE() << Q_FUNC_INFO << "APP_ID:" << app_id.c_str();
     QVector<const gchar*> uris;
-    uris.append(g_strdup_printf("%s", socket.c_str()));
-    uris.append("");
     uris.append(NULL);
-    TRACE() << Q_FUNC_INFO << "URIS:" << g_strdup_printf("%s", socket.c_str());
-    gboolean ok = ubuntu_app_launch_start_helper("content-hub",
-                                                 app_id.c_str(),
-                                                 uris.constData());
-    return static_cast<bool>(ok);
+    auto instance_c = ubuntu_app_launch_start_session_helper("content-hub",
+                                                             session.data()->get(),
+                                                             app_id.c_str(),
+                                                             uris.constData());
+    std::string instid = std::string(instance_c);
+    return !instid.empty();
 }
 
 /*!

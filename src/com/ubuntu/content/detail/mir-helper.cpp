@@ -18,7 +18,6 @@
 #include "mir-helper.h"
 
 #include <mir_toolkit/mir_client_library.h>
-#include <mir_toolkit/mir_prompt_session.h>
 
 #include <QHash>
 #include <QStandardPaths>
@@ -97,6 +96,13 @@ static void client_fd_callback(MirPromptSession *, size_t count,
     for (size_t i = 0; i < count; i++) {
         priv->m_fds.append(fds[i]);
     }
+}
+
+MirPromptSession* PromptSession::get()
+{
+    TRACE() << Q_FUNC_INFO;
+    Q_D(PromptSession);
+    return d->m_mirSession;
 }
 
 void PromptSession::release()

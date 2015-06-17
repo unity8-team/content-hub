@@ -19,6 +19,7 @@
 
 #include <QObject>
 #include <QSharedPointer>
+#include <mir_toolkit/mir_prompt_session.h>
 
 class PromptSessionPrivate;
 class MirHelperPrivate;
@@ -32,6 +33,7 @@ public:
 
     QString requestSocket();
     void release();
+    MirPromptSession* get();
 
 Q_SIGNALS:
     void finished();

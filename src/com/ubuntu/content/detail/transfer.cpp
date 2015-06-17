@@ -37,7 +37,7 @@ struct cucd::Transfer::Private
             const QString& source,
             const QString& destination,
             const int direction,
-            const QString& content_type)         :
+            const QString& content_type):
         state(cuc::Transfer::created),
             id(id),
             source(source),
@@ -169,15 +169,41 @@ void cucd::Transfer::Charge(const QVariantList& items)
         return;
     } 
 
+    QString profile = aa_profile(message().service());
+    TRACE() << Q_FUNC_INFO << "PROFILE:" << profile;
+
     QVariantList ret;
     Q_FOREACH(QVariant iv, items) {
-        cuc::Item origItem = qdbus_cast<Item>(iv);
-        cuc::Item copiedItem = cuc::Item{QUrl(copy_to_store(origItem.url().toString(), d->store))};
-        copiedItem.setName(origItem.name());
-        TRACE() << Q_FUNC_INFO << "Item:" << copiedItem.url();
-        ret.append(QVariant::fromValue(copiedItem));
+        cuc::Item item = qdbus_cast<Item>(iv);
+        if (item.url().isEmpty()) {
+            ret.append(QVariant::fromValue(item));
+        } else {
+            TRACE() << Q_FUNC_INFO;
+            if (profile.toStdString() != QString("unconfined").toStdString() &&
+                item.url().isLocalFile()) {
+                TRACE() << Q_FUNC_INFO << "IS LOCAL FILE";
+                QString file(item.url().toLocalFile());
+                TRACE() << Q_FUNC_INFO << "FILE:" << file;
+                // Verify app has read access to local file before transfer
+                if (not check_profile_read(profile, file)) {
+                    // If failed to access file, abort
+                    ret.clear();
+                    goto abort;
+                }
+            }
+            QString newUrl = copy_to_store(item.url().toString(), d->store);
+            if (!newUrl.isEmpty()) {
+                item.setUrl(QUrl(newUrl));
+                TRACE() << Q_FUNC_INFO << "Item:" << item.url();
+                ret.append(QVariant::fromValue(item));
+            } else {
+                ret.clear();
+                goto abort;
+            }
+        }
     }
 
+abort:
     if (ret.count() <= 0)
     {
         qWarning() << "Failed to charge items, aborting";

@@ -38,6 +38,12 @@ void AutoImporter::handle_import(cuc::Transfer *transfer)
     QVector<cuc::Item> items;
     items = transfer->collect();
     qDebug() << Q_FUNC_INFO << "Items:" << items.count();
+    Q_FOREACH(cuc::Item item, items) {
+        qDebug() << Q_FUNC_INFO << "URL:" << item.url();
+        qDebug() << Q_FUNC_INFO << "Name:" << item.name();
+        qDebug() << Q_FUNC_INFO << "Text:" << item.text();
+        qDebug() << Q_FUNC_INFO << "StreamType:" << item.streamType();
+    }
 }
 
 void AutoImporter::handle_export(cuc::Transfer *transfer)
@@ -59,6 +65,9 @@ void AutoImporter::stateChanged()
 
     qDebug() << Q_FUNC_INFO << "STATE:" << transfer->state();
 
+    if (transfer->state() == cuc::Transfer::aborted)
+        QCoreApplication::instance()->exit(1);
+
     if (transfer->state() == cuc::Transfer::collected)
-        QCoreApplication::instance()->quit();
+        QCoreApplication::instance()->exit(0);
 }

@@ -2,9 +2,9 @@ Content Management & Exchange {#mainpage}
 =============================
 
 Unity and the overall Ubuntu experience put heavy emphasis on the
-notion of content, with Unity’s dash offering streamlined access to
+notion of content, with Unity's dash offering streamlined access to
 arbitrary content, both local to the device or online. More to this,
-Unity’s dash is the primary way of surfacing content on mobile form
+Unity's dash is the primary way of surfacing content on mobile form
 factors without the need to access individual applications and their
 respective content silos. The content-hub deals with
 application-specific content management and implements an architecture

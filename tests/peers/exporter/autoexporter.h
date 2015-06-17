@@ -39,6 +39,10 @@ public slots:
     Q_INVOKABLE void handle_export(cuc::Transfer*);
     Q_INVOKABLE void handle_share(cuc::Transfer*);
     Q_INVOKABLE void stateChanged();
+    void setUrl(QString);
+
+private:
+    QString m_url;
 };
 
 #endif // AUTOEXPORTER_H

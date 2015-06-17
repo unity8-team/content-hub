@@ -16,12 +16,14 @@
  * Authored by: Ken VanDine <ken.vandine@canonical.com>
  */
 
+#include <QCoreApplication>
+#include <QDir>
+#include <QFile>
+#include <QFileInfo>
+#include <QProcess>
 #include <QtCore>
 #include <QtDBus/QDBusMessage>
 #include <QtDBus/QDBusConnection>
-#include <QFile>
-#include <QDir>
-#include <QFileInfo>
 #include <QUrl>
 #include <nih/alloc.h>
 #include <nih-dbus/dbus_util.h>
@@ -30,6 +32,11 @@
 #include "debug.h"
 #include "com/ubuntu/content/type.h"
 #include <unistd.h>
+
+#include <sys/apparmor.h>
+/* need to be exposed in libapparmor but for now ... */
+#define AA_CLASS_FILE 2
+#define AA_MAY_READ (1 << 2)
 
 namespace cuc = com::ubuntu::content;
 
@@ -102,10 +109,6 @@ QString aa_profile(QString uniqueConnectionId)
             reply.errorMessage();
     }
 
-    if (aaProfile.toStdString() == QString("unconfined").toStdString())
-    {
-        return QString("");
-    }
     return aaProfile;
 }
 
@@ -132,6 +135,10 @@ QString copy_to_store(const QString& src, const QString& store)
         st.mkpath(st.absolutePath());
     QString destFilePath = store + QDir::separator() + fi.fileName();
     TRACE() << Q_FUNC_INFO << destFilePath;
+    if (QFile::exists(destFilePath)) {
+            qWarning() << "Destination file already exists, aborting:" << destFilePath;
+            return QString();
+    }
     bool copy_failed = true;
     if (not is_persistent(store))
     {
@@ -169,6 +176,47 @@ bool purge_store_cache(QString store)
     }
 
     return false;
+}
+
+int query_file(const char *label, const char *path, int *allowed)
+{
+    int rc, audited;
+    char *query;
+
+    /* + 1 for null separator and then + 1 AA_CLASS_FILE */
+    int label_size = strlen(label);
+    int size = label_size + 1 + strlen(path) + AA_QUERY_CMD_LABEL_SIZE + 1;
+    /* +1 for null terminator used by strcpy, yes we could drop this
+     * using memcpy */
+    query = (char*)malloc(size + 1);
+    if (!query)
+        return -1;
+    /* we want the null terminator here */
+    strcpy(query + AA_QUERY_CMD_LABEL_SIZE, label);
+    query[AA_QUERY_CMD_LABEL_SIZE + label_size + 1] = AA_CLASS_FILE;
+    strcpy(query + AA_QUERY_CMD_LABEL_SIZE + label_size + 2, path);
+    rc = aa_query_label(AA_MAY_READ, query, size , allowed, &audited);
+    free(query);
+    return rc;
+}
+
+bool check_profile_read(QString profile, QString path)
+{
+    TRACE() << Q_FUNC_INFO << "PROFILE:" << profile;
+
+    int allowed;
+    if (query_file(profile.toStdString().c_str(), path.toStdString().c_str(), &allowed) == -1) {
+        qWarning() << "error:" << strerror(errno) << path;
+        return false;
+    }
+   
+    if (allowed) {
+        TRACE() << "ALLOWED:" << QString::number(allowed);
+        return true;
+    }
+    TRACE() << "NOT ALLOWED:" << QString::number(allowed);
+    return false;
+
 }
 
 }

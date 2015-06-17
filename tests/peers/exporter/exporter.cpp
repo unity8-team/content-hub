@@ -18,6 +18,8 @@
 
 #include <QCoreApplication>
 #include <QStringList>
+#include <QUrl>
+#include <sys/apparmor.h>
 
 #include "autoexporter.h"
 
@@ -30,12 +32,26 @@ int main(int argc, char *argv[])
         qputenv("APP_ID", "content-hub-test-exporter");
     }
 
-    AutoExporter exporter;
-
-    QString peerName;
+    QString peerName, url, profile;
 
     if (a.arguments().size() > 1)
         peerName = a.arguments().at(1);
+    if (a.arguments().size() > 2)
+        url = a.arguments().at(2);
+    if (a.arguments().size() > 3)
+        profile = a.arguments().at(3);
+
+    if (not profile.isEmpty()) {
+        int ret = 2;
+        ret = aa_change_profile(profile.toStdString().c_str());
+        if (ret != 0)
+            return 1;
+    }
+
+    AutoExporter exporter;
+
+    if (not url.isEmpty())
+        exporter.setUrl(url);
 
     if (!peerName.isEmpty())
     {

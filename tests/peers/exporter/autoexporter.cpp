@@ -24,6 +24,12 @@ AutoExporter::AutoExporter()
     hub->register_import_export_handler(this);
 }
 
+void AutoExporter::setUrl(QString url)
+{
+    qDebug() << Q_FUNC_INFO << url;
+    m_url = url;
+}
+
 void AutoExporter::handle_import(cuc::Transfer *transfer)
 {
     qDebug() << Q_FUNC_INFO << "not implemented";
@@ -42,19 +48,20 @@ void AutoExporter::handle_export(cuc::Transfer *transfer)
 
     QVector<cuc::Item> items;
 
-    if (transfer->contentType() == cuc::Type::Known::contacts().id()) {
-        items << cuc::Item(QUrl("file:///usr/share/content-hub/testability/data/Joker.vcf"));
-
-        if (transfer->selectionType() == cuc::Transfer::SelectionType::multiple) {
-            items << cuc::Item(QUrl("file:///usr/share/content-hub/testability/data/Stark,_Tony.vcf"));
+    if (m_url.isEmpty()) {
+        if (transfer->contentType() == cuc::Type::Known::contacts().id()) {
+            items << cuc::Item(QUrl("file:///usr/share/content-hub/testability/data/Joker.vcf"));
+            if (transfer->selectionType() == cuc::Transfer::SelectionType::multiple) {
+                items << cuc::Item(QUrl("file:///usr/share/content-hub/testability/data/Stark,_Tony.vcf"));
+            }
+        } else {
+            items << cuc::Item(QUrl("file:///usr/share/content-hub/testability/data/webbrowser-app.png"));
+            if (transfer->selectionType() == cuc::Transfer::SelectionType::multiple) {
+                items << cuc::Item(QUrl("file:///usr/share/content-hub/testability/data/clock.png"));
+            }
         }
-
     } else {
-        items << cuc::Item(QUrl("file:///usr/share/content-hub/testability/data/webbrowser-app.png"));
-
-        if (transfer->selectionType() == cuc::Transfer::SelectionType::multiple) {
-            items << cuc::Item(QUrl("file:///usr/share/content-hub/testability/data/clock.png"));
-        }
+        items << cuc::Item(QUrl(m_url));
     }
 
     transfer->charge(items);
@@ -62,6 +69,12 @@ void AutoExporter::handle_export(cuc::Transfer *transfer)
     connect(transfer, SIGNAL(stateChanged()), this, SLOT(stateChanged()));
 
     qDebug() << Q_FUNC_INFO << "Items:" << items.count();
+    Q_FOREACH(cuc::Item item, items) {
+        qDebug() << Q_FUNC_INFO << "URL:" << item.url();
+        qDebug() << Q_FUNC_INFO << "Name:" << item.name();
+        qDebug() << Q_FUNC_INFO << "Text:" << item.text();
+        qDebug() << Q_FUNC_INFO << "StreamType:" << item.streamType();
+    }
 }
 
 void AutoExporter::handle_share(cuc::Transfer *transfer)
@@ -77,9 +90,11 @@ void AutoExporter::stateChanged()
 
     qDebug() << Q_FUNC_INFO << "STATE:" << transfer->state();
 
+    if (transfer->state() == cuc::Transfer::aborted)
+        QCoreApplication::instance()->exit(1);
 
     if (transfer->state() == cuc::Transfer::collected)
-        QCoreApplication::instance()->quit();
+        QCoreApplication::instance()->exit(0);
 }
 
 

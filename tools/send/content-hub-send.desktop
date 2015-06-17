@@ -1,0 +1,9 @@
+[Desktop Entry]
+Name=Content Hub Send
+Comment=Content Hub Send
+Exec=content-hub-send %U
+Icon=
+Terminal=false
+Type=Application
+OnlyShowIn=Old
+X-Ubuntu-Touch=true

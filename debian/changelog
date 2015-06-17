@@ -1,3 +1,56 @@
+content-hub (0.0+15.10.20150608-0ubuntu1) wily; urgency=medium
+
+  [ Ken VanDine ]
+  * Make the import and share testability peers return 1 if the transfer
+    is aborted. Added url-dispatcher autopkgtest.
+
+ -- CI Train Bot <ci-train-bot@canonical.com>  Mon, 08 Jun 2015 16:48:39 +0000
+
+content-hub (0.0+15.10.20150603-0ubuntu1) wily; urgency=medium
+
+  [ Ken VanDine ]
+  * SECURITY UPDATE: file disclosure via unchecked AppArmor profile (LP:
+    #1456628) Don't allow exporting of files that aren't allowed by the
+    source apparmor profile CVE-2015-1327 (LP: #1456628)
+
+ -- CI Train Bot <ci-train-bot@canonical.com>  Wed, 03 Jun 2015 17:45:36 +0000
+
+content-hub (0.0+15.10.20150518-0ubuntu1) wily; urgency=medium
+
+  [ Ken VanDine ]
+  * Added url-dispatcher integration.  This allows export and share
+    requests to be initiated by opening a url.
+
+ -- CI Train Bot <ci-train-bot@canonical.com>  Mon, 18 May 2015 13:16:45 +0000
+
+content-hub (0.0+15.04.20150422-0ubuntu1) vivid; urgency=medium
+
+  [ Ken VanDine ]
+  * Added ContentType.Text as a well known type Added ContentItem.text
+    property for serialized content (LP: #1430460)
+  * Don't use a unicode apostrophe in the docs
+  * Fixed qdoc syntax error for the ContentPeerPicker::peerSelected and
+    ContentPeerPicker::cancelPressed signals
+
+ -- CI Train Bot <ci-train-bot@canonical.com>  Wed, 22 Apr 2015 16:45:39 +0000
+
+content-hub (0.0+15.04.20150331-0ubuntu1) vivid; urgency=medium
+
+  [ Ken VanDine ]
+  * When requesting an import from an unknown peer, abort the transfer.
+    This is most likely to occur when requesting the default peer for a
+    ContentType that has no default registered. (LP: #1429695)
+
+ -- CI Train Bot <ci-train-bot@canonical.com>  Tue, 31 Mar 2015 14:10:11 +0000
+
+content-hub (0.0+15.04.20150319-0ubuntu1) vivid; urgency=medium
+
+  [ Ken VanDine ]
+  * Abort transfers when a file already exists matching the requested
+    name and ContentStore. (LP: #1429687)
+
+ -- CI Train Bot <ci-train-bot@canonical.com>  Thu, 19 Mar 2015 15:27:11 +0000
+
 content-hub (0.0+15.04.20150123-0ubuntu1) vivid; urgency=low
 
   [ Michael Sheldon ]

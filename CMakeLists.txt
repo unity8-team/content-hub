@@ -70,6 +70,7 @@ pkg_check_modules(UBUNTU_DOWNLOAD_MANAGER REQUIRED ubuntu-download-manager-clien
 pkg_check_modules(NOTIFY REQUIRED libnotify)
 pkg_check_modules(MIRCLIENT REQUIRED mirclient)
 pkg_check_modules(CLICK REQUIRED click-0.4)
+pkg_check_modules(APPARMOR REQUIRED libapparmor)
 
 add_definitions(-DDEBUG_ENABLED)
 
@@ -105,6 +106,7 @@ add_subdirectory(src)
 add_subdirectory(import)
 add_subdirectory(examples)
 add_subdirectory(tests)
+add_subdirectory(tools)
 
 install(DIRECTORY include DESTINATION ${CMAKE_INSTALL_PREFIX})
 

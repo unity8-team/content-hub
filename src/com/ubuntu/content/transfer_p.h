@@ -243,9 +243,9 @@ class Transfer::Private : public QObject
         return static_cast<QString>(reply.value());
     }
 
-    QString mirSocket()
+    QString instanceId()
     {
-        auto reply = remote_transfer->MirSocket();
+        auto reply = remote_transfer->InstanceId();
         reply.waitForFinished();
 
         if (reply.isError())
@@ -254,9 +254,9 @@ class Transfer::Private : public QObject
         return static_cast<QString>(reply.value());
     }
 
-    bool setMirSocket(QString mir_socket)
+    bool setInstanceId(QString instance_id)
     {
-        auto reply = remote_transfer->SetMirSocket(mir_socket);
+        auto reply = remote_transfer->SetInstanceId(instance_id);
         reply.waitForFinished();
 
         return not reply.isError();

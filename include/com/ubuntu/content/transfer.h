@@ -64,7 +64,6 @@ class Transfer : public QObject
     Q_PROPERTY(QString contentType READ contentType)
     Q_PROPERTY(QString source READ source)
     Q_PROPERTY(QString destination READ destination)
-    Q_PROPERTY(QString mirSocket READ mirSocket WRITE setMirSocket NOTIFY mirSocketChanged)
 
   public:
     enum State
@@ -116,14 +115,11 @@ class Transfer : public QObject
     Q_INVOKABLE virtual QString contentType() const;
     Q_INVOKABLE virtual QString source() const;
     Q_INVOKABLE virtual QString destination() const;
-    Q_INVOKABLE virtual QString mirSocket() const;
-    Q_INVOKABLE virtual bool setMirSocket(const QString);
 
     Q_SIGNAL void stateChanged();
     Q_SIGNAL void storeChanged();
     Q_SIGNAL void selectionTypeChanged();
     Q_SIGNAL void downloadIdChanged();
-    Q_SIGNAL void mirSocketChanged();
 
   private:
     struct Private;

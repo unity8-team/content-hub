@@ -64,14 +64,11 @@
     <method name="destination">
       <arg name="destination" type="s" direction="out" />
     </method>
-    <method name="MirSocket">
-      <arg name="mir_socket" type="s" direction="out" />
+    <method name="InstanceId">
+      <arg name="instance_id" type="s" direction="out" />
     </method>
-    <method name="SetMirSocket">
-      <arg name="mir_socket" type="s" direction="in" />
+    <method name="SetInstanceId">
+      <arg name="instance_id" type="s" direction="in" />
     </method>
-    <signal name="MirSocketChanged">
-      <arg name="mir_socket" type="s"/>
-    </signal>
  </interface>
 </node>

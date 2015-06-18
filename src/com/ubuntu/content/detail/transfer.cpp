@@ -60,7 +60,7 @@ struct cucd::Transfer::Private
     bool source_started_by_content_hub;
     QString download_id;
     const QString content_type;
-    QString mir_socket = "";
+    QString instance_id = "";
     PromptSessionP promptSession;
 };
 
@@ -403,21 +403,20 @@ QString cucd::Transfer::ContentType()
     return d->content_type;
 }
 
-QString cucd::Transfer::MirSocket()
+QString cucd::Transfer::InstanceId()
 {
-    TRACE() << Q_FUNC_INFO << d->mir_socket;
-    return d->mir_socket;
+    TRACE() << Q_FUNC_INFO << d->instance_id;
+    return d->instance_id;
 }
 
-void cucd::Transfer::SetMirSocket(QString mir_socket)
+void cucd::Transfer::SetInstanceId(QString instance_id)
 {
-    TRACE() << Q_FUNC_INFO << mir_socket;
+    TRACE() << Q_FUNC_INFO << instance_id;
 
-    if (d->mir_socket == mir_socket)
+    if (d->instance_id == instance_id)
         return;
 
-    d->mir_socket = mir_socket;
-    Q_EMIT(MirSocketChanged(d->mir_socket));
+    d->instance_id = instance_id;
 }
 
 PromptSessionP cucd::Transfer::PromptSession()

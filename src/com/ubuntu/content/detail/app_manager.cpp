@@ -36,7 +36,7 @@ bool cucd::AppManager::invoke_application(const std::string &app_id)
 /*!
  * \reimp
  */
-bool cucd::AppManager::invoke_application_with_session(const std::string &app_id, const PromptSessionP &session)
+std::string cucd::AppManager::invoke_application_with_session(const std::string &app_id, const PromptSessionP &session)
 {
     TRACE() << Q_FUNC_INFO << "APP_ID:" << app_id.c_str();
     QVector<const gchar*> uris;
@@ -46,18 +46,20 @@ bool cucd::AppManager::invoke_application_with_session(const std::string &app_id
                                                              app_id.c_str(),
                                                              uris.constData());
     std::string instid = std::string(instance_c);
-    return !instid.empty();
+    return instid;
 }
 
 /*!
  * \reimp
  */
-bool cucd::AppManager::stop_application_with_helper(const std::string &app_id)
+bool cucd::AppManager::stop_application_with_helper(const std::string &app_id, const std::string &instance_id)
 {
     TRACE() << Q_FUNC_INFO << "APP_ID:" << app_id.c_str();
+    TRACE() << Q_FUNC_INFO << "INSTANCE_ID:" << instance_id.c_str();
 
-    gboolean ok = ubuntu_app_launch_stop_helper("content-hub",
-                                                app_id.c_str());
+    gboolean ok = ubuntu_app_launch_stop_multiple_helper("content-hub",
+                                                         app_id.c_str(),
+                                                         instance_id.c_str());
     return static_cast<bool>(ok);
 }
 

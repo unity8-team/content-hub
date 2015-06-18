@@ -316,9 +316,7 @@ QDBusObjectPath cucd::Service::CreateTransfer(const QString& dest_id, const QStr
     auto transfer = new cucd::Transfer(import_counter, src_id, dest_id, dir, type_id, this);
     if (dir == cuc::Transfer::Import) {
         uint clientPid = d->connection.interface()->servicePid(this->message().service());
-        auto mirSocket = setupPromptSession(transfer, clientPid);
-        if (!mirSocket.isEmpty())
-            transfer->SetMirSocket(mirSocket);
+        setupPromptSession(transfer, clientPid);
     }
     new TransferAdaptor(transfer);
     d->active_transfers.insert(transfer);
@@ -344,7 +342,7 @@ QDBusObjectPath cucd::Service::CreateTransfer(const QString& dest_id, const QStr
     return QDBusObjectPath{source};
 }
 
-QString cucd::Service::setupPromptSession(cucd::Transfer* t, uint clientPid)
+void cucd::Service::setupPromptSession(cucd::Transfer* t, uint clientPid)
 {
     TRACE() << Q_FUNC_INFO << "PID:" << clientPid;
     if (!m_mirHelper) {
@@ -352,7 +350,7 @@ QString cucd::Service::setupPromptSession(cucd::Transfer* t, uint clientPid)
         m_mirHelper = MirHelper::instance();
     }
     PromptSessionP session = m_mirHelper->createPromptSession(clientPid);
-    if (!session) return "";
+    if (!session) return;
 
     QString mirSocket = session->requestSocket();
     t->SetPromptSession(session);
@@ -362,8 +360,6 @@ QString cucd::Service::setupPromptSession(cucd::Transfer* t, uint clientPid)
     QObject::connect(session.data(), SIGNAL(finished()),
                      q, SIGNAL(finished()));
     */
-
-    return mirSocket;
 }
 
 void cucd::Service::handle_imports(int state)
@@ -393,23 +389,25 @@ void cucd::Service::handle_imports(int state)
             }
         }
 
-        if (transfer->MirSocket().isEmpty() || !transfer->WasSourceStartedByContentHub())
+        if (!transfer->PromptSession() || !transfer->WasSourceStartedByContentHub())
             d->app_manager->invoke_application(transfer->source().toStdString());
-        else
-            d->app_manager->invoke_application_with_session(transfer->source().toStdString(), transfer->PromptSession());
+        else {
+            std::string instance_id = d->app_manager->invoke_application_with_session(transfer->source().toStdString(), transfer->PromptSession());
+            transfer->SetInstanceId(QString::fromStdString(instance_id));
+        }
     }
 
     if (state == cuc::Transfer::charged)
     {
         TRACE() << Q_FUNC_INFO << "Charged";
         if (transfer->WasSourceStartedByContentHub()) {
-            if (!transfer->MirSocket().isEmpty()) {
+            if (!transfer->PromptSession()) {
                 PromptSessionP pSession = transfer->PromptSession();
                 PromptSession* session = pSession.data();
                 if (session)
                     session->release();
                 pSession.clear();
-                d->app_manager->stop_application_with_helper(transfer->source().toStdString());
+                d->app_manager->stop_application_with_helper(transfer->source().toStdString(), transfer->InstanceId().toStdString());
             }
             else
                 d->app_manager->stop_application(transfer->source().toStdString());
@@ -452,7 +450,18 @@ void cucd::Service::handle_imports(int state)
                 }
             }
             if (shouldStop)
-                d->app_manager->stop_application(transfer->source().toStdString());            
+            {
+                if (!transfer->PromptSession()) {
+                    PromptSessionP pSession = transfer->PromptSession();
+                    PromptSession* session = pSession.data();
+                    if (session)
+                        session->release();
+                    pSession.clear();
+                    d->app_manager->stop_application_with_helper(transfer->source().toStdString(), transfer->InstanceId().toStdString());
+                } else {
+                    d->app_manager->stop_application(transfer->source().toStdString());
+                }
+            }
         }
         d->app_manager->invoke_application(transfer->destination().toStdString());
     }
@@ -638,13 +647,4 @@ void cucd::Service::HandlerActive(const QString& peer_id)
             }
         }
     }
-}
-
-QDBusUnixFileDescriptor cucd::Service::GetMirSocket(int fd_id)
-{
-    TRACE() << Q_FUNC_INFO << fd_id;
-    auto fd = QDBusUnixFileDescriptor(fd_id);
-    TRACE() << Q_FUNC_INFO << "FD isValid" << fd.isValid();
-    return fd;
-      
 }

@@ -68,7 +68,6 @@ class Service : public QObject, protected QDBusContext
     void HandlerActive(const QString&);
     void Quit();
     void DownloadManagerError(QString);
-    QDBusUnixFileDescriptor GetMirSocket(int);
 
   private:
     bool should_cancel(int);
@@ -83,7 +82,7 @@ class Service : public QObject, protected QDBusContext
     void handle_exports(int);
     void handler_unregistered(const QString&);
     QDBusObjectPath CreateTransfer(const QString&, const QString&, int, const QString&);
-    QString setupPromptSession(com::ubuntu::content::detail::Transfer*, uint);
+    void setupPromptSession(com::ubuntu::content::detail::Transfer*, uint);
     void download_notify(com::ubuntu::content::detail::Transfer*);
 };
 }

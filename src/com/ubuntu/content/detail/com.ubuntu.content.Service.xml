@@ -43,9 +43,5 @@
     <method name="HandlerActive">
       <arg name="peer_id" type="s" direction="in" />
     </method>
-    <method name="GetMirSocket">
-      <arg type="i" name="fd" direction="in" />
-      <arg type="h" name="handle" direction="out" />
-    </method>
  </interface>
 </node>

@@ -135,11 +135,19 @@ main (int argc, char * argv[])
 		return -1;
         }
 
+        GDBusConnection * bus = g_bus_get_sync(G_BUS_TYPE_SESSION, NULL, NULL);
+        g_return_val_if_fail(bus != NULL, -1);
+
         g_debug("Exec: %s", exec);
         g_debug("Dir:  %s", dir);
         ubuntu_app_launch_helper_set_exec(exec, dir);
         g_free(exec);
         g_free(dir);
 
+        /* Ensuring the messages get on the bus before we quit */
+        g_dbus_connection_flush_sync(bus, NULL, NULL);
+        g_clear_object(&bus);
+
         return 0;
+
 }

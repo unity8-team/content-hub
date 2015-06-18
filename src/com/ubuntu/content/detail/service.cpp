@@ -401,16 +401,15 @@ void cucd::Service::handle_imports(int state)
     {
         TRACE() << Q_FUNC_INFO << "Charged";
         if (transfer->WasSourceStartedByContentHub()) {
-            if (!transfer->PromptSession()) {
+            if (transfer->PromptSession()) {
                 PromptSessionP pSession = transfer->PromptSession();
                 PromptSession* session = pSession.data();
                 if (session)
                     session->release();
-                pSession.clear();
                 d->app_manager->stop_application_with_helper(transfer->source().toStdString(), transfer->InstanceId().toStdString());
-            }
-            else
+            } else {
                 d->app_manager->stop_application(transfer->source().toStdString());
+            }
         }
         
         d->app_manager->invoke_application(transfer->destination().toStdString());
@@ -449,14 +448,12 @@ void cucd::Service::handle_imports(int state)
                     }
                 }
             }
-            if (shouldStop)
-            {
-                if (!transfer->PromptSession()) {
+            if (shouldStop) {
+                if (transfer->PromptSession()) {
                     PromptSessionP pSession = transfer->PromptSession();
                     PromptSession* session = pSession.data();
                     if (session)
                         session->release();
-                    pSession.clear();
                     d->app_manager->stop_application_with_helper(transfer->source().toStdString(), transfer->InstanceId().toStdString());
                 } else {
                     d->app_manager->stop_application(transfer->source().toStdString());
@@ -534,8 +531,17 @@ void cucd::Service::handle_exports(int state)
                     }
                 }
             }
-            if (shouldStop)
-                d->app_manager->stop_application(transfer->destination().toStdString());
+            if (shouldStop) {
+                if (transfer->PromptSession()) {
+                    PromptSessionP pSession = transfer->PromptSession();
+                    PromptSession* session = pSession.data();
+                    if (session)
+                        session->release();
+                    d->app_manager->stop_application_with_helper(transfer->destination().toStdString(), transfer->InstanceId().toStdString());
+                } else {
+                    d->app_manager->stop_application(transfer->destination().toStdString());
+                }
+            }
         }
         d->app_manager->invoke_application(transfer->source().toStdString());
     }

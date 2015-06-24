@@ -51,6 +51,7 @@ class Type : public QObject
         static const Type& links();
         static const Type& ebooks();
         static const Type& text();
+        static const Type& events();
     };
 
     virtual ~Type();

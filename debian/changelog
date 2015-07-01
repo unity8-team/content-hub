@@ -1,3 +1,13 @@
+content-hub (0.0+15.10.20150701-0ubuntu1) wily; urgency=medium
+
+  [ CI Train Bot ]
+  * Resync trunk.
+
+  [ Renato Araujo Oliveira Filho ]
+  * Fixed header divider color for ContentPeerPicker11. (LP: #1470557)
+
+ -- CI Train Bot <ci-train-bot@canonical.com>  Wed, 01 Jul 2015 21:53:29 +0000
+
 content-hub (0.0+15.10.20150615.3-0ubuntu1) wily; urgency=medium
 
   [ Ken VanDine ]

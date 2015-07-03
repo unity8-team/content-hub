@@ -130,3 +130,9 @@ const cuc::Type& cuc::Type::Known::text()
     static cuc::Type t("text", nullptr);
     return t;
 }
+
+const cuc::Type& cuc::Type::Known::events()
+{
+    static cuc::Type t("events", nullptr);
+    return t;
+}

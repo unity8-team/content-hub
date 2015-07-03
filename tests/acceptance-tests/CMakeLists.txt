@@ -53,6 +53,11 @@ add_executable(
 )
 
 add_executable(
+  test_types
+  test_types.cpp
+)
+
+add_executable(
   test_hook
   test_hook.cpp
   ${MOCS}
@@ -78,6 +83,7 @@ target_link_libraries(app_hub_communication_stores content-hub gmock gtest gtest
 target_link_libraries(app_hub_communication_transfer content-hub gmock gtest gtest_main)
 target_link_libraries(app_hub_communication_handler content-hub gmock gtest gtest_main)
 target_link_libraries(test_utils content-hub gmock gtest gtest_main)
+target_link_libraries(test_types content-hub gmock gtest gtest_main)
 target_link_libraries(test_hook content-hub gmock gtest gtest_main ${GSETTINGS_LDFLAGS})
 
 add_test(app_hub_communication_default_source app_hub_communication_default_source)
@@ -86,6 +92,7 @@ add_test(app_hub_communication_stores app_hub_communication_stores)
 add_test(app_hub_communication_transfer app_hub_communication_transfer)
 add_test(app_hub_communication_handler app_hub_communication_handler)
 add_test(test_utils test_utils)
+add_test(test_types test_types)
 add_test(test_hook test_hook)
 
 set_target_properties(

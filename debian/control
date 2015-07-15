@@ -5,10 +5,12 @@ Build-Depends: cmake,
                click-dev,
                dbus-test-runner,
                debhelper (>= 9),
+               dh-apparmor,
                dh-translations,
                doxygen,
                google-mock,
                lcov,
+               libapparmor-dev,
                libglib2.0-dev,
                libgsettings-qt-dev,
                libnih-dbus-dev,
@@ -28,6 +30,7 @@ Homepage: https://launchpad.net/content-hub
 Vcs-Bzr: https://code.launchpad.net/~phablet-team/content-hub/trunk
 Vcs-Browser: https://bazaar.launchpad.net/~phablet-team/content-hub/trunk/files
 X-Ubuntu-Use-Langpack: yes
+XS-Testsuite: autopkgtest
 
 Package: content-hub
 Architecture: any
@@ -88,5 +91,6 @@ Section: libdevel
 Architecture: any
 Depends: ${misc:Depends},
          ${shlibs:Depends},
+         content-hub,
 Description: content sharing testability
  Files and utilities needed for automated testing of content-hub

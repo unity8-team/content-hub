@@ -136,14 +136,17 @@ void Registry::enumerate_known_sources_for_type(cuc::Type type, const std::funct
 {
     TRACE() << Q_FUNC_INFO << type.id();
 
-    if (type == cuc::Type::unknown())
-        return;
-
-    Q_FOREACH (QString k, m_sources->get(type.id()).toStringList())
+    QStringList peers;
+    peers << m_sources->get("all").toStringList();
+    if (type != cuc::Type::unknown())
+        peers << m_sources->get(type.id()).toStringList();
+    Q_FOREACH (QString k, peers)
     {
         TRACE() << Q_FUNC_INFO << k;
         bool defaultPeer = false;
-        QVariant peer_v = m_defaultSources->get(type.id());
+        QVariant peer_v;
+        if (type != cuc::Type::unknown())
+            peer_v = m_defaultSources->get(type.id());
         if (peer_v.type() == QVariant::StringList)
         {
             QStringList as(peer_v.toStringList());
@@ -166,10 +169,11 @@ void Registry::enumerate_known_destinations_for_type(cuc::Type type, const std::
 {
     TRACE() << Q_FUNC_INFO << type.id();
 
-    if (type == cuc::Type::unknown())
-        return;
-
-    Q_FOREACH (QString k, m_dests->get(type.id()).toStringList())
+    QStringList peers;
+    peers << m_dests->get("all").toStringList();
+    if (type != cuc::Type::unknown())
+        peers << m_dests->get(type.id()).toStringList();
+    Q_FOREACH (QString k, peers)
     {
         TRACE() << Q_FUNC_INFO << k;
         for_each(cuc::Peer{k});

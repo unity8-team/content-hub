@@ -39,6 +39,7 @@ class Type : public QObject
   public:
     
     static const Type& unknown();
+    static const Type& all();
 
     struct Known
     {
@@ -50,6 +51,7 @@ class Type : public QObject
         static const Type& links();
         static const Type& ebooks();
         static const Type& text();
+        static const Type& events();
     };
 
     virtual ~Type();
@@ -57,6 +59,7 @@ class Type : public QObject
     
     Type& operator=(const Type&);    
     bool operator==(const Type&) const;
+    bool operator!=(const Type&) const;
     bool operator<(const Type&) const;
 
     Q_INVOKABLE virtual const QString& id() const;

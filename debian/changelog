@@ -1,3 +1,46 @@
+content-hub (0.0+15.10.20150703-0ubuntu1) wily; urgency=medium
+
+  [ Ken VanDine ]
+  * Added ContentType.Events Added tests for the well known types (LP:
+    #1464244)
+
+ -- CI Train Bot <ci-train-bot@canonical.com>  Fri, 03 Jul 2015 13:22:31 +0000
+
+content-hub (0.0+15.10.20150701-0ubuntu1) wily; urgency=medium
+
+  [ CI Train Bot ]
+  * Resync trunk.
+
+  [ Renato Araujo Oliveira Filho ]
+  * Fixed header divider color for ContentPeerPicker11. (LP: #1470557)
+
+ -- CI Train Bot <ci-train-bot@canonical.com>  Wed, 01 Jul 2015 21:53:29 +0000
+
+content-hub (0.0+15.10.20150615.3-0ubuntu1) wily; urgency=medium
+
+  [ Ken VanDine ]
+  * Added support for registering a source or destination as handlers
+    for Type::all
+
+ -- CI Train Bot <ci-train-bot@canonical.com>  Mon, 15 Jun 2015 18:21:22 +0000
+
+content-hub (0.0+15.10.20150608-0ubuntu1) wily; urgency=medium
+
+  [ Ken VanDine ]
+  * Make the import and share testability peers return 1 if the transfer
+    is aborted. Added url-dispatcher autopkgtest.
+
+ -- CI Train Bot <ci-train-bot@canonical.com>  Mon, 08 Jun 2015 16:48:39 +0000
+
+content-hub (0.0+15.10.20150603-0ubuntu1) wily; urgency=medium
+
+  [ Ken VanDine ]
+  * SECURITY UPDATE: file disclosure via unchecked AppArmor profile (LP:
+    #1456628) Don't allow exporting of files that aren't allowed by the
+    source apparmor profile CVE-2015-1327 (LP: #1456628)
+
+ -- CI Train Bot <ci-train-bot@canonical.com>  Wed, 03 Jun 2015 17:45:36 +0000
+
 content-hub (0.0+15.04.20150422-0ubuntu1) vivid; urgency=medium
 
   [ Ken VanDine ]

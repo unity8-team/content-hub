@@ -1,0 +1,41 @@
+#!/bin/sh
+
+# start X
+(Xvfb :5 >/dev/null 2>&1 &)
+XVFB_PID=$!
+export DISPLAY=:5
+
+# start local session D-BUS
+eval `dbus-launch`
+trap "kill $DBUS_SESSION_BUS_PID $XVFB_PID" 0 TERM QUIT INT
+export DBUS_SESSION_BUS_ADDRESS
+export XAUTHORITY=/dev/null
+
+oktests="content-hub-test-ok"
+badtests="content-hub-test-bad"
+FAILED=""
+
+for a in $oktests; do
+    content-hub-test-importer &2>/dev/null
+    content-hub-test-exporter content-hub-test-importer file:///etc/issue $a 2>/dev/null
+    if [ $? -ne 0 ]; then
+        FAILED="$FAILED $a"
+    fi
+done
+
+for b in $badtests; do
+    content-hub-test-importer &2>/dev/null
+    content-hub-test-exporter content-hub-test-importer file:///etc/issue $b 2>/dev/null
+    if [ $? -eq 0 ]; then
+        FAILED="$FAILED $b"
+    fi
+done
+
+if [ -z "$FAILED" ]; then
+    echo "All tests passed"
+    exit 0
+else
+    echo "$FAILED failed"
+    exit 1
+fi
+

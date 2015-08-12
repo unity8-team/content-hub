@@ -93,14 +93,14 @@ Rectangle {
       Button {
           text: "Import single item"
           onClicked: {
-              activeTransfer = picSourceSingle.request()
+              root.activeTransfer = picSourceSingle.request()
           }
       }
 
       Button {
           text: "Import multiple items"
           onClicked: {
-              activeTransfer = picSourceMulti.request()
+              root.activeTransfer = picSourceMulti.request()
           }
       }
   }

@@ -53,7 +53,8 @@ int main(int argc, char** argv)
         + QString("content-hub"));
 
     if (!contentDir.exists()) {
-	return 0;
+        if (!contentDir.mkpath(contentDir.absolutePath()))
+            return 0;
     }
 
     new cuc::detail::Hook();

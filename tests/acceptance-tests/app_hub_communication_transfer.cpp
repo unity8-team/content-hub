@@ -152,11 +152,13 @@ TEST(Hub, transfer_creation_and_states_work)
                 hub->default_source_for_type(cuc::Type::Known::pictures()));
             ASSERT_TRUE(transfer != nullptr);
             EXPECT_EQ(cuc::Transfer::created, transfer->state());
+            ASSERT_FALSE(hub->has_pending(transfer->destination()));
             EXPECT_TRUE(transfer->setSelectionType(cuc::Transfer::SelectionType::multiple));
             ASSERT_EQ(cuc::Transfer::SelectionType::multiple, transfer->selectionType());
             transfer->setStore(new cuc::Store{store_dir.path()});
             EXPECT_TRUE(transfer->start());
             EXPECT_EQ(cuc::Transfer::initiated, transfer->state());
+            ASSERT_TRUE(hub->has_pending(transfer->destination()));
             EXPECT_TRUE(transfer->setSelectionType(cuc::Transfer::SelectionType::single));
             ASSERT_EQ(cuc::Transfer::SelectionType::multiple, transfer->selectionType());
             EXPECT_TRUE(transfer->charge(source_items));

@@ -299,3 +299,14 @@ void cuc::Hub::quit()
 {
     d->service->Quit();
 }
+
+bool cuc::Hub::has_pending(QString peer_id)
+{
+    auto reply = d->service->HasPending(peer_id);
+    reply.waitForFinished();
+
+    if (reply.isError())
+        return false;
+
+    return reply.value();
+}

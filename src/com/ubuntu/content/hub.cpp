@@ -88,6 +88,9 @@ bool cuc::Hub::eventFilter(QObject *obj, QEvent *event)
        {
            TRACE() << Q_FUNC_INFO << id << "Activated";
            d->service->HandlerActive(id);
+       } else 
+       {
+           qWarning() << "APP_ID isn't set, the handler ignored";
        }
    }
    return QObject::eventFilter(obj, event);

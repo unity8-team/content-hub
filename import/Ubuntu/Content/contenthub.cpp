@@ -307,6 +307,7 @@ void ContentHub::updateState()
 /*!
  * \qmlproperty bool ContentHub::hasPending
  * True if there is a pending transfer for the handler
+ * \internal
  */
 bool ContentHub::hasPending()
 {

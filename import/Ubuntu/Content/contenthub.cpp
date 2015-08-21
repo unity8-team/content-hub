@@ -304,6 +304,10 @@ void ContentHub::updateState()
     TRACE() << Q_FUNC_INFO;
 }
 
+/*!
+ * \qmlproperty bool ContentHub::hasPending
+ * True if there is a pending transfer for the handler
+ */
 bool ContentHub::hasPending()
 {
     TRACE() << Q_FUNC_INFO;

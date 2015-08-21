@@ -1,3 +1,12 @@
+content-hub (0.0+15.10.20150821.2-0ubuntu1) wily; urgency=medium
+
+  [ Ken VanDine ]
+  * Don't swallow QEvent::ApplicationDeactivate (LP: #1485222)
+  * added hasPending property on ContentHub (LP: #1487073)
+  * generate plugins.qmltypes (LP: #1483626)
+
+ -- CI Train Bot <ci-train-bot@canonical.com>  Fri, 21 Aug 2015 16:36:06 +0000
+
 content-hub (0.0+15.10.20150813-0ubuntu1) wily; urgency=medium
 
   [ Ken VanDine ]

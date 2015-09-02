@@ -34,7 +34,7 @@ namespace cuc = com::ubuntu::content;
 
 ContentPeerModel::ContentPeerModel(QObject *parent)
     : QObject(parent),
-      m_contentType(ContentType::Unknown),
+      m_contentType(ContentType::Undefined),
       m_handler(ContentHandler::Source),
       m_complete(false)
 {
@@ -106,7 +106,7 @@ void ContentPeerModel::findPeers() {
         appendPeersForContentType(ContentType::Text);
         appendPeersForContentType(ContentType::Events);
         appendPeersForContentType(ContentType::Unknown);
-    } else {
+    } else if (m_contentType != ContentType::Undefined) {
         appendPeersForContentType(m_contentType);
     }
     Q_EMIT findPeersCompleted();

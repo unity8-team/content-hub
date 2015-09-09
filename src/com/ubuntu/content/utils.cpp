@@ -49,7 +49,23 @@ QList<cuc::Type> known_types()
     types << cuc::Type::Known::music();
     types << cuc::Type::Known::documents();
     types << cuc::Type::Known::contacts();
+    types << cuc::Type::Known::videos();
+    types << cuc::Type::Known::links();
+    types << cuc::Type::Known::ebooks();
+    types << cuc::Type::Known::text();
+    types << cuc::Type::Known::events();
     return types;
+}
+
+bool valid_type(cuc::Type type)
+{
+    Q_FOREACH (cuc::Type t, known_types())
+    {
+        TRACE() << Q_FUNC_INFO << t.id();
+        if (t.id() == type.id())
+            return true;
+    }
+    return false;
 }
 
 /* sanitize the dbus names */

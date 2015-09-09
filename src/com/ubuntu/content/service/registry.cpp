@@ -138,7 +138,7 @@ void Registry::enumerate_known_sources_for_type(cuc::Type type, const std::funct
 
     QStringList peers;
     peers << m_sources->get("all").toStringList();
-    if (type != cuc::Type::unknown())
+    if (type != cuc::Type::unknown() && valid_type(type))
         peers << m_sources->get(type.id()).toStringList();
     Q_FOREACH (QString k, peers)
     {
@@ -171,7 +171,7 @@ void Registry::enumerate_known_destinations_for_type(cuc::Type type, const std::
 
     QStringList peers;
     peers << m_dests->get("all").toStringList();
-    if (type != cuc::Type::unknown())
+    if (type != cuc::Type::unknown() && valid_type(type))
         peers << m_dests->get(type.id()).toStringList();
     Q_FOREACH (QString k, peers)
     {
@@ -184,7 +184,7 @@ void Registry::enumerate_known_shares_for_type(cuc::Type type, const std::functi
 {
     TRACE() << Q_FUNC_INFO << type.id();
 
-    if (type == cuc::Type::unknown())
+    if (type == cuc::Type::unknown() || !valid_type(type))
         return;
 
     Q_FOREACH (QString k, m_shares->get(type.id()).toStringList())

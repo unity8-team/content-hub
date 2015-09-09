@@ -29,6 +29,7 @@ class ContentType : public QObject
 
 public:
     enum Type {
+        Undefined = -2,
         All = -1,
         Unknown = 0,
         Documents = 1,

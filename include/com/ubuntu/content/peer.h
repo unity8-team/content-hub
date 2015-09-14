@@ -21,7 +21,6 @@
 #include <QtDBus>
 #include <QObject>
 #include <QSharedPointer>
-#include <QImage>
 
 namespace com
 {

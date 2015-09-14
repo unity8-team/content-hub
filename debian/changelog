@@ -1,3 +1,20 @@
+content-hub (0.0+15.10.20150909-0ubuntu1) wily; urgency=medium
+
+  [ Ken VanDine ]
+  * Fixed crash when the service is passed an invalid type via dbus (LP:
+    #1472026)
+
+  [ Michael Sheldon ]
+  * Add an "Undefined" content type to QML bindings so we can avoid
+    making unnecessary peer look ups when the content type hasn't yet
+    been set now that peers can register for Unknown.
+
+  [ Robert Ancell ]
+  * Drop unused include that makes build fail unless Qt5Gui pkg-config
+    file is used.
+
+ -- Ken VanDine <ken.vandine@canonical.com>  Wed, 09 Sep 2015 16:58:39 +0000
+
 content-hub (0.0+15.10.20150821.2-0ubuntu1) wily; urgency=medium
 
   [ Ken VanDine ]

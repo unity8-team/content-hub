@@ -45,25 +45,14 @@ Item {
         color: Theme.palette.normal.background
     }
 
-    Header {
+    ContentPageHeader {
         id: header
         title: headerText ? headerText : (handler === ContentHandler.Source) ? i18n.dtr("content-hub", "Choose from") : (handler === ContentHandler.Destination ? i18n.dtr("content-hub", "Open with") : i18n.dtr("content-hub", "Share to"))
-        useDeprecatedToolbar: false
-        dividerColor: Qt.darker(Theme.palette.normal.background, 1.1)
-        config: PageHeadConfiguration {
-            backAction: Action {
-                objectName: "cancel"
-
-                iconName: "close"
-                text: i18n.dtr("content-hub", "Cancel")
-                onTriggered: {
-                    if(root.activeTransfer) {
-                        root.activeTransfer.state = ContentTransfer.Aborted;
-                    }
-                    cancelPressed()
-                }
-
+        onCancel: {
+            if(root.activeTransfer) {
+                root.activeTransfer.state = ContentTransfer.Aborted;
             }
+            cancelPressed()
         }
     }
 

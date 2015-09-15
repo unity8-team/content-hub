@@ -34,6 +34,17 @@
 */
 
 /*! 
+    \qmlproperty string ContentPeerPicker::title
+    \brief A property to get the title to be used for the picking
+     operation.
+    \readonly
+    \since Ubuntu.Content 1.3
+
+    This properties provides access to a context aware title, suitable to use 
+    to set a Page title.
+*/
+
+/*! 
     \qmlproperty bool ContentPeerPicker::showTitle
     \brief Determines whether the header should be displayed.
 

@@ -43,5 +43,9 @@
     <method name="HandlerActive">
       <arg name="peer_id" type="s" direction="in" />
     </method>
+    <method name="HasPending">
+      <arg name="peer_id" type="s" direction="in" />
+      <arg name="pending" type="b" direction="out" />
+    </method>
  </interface>
 </node>

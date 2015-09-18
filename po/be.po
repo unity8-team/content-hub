@@ -14,23 +14,23 @@ msgstr ""
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"X-Launchpad-Export-Date: 2015-06-16 11:20+0000\n"
-"X-Generator: Launchpad (build 17557)\n"
+"X-Launchpad-Export-Date: 2015-09-17 05:46+0000\n"
+"X-Generator: Launchpad (build 17737)\n"
 
 #: import/Ubuntu/Content/ContentPeerPicker10.qml:48
 #: import/Ubuntu/Content/ContentPeerPicker11.qml:49
 msgid "Choose from"
-msgstr ""
+msgstr "Выберыце з"
 
 #: import/Ubuntu/Content/ContentPeerPicker10.qml:48
 #: import/Ubuntu/Content/ContentPeerPicker11.qml:49
 msgid "Open with"
-msgstr "Адкрыць з"
+msgstr "Адкрыць з дапамогай"
 
 #: import/Ubuntu/Content/ContentPeerPicker10.qml:48
 #: import/Ubuntu/Content/ContentPeerPicker11.qml:49
 msgid "Share to"
-msgstr ""
+msgstr "Падзяліцца"
 
 #: import/Ubuntu/Content/ContentPeerPicker10.qml:158
 #: import/Ubuntu/Content/ContentPeerPicker11.qml:175
@@ -43,6 +43,8 @@ msgid ""
 "Sorry, there aren't currently any apps installed that can provide this type "
 "of content."
 msgstr ""
+"Прабачце, прадастаўленне гэтага тыпу дадзеных не прадугледжана ні ў адной з "
+"усталяваных праграм."
 
 #: import/Ubuntu/Content/ContentPeerPicker10.qml:194
 #: import/Ubuntu/Content/ContentPeerPicker11.qml:211
@@ -50,11 +52,13 @@ msgid ""
 "Sorry, there aren't currently any apps installed that can handle this type "
 "of content."
 msgstr ""
+"Прабачце, апрацоўка гэтага тыпу дадзеных не прадугледжана ні ў адной з "
+"усталяваных праграм."
 
 #: import/Ubuntu/Content/ContentPeerPicker10.qml:210
 #: import/Ubuntu/Content/ContentPeerPicker11.qml:227
 msgid "Devices"
-msgstr "Прыстасаванні"
+msgstr "Прылады"
 
 #: import/Ubuntu/Content/ContentPeerPicker10.qml:247
 #: import/Ubuntu/Content/ContentPeerPicker11.qml:56
@@ -64,7 +68,7 @@ msgstr "Скасаваць"
 
 #: import/Ubuntu/Content/ContentTransferHint.qml:52
 msgid "Transfer in progress"
-msgstr ""
+msgstr "Перадача дадзеных"
 
 #: src/com/ubuntu/content/detail/service.cpp:216
 msgid "Download Complete"
@@ -72,12 +76,12 @@ msgstr "Запампоўка скончана"
 
 #: src/com/ubuntu/content/detail/service.cpp:234
 msgid "Open"
-msgstr ""
+msgstr "Адкрыць"
 
 #: src/com/ubuntu/content/detail/service.cpp:241
 msgid "Dismiss"
-msgstr ""
+msgstr "Адкінуць"
 
 #: src/com/ubuntu/content/detail/service.cpp:259
 msgid "Download Failed"
-msgstr ""
+msgstr "Памылка пры спробе атрымання"

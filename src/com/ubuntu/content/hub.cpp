@@ -81,20 +81,17 @@ cuc::Hub* cuc::Hub::Client::instance()
 
 bool cuc::Hub::eventFilter(QObject *obj, QEvent *event)
 {
-   if (event->type() == QEvent::ApplicationDeactivate)
-       return true;
-
    if (event->type() == QEvent::ApplicationActivate)
    {
        QString id = app_id();
-       if (id.isEmpty())
+       if (!id.isEmpty())
+       {
+           TRACE() << Q_FUNC_INFO << id << "Activated";
+           d->service->HandlerActive(id);
+       } else 
        {
            qWarning() << "APP_ID isn't set, the handler ignored";
-           return true;
        }
-       TRACE() << Q_FUNC_INFO << id << "Activated";
-       d->service->HandlerActive(id);
-       return true;
    }
    return QObject::eventFilter(obj, event);
 }
@@ -298,4 +295,15 @@ cuc::Transfer* cuc::Hub::create_share_to_peer_for_type(cuc::Peer peer, cuc::Type
 void cuc::Hub::quit()
 {
     d->service->Quit();
+}
+
+bool cuc::Hub::has_pending(QString peer_id)
+{
+    auto reply = d->service->HasPending(peer_id);
+    reply.waitForFinished();
+
+    if (reply.isError())
+        return false;
+
+    return reply.value();
 }

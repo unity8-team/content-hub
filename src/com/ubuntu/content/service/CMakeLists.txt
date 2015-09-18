@@ -34,6 +34,7 @@ add_executable(
   main.cpp
   registry.cpp
   ../debug.cpp
+  ../utils.cpp
   ${CONTENT_SERVICE_SKELETON}
 )
 

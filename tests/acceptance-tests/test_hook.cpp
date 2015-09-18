@@ -65,7 +65,7 @@ TEST(Hook, parse_json)
     
     auto mock = new MockedRegistry{};
     EXPECT_CALL(*mock, install_source_for_type(_,_)).
-    Times(Exactly(2)).
+    Times(Exactly(3)).
     WillRepeatedly(Return(true));
 
     QFileInfo f("good.json");
@@ -74,5 +74,7 @@ TEST(Hook, parse_json)
     EXPECT_TRUE(hook->add_peer(f));
     f.setFile("bad.json");
     EXPECT_FALSE(hook->add_peer(f));
+    f.setFile("source_all.json");
+    EXPECT_TRUE(hook->add_peer(f));
     delete mock;
 }

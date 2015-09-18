@@ -126,7 +126,7 @@ bool cucd::Hook::add_peer(QFileInfo result)
     TRACE() << Q_FUNC_INFO << "Hook:" << result.filePath();
 
     QStringList knownTypes;
-    knownTypes << "pictures" << "music" << "contacts" << "documents" << "videos" << "links" << "ebooks" << "text";
+    knownTypes << "all" << "pictures" << "music" << "contacts" << "documents" << "videos" << "links" << "ebooks" << "text" << "events";
     QString app_id = result.fileName();
     auto peer = cuc::Peer(app_id);
 

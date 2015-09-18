@@ -15,6 +15,7 @@
  */
 
 #include "../../../src/com/ubuntu/content/debug.h"
+#include "../../../src/com/ubuntu/content/utils.cpp"
 #include "contenthub.h"
 #include "contentpeer.h"
 #include "contentstore.h"
@@ -122,6 +123,9 @@ ContentHub::ContentHub(QObject *parent)
     m_hub = cuc::Hub::Client::instance();
     m_handler = new QmlImportExportHandler(this);
     m_hub->register_import_export_handler(m_handler);
+    QString id = app_id();
+    if (!id.isEmpty())
+        m_hasPending = m_hub->has_pending(id);
 
     connect(m_handler, SIGNAL(importRequested(com::ubuntu::content::Transfer*)),
             this, SLOT(handleImport(com::ubuntu::content::Transfer*)));
@@ -298,6 +302,17 @@ void ContentHub::handleShare(com::ubuntu::content::Transfer *transfer)
 void ContentHub::updateState()
 {
     TRACE() << Q_FUNC_INFO;
+}
+
+/*!
+ * \qmlproperty bool ContentHub::hasPending
+ * True if there is a pending transfer for the handler
+ * \internal
+ */
+bool ContentHub::hasPending()
+{
+    TRACE() << Q_FUNC_INFO;
+    return m_hasPending;
 }
 
 /*!

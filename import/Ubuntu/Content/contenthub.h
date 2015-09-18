@@ -43,6 +43,7 @@ class ContentHub : public QObject
 {
     Q_OBJECT
     Q_PROPERTY(QQmlListProperty<ContentTransfer> finishedImports READ finishedImports NOTIFY finishedImportsChanged)
+    Q_PROPERTY(bool hasPending READ hasPending)
 
 public:
     ContentHub(const ContentHub&) = delete;
@@ -52,6 +53,7 @@ public:
     Q_INVOKABLE void restoreImports();
 
     QQmlListProperty<ContentTransfer> finishedImports();
+    bool hasPending();
 
     Q_INVOKABLE ContentTransfer* importContent(com::ubuntu::content::Peer peer, ContentType::Type type);
     Q_INVOKABLE ContentTransfer* exportContent(com::ubuntu::content::Peer peer, ContentType::Type type);
@@ -76,6 +78,7 @@ private:
     QHash<com::ubuntu::content::Transfer *, ContentTransfer *> m_activeImports;
     com::ubuntu::content::Hub *m_hub;
     QmlImportExportHandler *m_handler;
+    bool m_hasPending = false;
 
 protected:
     ContentHub(QObject* = nullptr);

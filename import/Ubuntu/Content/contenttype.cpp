@@ -31,7 +31,7 @@
      \li Type
      \li Description
    \row
-     \li ContentType.Uknown
+     \li ContentType.Unknown
      \li Unknown type
    \row
      \li ContentType.Documents
@@ -101,6 +101,7 @@ const com::ubuntu::content::Type &ContentType::contentType2HubType(Type type)
     case Links: return cuc::Type::Known::links();
     case EBooks: return cuc::Type::Known::ebooks();
     case Text: return cuc::Type::Known::text();
+    case Events: return cuc::Type::Known::events();
     default: return cuc::Type::unknown();
     }
 }
@@ -128,6 +129,8 @@ ContentType::Type ContentType::hubType2contentType(const QString& type)
         return EBooks;
     else if (type ==  cuc::Type::Known::text().id())
         return Text;
+    else if (type ==  cuc::Type::Known::events().id())
+        return Events;
     else
       return Unknown;
 }

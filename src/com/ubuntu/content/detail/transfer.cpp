@@ -235,6 +235,9 @@ void cucd::Transfer::Download()
         download->setDestinationDir(d->store);
         connect(download, SIGNAL(finished(QString)), this, SLOT(DownloadComplete(QString)));
         connect(download, SIGNAL(error(Ubuntu::DownloadManager::Error*)), this, SLOT(DownloadError(Ubuntu::DownloadManager::Error*)));
+        QVariantMap metadata = download->metadata();
+        metadata["owner"] = d->destination;
+        download->setMetadata(metadata);
         download->start();
         d->state = cuc::Transfer::downloading;
         Q_EMIT(StateChanged(d->state));

@@ -121,15 +121,15 @@ Item {
                     radius: "medium"
                     width: units.gu(8)
                     height: units.gu(7.5)
-                    image: Image {
+                    sourceHorizontalAlignment: Image.AlignHCenter
+                    sourceVerticalAlignment: Image.AlignVCenter
+                    source: Image {
                         id: image
                         objectName: "image"
                         sourceSize { width: icon.width; height: icon.height }
                         asynchronous: true
                         cache: false
                         source: "image://content-hub/" + modelData.appId
-                        horizontalAlignment: Image.AlignHCenter
-                        verticalAlignment: Image.AlignVCenter
                     }
                }
 

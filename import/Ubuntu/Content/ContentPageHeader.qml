@@ -47,7 +47,6 @@ Column {
 
         Rectangle {
             anchors.fill: parent
-            //color: "#f6f6f6"
             color: Theme.palette.normal.background
         }
 

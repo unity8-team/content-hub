@@ -20,6 +20,7 @@ Build-Depends: cmake,
                qt5-default,
                qtbase5-dev,
                qtdeclarative5-dev,
+               qtdeclarative5-dev-tools,
                qtdeclarative5-qtquick2-plugin,
                qtdeclarative5-test-plugin,
 Standards-Version: 3.9.4

@@ -29,6 +29,7 @@ class ContentType : public QObject
 
 public:
     enum Type {
+        Undefined = -2,
         All = -1,
         Unknown = 0,
         Documents = 1,
@@ -38,7 +39,8 @@ public:
         Videos = 5,
         Links = 6,
         EBooks = 7,
-        Text = 8
+        Text = 8,
+        Events = 9
     };
 
     ContentType(QObject *parent = nullptr);

@@ -25,8 +25,14 @@
     <key name="text" type="as">
       <default>[]</default>
     </key>
+    <key name="events" type="as">
+      <default>[]</default>
+    </key>
   </schema>
   <schema id="com.ubuntu.content.hub.source" path="/com/ubuntu/content/hub/source/">
+    <key name="all" type="as">
+      <default>[]</default>
+    </key>
     <key name="pictures" type="as">
       <default>[]</default>
     </key>
@@ -49,10 +55,16 @@
       <default>[]</default>
     </key>
     <key name="text" type="as">
+      <default>[]</default>
+    </key>
+    <key name="events" type="as">
       <default>[]</default>
     </key>
   </schema>
   <schema id="com.ubuntu.content.hub.destination" path="/com/ubuntu/content/hub/destination/">
+    <key name="all" type="as">
+      <default>[]</default>
+    </key>
     <key name="pictures" type="as">
       <default>[]</default>
     </key>
@@ -75,6 +87,9 @@
       <default>[]</default>
     </key>
     <key name="text" type="as">
+      <default>[]</default>
+    </key>
+    <key name="events" type="as">
       <default>[]</default>
     </key>
   </schema>
@@ -101,6 +116,9 @@
       <default>[]</default>
     </key>
     <key name="text" type="as">
+      <default>[]</default>
+    </key>
+    <key name="events" type="as">
       <default>[]</default>
     </key>
   </schema>

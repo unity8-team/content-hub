@@ -598,3 +598,18 @@ void cucd::Service::HandlerActive(const QString& peer_id)
         }
     }
 }
+
+bool cucd::Service::HasPending(const QString& peer_id)
+{
+    TRACE() << Q_FUNC_INFO << peer_id;
+    Q_FOREACH (cucd::Transfer *t, d->active_transfers)
+    {
+        TRACE() << Q_FUNC_INFO << "SOURCE: " << t->source() << "DEST:" << t->destination() << "STATE:" << t->State();
+        if (((t->source() == peer_id) || (t->destination() == peer_id)) && (t->State() == cuc::Transfer::initiated))
+        {
+            TRACE() << Q_FUNC_INFO << "Has pending:" << peer_id;
+            return true;
+        }
+    }
+    return false;
+}

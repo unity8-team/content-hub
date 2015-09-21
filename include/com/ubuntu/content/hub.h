@@ -64,6 +64,7 @@ class Hub : public QObject
     Q_INVOKABLE virtual Transfer* create_import_from_peer_for_type(Peer peer, Type type);
     Q_INVOKABLE virtual Transfer* create_export_to_peer_for_type(Peer peer, Type type);
     Q_INVOKABLE virtual Transfer* create_share_to_peer_for_type(Peer peer, Type type);
+    Q_INVOKABLE virtual bool has_pending(QString peer_id);
        
   protected:
     Hub(QObject* = nullptr);

@@ -34,7 +34,6 @@ Item {
     property var peer
     property var customPeerModelLoader
     property string headerText
-    readonly property string title: header.title
     property var completed: false
 
     signal peerSelected

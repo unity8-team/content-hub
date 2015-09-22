@@ -1,8 +1,16 @@
-content-hub (0.0+15.04.20150909-0ubuntu2) UNRELEASED; urgency=medium
+content-hub (0.0+15.04.20150922.2-0ubuntu1) vivid; urgency=medium
 
+  [ Ken VanDine ]
   * Updated version for 15.04
 
- -- Ken VanDine <ken.vandine@canonical.com>  Mon, 21 Sep 2015 10:32:44 -0400
+  [ CI Train Bot ]
+  * New rebuild forced.
+
+  [ Manuel de la Pena ]
+  * No changes done, we need to recompile the project due to UDM ABI
+    changes.
+
+ -- Bill Filler <ci-train-bot@canonical.com>  Tue, 22 Sep 2015 16:03:39 +0000
 
 content-hub (0.0+15.10.20150909-0ubuntu1) wily; urgency=medium
 

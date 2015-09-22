@@ -17,6 +17,7 @@
  */
 
 #include <gio/gdesktopappinfo.h>
+#include <ubuntu-app-launch.h>
 #include <com/ubuntu/content/peer.h>
 #include <QMetaType>
 #include "debug.h"
@@ -28,12 +29,17 @@ struct cuc::Peer::Private
     Private (QString id, bool isDefaultPeer) : id(id), isDefaultPeer(isDefaultPeer)
     {
         TRACE() << Q_FUNC_INFO << id;
-        if (name.isEmpty())
-        {
-            QString desktop_id(id + ".desktop");
-            GDesktopAppInfo* app = g_desktop_app_info_new(desktop_id.toLocal8Bit().data());
-            if (G_IS_APP_INFO(app))
-            {
+        if (name.isEmpty()) {
+            char * dir = nullptr;
+            char * file = nullptr;
+            GDesktopAppInfo* app;
+            if (ubuntu_app_launch_application_info(id.toStdString().c_str(), &dir, &file)) {
+                app = g_desktop_app_info_new_from_filename (g_strjoin("/", dir, file, NULL));
+            } else {
+                QString desktop_id(id + ".desktop");
+                app = g_desktop_app_info_new(desktop_id.toLocal8Bit().data());
+            }
+            if (G_IS_APP_INFO(app)) {
                 name = QString::fromUtf8(g_app_info_get_display_name(G_APP_INFO(app)));
                 GIcon* ic = g_app_info_get_icon(G_APP_INFO(app));
                 if (G_IS_ICON(ic))
@@ -49,6 +55,8 @@ struct cuc::Peer::Private
                 }
                 g_object_unref(app);
             }
+            g_free(dir);
+            g_free(file);
         }
     }
 

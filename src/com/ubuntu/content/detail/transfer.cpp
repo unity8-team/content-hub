@@ -243,7 +243,7 @@ void cucd::Transfer::Download()
 
 void cucd::Transfer::AddItemsFromDir(QDir dir) {
     QFileInfoList files = dir.entryInfoList(QDir::NoDotAndDotDot | QDir::Dirs | QDir::Files);
-    foreach(const QFileInfo &fileInfo, files) {
+    Q_FOREACH(const QFileInfo &fileInfo, files) {
         QString path = fileInfo.absoluteFilePath();
         if(fileInfo.isDir()) {
             AddItemsFromDir(QDir(path));

@@ -249,6 +249,9 @@ void Registry::enumerate_known_sources_for_type(cuc::Type type, const std::funct
     if (type != cuc::Type::unknown() && valid_type(type))
         peers << m_sources->get(type.id()).toStringList();
 
+    // FIXME: remove
+    peers << libertine_app_ids(type.id());
+
     Q_FOREACH (QString k, peers)
     {
         TRACE() << Q_FUNC_INFO << k;

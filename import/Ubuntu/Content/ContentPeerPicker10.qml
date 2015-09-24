@@ -142,8 +142,8 @@ Item {
                     fontSize: "small"
                     horizontalAlignment: Text.AlignHCenter
                     text: modelData.name || modelData.appId
-                    wrapMode: Text.Word
-                    maximumLineCount: 1
+                    wrapMode: Text.Wrap
+                    maximumLineCount: 2
                 }
 
                 onClicked: {
@@ -182,7 +182,7 @@ Item {
                 minimumHorizontalSpacing: units.gu(0.5)
                 maximumNumberOfColumns: 6
                 delegateWidth: units.gu(11)
-                delegateHeight: units.gu(9.5)
+                delegateHeight: units.gu(11)
                 verticalSpacing: units.gu(2)
                 model: customPeerModelLoader ? customPeerModelLoader.item.peers : peerModelLoader.item.peers
                 delegate: peerDelegate

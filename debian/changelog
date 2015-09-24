@@ -1,3 +1,13 @@
+content-hub (0.1+15.10.20150922-0ubuntu1) wily; urgency=medium
+
+  [ Ken VanDine ]
+  * Major version bump
+
+  [ CI Train Bot ]
+  * No-change rebuild.
+
+ -- Ken VanDine <ken.vandine@canonical.com>  Tue, 22 Sep 2015 01:19:46 +0000
+
 content-hub (0.0+15.10.20150909-0ubuntu1) wily; urgency=medium
 
   [ Ken VanDine ]

@@ -70,8 +70,9 @@ void ContentHubPlugin::registerTypes(const char *uri)
     versions.append(QPair<int, int>(0, 1));
     versions.append(QPair<int, int>(1, 0));
     versions.append(QPair<int, int>(1, 1));
+    versions.append(QPair<int, int>(1, 3));
 
-    // Register common types for version 0.1, 1.0 and 1.1
+    // Register common types for version 0.1, 1.0, 1.1 and 1.3
     for(int i = 0; i < versions.length(); i++) {
         int versionMajor = versions[i].first;
         int versionMinor = versions[i].second;

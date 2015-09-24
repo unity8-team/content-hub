@@ -26,7 +26,7 @@ namespace cuc = com::ubuntu::content;
 
 struct cuc::Peer::Private
 {
-    Private (QString id, bool isDefaultPeer) : id(id), isDefaultPeer(isDefaultPeer)
+    Private (QString id, QString name, bool isDefaultPeer) : id(id), name(name), isDefaultPeer(isDefaultPeer)
     {
         TRACE() << Q_FUNC_INFO << id;
         if (name.isEmpty()) {
@@ -73,7 +73,7 @@ const cuc::Peer& cuc::Peer::unknown()
     return peer;
 }
 
-cuc::Peer::Peer(const QString& id, bool isDefaultPeer, QObject* parent) : QObject(parent), d(new cuc::Peer::Private{id, isDefaultPeer})
+cuc::Peer::Peer(const QString& id, QString name, bool isDefaultPeer, QObject* parent) : QObject(parent), d(new cuc::Peer::Private{id, name, isDefaultPeer})
 {
     TRACE() << Q_FUNC_INFO;
 }
@@ -164,8 +164,7 @@ const QDBusArgument &operator>>(const QDBusArgument &argument, cuc::Peer &peer)
     argument >> id >> name >> ic >> iconName >> isDefaultPeer;
     argument.endStructure();
 
-    peer = cuc::Peer{id, isDefaultPeer};
-    peer.setName(name);
+    peer = cuc::Peer{id, name, isDefaultPeer};
     peer.setIconData(ic);
     peer.setIconName(iconName);
     return argument;

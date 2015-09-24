@@ -36,7 +36,6 @@ struct cuc::Peer::Private
             GDesktopAppInfo* app;
             if (ubuntu_app_launch_application_info(id.toStdString().c_str(), &dir, &file)) {
                 app = g_desktop_app_info_new_from_filename (g_strjoin("/", dir, file, NULL));
-                qDebug() << "appInfo from UAL";
             } else {
                 QString desktop_id(id + ".desktop");
                 app = g_desktop_app_info_new(desktop_id.toLocal8Bit().data());
@@ -47,11 +46,13 @@ struct cuc::Peer::Private
                 if (G_IS_ICON(ic))
                 {
                     iconName = QString::fromUtf8(g_icon_to_string(ic));
-                    qDebug() << "iconName:" << iconName;
+                    /* Special case for firefox which doesn't have a themed icon */
+                    if (iconName == QString("firefox")) {
+                        iconName = QString(dir) + "/pixmaps/firefox.png";
+                    }
                     if (QFile::exists(iconName)) {
                         QFile iconFile(iconName);
                         if(iconFile.open(QIODevice::ReadOnly)) {
-                            qDebug() << "icon is valid:" << iconName;
                             iconData = iconFile.readAll();
                             iconFile.close();
                         }

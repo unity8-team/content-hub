@@ -109,7 +109,6 @@ void ContentPeer::setPeer(const cuc::Peer &peer, bool explicitPeer)
     m_explicit_peer = explicitPeer;
     if (peer.iconData().isEmpty())
     {
-        qDebug() << Q_FUNC_INFO << QIcon::themeSearchPaths();
         if (QIcon::hasThemeIcon(peer.iconName().toUtf8()))
             m_icon = QIcon::fromTheme(peer.iconName().toUtf8()).pixmap(256).toImage();
     } else

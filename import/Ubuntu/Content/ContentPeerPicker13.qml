@@ -149,7 +149,8 @@ Item {
                     fontSize: "small"
                     horizontalAlignment: Text.AlignHCenter
                     text: modelData.name || modelData.appId
-                    wrapMode: Text.WordWrap
+                    wrapMode: Text.Word
+                    maximumLineCount: 2
                 }
 
                 onClicked: {

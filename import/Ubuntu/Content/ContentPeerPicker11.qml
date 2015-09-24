@@ -158,9 +158,10 @@ Item {
 
                     opacity: 0.9
                     fontSize: "small"
-                    elide: Text.ElideMiddle
                     horizontalAlignment: Text.AlignHCenter
                     text: modelData.name || modelData.appId
+                    wrapMode: Text.Word
+                    maximumLineCount: 2
                 }
 
                 onClicked: {

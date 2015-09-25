@@ -30,6 +30,7 @@ struct cuc::Peer::Private
     {
         TRACE() << Q_FUNC_INFO << id;
         if (name.isEmpty()) {
+            TRACE() << Q_FUNC_INFO << "Getting appinfo for" << id;
             char * dir = nullptr;
             char * file = nullptr;
             GDesktopAppInfo* app;

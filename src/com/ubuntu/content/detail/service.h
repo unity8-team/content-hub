@@ -67,6 +67,7 @@ class Service : public QObject, protected QDBusContext
     void Quit();
     void DownloadManagerError(QString);
     bool HasPending(const QString&);
+    QDBusVariant PeerForId(const QString&);
 
   private:
     bool should_cancel(int);

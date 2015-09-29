@@ -38,7 +38,8 @@ class Peer : public QObject
 
   public:
     static const Peer& unknown();
-    Peer(const QString& id = QString(), QString name = QString(), bool isDefaultPeer = false, QObject* parent = nullptr);
+    Peer(const QString& id = QString(), bool isDefaultPeer = false, QObject* parent = nullptr);
+    Peer(const QString&, const QString&, QByteArray&, const QString&, bool, QObject* parent = nullptr);
     Peer(const Peer& rhs);
     virtual ~Peer();
     

@@ -80,7 +80,7 @@ const QString &ContentPeer::appId() const
 void ContentPeer::setAppId(const QString& appId)
 {
     TRACE() << Q_FUNC_INFO << appId;
-    this->setPeer(cuc::Peer{appId});
+    this->setPeer(m_hub->peer_for_app_id(appId));
 }
 
 QImage &ContentPeer::icon()

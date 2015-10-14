@@ -87,16 +87,27 @@ QMap<QString, QVector<QString>> libertine_apps()
         ret = ubuntu_app_launch_application_info(app.toStdString().c_str(), &dir, &file);
         if (ret)
         {
-            GDesktopAppInfo * appInfo = g_desktop_app_info_new_from_filename (g_strjoin("/", dir, file, NULL));
-            if (G_IS_APP_INFO (appInfo)) {
-
+            GKeyFile *key_file = g_key_file_new();
+            GError *error = NULL;
+            if (!g_key_file_load_from_file(key_file,
+                                           g_strjoin("/", dir, file, NULL),
+                                           G_KEY_FILE_NONE,
+                                           &error)) {
+                qWarning() << "ERROR:" <<error->message;
+            } else {
                 //if (g_desktop_app_info_get_nodisplay (appInfo))
                 //    continue;
 
-                if (not g_app_info_should_show (G_APP_INFO(appInfo)))
-                    continue;
+                //if (not g_app_info_should_show (G_APP_INFO(appInfo)))
+                //    continue;
 
-                const gchar ** types = g_app_info_get_supported_types (G_APP_INFO(appInfo));
+                gchar ** types = g_key_file_get_locale_string_list(key_file,
+                                                                   "Desktop Entry",
+                                                                   "MimeType",
+                                                                   NULL,
+                                                                   NULL,
+                                                                   &error);
+
                 if (types == NULL)
                     continue;
                 cuc::Type type = cuc::Type::unknown();

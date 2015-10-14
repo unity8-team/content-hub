@@ -95,11 +95,13 @@ QMap<QString, QVector<QString>> libertine_apps()
                                            &error)) {
                 qWarning() << "ERROR:" <<error->message;
             } else {
-                //if (g_desktop_app_info_get_nodisplay (appInfo))
-                //    continue;
+                /* FIXME: we should hide NoDisplay and honor ShownIn
+                if (g_desktop_app_info_get_nodisplay (appInfo))
+                    continue;
 
-                //if (not g_app_info_should_show (G_APP_INFO(appInfo)))
-                //    continue;
+                if (not g_app_info_should_show (G_APP_INFO(appInfo)))
+                    continue;
+                */
 
                 gchar ** types = g_key_file_get_locale_string_list(key_file,
                                                                    "Desktop Entry",

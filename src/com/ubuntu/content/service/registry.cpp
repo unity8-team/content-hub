@@ -104,8 +104,8 @@ QMap<QString, QVector<QString>> libertine_apps()
                 */
 
                 gchar ** types = g_key_file_get_locale_string_list(key_file,
-                                                                   "Desktop Entry",
-                                                                   "MimeType",
+                                                                   G_KEY_FILE_DESKTOP_GROUP,
+                                                                   G_KEY_FILE_DESKTOP_KEY_MIME_TYPE,
                                                                    NULL,
                                                                    NULL,
                                                                    &error);

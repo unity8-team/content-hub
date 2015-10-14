@@ -72,14 +72,14 @@ struct cuc::Peer::Private
                     qWarning() << "ERROR:" <<error->message;
                 } else {
                     name = QString::fromUtf8 (g_key_file_get_locale_string(key_file,
-                                                                           "Desktop Entry",
-                                                                           "Name",
+                                                                           G_KEY_FILE_DESKTOP_GROUP,
+                                                                           G_KEY_FILE_DESKTOP_KEY_NAME,
                                                                            NULL,
                                                                            &error));
                     TRACE() << Q_FUNC_INFO << "name:" << name;
                     iconName = QString::fromUtf8 (g_key_file_get_locale_string(key_file,
-                                                                               "Desktop Entry",
-                                                                               "Icon",
+                                                                               G_KEY_FILE_DESKTOP_GROUP,
+                                                                               G_KEY_FILE_DESKTOP_KEY_ICON,
                                                                                NULL,
                                                                                &error));
                     TRACE() << Q_FUNC_INFO << "iconName:" << iconName;

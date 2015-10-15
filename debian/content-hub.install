@@ -1,5 +1,6 @@
 usr/bin/content-hub-send
 usr/bin/content-hub-service
+usr/bin/content-hub-qicon-helper
 usr/lib/*/content-hub
 usr/share/click/hooks
 usr/share/dbus-1

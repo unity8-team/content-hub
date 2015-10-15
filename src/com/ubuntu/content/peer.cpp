@@ -18,14 +18,32 @@
 
 #include <gio/gdesktopappinfo.h>
 #include <ubuntu-app-launch.h>
+#include <iostream>
+#include <string>
+#include <stdio.h>
 #include <com/ubuntu/content/peer.h>
 #include <QMetaType>
 #include "debug.h"
+#include <QFile>
 
 namespace cuc = com::ubuntu::content;
 
+
 struct cuc::Peer::Private
 {
+    std::string exec(const char* cmd) {
+        FILE* pipe = popen(cmd, "r");
+        if (!pipe) return "ERROR";
+        char buffer[128];
+        std::string result = "";
+        while (!feof(pipe)) {
+            if (fgets(buffer, 128, pipe) != NULL)
+                result += buffer;
+        }
+        pclose(pipe);
+        return result;
+    }
+
     Private (QString id, bool isDefaultPeer) : id(id), isDefaultPeer(isDefaultPeer)
     {
         TRACE() << Q_FUNC_INFO << id;
@@ -53,7 +71,7 @@ struct cuc::Peer::Private
                 if (G_IS_ICON(ic))
                 {
                     iconName = QString::fromUtf8(g_icon_to_string(ic));
-                    /* Special case for firefox which doesn't have a themed icon */
+                    // Special case for firefox which doesn't have a themed icon
                     if (iconName == QString("firefox")) {
                         iconName = QString(dir) + "/pixmaps/firefox.png";
                     }
@@ -93,6 +111,23 @@ struct cuc::Peer::Private
                         if(iconFile.open(QIODevice::ReadOnly)) {
                             iconData = iconFile.readAll();
                             iconFile.close();
+                        }
+                    } else {
+                        QString cmd = QString("/usr/bin/content-hub-qicon-helper " + iconName + " 2>&1");
+                        qWarning() << "CMD:" << cmd;
+                        std::string result = exec(cmd.toStdString().data());
+                        QFile output("output.txt");
+                        if (output.open(QIODevice::Append)) {
+                            QDataStream out(&output);
+                            out << QString::fromStdString(result).toUtf8().toBase64();
+                            output.close();
+                        }
+                        QFile input("output.txt");
+                        if (output.open(QIODevice::ReadOnly)) {
+                            QDataStream in(&input);
+                            while (!input.atEnd()) {
+                                in >> iconData;
+                            }
                         }
                     }
                 }

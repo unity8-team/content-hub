@@ -14,5 +14,34 @@
 #
 # Authored by: Ken VanDine <ken.vandine@canonical.com>
 
-add_subdirectory(send)
-add_subdirectory(qicon_helper)
+include_directories(
+  ${CMAKE_CURRENT_BINARY_DIR}
+  ${CMAKE_SOURCE_DIR}/src/com/ubuntu/content
+  ${UBUNTU_LAUNCH_INCLUDE_DIRS}
+)
+
+add_executable(
+  content-hub-qicon-helper
+
+  main.cpp
+)
+
+qt5_use_modules(content-hub-qicon-helper Gui DBus)
+
+set_target_properties(
+  content-hub-qicon-helper
+  PROPERTIES
+  AUTOMOC TRUE
+)
+
+target_link_libraries(
+  content-hub-qicon-helper
+ 
+  content-hub 
+  ${UBUNTU_LAUNCH_LDFLAGS}
+)
+
+install(
+  TARGETS content-hub-qicon-helper
+  RUNTIME DESTINATION ${CMAKE_INSTALL_BINDIR}
+)

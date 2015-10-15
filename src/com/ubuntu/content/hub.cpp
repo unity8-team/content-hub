@@ -78,6 +78,8 @@ cuc::Hub::Hub(QObject* parent) : QObject(parent), d{new cuc::Hub::Private{this}}
         QString path = libertine_container_path(containers[i]);
         iconPaths << QString(path + "/usr/share/icons/");
     }
+    // FIXME: debug output
+    qWarning() << "iconPaths:" << iconPaths;
     QIcon::setThemeSearchPaths(iconPaths);
 }
 

@@ -41,6 +41,9 @@ struct cuc::Peer::Private
                 TRACE() << "FILE:" << QString::fromUtf8(file);
                 TRACE() << "PATH:" << QString::fromUtf8(g_strjoin("/", dir, file, NULL));
                 app = g_desktop_app_info_new_from_filename (g_strjoin("/", dir, file, NULL));
+                if (QString::fromUtf8(dir).contains("libertine-container")) {
+                    legacy = true;
+                }
             } else {
                 QString desktop_id(id + ".desktop");
                 app = g_desktop_app_info_new(desktop_id.toLocal8Bit().data());
@@ -82,11 +85,15 @@ struct cuc::Peer::Private
                                                                            NULL,
                                                                            &error));
                     TRACE() << Q_FUNC_INFO << "name:" << name;
-                    iconName = QString::fromUtf8 (g_key_file_get_locale_string(key_file,
-                                                                               G_KEY_FILE_DESKTOP_GROUP,
-                                                                               G_KEY_FILE_DESKTOP_KEY_ICON,
-                                                                               NULL,
-                                                                               &error));
+                    if (!legacy) {
+                        iconName = QString::fromUtf8 (g_key_file_get_locale_string(key_file,
+                                                                                   G_KEY_FILE_DESKTOP_GROUP,
+                                                                                   G_KEY_FILE_DESKTOP_KEY_ICON,
+                                                                                   NULL,
+                                                                                   &error));
+                    } else {
+                        iconName = "/usr/share/icons/suru/places/256/distributor-logo.png";
+                    }
                     TRACE() << Q_FUNC_INFO << "iconName:" << iconName;
                     if (QFile::exists(QString::fromUtf8 (dir) + "/" + iconName)) {
                         QFile iconFile(QString::fromUtf8 (dir) + "/" + iconName);

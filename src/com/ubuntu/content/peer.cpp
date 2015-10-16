@@ -79,6 +79,7 @@ struct cuc::Peer::Private
                                                &error)) {
                     qWarning() << "ERROR:" <<error->message;
                 } else {
+                    QString iconPath;
                     name = QString::fromUtf8 (g_key_file_get_locale_string(key_file,
                                                                            G_KEY_FILE_DESKTOP_GROUP,
                                                                            G_KEY_FILE_DESKTOP_KEY_NAME,
@@ -91,12 +92,13 @@ struct cuc::Peer::Private
                                                                                    G_KEY_FILE_DESKTOP_KEY_ICON,
                                                                                    NULL,
                                                                                    &error));
+                        iconPath = QString::fromUtf8 (dir) + "/" + iconName;
                     } else {
-                        iconName = "icons/suru/places/256/distributor-logo.png";
+                        iconPath = "/usr/share/content-hub/icons/xorg.png";
                     }
                     TRACE() << Q_FUNC_INFO << "iconName:" << iconName;
-                    if (QFile::exists(QString::fromUtf8 (dir) + "/" + iconName)) {
-                        QFile iconFile(QString::fromUtf8 (dir) + "/" + iconName);
+                    if (QFile::exists(iconPath)) {
+                        QFile iconFile(iconPath);
                         if(iconFile.open(QIODevice::ReadOnly)) {
                             iconData = iconFile.readAll();
                             iconFile.close();

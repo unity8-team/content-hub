@@ -122,3 +122,8 @@ FILES
 "${CLICK_HOOK}"
 DESTINATION "/usr/share/click/hooks"
 )
+
+install(
+  FILES xorg.png
+  DESTINATION ${CMAKE_INSTALL_DATADIR}/content-hub/icons/
+)

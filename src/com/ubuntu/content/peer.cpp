@@ -92,7 +92,7 @@ struct cuc::Peer::Private
                                                                                    NULL,
                                                                                    &error));
                     } else {
-                        iconName = "/usr/share/icons/suru/places/256/distributor-logo.png";
+                        iconName = "icons/suru/places/256/distributor-logo.png";
                     }
                     TRACE() << Q_FUNC_INFO << "iconName:" << iconName;
                     if (QFile::exists(QString::fromUtf8 (dir) + "/" + iconName)) {

@@ -41,7 +41,10 @@ struct cuc::Peer::Private
                 TRACE() << "FILE:" << QString::fromUtf8(file);
                 TRACE() << "PATH:" << QString::fromUtf8(g_strjoin("/", dir, file, NULL));
                 app = g_desktop_app_info_new_from_filename (g_strjoin("/", dir, file, NULL));
+                qWarning() << Q_FUNC_INFO << "Constructor";
+                qWarning() << "DIR:" << QString::fromUtf8(dir);
                 if (QString::fromUtf8(dir).contains("libertine-container")) {
+                    qWarning() << Q_FUNC_INFO << "Legacy app detected";
                     legacy = true;
                 }
             } else {

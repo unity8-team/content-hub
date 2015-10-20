@@ -147,7 +147,7 @@ QStringList libertine_app_ids(QString type)
 
     Q_FOREACH (QString a, appMap.keys())
     {
-        if (appMap.value(a).contains(type))
+        if (appMap.value(a).contains(type) || type == "all")
             results << a;
     }
 
@@ -420,4 +420,8 @@ bool Registry::remove_peer(cuc::Peer peer)
         }
     }
     return ret;
+}
+bool Registry::peer_is_legacy(QString peer_id)
+{
+    return libertine_app_ids("all").contains(peer_id);
 }

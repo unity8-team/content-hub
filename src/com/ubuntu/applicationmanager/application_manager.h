@@ -17,6 +17,7 @@
 #define COM_UBUNTU_APPLICATION_MANAGER_H_
 
 #include <string>
+#include <glib.h>
 
 namespace com
 {
@@ -37,7 +38,7 @@ class ApplicationManager
      * \brief invoke_application starts an application, and brings it to foreground
      * \param app_id ID for the application (for example "gallery-app" - used for the desktop)
      */
-    virtual bool invoke_application(const std::string &app_id) = 0;
+    virtual bool invoke_application(const std::string &app_id, gchar ** uris) = 0;
     /*!
      * \brief stop_application stops an application started by ubuntu
      * \param app_id ID for the application (for example "gallery-app" - used for the desktop)

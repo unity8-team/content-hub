@@ -56,6 +56,7 @@ struct MockedRegistry : public cuc::detail::PeerRegistry
     MOCK_METHOD2(install_destination_for_type, bool(cuc::Type, cuc::Peer));
     MOCK_METHOD2(install_share_for_type, bool(cuc::Type, cuc::Peer));
     MOCK_METHOD1(remove_peer, bool(cuc::Peer));
+    MOCK_METHOD1(peer_is_legacy, bool(QString));
 };
 }
 

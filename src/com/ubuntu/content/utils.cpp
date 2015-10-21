@@ -149,12 +149,21 @@ QString copy_to_store(const QString& src, const QString& store)
     QDir st(store);
     if (not st.exists())
         st.mkpath(st.absolutePath());
-    QString destFilePath = store + QDir::separator() + fi.fileName();
-    TRACE() << Q_FUNC_INFO << destFilePath;
+    QString suffix = fi.completeSuffix();
+    QString filename = fi.fileName();
+    QString filenameWithoutSuffix = filename.left(filename.size() - suffix.size());
+    QString destFilePath = store + QDir::separator() + filenameWithoutSuffix + suffix;
+    // Avoid filename collision by automatically inserting an incremented
+    // number into the filename if the original name already exists.
     if (QFile::exists(destFilePath)) {
-            qWarning() << "Destination file already exists, aborting:" << destFilePath;
-            return QString();
+        qWarning() << "Destination file already exists, attempt to resolve:" << destFilePath;
+        int append = 1;
+        do {
+            destFilePath = QString("%1%2.%3").arg(store + QDir::separator() + filenameWithoutSuffix, QString::number(append), suffix);
+            append++;
+        } while (QFile::exists(destFilePath));
     }
+    TRACE() << Q_FUNC_INFO << destFilePath;
     bool copy_failed = true;
     if (not is_persistent(store))
     {

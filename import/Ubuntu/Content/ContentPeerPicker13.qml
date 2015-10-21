@@ -47,7 +47,7 @@ Item {
 
     ContentPageHeader {
         id: header
-        title: headerText ? headerText : (handler === ContentHandler.Source) ? i18n.dtr("content-hub", "Choose from") : (handler === ContentHandler.Destination ? i18n.dtr("content-hub", "Open with") : i18n.dtr("content-hub", "Share to"))
+        title: headerText ? headerText : (handler === ContentHandler.Source) ? i18n.dtr("content-hub", "Choose from") : i18n.dtr("content-hub", "Select")
         onCancel: {
             if(root.activeTransfer) {
                 root.activeTransfer.state = ContentTransfer.Aborted;

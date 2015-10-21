@@ -47,7 +47,7 @@ Item {
 
     Header {
         id: header
-        title: headerText ? headerText : (handler === ContentHandler.Source) ? i18n.dtr("content-hub", "Choose from") : (handler === ContentHandler.Destination ? i18n.dtr("content-hub", "Open with") : i18n.dtr("content-hub", "Share to"))
+        title: headerText ? headerText : (handler === ContentHandler.Source) ? i18n.dtr("content-hub", "Choose from") : i18n.dtr("content-hub", "Select")
         useDeprecatedToolbar: false
         dividerColor: Qt.darker(Theme.palette.normal.background, 1.1)
         config: PageHeadConfiguration {

@@ -202,7 +202,8 @@ QVector<cuc::Peer> cuc::Hub::known_shares_for_type(cuc::Type t)
 {
     QVector<cuc::Peer> result;
 
-    auto reply = d->service->KnownSharesForType(t.id());
+    /* Treat shares the same as exports */
+    auto reply = d->service->KnownDestinationsForType(t.id());
     reply.waitForFinished();
 
     if (reply.isError())

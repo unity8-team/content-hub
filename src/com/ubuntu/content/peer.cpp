@@ -33,7 +33,6 @@ struct cuc::Peer::Private
             TRACE() << Q_FUNC_INFO << "Getting appinfo for" << id;
             char * dir = nullptr;
             char * file = nullptr;
-
             GDesktopAppInfo* app;
 
             if (ubuntu_app_launch_application_info(id.toStdString().c_str(), &dir, &file)) {

@@ -33,9 +33,6 @@ cuc::Type mime_to_wellknown_type (const char * type)
 {
     TRACE() << Q_FUNC_INFO << "TYPE:" << type;
 
-    // FIXME: debugging output
-    qWarning() << Q_FUNC_INFO << "TYPE:" << type;
-
     if (QString(type).contains("document"))
         return cuc::Type::Known::documents();
     else if (g_str_has_prefix (type, "x-scheme-handler/http"))
@@ -63,9 +60,6 @@ QMap<QString, QVector<QString>> libertine_apps()
         containers << raw_containers[i];
     }
 
-    // FIXME: debugging output
-    qWarning() << Q_FUNC_INFO << "CONTAINERS:" << containers;
-
     g_strfreev(raw_containers);
 
     gchar ** app_ids = NULL;
@@ -76,9 +70,6 @@ QMap<QString, QVector<QString>> libertine_apps()
         }
     }
     g_strfreev(app_ids);
-
-    // FIXME: debugging output
-    qWarning() << Q_FUNC_INFO << "APP_IDs:" << appIds;
 
     QMap<QString, QVector<QString>> appMap;
 
@@ -129,9 +120,6 @@ QMap<QString, QVector<QString>> libertine_apps()
             }
         }
     }
-    //
-    // FIXME: debugging output
-    qWarning() << Q_FUNC_INFO << "APP_MAP:" << appMap;
 
     g_free(dir);
     g_free(file);
@@ -150,9 +138,6 @@ QStringList libertine_app_ids(QString type)
         if (appMap.value(a).contains(type) || type == "all")
             results << a;
     }
-
-    // FIXME: debugging output
-    qWarning() << Q_FUNC_INFO << "APPS:" << results;
 
     return results;
 }

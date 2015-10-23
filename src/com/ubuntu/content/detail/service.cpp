@@ -392,7 +392,6 @@ void cucd::Service::handle_imports(int state)
             gint i = 0;
             Q_FOREACH (QVariant item, items) {
                 urls[i] = g_str_to_ascii(copy_to_store(item.value<cuc::Item>().url().toString(), transfer->Store()).toStdString().c_str(), NULL);
-                qWarning() << "URI:" << urls[i];
                 i++;
             }
             uris = (gchar **)urls;
@@ -470,7 +469,6 @@ void cucd::Service::handle_exports(int state)
         else
             transfer->SetSourceStartedByContentHub(true);
 
-        // FIXME: add files
         gchar ** uris = NULL;
         if (d->registry->peer_is_legacy(transfer->destination())) {
             TRACE() << Q_FUNC_INFO << "Destination is a legacy app, collecting";
@@ -482,7 +480,6 @@ void cucd::Service::handle_exports(int state)
             gint i = 0;
             Q_FOREACH (QVariant item, items) {
                 urls[i] = g_str_to_ascii(copy_to_store(item.value<cuc::Item>().url().toString(), transfer->Store()).toStdString().c_str(), NULL);
-                qWarning() << "URI:" << urls[i];
                 i++;
             }
             uris = (gchar **)urls;

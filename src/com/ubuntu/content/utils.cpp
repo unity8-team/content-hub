@@ -32,6 +32,7 @@
 #include "debug.h"
 #include "com/ubuntu/content/type.h"
 #include <unistd.h>
+#include <liblibertine/libertine.h>
 
 #include <sys/apparmor.h>
 /* need to be exposed in libapparmor but for now ... */
@@ -242,6 +243,19 @@ bool check_profile_read(QString profile, QString path)
     TRACE() << "NOT ALLOWED:" << QString::number(allowed);
     return false;
 
+}
+
+QString shared_dir_for_peer(QString peer)
+{
+    TRACE() << Q_FUNC_INFO << "PEER:" << peer;
+    QString container = peer.split("_")[0];
+    if (container.isEmpty())
+        return QString();
+    QString home_path = libertine_container_home_path(container.toStdString().c_str());
+    if (home_path.isEmpty())
+        return QString();
+    QString path = home_path + "/shared";
+    return path;
 }
 
 }

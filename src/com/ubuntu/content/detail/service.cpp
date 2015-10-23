@@ -385,13 +385,14 @@ void cucd::Service::handle_imports(int state)
         gchar ** uris = NULL;
         if (d->registry->peer_is_legacy(transfer->destination())) {
             TRACE() << Q_FUNC_INFO << "Destination is a legacy app, collecting";
-            // FIXME: Set store different depending on type
-            transfer->SetStore(QStandardPaths::writableLocation(QStandardPaths::DocumentsLocation) + "/HubIncoming/");
+            transfer->SetStore(shared_dir_for_peer(transfer->destination()));
             auto items = transfer->Collect();
             gchar* urls[2] = {0};
             gint i = 0;
             Q_FOREACH (QVariant item, items) {
-                urls[i] = g_str_to_ascii(copy_to_store(item.value<cuc::Item>().url().toString(), transfer->Store()).toStdString().c_str(), NULL);
+                QString s = copy_to_store(item.value<cuc::Item>().url().toString(), transfer->Store()).split("/shared")[1];
+                QUrl u = QUrl::fromLocalFile(QStandardPaths::writableLocation(QStandardPaths::HomeLocation) + "/shared" + s);
+                urls[i] = g_str_to_ascii(u.toString().toStdString().c_str(), NULL);
                 i++;
             }
             uris = (gchar **)urls;
@@ -472,14 +473,15 @@ void cucd::Service::handle_exports(int state)
         gchar ** uris = NULL;
         if (d->registry->peer_is_legacy(transfer->destination())) {
             TRACE() << Q_FUNC_INFO << "Destination is a legacy app, collecting";
-            // FIXME: Set store different depending on type
-            transfer->SetStore(QStandardPaths::writableLocation(QStandardPaths::DocumentsLocation) + "/HubIncoming/");
+            transfer->SetStore(shared_dir_for_peer(transfer->destination()));
             
             auto items = transfer->Collect();
             gchar* urls[2] = {0};
             gint i = 0;
             Q_FOREACH (QVariant item, items) {
-                urls[i] = g_str_to_ascii(copy_to_store(item.value<cuc::Item>().url().toString(), transfer->Store()).toStdString().c_str(), NULL);
+                QString s = copy_to_store(item.value<cuc::Item>().url().toString(), transfer->Store()).split("/shared")[1];
+                QUrl u = QUrl::fromLocalFile(QStandardPaths::writableLocation(QStandardPaths::HomeLocation) + "/shared" + s);
+                urls[i] = g_str_to_ascii(u.toString().toStdString().c_str(), NULL);
                 i++;
             }
             uris = (gchar **)urls;

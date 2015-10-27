@@ -101,6 +101,8 @@ struct cuc::Peer::Private
                             iconFile.close();
                         }
                     }
+
+                    qWarning() << Q_FUNC_INFO << iconPath;
                 }
             }
             g_free(dir);
@@ -212,6 +214,7 @@ QDBusArgument &operator<<(QDBusArgument &argument, const cuc::Peer& peer)
     argument.beginStructure();
     argument << peer.id() << peer.name() << peer.iconData() << peer.iconName() << peer.isDefaultPeer() << peer.legacy();
     argument.endStructure();
+    qWarning() << Q_FUNC_INFO << peer.iconName();
     return argument;
 }
 
@@ -228,6 +231,8 @@ const QDBusArgument &operator>>(const QDBusArgument &argument, cuc::Peer &peer)
     argument.beginStructure();
     argument >> id >> name >> ic >> iconName >> isDefaultPeer >> legacy;
     argument.endStructure();
+
+    qWarning() << Q_FUNC_INFO << iconName;
 
     peer = cuc::Peer{id, name, ic, iconName, isDefaultPeer, legacy};
     return argument;

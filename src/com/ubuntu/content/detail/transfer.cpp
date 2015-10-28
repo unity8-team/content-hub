@@ -44,6 +44,7 @@ struct cucd::Transfer::Private
             direction(direction),
             selection_type(cuc::Transfer::single),
             source_started_by_content_hub(false),
+            should_be_started_by_content_hub(true),
             content_type(content_type)
     {
     }
@@ -57,6 +58,7 @@ struct cucd::Transfer::Private
     int selection_type;
     QVariantList items;
     bool source_started_by_content_hub;
+    bool should_be_started_by_content_hub;
     QString download_id;
     const QString content_type;
 };
@@ -390,6 +392,18 @@ void cucd::Transfer::SetSourceStartedByContentHub(bool started)
 bool com::ubuntu::content::detail::Transfer::WasSourceStartedByContentHub() const
 {
     return d->source_started_by_content_hub;
+}
+
+/* sets, if the dest app should be invoked by the content hub */
+void cucd::Transfer::SetShouldBeStartedByContentHub(bool start)
+{
+    d->should_be_started_by_content_hub = start;
+}
+
+/* returns if the dest app should be invoked by the content hub */
+bool com::ubuntu::content::detail::Transfer::ShouldBeStartedByContentHub() const
+{
+    return d->should_be_started_by_content_hub;
 }
 
 QString cucd::Transfer::ContentType()

@@ -201,7 +201,10 @@ void action_dismiss(NotifyNotification *notification, char *action, gpointer dat
     TRACE() << Q_FUNC_INFO;
     Q_UNUSED(notification);
     Q_UNUSED(action);
-    Q_UNUSED(data);
+
+    cucd::Transfer* t = (cucd::Transfer*)data;
+    t->SetShouldBeStartedByContentHub(false);
+    t->Charge(QVariantList());
 }
 
 void action_accept(NotifyNotification *notification, char *action, gpointer data)
@@ -398,7 +401,8 @@ void cucd::Service::handle_imports(int state)
             uris = (gchar **)urls;
         }
 
-        d->app_manager->invoke_application(transfer->destination().toStdString(), uris);
+        if (transfer->ShouldBeStartedByContentHub())
+            d->app_manager->invoke_application(transfer->destination().toStdString(), uris);
 
         Q_FOREACH (RegHandler *r, d->handlers)
         {
@@ -487,7 +491,8 @@ void cucd::Service::handle_exports(int state)
             uris = (gchar **)urls;
         }
 
-        d->app_manager->invoke_application(transfer->destination().toStdString(), uris);
+        if (transfer->ShouldBeStartedByContentHub())
+            d->app_manager->invoke_application(transfer->destination().toStdString(), uris);
 
         Q_FOREACH (RegHandler *r, d->handlers)
         {

@@ -55,6 +55,8 @@ class Transfer : public QObject, protected QDBusContext
 
     void SetSourceStartedByContentHub(bool started);
     bool WasSourceStartedByContentHub() const;
+    void SetShouldBeStartedByContentHub(bool start);
+    bool ShouldBeStartedByContentHub() const;
 
 Q_SIGNALS:
     void StateChanged(int State);

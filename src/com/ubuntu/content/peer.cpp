@@ -57,8 +57,8 @@ struct cuc::Peer::Private
                     if (iconName == QString("firefox")) {
                         iconName = QString(dir) + "/pixmaps/firefox.png";
                     }
-                    if (QFile::exists(iconName)) {
-                        QFile iconFile(iconName);
+                    if (QFile::exists(QString(dir) + iconName)) {
+                        QFile iconFile(QString(dir) + iconName);
                         if(iconFile.open(QIODevice::ReadOnly)) {
                             iconData = iconFile.readAll();
                             iconFile.close();

@@ -38,6 +38,7 @@ include_directories(
     ${NIH_INCLUDE_DIRS}
     ${NIH_DBUS_INCLUDE_DIRS}
     ${DBUS_INCLUDE_DIRS}
+    ${GLIB_INCLUDE_DIRS}
 )
 
 set(PLUGIN_HDRS
@@ -79,6 +80,7 @@ target_link_libraries(
     content-hub
     ${NIH_LIBRARIES}
     ${NIH_DBUS_LIBRARIES}
+    ${GLIB_LIBRARIES}
 )
 
 install(TARGETS ${PLUGIN} DESTINATION ${CONTENT_HUB_IMPORTS_DIR})

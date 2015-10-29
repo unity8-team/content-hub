@@ -26,6 +26,7 @@ include_directories(
   ${NIH_INCLUDE_DIRS}
   ${NIH_DBUS_INCLUDE_DIRS}
   ${UBUNTU_LAUNCH_INCLUDE_DIRS}
+  ${LIBERTINE_INCLUDE_DIRS}
   ${UBUNTU_DOWNLOAD_MANAGER_INCLUDE_DIRS}
   ${NOTIFY_INCLUDE_DIRS}
   ${APPARMOR_INCLUDE_DIRS}
@@ -101,6 +102,7 @@ qt5_use_modules(content-hub Core DBus Gui)
 
 target_link_libraries(content-hub
     ${UBUNTU_LAUNCH_LDFLAGS}
+    ${LIBERTINE_LDFLAGS}
     ${NIH_LIBRARIES}
     ${NIH_DBUS_LIBRARIES}
     ${GIO_LIBRARIES}

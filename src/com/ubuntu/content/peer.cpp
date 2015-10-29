@@ -26,7 +26,7 @@ namespace cuc = com::ubuntu::content;
 
 struct cuc::Peer::Private
 {
-    Private (QString id, bool isDefaultPeer) : id(id), isDefaultPeer(isDefaultPeer)
+    Private (QString id, bool isDefaultPeer, bool legacy) : id(id), isDefaultPeer(isDefaultPeer), legacy(legacy)
     {
         TRACE() << Q_FUNC_INFO << id;
         if (not id.isEmpty()) {
@@ -36,10 +36,11 @@ struct cuc::Peer::Private
             GDesktopAppInfo* app;
 
             if (ubuntu_app_launch_application_info(id.toStdString().c_str(), &dir, &file)) {
-                TRACE() << "DIR:" << QString::fromUtf8(dir);
-                TRACE() << "FILE:" << QString::fromUtf8(file);
-                TRACE() << "PATH:" << QString::fromUtf8(g_strjoin("/", dir, file, NULL));
                 app = g_desktop_app_info_new_from_filename (g_strjoin("/", dir, file, NULL));
+                if (QString::fromUtf8(dir).contains("libertine-container")) {
+                    TRACE() << Q_FUNC_INFO << "Legacy app detected";
+                    legacy = true;
+                }
 
                 Q_UNUSED(app);
 
@@ -58,16 +59,19 @@ struct cuc::Peer::Private
                                                                            NULL,
                                                                            &error));
                     TRACE() << Q_FUNC_INFO << "name:" << name;
-                    iconName = QString::fromUtf8 (g_key_file_get_locale_string(key_file,
-                                                                               G_KEY_FILE_DESKTOP_GROUP,
-                                                                               G_KEY_FILE_DESKTOP_KEY_ICON,
-                                                                               NULL,
-                                                                               &error));
-                    if (iconName.startsWith("/"))
-                        iconPath = iconName;
-                    else
-                        iconPath = QString::fromUtf8 (dir) + "/" + iconName;
-
+                    if (!legacy) {
+                        iconName = QString::fromUtf8 (g_key_file_get_locale_string(key_file,
+                                                                                   G_KEY_FILE_DESKTOP_GROUP,
+                                                                                   G_KEY_FILE_DESKTOP_KEY_ICON,
+                                                                                   NULL,
+                                                                                   &error));
+                        if (iconName.startsWith("/"))
+                            iconPath = iconName;
+                        else
+                            iconPath = QString::fromUtf8 (dir) + "/" + iconName;
+                    } else {
+                        iconPath = "/usr/share/content-hub/icons/xorg.png";
+                    }
                     TRACE() << Q_FUNC_INFO << "iconName:" << iconName;
                     if (QFile::exists(iconPath)) {
                         QFile iconFile(iconPath);
@@ -76,6 +80,7 @@ struct cuc::Peer::Private
                             iconFile.close();
                         }
                     }
+
                 }
             }
             g_free(dir);
@@ -83,7 +88,7 @@ struct cuc::Peer::Private
         }
     }
 
-    Private (QString id, QString name, QByteArray iconData, QString iconName, bool isDefaultPeer) : id(id), name(name), iconData(iconData), iconName(iconName), isDefaultPeer(isDefaultPeer)
+    Private (QString id, QString name, QByteArray iconData, QString iconName, bool isDefaultPeer, bool legacy) : id(id), name(name), iconData(iconData), iconName(iconName), isDefaultPeer(isDefaultPeer), legacy(legacy)
     {
         TRACE() << Q_FUNC_INFO << id;
     }
@@ -93,6 +98,7 @@ struct cuc::Peer::Private
     QByteArray iconData;
     QString iconName;
     bool isDefaultPeer;
+    bool legacy;
 };
 
 const cuc::Peer& cuc::Peer::unknown()
@@ -101,12 +107,12 @@ const cuc::Peer& cuc::Peer::unknown()
     return peer;
 }
 
-cuc::Peer::Peer(const QString& id, bool isDefaultPeer, QObject* parent) : QObject(parent), d(new cuc::Peer::Private{id, isDefaultPeer})
+cuc::Peer::Peer(const QString& id, bool isDefaultPeer, bool legacy, QObject* parent) : QObject(parent), d(new cuc::Peer::Private{id, isDefaultPeer, legacy})
 {
     TRACE() << Q_FUNC_INFO;
 }
 
-cuc::Peer::Peer(const QString& id, const QString& name, QByteArray& iconData, const QString& iconName, bool isDefaultPeer, QObject* parent) : QObject(parent), d(new cuc::Peer::Private{id, name, iconData, iconName, isDefaultPeer})
+cuc::Peer::Peer(const QString& id, const QString& name, QByteArray& iconData, const QString& iconName, bool isDefaultPeer, bool legacy, QObject* parent) : QObject(parent), d(new cuc::Peer::Private{id, name, iconData, iconName, isDefaultPeer, legacy})
 {
     TRACE() << Q_FUNC_INFO;
 }
@@ -176,10 +182,15 @@ bool cuc::Peer::isDefaultPeer() const
     return d->isDefaultPeer;
 }
 
+bool cuc::Peer::legacy() const
+{
+    return d->legacy;
+}
+
 QDBusArgument &operator<<(QDBusArgument &argument, const cuc::Peer& peer)
 {
     argument.beginStructure();
-    argument << peer.id() << peer.name() << peer.iconData() << peer.iconName() << peer.isDefaultPeer();
+    argument << peer.id() << peer.name() << peer.iconData() << peer.iconName() << peer.isDefaultPeer() << peer.legacy();
     argument.endStructure();
     return argument;
 }
@@ -192,11 +203,12 @@ const QDBusArgument &operator>>(const QDBusArgument &argument, cuc::Peer &peer)
     QByteArray ic;
     QString iconName;
     bool isDefaultPeer;
+    bool legacy;
 
     argument.beginStructure();
-    argument >> id >> name >> ic >> iconName >> isDefaultPeer;
+    argument >> id >> name >> ic >> iconName >> isDefaultPeer >> legacy;
     argument.endStructure();
 
-    peer = cuc::Peer{id, name, ic, iconName, isDefaultPeer};
+    peer = cuc::Peer{id, name, ic, iconName, isDefaultPeer, legacy};
     return argument;
 }

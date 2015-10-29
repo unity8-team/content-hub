@@ -41,7 +41,7 @@ public:
     Hook(com::ubuntu::content::detail::PeerRegistry *registry, QObject *parent = 0);
     ~Hook();
 
-public slots:
+public Q_SLOTS:
     bool return_error(QString err = "");
     void run();
     bool add_peer(QFileInfo);

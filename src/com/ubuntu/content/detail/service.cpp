@@ -201,7 +201,10 @@ void action_dismiss(NotifyNotification *notification, char *action, gpointer dat
     TRACE() << Q_FUNC_INFO;
     Q_UNUSED(notification);
     Q_UNUSED(action);
-    Q_UNUSED(data);
+
+    cucd::Transfer* t = (cucd::Transfer*)data;
+    t->SetShouldBeStartedByContentHub(false);
+    t->Charge(QVariantList());
 }
 
 void action_accept(NotifyNotification *notification, char *action, gpointer data)
@@ -372,7 +375,8 @@ void cucd::Service::handle_imports(int state)
             }
         }
 
-        d->app_manager->invoke_application(transfer->source().toStdString());
+        gchar ** uris = NULL;
+        d->app_manager->invoke_application(transfer->source().toStdString(), uris);
     }
 
     if (state == cuc::Transfer::charged)
@@ -381,7 +385,24 @@ void cucd::Service::handle_imports(int state)
         if (transfer->WasSourceStartedByContentHub())
             d->app_manager->stop_application(transfer->source().toStdString());
         
-        d->app_manager->invoke_application(transfer->destination().toStdString());
+        gchar ** uris = NULL;
+        if (d->registry->peer_is_legacy(transfer->destination())) {
+            TRACE() << Q_FUNC_INFO << "Destination is a legacy app, collecting";
+            transfer->SetStore(shared_dir_for_peer(transfer->destination()));
+            auto items = transfer->Collect();
+            gchar* urls[2] = {0};
+            gint i = 0;
+            Q_FOREACH (QVariant item, items) {
+                QString s = copy_to_store(item.value<cuc::Item>().url().toString(), transfer->Store()).split("/shared")[1];
+                QUrl u = QUrl::fromLocalFile(QStandardPaths::writableLocation(QStandardPaths::HomeLocation) + "/shared" + s);
+                urls[i] = g_str_to_ascii(u.toString().toStdString().c_str(), NULL);
+                i++;
+            }
+            uris = (gchar **)urls;
+        }
+
+        if (transfer->ShouldBeStartedByContentHub())
+            d->app_manager->invoke_application(transfer->destination().toStdString(), uris);
 
         Q_FOREACH (RegHandler *r, d->handlers)
         {
@@ -420,7 +441,8 @@ void cucd::Service::handle_imports(int state)
             if (shouldStop)
                 d->app_manager->stop_application(transfer->source().toStdString());            
         }
-        d->app_manager->invoke_application(transfer->destination().toStdString());
+        gchar ** uris = NULL;
+        d->app_manager->invoke_application(transfer->destination().toStdString(), uris);
     }
 }
 
@@ -452,7 +474,25 @@ void cucd::Service::handle_exports(int state)
         else
             transfer->SetSourceStartedByContentHub(true);
 
-        d->app_manager->invoke_application(transfer->destination().toStdString());
+        gchar ** uris = NULL;
+        if (d->registry->peer_is_legacy(transfer->destination())) {
+            TRACE() << Q_FUNC_INFO << "Destination is a legacy app, collecting";
+            transfer->SetStore(shared_dir_for_peer(transfer->destination()));
+            
+            auto items = transfer->Collect();
+            gchar* urls[2] = {0};
+            gint i = 0;
+            Q_FOREACH (QVariant item, items) {
+                QString s = copy_to_store(item.value<cuc::Item>().url().toString(), transfer->Store()).split("/shared")[1];
+                QUrl u = QUrl::fromLocalFile(QStandardPaths::writableLocation(QStandardPaths::HomeLocation) + "/shared" + s);
+                urls[i] = g_str_to_ascii(u.toString().toStdString().c_str(), NULL);
+                i++;
+            }
+            uris = (gchar **)urls;
+        }
+
+        if (transfer->ShouldBeStartedByContentHub())
+            d->app_manager->invoke_application(transfer->destination().toStdString(), uris);
 
         Q_FOREACH (RegHandler *r, d->handlers)
         {
@@ -494,7 +534,8 @@ void cucd::Service::handle_exports(int state)
             if (shouldStop)
                 d->app_manager->stop_application(transfer->destination().toStdString());
         }
-        d->app_manager->invoke_application(transfer->source().toStdString());
+        gchar ** uris = NULL;
+        d->app_manager->invoke_application(transfer->source().toStdString(), uris);
     }
 }
 

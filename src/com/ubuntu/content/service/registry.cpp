@@ -19,7 +19,130 @@
 #include "debug.h"
 #include "registry.h"
 #include "utils.cpp"
+#include <QMap>
+#include <QVector>
+#include <com/ubuntu/content/type.h>
+#include <gio/gdesktopappinfo.h>
+#include <libertine.h>
 #include <ubuntu-app-launch.h>
+
+// Begin anonymous namespace
+namespace {
+
+cuc::Type mime_to_wellknown_type (const char * type)
+{
+    TRACE() << Q_FUNC_INFO << "TYPE:" << type;
+
+    if (QString(type).contains("document"))
+        return cuc::Type::Known::documents();
+    else if (g_str_has_prefix (type, "x-scheme-handler/http"))
+        return cuc::Type::Known::links();
+    else if (g_str_has_prefix (type, "audio"))
+        return cuc::Type::Known::music();
+    else if (g_str_has_prefix (type, "image"))
+        return cuc::Type::Known::pictures();
+    else if (g_str_has_prefix (type, "video"))
+        return cuc::Type::Known::videos();
+    return cuc::Type::unknown();
+}
+
+QMap<QString, QVector<QString>> libertine_apps()
+{
+    TRACE() << Q_FUNC_INFO;
+    QStringList containers;
+    QStringList appIds;
+    char * dir = nullptr;
+    char * file = nullptr;
+    bool ret;
+    gchar ** raw_containers = libertine_list_containers();
+
+    for (int i = 0; raw_containers[i]; i++) {
+        containers << raw_containers[i];
+    }
+
+    g_strfreev(raw_containers);
+
+    gchar ** app_ids = NULL;
+    Q_FOREACH(QString container, containers) {
+        gchar ** app_ids = libertine_list_apps_for_container(container.toStdString().c_str());
+        for (int i = 0; app_ids[i]; i++) {
+            appIds << app_ids[i];
+        }
+    }
+    g_strfreev(app_ids);
+
+    QMap<QString, QVector<QString>> appMap;
+
+    Q_FOREACH(QString app, appIds)
+    {
+        ret = ubuntu_app_launch_application_info(app.toStdString().c_str(), &dir, &file);
+        if (ret)
+        {
+            GKeyFile *key_file = g_key_file_new();
+            GError *error = NULL;
+            if (!g_key_file_load_from_file(key_file,
+                                           g_strjoin("/", dir, file, NULL),
+                                           G_KEY_FILE_NONE,
+                                           &error)) {
+                qWarning() << "ERROR:" <<error->message;
+            } else {
+                /* FIXME: we should hide NoDisplay and honor ShownIn
+                if (g_desktop_app_info_get_nodisplay (appInfo))
+                    continue;
+
+                if (not g_app_info_should_show (G_APP_INFO(appInfo)))
+                    continue;
+                */
+
+                gchar ** types = g_key_file_get_locale_string_list(key_file,
+                                                                   G_KEY_FILE_DESKTOP_GROUP,
+                                                                   G_KEY_FILE_DESKTOP_KEY_MIME_TYPE,
+                                                                   NULL,
+                                                                   NULL,
+                                                                   &error);
+
+                if (types == NULL)
+                    continue;
+                cuc::Type type = cuc::Type::unknown();
+                for (int i = 0; types[i]; i++) {
+                    type = mime_to_wellknown_type(types[i]);
+                    if (type != cuc::Type::unknown()) {
+                        QVector<QString> t;
+                        t << type.id();
+                        if (not appMap.keys().contains(app)) {
+                            appMap.insert(app, t);
+                        } else if (not appMap.value(app).contains(type.id())){
+                            t << appMap.value(app);
+                            appMap.insert(app, t);
+                        }
+                    }
+                }
+            }
+        }
+    }
+
+    g_free(dir);
+    g_free(file);
+    return appMap;
+}
+
+QStringList libertine_app_ids(QString type)
+{
+    TRACE() << Q_FUNC_INFO << "TYPE:" << type;
+    QStringList results;
+
+    auto appMap = libertine_apps();
+
+    Q_FOREACH (QString a, appMap.keys())
+    {
+        if (appMap.value(a).contains(type) || type == "all")
+            results << a;
+    }
+
+    return results;
+}
+
+} // End anonymous namespace
 
 Registry::Registry() :
     m_defaultSources(new QGSettings("com.ubuntu.content.hub.default",
@@ -140,6 +263,7 @@ void Registry::enumerate_known_sources_for_type(cuc::Type type, const std::funct
     peers << m_sources->get("all").toStringList();
     if (type != cuc::Type::unknown() && valid_type(type))
         peers << m_sources->get(type.id()).toStringList();
+
     Q_FOREACH (QString k, peers)
     {
         TRACE() << Q_FUNC_INFO << k;
@@ -173,6 +297,9 @@ void Registry::enumerate_known_destinations_for_type(cuc::Type type, const std::
     peers << m_dests->get("all").toStringList();
     if (type != cuc::Type::unknown() && valid_type(type))
         peers << m_dests->get(type.id()).toStringList();
+
+    peers << libertine_app_ids(type.id());
+
     Q_FOREACH (QString k, peers)
     {
         TRACE() << Q_FUNC_INFO << k;
@@ -275,4 +402,8 @@ bool Registry::remove_peer(cuc::Peer peer)
         }
     }
     return ret;
+}
+bool Registry::peer_is_legacy(QString peer_id)
+{
+    return libertine_app_ids("all").contains(peer_id);
 }

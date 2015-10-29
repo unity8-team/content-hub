@@ -1,3 +1,17 @@
+content-hub (0.1+16.04.20151029.1-0ubuntu1) xenial; urgency=medium
+
+  [ CI Train Bot ]
+  * Resync trunk. added: po/et.po
+
+  [ Ken VanDine ]
+  * Drop the ElideMiddle in the ContentPeerPicker and add WordWrap to
+    match the grid in unity8
+  * Use libertine to query for apps installed in containers
+  * use ubuntu_app_launch_application_info to get the dir and filename
+    for desktop files
+
+ -- Ken VanDine <ken.vandine@canonical.com>  Thu, 29 Oct 2015 13:59:36 +0000
+
 content-hub (0.1+15.10.20150922-0ubuntu1) wily; urgency=medium
 
   [ Ken VanDine ]

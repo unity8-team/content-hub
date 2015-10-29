@@ -41,51 +41,47 @@ struct cuc::Peer::Private
                     TRACE() << Q_FUNC_INFO << "Legacy app detected";
                     legacy = true;
                 }
-            } else {
-                QString desktop_id(id + ".desktop");
-                app = g_desktop_app_info_new(desktop_id.toLocal8Bit().data());
-            }
 
-            Q_UNUSED(app);
+                Q_UNUSED(app);
 
-            GKeyFile *key_file = g_key_file_new();
-            GError *error = NULL;
-            if (!g_key_file_load_from_file(key_file,
-                                           g_strjoin("/", dir, file, NULL),
-                                           G_KEY_FILE_NONE,
-                                           &error)) {
-                qWarning() << "ERROR:" <<error->message;
-            } else {
-                QString iconPath;
-                name = QString::fromUtf8 (g_key_file_get_locale_string(key_file,
-                                                                       G_KEY_FILE_DESKTOP_GROUP,
-                                                                       G_KEY_FILE_DESKTOP_KEY_NAME,
-                                                                       NULL,
-                                                                       &error));
-                TRACE() << Q_FUNC_INFO << "name:" << name;
-                if (!legacy) {
-                    iconName = QString::fromUtf8 (g_key_file_get_locale_string(key_file,
-                                                                               G_KEY_FILE_DESKTOP_GROUP,
-                                                                               G_KEY_FILE_DESKTOP_KEY_ICON,
-                                                                               NULL,
-                                                                               &error));
-                    if (iconName.startsWith("/"))
-                        iconPath = iconName;
-                    else
-                        iconPath = QString::fromUtf8 (dir) + "/" + iconName;
+                GKeyFile *key_file = g_key_file_new();
+                GError *error = NULL;
+                if (!g_key_file_load_from_file(key_file,
+                                               g_strjoin("/", dir, file, NULL),
+                                               G_KEY_FILE_NONE,
+                                               &error)) {
+                    qWarning() << "ERROR:" <<error->message;
                 } else {
-                    iconPath = "/usr/share/content-hub/icons/xorg.png";
-                }
-                TRACE() << Q_FUNC_INFO << "iconName:" << iconName;
-                if (QFile::exists(iconPath)) {
-                    QFile iconFile(iconPath);
-                    if(iconFile.open(QIODevice::ReadOnly)) {
-                        iconData = iconFile.readAll();
-                        iconFile.close();
+                    QString iconPath;
+                    name = QString::fromUtf8 (g_key_file_get_locale_string(key_file,
+                                                                           G_KEY_FILE_DESKTOP_GROUP,
+                                                                           G_KEY_FILE_DESKTOP_KEY_NAME,
+                                                                           NULL,
+                                                                           &error));
+                    TRACE() << Q_FUNC_INFO << "name:" << name;
+                    if (!legacy) {
+                        iconName = QString::fromUtf8 (g_key_file_get_locale_string(key_file,
+                                                                                   G_KEY_FILE_DESKTOP_GROUP,
+                                                                                   G_KEY_FILE_DESKTOP_KEY_ICON,
+                                                                                   NULL,
+                                                                                   &error));
+                        if (iconName.startsWith("/"))
+                            iconPath = iconName;
+                        else
+                            iconPath = QString::fromUtf8 (dir) + "/" + iconName;
+                    } else {
+                        iconPath = "/usr/share/content-hub/icons/xorg.png";
                     }
-                }
+                    TRACE() << Q_FUNC_INFO << "iconName:" << iconName;
+                    if (QFile::exists(iconPath)) {
+                        QFile iconFile(iconPath);
+                        if(iconFile.open(QIODevice::ReadOnly)) {
+                            iconData = iconFile.readAll();
+                            iconFile.close();
+                        }
+                    }
 
-                qWarning() << Q_FUNC_INFO << iconPath;
+                }
             }
             g_free(dir);
             g_free(file);
@@ -196,7 +192,6 @@ QDBusArgument &operator<<(QDBusArgument &argument, const cuc::Peer& peer)
     argument.beginStructure();
     argument << peer.id() << peer.name() << peer.iconData() << peer.iconName() << peer.isDefaultPeer() << peer.legacy();
     argument.endStructure();
-    qWarning() << Q_FUNC_INFO << peer.iconName();
     return argument;
 }
 
@@ -213,8 +208,6 @@ const QDBusArgument &operator>>(const QDBusArgument &argument, cuc::Peer &peer)
     argument.beginStructure();
     argument >> id >> name >> ic >> iconName >> isDefaultPeer >> legacy;
     argument.endStructure();
-
-    qWarning() << Q_FUNC_INFO << iconName;
 
     peer = cuc::Peer{id, name, ic, iconName, isDefaultPeer, legacy};
     return argument;

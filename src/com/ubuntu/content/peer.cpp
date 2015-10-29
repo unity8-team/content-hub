@@ -40,29 +40,9 @@ struct cuc::Peer::Private
                 TRACE() << "FILE:" << QString::fromUtf8(file);
                 TRACE() << "PATH:" << QString::fromUtf8(g_strjoin("/", dir, file, NULL));
                 app = g_desktop_app_info_new_from_filename (g_strjoin("/", dir, file, NULL));
-            } else {
-                QString desktop_id(id + ".desktop");
-                app = g_desktop_app_info_new(desktop_id.toLocal8Bit().data());
-            }
-            if (G_IS_APP_INFO(app)) {
-                TRACE() << Q_FUNC_INFO << "Has appinfo";
-                name = QString::fromUtf8(g_app_info_get_display_name(G_APP_INFO(app)));
-                TRACE() << Q_FUNC_INFO << "name:" << name;
-                GIcon* ic = g_app_info_get_icon(G_APP_INFO(app));
-                if (G_IS_ICON(ic))
-                {
-                    iconName = QString::fromUtf8(g_icon_to_string(ic));
-                    if (QFile::exists(iconName)) {
-                        QFile iconFile(iconName);
-                        if(iconFile.open(QIODevice::ReadOnly)) {
-                            iconData = iconFile.readAll();
-                            iconFile.close();
-                        }
-                    }
-                }
-                g_object_unref(app);
-            } else {
-                TRACE() << Q_FUNC_INFO << "No appinfo, falling back to keyfile";
+
+                Q_UNUSED(app);
+
                 GKeyFile *key_file = g_key_file_new();
                 GError *error = NULL;
                 if (!g_key_file_load_from_file(key_file,
@@ -71,6 +51,7 @@ struct cuc::Peer::Private
                                                &error)) {
                     qWarning() << "ERROR:" <<error->message;
                 } else {
+                    QString iconPath;
                     name = QString::fromUtf8 (g_key_file_get_locale_string(key_file,
                                                                            G_KEY_FILE_DESKTOP_GROUP,
                                                                            G_KEY_FILE_DESKTOP_KEY_NAME,
@@ -82,9 +63,14 @@ struct cuc::Peer::Private
                                                                                G_KEY_FILE_DESKTOP_KEY_ICON,
                                                                                NULL,
                                                                                &error));
+                    if (iconName.startsWith("/"))
+                        iconPath = iconName;
+                    else
+                        iconPath = QString::fromUtf8 (dir) + "/" + iconName;
+
                     TRACE() << Q_FUNC_INFO << "iconName:" << iconName;
-                    if (QFile::exists(QString::fromUtf8 (dir) + "/" + iconName)) {
-                        QFile iconFile(QString::fromUtf8 (dir) + "/" + iconName);
+                    if (QFile::exists(iconPath)) {
+                        QFile iconFile(iconPath);
                         if(iconFile.open(QIODevice::ReadOnly)) {
                             iconData = iconFile.readAll();
                             iconFile.close();

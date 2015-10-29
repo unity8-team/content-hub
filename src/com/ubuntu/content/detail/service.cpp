@@ -166,6 +166,13 @@ QDBusVariant cucd::Service::DefaultSourceForType(const QString& type_id)
     return QDBusVariant(QVariant::fromValue(peer));
 }
 
+QDBusVariant cucd::Service::PeerForId(const QString& app_id)
+{
+    cuc::Peer peer = cuc::Peer{app_id};
+
+    return QDBusVariant(QVariant::fromValue(peer));
+}
+
 QDBusObjectPath cucd::Service::CreateImportFromPeer(const QString& peer_id, const QString& app_id, const QString& type_id)
 {
     TRACE() << Q_FUNC_INFO;

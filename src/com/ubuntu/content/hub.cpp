@@ -307,3 +307,15 @@ bool cuc::Hub::has_pending(QString peer_id)
 
     return reply.value();
 }
+
+cuc::Peer cuc::Hub::peer_for_app_id(QString app_id)
+{
+    auto reply = d->service->PeerForId(app_id);
+    reply.waitForFinished();
+
+    if (reply.isError())
+        return cuc::Peer::unknown();
+
+    auto peer = reply.value();
+    return qdbus_cast<cuc::Peer>(peer.variant());
+}

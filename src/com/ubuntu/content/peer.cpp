@@ -45,65 +45,47 @@ struct cuc::Peer::Private
                 QString desktop_id(id + ".desktop");
                 app = g_desktop_app_info_new(desktop_id.toLocal8Bit().data());
             }
-            if (G_IS_APP_INFO(app)) {
-                TRACE() << Q_FUNC_INFO << "Has appinfo";
-                name = QString::fromUtf8(g_app_info_get_display_name(G_APP_INFO(app)));
-                TRACE() << Q_FUNC_INFO << "name:" << name;
-                GIcon* ic = g_app_info_get_icon(G_APP_INFO(app));
-                if (G_IS_ICON(ic))
-                {
-                    iconName = QString::fromUtf8(g_icon_to_string(ic));
-                    /* Special case for firefox which doesn't have a themed icon */
-                    if (iconName == QString("firefox")) {
-                        iconName = QString(dir) + "/pixmaps/firefox.png";
-                    }
-                    if (QFile::exists(QString(dir) + iconName)) {
-                        QFile iconFile(QString(dir) + iconName);
-                        if(iconFile.open(QIODevice::ReadOnly)) {
-                            iconData = iconFile.readAll();
-                            iconFile.close();
-                        }
-                    }
-                }
-                g_object_unref(app);
-            } else {
-                TRACE() << Q_FUNC_INFO << "No appinfo, falling back to keyfile";
-                GKeyFile *key_file = g_key_file_new();
-                GError *error = NULL;
-                if (!g_key_file_load_from_file(key_file,
-                                               g_strjoin("/", dir, file, NULL),
-                                               G_KEY_FILE_NONE,
-                                               &error)) {
-                    qWarning() << "ERROR:" <<error->message;
-                } else {
-                    QString iconPath;
-                    name = QString::fromUtf8 (g_key_file_get_locale_string(key_file,
-                                                                           G_KEY_FILE_DESKTOP_GROUP,
-                                                                           G_KEY_FILE_DESKTOP_KEY_NAME,
-                                                                           NULL,
-                                                                           &error));
-                    TRACE() << Q_FUNC_INFO << "name:" << name;
-                    if (!legacy) {
-                        iconName = QString::fromUtf8 (g_key_file_get_locale_string(key_file,
-                                                                                   G_KEY_FILE_DESKTOP_GROUP,
-                                                                                   G_KEY_FILE_DESKTOP_KEY_ICON,
-                                                                                   NULL,
-                                                                                   &error));
-                        iconPath = QString::fromUtf8 (dir) + "/" + iconName;
-                    } else {
-                        iconPath = "/usr/share/content-hub/icons/xorg.png";
-                    }
-                    TRACE() << Q_FUNC_INFO << "iconName:" << iconName;
-                    if (QFile::exists(iconPath)) {
-                        QFile iconFile(iconPath);
-                        if(iconFile.open(QIODevice::ReadOnly)) {
-                            iconData = iconFile.readAll();
-                            iconFile.close();
-                        }
-                    }
 
-                    qWarning() << Q_FUNC_INFO << iconPath;
+            Q_UNUSED(app);
+
+            GKeyFile *key_file = g_key_file_new();
+            GError *error = NULL;
+            if (!g_key_file_load_from_file(key_file,
+                                           g_strjoin("/", dir, file, NULL),
+                                           G_KEY_FILE_NONE,
+                                           &error)) {
+                qWarning() << "ERROR:" <<error->message;
+            } else {
+                QString iconPath;
+                name = QString::fromUtf8 (g_key_file_get_locale_string(key_file,
+                                                                       G_KEY_FILE_DESKTOP_GROUP,
+                                                                       G_KEY_FILE_DESKTOP_KEY_NAME,
+                                                                       NULL,
+                                                                       &error));
+                TRACE() << Q_FUNC_INFO << "name:" << name;
+                if (!legacy) {
+                    iconName = QString::fromUtf8 (g_key_file_get_locale_string(key_file,
+                                                                               G_KEY_FILE_DESKTOP_GROUP,
+                                                                               G_KEY_FILE_DESKTOP_KEY_ICON,
+                                                                               NULL,
+                                                                               &error));
+                    if (iconName.startsWith("/"))
+                        iconPath = iconName;
+                    else
+                        iconPath = QString::fromUtf8 (dir) + "/" + iconName;
+                } else {
+                    iconPath = "/usr/share/content-hub/icons/xorg.png";
                 }
+                TRACE() << Q_FUNC_INFO << "iconName:" << iconName;
+                if (QFile::exists(iconPath)) {
+                    QFile iconFile(iconPath);
+                    if(iconFile.open(QIODevice::ReadOnly)) {
+                        iconData = iconFile.readAll();
+                        iconFile.close();
+                    }
+                }
+
+                qWarning() << Q_FUNC_INFO << iconPath;
             }
             g_free(dir);
             g_free(file);

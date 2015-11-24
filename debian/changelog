@@ -1,3 +1,14 @@
+content-hub (0.1+16.04.20151124-0ubuntu1) xenial; urgency=medium
+
+  [ CI Train Bot ]
+  * New rebuild forced.
+
+  [ Ken VanDine ]
+  * Added ogg file (the default Ubuntu ringtone) for testing music
+    exports and support music exports in content-hub-test-exporter
+
+ -- Ken VanDine <ken.vandine@canonical.com>  Tue, 24 Nov 2015 11:09:05 +0000
+
 content-hub (0.1+16.04.20151029.1-0ubuntu1) xenial; urgency=medium
 
   [ CI Train Bot ]

@@ -15,6 +15,6 @@
 # Authored by: Ken VanDine <ken.vandine@canonical.com>
 
 install(
-  FILES webbrowser-app.png clock.png Joker.vcf Stark,_Tony.vcf
+  FILES webbrowser-app.png clock.png Joker.vcf Stark,_Tony.vcf "Music Ringtone.ogg"
   DESTINATION ${CMAKE_INSTALL_DATADIR}/content-hub/testability/data
 )

@@ -54,6 +54,11 @@ void AutoExporter::handle_export(cuc::Transfer *transfer)
             if (transfer->selectionType() == cuc::Transfer::SelectionType::multiple) {
                 items << cuc::Item(QUrl("file:///usr/share/content-hub/testability/data/Stark,_Tony.vcf"));
             }
+        } else if (transfer->contentType() == cuc::Type::Known::music().id()) {
+            items << cuc::Item(QUrl("file:///usr/share/content-hub/testability/data/Music Ringtone.ogg"));
+            if (transfer->selectionType() == cuc::Transfer::SelectionType::multiple) {
+                items << cuc::Item(QUrl("file:///usr/share/content-hub/testability/data/Stark,_Tony.vcf"));
+            }
         } else {
             items << cuc::Item(QUrl("file:///usr/share/content-hub/testability/data/webbrowser-app.png"));
             if (transfer->selectionType() == cuc::Transfer::SelectionType::multiple) {

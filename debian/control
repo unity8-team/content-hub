@@ -23,6 +23,7 @@ Build-Depends: cmake,
                qtdeclarative5-dev-tools,
                qtdeclarative5-qtquick2-plugin,
                qtdeclarative5-test-plugin,
+               qtdeclarative5-ubuntu-ui-toolkit-plugin,
 Standards-Version: 3.9.4
 Section: libs
 Homepage: https://launchpad.net/content-hub

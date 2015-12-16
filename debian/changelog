@@ -1,3 +1,10 @@
+content-hub (0.1+16.04.20151216.1-0ubuntu1) xenial; urgency=medium
+
+  [ Michael Sheldon ]
+  * Set destination app-id as download metadata
+
+ -- CI Train Bot <ci-train-bot@canonical.com>  Wed, 16 Dec 2015 16:17:10 +0000
+
 content-hub (0.1+16.04.20151124-0ubuntu1) xenial; urgency=medium
 
   [ CI Train Bot ]

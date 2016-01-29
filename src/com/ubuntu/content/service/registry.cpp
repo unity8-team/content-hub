@@ -311,6 +311,7 @@ void Registry::enumerate_known_shares_for_type(cuc::Type type, const std::functi
 {
     TRACE() << Q_FUNC_INFO << type.id();
 
+    QStringList peers;
     peers << m_shares->get("all").toStringList();
     if (type != cuc::Type::unknown() && valid_type(type))
         peers << m_shares->get(type.id()).toStringList();

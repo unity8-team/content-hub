@@ -314,7 +314,12 @@ void Registry::enumerate_known_shares_for_type(cuc::Type type, const std::functi
     if (type == cuc::Type::unknown() || !valid_type(type))
         return;
 
-    Q_FOREACH (QString k, m_shares->get(type.id()).toStringList())
+    QStringList peers;
+    peers << m_shares->get(type.id()).toStringList();
+
+    peers << libertine_app_ids(type.id());
+
+    Q_FOREACH (QString k, peers)
     {
         TRACE() << Q_FUNC_INFO << k;
         for_each(cuc::Peer{k});

@@ -149,7 +149,7 @@ QVariantList cucd::Service::KnownSharesForType(const QString& type_id)
 {
     QVariantList result;
 
-    d->registry->enumerate_known_shares_for_type(
+    d->registry->enumerate_known_destinations_for_type(
         Type(type_id),
         [&result](const Peer& peer)
         {

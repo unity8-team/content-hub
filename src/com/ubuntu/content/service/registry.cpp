@@ -300,9 +300,6 @@ void Registry::enumerate_known_destinations_for_type(cuc::Type type, const std::
 
     peers << libertine_app_ids(type.id());
 
-    /* Get shares too */
-    peers << m_shares->get(type.id()).toStringList();
-
     Q_FOREACH (QString k, peers)
     {
         TRACE() << Q_FUNC_INFO << k;
@@ -314,10 +311,13 @@ void Registry::enumerate_known_shares_for_type(cuc::Type type, const std::functi
 {
     TRACE() << Q_FUNC_INFO << type.id();
 
-    if (type == cuc::Type::unknown() || !valid_type(type))
-        return;
+    peers << m_shares->get("all").toStringList();
+    if (type != cuc::Type::unknown() && valid_type(type))
+        peers << m_shares->get(type.id()).toStringList();
 
-    Q_FOREACH (QString k, m_shares->get(type.id()).toStringList())
+    peers << libertine_app_ids(type.id());
+
+    Q_FOREACH (QString k, peers)
     {
         TRACE() << Q_FUNC_INFO << k;
         for_each(cuc::Peer{k});

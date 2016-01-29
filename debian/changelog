@@ -1,3 +1,9 @@
+content-hub (0.1+16.04.20160129.1-0ubuntu1) xenial; urgency=medium
+
+  * Combine share and import peers (LP: #1539674)
+
+ -- Ken VanDine <ken.vandine@canonical.com>  Fri, 29 Jan 2016 17:31:56 +0000
+
 content-hub (0.1+16.04.20151216.1-0ubuntu1) xenial; urgency=medium
 
   [ Michael Sheldon ]

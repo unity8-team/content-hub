@@ -128,7 +128,7 @@ void ContentItem::setItem(const com::ubuntu::content::Item &item)
 }
 
 /*!
- * \qmlmethod string ContentItem::toDataURI
+ * \qmlmethod string ContentItem::toDataURI()
  *  Returns the ContentItem base64 encoded with the mimetype as a 
  *  properly formated dataUri
  */

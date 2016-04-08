@@ -42,6 +42,7 @@ class ContentTransfer : public QObject
     Q_PROPERTY(QQmlListProperty<ContentItem> items READ items NOTIFY itemsChanged)
     Q_PROPERTY(QString downloadId READ downloadId WRITE setDownloadId NOTIFY downloadIdChanged)
     Q_PROPERTY(ContentType::Type contentType READ contentType CONSTANT)
+    Q_PROPERTY(QStringList mimeTypes READ mimeTypes CONSTANT)
     Q_PROPERTY(QString source READ source)
     Q_PROPERTY(QString destination READ destination)
 
@@ -94,6 +95,8 @@ public:
     void collectItems();
 
     ContentType::Type contentType() const;
+
+    QStringList mimeTypes() const;
 
     QString source();
     QString destination();

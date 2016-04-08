@@ -30,6 +30,7 @@ Item {
 
     property var handler
     property var contentType
+    property var mimeTypes
     property alias showTitle: header.visible
     property var peer
     property var customPeerModelLoader
@@ -103,6 +104,15 @@ Item {
             appPeers.model = peerModelLoader.item.peers;
         }
     }
+
+    onMimeTypesChanged: {
+        if (!customPeerModelLoader && peerModelLoader.item) {
+            appPeers.model = undefined; // Clear grid view
+            peerModelLoader.item.mimeTypes = root.mimeTypes;
+            appPeers.model = peerModelLoader.item.peers;
+        }
+    }
+
 
     Component {
         id: peerDelegate

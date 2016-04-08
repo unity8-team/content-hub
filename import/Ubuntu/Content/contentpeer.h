@@ -34,6 +34,7 @@ class ContentPeer : public QObject
     Q_PROPERTY(QString appId READ appId WRITE setAppId NOTIFY appIdChanged)
     Q_PROPERTY(ContentHandler::Handler handler READ handler WRITE setHandler NOTIFY handlerChanged)
     Q_PROPERTY(ContentType::Type contentType READ contentType WRITE setContentType NOTIFY contentTypeChanged)
+    Q_PROPERTY(QStringList mimeTypes READ mimeTypes WRITE setMimeTypes NOTIFY mimeTypesChanged)
     Q_PROPERTY(ContentTransfer::SelectionType selectionType READ selectionType WRITE setSelectionType NOTIFY selectionTypeChanged)
     Q_PROPERTY(QImage icon READ icon)
     Q_PROPERTY(bool isDefaultPeer READ isDefaultPeer)
@@ -59,6 +60,9 @@ public:
     ContentType::Type contentType();
     void setContentType(ContentType::Type contentType);
 
+    QStringList mimeTypes();
+    void setMimeTypes(QStringList mimeTypes);
+
     ContentTransfer::SelectionType selectionType();
     void setSelectionType(ContentTransfer::SelectionType selectionType);
 
@@ -78,6 +82,7 @@ private:
     com::ubuntu::content::Peer m_peer;
     ContentHandler::Handler m_handler;
     ContentType::Type m_contentType;
+    QStringList m_mimeTypes;
     ContentTransfer::SelectionType m_selectionType;
     bool m_explicit_peer;
     QImage m_icon;

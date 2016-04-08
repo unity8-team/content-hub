@@ -2,6 +2,15 @@
     "source": [
         "pictures",
         "contacts",
-        "music"
+        "music",
+	"audio/aac",
+	"audio/ac3",
+	"audio/flac",
+	"audio/mp2",
+	"audio/mp4",
+	"audio/mpeg",
+	"audio/ogg",
+	"audio/webm",
+	"audio/x-flac+ogg"
     ]
 }

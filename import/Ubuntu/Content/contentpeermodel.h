@@ -32,6 +32,7 @@ class ContentPeerModel : public QObject, public QQmlParserStatus
     Q_OBJECT
     Q_INTERFACES(QQmlParserStatus)
     Q_PROPERTY(ContentType::Type contentType READ contentType WRITE setContentType NOTIFY contentTypeChanged)
+    Q_PROPERTY(QStringList mimeTypes READ mimeTypes WRITE setMimeTypes NOTIFY mimeTypesChanged)
     Q_PROPERTY(ContentHandler::Handler handler READ handler WRITE setHandler NOTIFY handlerChanged)
     Q_PROPERTY(QQmlListProperty<ContentPeer> peers READ peers NOTIFY peersChanged)
 
@@ -43,12 +44,15 @@ public:
     ContentType::Type contentType();
     void setContentType(ContentType::Type contentType);
     void appendPeersForContentType(ContentType::Type contentType);
+    QStringList mimeTypes();
+    void setMimeTypes(QStringList mimeTypes);
     ContentHandler::Handler handler();
     void setHandler(ContentHandler::Handler handler);
     QQmlListProperty<ContentPeer> peers();
 
 Q_SIGNALS:
     void contentTypeChanged();
+    void contentMimeTypesChanged();
     void handlerChanged();
     void peersChanged();
     void findPeersCompleted();
@@ -59,6 +63,7 @@ public Q_SLOTS:
 private:
     com::ubuntu::content::Hub *m_hub;
     ContentType::Type m_contentType;
+    QStringList m_mimeTypes;
     ContentHandler::Handler m_handler;
     QList<ContentPeer *> m_peers;
     bool m_complete;

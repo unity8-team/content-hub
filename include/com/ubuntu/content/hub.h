@@ -51,10 +51,15 @@ class Hub : public QObject
 
     Q_INVOKABLE virtual void register_import_export_handler(ImportExportHandler* handler);
     Q_INVOKABLE virtual const Store* store_for_scope_and_type(Scope scope, Type type);
+    Q_INVOKABLE virtual const Store* store_for_scope_and_mimetype(Scope scope, QString mimetype);
     Q_INVOKABLE virtual Peer default_source_for_type(Type type);
+    Q_INVOKABLE virtual Peer default_source_for_mimetypes(QStringList mimetype);
     Q_INVOKABLE virtual QVector<Peer> known_sources_for_type(Type type);
+    Q_INVOKABLE virtual QVector<Peer> known_sources_for_mimetypes(QStringList mimetypes);
     Q_INVOKABLE virtual QVector<Peer> known_destinations_for_type(Type type);
+    Q_INVOKABLE virtual QVector<Peer> known_destinations_for_mimetype(QString mimetype);
     Q_INVOKABLE virtual QVector<Peer> known_shares_for_type(Type type);
+    Q_INVOKABLE virtual QVector<Peer> known_shares_for_mimetype(QString mimetype);
     Q_INVOKABLE virtual Transfer* create_import_from_peer(Peer peer);
     Q_INVOKABLE virtual Transfer* create_export_to_peer(Peer peer);
     Q_INVOKABLE virtual Transfer* create_share_to_peer(Peer peer);
@@ -62,10 +67,15 @@ class Hub : public QObject
     Q_INVOKABLE virtual void quit();
 
     Q_INVOKABLE virtual Transfer* create_import_from_peer_for_type(Peer peer, Type type);
+    Q_INVOKABLE virtual Transfer* create_import_from_peer_for_mimetype(Peer peer, QString mimetype);
     Q_INVOKABLE virtual Transfer* create_export_to_peer_for_type(Peer peer, Type type);
+    Q_INVOKABLE virtual Transfer* create_export_to_peer_for_mimetype(Peer peer, QString mimetype);
     Q_INVOKABLE virtual Transfer* create_share_to_peer_for_type(Peer peer, Type type);
+    Q_INVOKABLE virtual Transfer* create_share_to_peer_for_mimetype(Peer peer, QString mimetype);
     Q_INVOKABLE virtual bool has_pending(QString peer_id);
     Q_INVOKABLE virtual Peer peer_for_app_id(QString app_id);
+    Q_INVOKABLE virtual Type type_for_mimetype(QString mimetype);
+    Q_INVOKABLE virtual QStringList mimetypes_for_type(Type type);
        
   protected:
     Hub(QObject* = nullptr);

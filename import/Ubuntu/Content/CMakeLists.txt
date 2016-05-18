@@ -101,7 +101,7 @@ if(NOT ${CMAKE_CURRENT_BINARY_DIR} STREQUAL ${CMAKE_CURRENT_SOURCE_DIR})
 endif()
 
 add_custom_command(OUTPUT ${CMAKE_CURRENT_BINARY_DIR}/plugins.qmltypes
-    COMMAND ${QT_INSTALL_BINS}/qmlplugindump -notrelocatable Ubuntu.Content 1.1 ../../ > ${CMAKE_CURRENT_BINARY_DIR}/plugins.qmltypes
+    COMMAND ${QT_INSTALL_BINS}/qmlplugindump -noinstantiate -notrelocatable Ubuntu.Content 1.1 ../../ > ${CMAKE_CURRENT_BINARY_DIR}/plugins.qmltypes
     DEPENDS ${PLUGIN}
     WORKING_DIRECTORY "${CMAKE_CURRENT_BINARY_DIR}"
 )

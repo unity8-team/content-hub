@@ -1,3 +1,9 @@
+content-hub (0.1+16.04.20160309-0ubuntu1) xenial; urgency=medium
+
+  * Fix documentation for toDataURI method (LP: #1555116)
+
+ -- Michael Sheldon <michael.sheldon@canonical.com>  Wed, 09 Mar 2016 14:03:08 +0000
+
 content-hub (0.1+16.04.20160129.1-0ubuntu1) xenial; urgency=medium
 
   * Combine share and import peers (LP: #1539674)

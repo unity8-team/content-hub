@@ -38,6 +38,8 @@ public slots:
     Q_INVOKABLE void handle_import(cuc::Transfer*);
     Q_INVOKABLE void handle_export(cuc::Transfer*);
     Q_INVOKABLE void handle_share(cuc::Transfer*);
+    Q_INVOKABLE void handle_copy(cuc::Transfer*);
+    Q_INVOKABLE void handle_paste(cuc::Transfer*);
     Q_INVOKABLE void stateChanged();
     void setUrl(const QString&);
     void setText(const QString&);

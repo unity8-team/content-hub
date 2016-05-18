@@ -84,11 +84,15 @@ struct MockedHandler : public cuc::ImportExportHandler
         ON_CALL(*this, handle_import(_)).WillByDefault(Return());
         ON_CALL(*this, handle_export(_)).WillByDefault(Return());
         ON_CALL(*this, handle_share(_)).WillByDefault(Return());
+        ON_CALL(*this, handle_copy(_)).WillByDefault(Return());
+        ON_CALL(*this, handle_paste(_)).WillByDefault(Return());
     }
 
     MOCK_METHOD1(handle_import, void(cuc::Transfer*));
     MOCK_METHOD1(handle_export, void(cuc::Transfer*));
     MOCK_METHOD1(handle_share, void(cuc::Transfer*));
+    MOCK_METHOD1(handle_copy, void(cuc::Transfer*));
+    MOCK_METHOD1(handle_paste, void(cuc::Transfer*));
 };
 }
 

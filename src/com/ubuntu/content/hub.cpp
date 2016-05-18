@@ -331,3 +331,14 @@ cuc::Peer cuc::Hub::peer_for_app_id(QString app_id)
     auto peer = reply.value();
     return qdbus_cast<cuc::Peer>(peer.variant());
 }
+
+void cuc::Hub::create_paste(const char * data) {
+    Q_UNUSED(data);
+}
+
+const char* cuc::Hub::get_latest_paste() {
+    qWarning() << Q_FUNC_INFO;
+    const char* ret = NULL;
+    return ret;
+}
+

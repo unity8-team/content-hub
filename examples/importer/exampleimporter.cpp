@@ -50,3 +50,15 @@ void ExampleImporter::handle_share(cuc::Transfer *transfer)
     qDebug() << Q_FUNC_INFO << "not implemented";
     Q_UNUSED(transfer);
 }
+
+void ExampleImporter::handle_copy(cuc::Transfer *transfer)
+{
+    qDebug() << Q_FUNC_INFO << "not implemented";
+    Q_UNUSED(transfer);
+}
+
+void ExampleImporter::handle_paste(cuc::Transfer *transfer)
+{
+    qDebug() << Q_FUNC_INFO << "not implemented";
+    Q_UNUSED(transfer);
+}

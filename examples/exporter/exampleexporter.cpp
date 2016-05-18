@@ -60,3 +60,15 @@ void ExampleExporter::handle_share(cuc::Transfer *transfer)
     qDebug() << Q_FUNC_INFO << "not implemented";
     Q_UNUSED(transfer);
 }
+
+void ExampleExporter::handle_copy(cuc::Transfer *transfer)
+{
+    qDebug() << Q_FUNC_INFO << "not implemented";
+    Q_UNUSED(transfer);
+}
+
+void ExampleExporter::handle_paste(cuc::Transfer *transfer)
+{
+    qDebug() << Q_FUNC_INFO << "not implemented";
+    Q_UNUSED(transfer);
+}

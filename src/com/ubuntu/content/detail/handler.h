@@ -49,6 +49,8 @@ class Handler : public QObject
     void HandleImport(const QDBusObjectPath &transfer);
     void HandleExport(const QDBusObjectPath &transfer);
     void HandleShare(const QDBusObjectPath &transfer);
+    void HandleCopy(const QDBusObjectPath &transfer);
+    void HandlePaste(const QDBusObjectPath &transfer);
 
   private:
     struct Private;

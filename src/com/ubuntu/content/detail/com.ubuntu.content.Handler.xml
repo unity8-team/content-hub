@@ -9,5 +9,11 @@
     <method name="HandleShare">
       <arg name="transfer" type="o" direction="in"/>
     </method>
+    <method name="HandleCopy">
+      <arg name="transfer" type="o" direction="in"/>
+    </method>
+    <method name="HandlePaste">
+      <arg name="transfer" type="o" direction="in"/>
+    </method>
   </interface>
 </node>

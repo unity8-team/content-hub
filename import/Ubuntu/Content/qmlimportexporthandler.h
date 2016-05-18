@@ -37,6 +37,8 @@ public:
     Q_INVOKABLE virtual void handle_import(com::ubuntu::content::Transfer *transfer);
     Q_INVOKABLE virtual void handle_export(com::ubuntu::content::Transfer *transfer);
     Q_INVOKABLE virtual void handle_share(com::ubuntu::content::Transfer *transfer);
+    Q_INVOKABLE virtual void handle_copy(com::ubuntu::content::Transfer *transfer);
+    Q_INVOKABLE virtual void handle_paste(com::ubuntu::content::Transfer *transfer);
 
 Q_SIGNALS:
     void importRequested(com::ubuntu::content::Transfer*);

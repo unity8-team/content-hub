@@ -36,6 +36,10 @@
       <arg name="type_id" type="s" direction="in" />
       <arg name="transfer_object" type="o" direction="out" />
     </method>
+    <method name="CreatePaste">
+      <arg name="app_id" type="s" direction="in" />
+      <arg name="paste_object" type="o" direction="out" />
+    </method>
     <method name="RegisterImportExportHandler">
       <arg name="peer_id" type="s" direction="in" />
       <arg name="handler_object" type="o" direction="in" />

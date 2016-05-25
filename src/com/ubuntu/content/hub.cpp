@@ -21,6 +21,7 @@
 #include "ContentServiceInterface.h"
 #include "ContentHandlerInterface.h"
 #include "handleradaptor.h"
+#include "paste_p.h"
 #include "transfer_p.h"
 #include "utils.cpp"
 
@@ -333,7 +334,18 @@ cuc::Peer cuc::Hub::peer_for_app_id(QString app_id)
 }
 
 void cuc::Hub::create_paste(const char * data) {
-    Q_UNUSED(data);
+    /* This needs to be replaced with a better way to get the APP_ID */
+    QString id = app_id();
+
+    auto reply = d->service->CreatePaste(id);
+    reply.waitForFinished();
+
+    cuc::Paste *paste = cuc::Paste::Private::make_paste(reply.value(), this);
+    auto item = cuc::Item();
+    item.setStream(QByteArray(data));
+    QVector<cuc::Item> items;
+    items << item;
+    paste->charge(items);
 }
 
 const char* cuc::Hub::get_latest_paste() {

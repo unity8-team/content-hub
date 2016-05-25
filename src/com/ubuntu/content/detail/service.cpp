@@ -23,6 +23,8 @@
 #include "service.h"
 #include "peer_registry.h"
 #include "i18n.h"
+#include "paste.h"
+#include "pasteadaptor.h"
 #include "transfer.h"
 #include "transferadaptor.h"
 #include "utils.cpp"
@@ -33,6 +35,7 @@
 #include <libnotify/notify.h>
 
 #include <com/ubuntu/content/item.h>
+#include <com/ubuntu/content/paste.h>
 #include <com/ubuntu/content/peer.h>
 #include <com/ubuntu/content/type.h>
 #include <com/ubuntu/content/transfer.h>
@@ -79,6 +82,7 @@ struct cucd::Service::Private : public QObject
     QDBusConnection connection;
     QSharedPointer<cucd::PeerRegistry> registry;
     QSet<cucd::Transfer*> active_transfers;
+    QSet<cucd::Paste*> active_pastes;
     QSet<RegHandler*> handlers;
     QSharedPointer<cua::ApplicationManager> app_manager;
 
@@ -300,6 +304,25 @@ QDBusObjectPath cucd::Service::CreateShareToPeer(const QString& peer_id, const Q
         src_id = aa_profile(this->message().service());
     }
     return CreateTransfer(peer_id, src_id, cuc::Transfer::Share, type_id);
+}
+
+QDBusObjectPath cucd::Service::CreatePaste(const QString& app_id)
+{
+    TRACE() << Q_FUNC_INFO;
+    static size_t import_counter{0}; import_counter++;
+
+    QUuid uuid{QUuid::createUuid()};
+
+    auto paste = new cucd::Paste(import_counter, app_id, this);
+    new PasteAdaptor(paste);
+    d->active_pastes.insert(paste);
+
+    auto path = paste->source();
+    if (not d->connection.registerObject(path, paste))
+        TRACE() << "Problem registering object for path: " << path;
+
+    connect(paste, SIGNAL(StateChanged(int)), this, SLOT(handle_paste(int)));
+    return QDBusObjectPath{path};
 }
 
 QDBusObjectPath cucd::Service::CreateTransfer(const QString& dest_id, const QString& src_id, int dir, const QString& type_id)

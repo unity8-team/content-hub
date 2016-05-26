@@ -352,6 +352,13 @@ cuc::Paste* cuc::Hub::create_paste(const char * data) {
 const char* cuc::Hub::get_latest_paste() {
     qWarning() << Q_FUNC_INFO;
     const char* ret = NULL;
+    auto reply = d->service->GetLatestPaste();
+    reply.waitForFinished();
+
+    cuc::Paste *paste = cuc::Paste::Private::make_paste(reply.value(), this);
+    auto items = paste->collect();
+    auto item = items.first();
+    ret = item.stream().constData();
     return ret;
 }
 

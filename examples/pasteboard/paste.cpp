@@ -31,7 +31,6 @@ int main(int argc, char *argv[])
 
     auto hub = cuc::Hub::Client::instance();
     const char* buf = hub->get_latest_paste();
-    Q_UNUSED(buf);
-
+    qWarning() << Q_FUNC_INFO << buf;
     return a.exec();
 }

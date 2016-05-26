@@ -82,7 +82,7 @@ struct cucd::Service::Private : public QObject
     QDBusConnection connection;
     QSharedPointer<cucd::PeerRegistry> registry;
     QSet<cucd::Transfer*> active_transfers;
-    QSet<cucd::Paste*> active_pastes;
+    QList<cucd::Paste*> active_pastes;
     QSet<RegHandler*> handlers;
     QSharedPointer<cua::ApplicationManager> app_manager;
 
@@ -315,7 +315,7 @@ QDBusObjectPath cucd::Service::CreatePaste(const QString& app_id)
 
     auto paste = new cucd::Paste(import_counter, app_id, this);
     new PasteAdaptor(paste);
-    d->active_pastes.insert(paste);
+    d->active_pastes.append(paste);
 
     auto path = paste->path();
     if (not d->connection.registerObject(path, paste))
@@ -323,6 +323,30 @@ QDBusObjectPath cucd::Service::CreatePaste(const QString& app_id)
 
     connect(paste, SIGNAL(StateChanged(int)), this, SLOT(handle_pastes(int)));
     return QDBusObjectPath{path};
+}
+
+QDBusObjectPath cucd::Service::GetLatestPaste()
+{
+    TRACE() << Q_FUNC_INFO;
+    if (d->active_pastes.isEmpty())
+        return QDBusObjectPath();
+
+    auto paste = d->active_pastes.last();
+    return QDBusObjectPath(paste->path());
+}
+
+QDBusObjectPath cucd::Service::GetPaste(const QString& id)
+{
+    TRACE() << Q_FUNC_INFO << id;
+    if (d->active_pastes.isEmpty())
+        return QDBusObjectPath();
+
+    Q_FOREACH (cucd::Paste *p, d->active_pastes)
+    {
+        if (p->Id() == id.toInt())
+            return QDBusObjectPath(p->path());
+    }
+    return QDBusObjectPath();
 }
 
 QDBusObjectPath cucd::Service::CreateTransfer(const QString& dest_id, const QString& src_id, int dir, const QString& type_id)

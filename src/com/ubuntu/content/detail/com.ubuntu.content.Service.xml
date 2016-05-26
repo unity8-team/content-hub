@@ -40,6 +40,13 @@
       <arg name="app_id" type="s" direction="in" />
       <arg name="paste_object" type="o" direction="out" />
     </method>
+    <method name="GetLatestPaste">
+      <arg name="paste_object" type="o" direction="out" />
+    </method>
+    <method name="GetPaste">
+      <arg name="id" type="s" direction="in" />
+      <arg name="paste_object" type="o" direction="out" />
+    </method>
     <method name="RegisterImportExportHandler">
       <arg name="peer_id" type="s" direction="in" />
       <arg name="handler_object" type="o" direction="in" />

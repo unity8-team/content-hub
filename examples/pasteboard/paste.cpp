@@ -29,10 +29,17 @@ int main(int argc, char *argv[])
         qputenv("APP_ID", "paste-from-pasteboard");
     }
 
+    QString id("latest");
+
+    if (a.arguments().size() > 1)
+        id = a.arguments().at(1);
+
     auto hub = cuc::Hub::Client::instance();
-    const char* buf = hub->latest_paste_buf();
-    qWarning() << Q_FUNC_INFO << buf;
-    const char* buf2 = hub->paste_buf_by_id(1);
-    qWarning() << Q_FUNC_INFO << buf2;
-    return a.exec();
+    const char* buf = NULL;
+    if (id == "latest")
+        buf = hub->latest_paste_buf();
+    else
+        buf = hub->paste_buf_by_id(id.toInt());
+    qDebug() << id << ":" << buf;
+    return 0;
 }

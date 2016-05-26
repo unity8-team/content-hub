@@ -31,11 +31,14 @@ int main(int argc, char *argv[])
         qputenv("APP_ID", "copy-to-pasteboard");
     }
 
-    const char * data = "Some text";
+    QString text("Some text");
+
+    if (a.arguments().size() > 1)
+        text = a.arguments().at(1);
+
+    const char * data = text.toStdString().c_str();
     auto hub = cuc::Hub::Client::instance();
 
     auto paste = hub->create_paste(data);
-    qDebug() << Q_FUNC_INFO << paste->id();
-
-    return a.exec();
+    qDebug() << paste->id() << ":" << text;
 }

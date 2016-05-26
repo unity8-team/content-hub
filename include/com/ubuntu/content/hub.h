@@ -34,6 +34,7 @@ namespace content
 class ImportExportHandler;
 class Store;
 class Transfer;
+class Paste;
 
 class Hub : public QObject
 {
@@ -66,7 +67,7 @@ class Hub : public QObject
     Q_INVOKABLE virtual Transfer* create_share_to_peer_for_type(Peer peer, Type type);
     Q_INVOKABLE virtual bool has_pending(QString peer_id);
     Q_INVOKABLE virtual Peer peer_for_app_id(QString app_id);
-    Q_INVOKABLE virtual void create_paste(const char * data);
+    Q_INVOKABLE virtual Paste* create_paste(const char * data);
     Q_INVOKABLE virtual const char* get_latest_paste();
        
   protected:

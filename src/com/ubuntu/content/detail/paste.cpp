@@ -73,6 +73,17 @@ QString cucd::Paste::source()
     return d->source;
 }
 
+/* returns the object path for the paste */
+QString cucd::Paste::path()
+{
+    TRACE() << Q_FUNC_INFO << "source:" << d->source;
+    static const QString path_pattern{"/pastes/%1/%2"};
+    QString path = path_pattern
+            .arg(sanitize_id(d->source))
+            .arg(d->id);
+    return path;
+}
+
 int cucd::Paste::State()
 {
     TRACE() << __PRETTY_FUNCTION__;

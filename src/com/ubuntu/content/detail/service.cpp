@@ -317,11 +317,11 @@ QDBusObjectPath cucd::Service::CreatePaste(const QString& app_id)
     new PasteAdaptor(paste);
     d->active_pastes.insert(paste);
 
-    auto path = paste->source();
+    auto path = paste->path();
     if (not d->connection.registerObject(path, paste))
         TRACE() << "Problem registering object for path: " << path;
 
-    connect(paste, SIGNAL(StateChanged(int)), this, SLOT(handle_paste(int)));
+    connect(paste, SIGNAL(StateChanged(int)), this, SLOT(handle_pastes(int)));
     return QDBusObjectPath{path};
 }
 
@@ -560,6 +560,11 @@ void cucd::Service::handle_exports(int state)
         gchar ** uris = NULL;
         d->app_manager->invoke_application(transfer->source().toStdString(), uris);
     }
+}
+
+void cucd::Service::handle_pastes(int state)
+{
+    TRACE() << Q_FUNC_INFO << state;
 }
 
 void cucd::Service::handler_unregistered(const QString& s)

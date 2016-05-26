@@ -56,6 +56,7 @@ Q_SIGNALS:
     void Finalize();
     int Id();
     QString source();
+    QString path();
 
   private:
     struct Private;

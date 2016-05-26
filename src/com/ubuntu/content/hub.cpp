@@ -333,7 +333,7 @@ cuc::Peer cuc::Hub::peer_for_app_id(QString app_id)
     return qdbus_cast<cuc::Peer>(peer.variant());
 }
 
-void cuc::Hub::create_paste(const char * data) {
+cuc::Paste* cuc::Hub::create_paste(const char * data) {
     /* This needs to be replaced with a better way to get the APP_ID */
     QString id = app_id();
 
@@ -346,6 +346,7 @@ void cuc::Hub::create_paste(const char * data) {
     QVector<cuc::Item> items;
     items << item;
     paste->charge(items);
+    return paste;
 }
 
 const char* cuc::Hub::get_latest_paste() {

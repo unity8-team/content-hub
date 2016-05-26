@@ -68,7 +68,8 @@ class Hub : public QObject
     Q_INVOKABLE virtual bool has_pending(QString peer_id);
     Q_INVOKABLE virtual Peer peer_for_app_id(QString app_id);
     Q_INVOKABLE virtual Paste* create_paste(const char * data);
-    Q_INVOKABLE virtual const char* get_latest_paste();
+    Q_INVOKABLE virtual const char* latest_paste_buf();
+    Q_INVOKABLE virtual const char* paste_buf_by_id(int id);
        
   protected:
     Hub(QObject* = nullptr);

@@ -349,10 +349,23 @@ cuc::Paste* cuc::Hub::create_paste(const char * data) {
     return paste;
 }
 
-const char* cuc::Hub::get_latest_paste() {
+const char* cuc::Hub::latest_paste_buf() {
     qWarning() << Q_FUNC_INFO;
     const char* ret = NULL;
     auto reply = d->service->GetLatestPaste();
+    reply.waitForFinished();
+
+    cuc::Paste *paste = cuc::Paste::Private::make_paste(reply.value(), this);
+    auto items = paste->collect();
+    auto item = items.first();
+    ret = item.stream().constData();
+    return ret;
+}
+
+const char* cuc::Hub::paste_buf_by_id(int id) {
+    qWarning() << Q_FUNC_INFO;
+    const char* ret = NULL;
+    auto reply = d->service->GetPaste(QString::number(id));
     reply.waitForFinished();
 
     cuc::Paste *paste = cuc::Paste::Private::make_paste(reply.value(), this);

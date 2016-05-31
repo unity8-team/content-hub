@@ -58,18 +58,6 @@ void AutoImporter::handle_share(cuc::Transfer *transfer)
     Q_UNUSED(transfer);
 }
 
-void AutoImporter::handle_copy(cuc::Transfer *transfer)
-{
-    qDebug() << Q_FUNC_INFO << "not implemented";
-    Q_UNUSED(transfer);
-}
-
-void AutoImporter::handle_paste(cuc::Transfer *transfer)
-{
-    qDebug() << Q_FUNC_INFO << "not implemented";
-    Q_UNUSED(transfer);
-}
-
 void AutoImporter::stateChanged()
 {
     qDebug() << Q_FUNC_INFO;

@@ -39,8 +39,6 @@ public Q_SLOTS:
     Q_INVOKABLE void handle_import(cuc::Transfer*);
     Q_INVOKABLE void handle_export(cuc::Transfer*);
     Q_INVOKABLE void handle_share(cuc::Transfer*);
-    Q_INVOKABLE void handle_copy(cuc::Transfer*);
-    Q_INVOKABLE void handle_paste(cuc::Transfer*);
     Q_INVOKABLE void stateChanged();
 };
 

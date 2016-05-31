@@ -88,18 +88,6 @@ void AutoExporter::handle_share(cuc::Transfer *transfer)
     Q_UNUSED(transfer);
 }
 
-void AutoExporter::handle_copy(cuc::Transfer *transfer)
-{
-    qDebug() << Q_FUNC_INFO << "not implemented";
-    Q_UNUSED(transfer);
-}
-
-void AutoExporter::handle_paste(cuc::Transfer *transfer)
-{
-    qDebug() << Q_FUNC_INFO << "not implemented";
-    Q_UNUSED(transfer);
-}
-
 void AutoExporter::stateChanged()
 {
     qDebug() << Q_FUNC_INFO;
@@ -113,3 +101,5 @@ void AutoExporter::stateChanged()
     if (transfer->state() == cuc::Transfer::collected)
         QCoreApplication::instance()->exit(0);
 }
+
+

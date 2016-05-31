@@ -39,8 +39,6 @@ class ImportExportHandler : public QObject
     Q_INVOKABLE virtual void handle_import(Transfer*) = 0;
     Q_INVOKABLE virtual void handle_export(Transfer*) = 0;
     Q_INVOKABLE virtual void handle_share(Transfer*) = 0;
-    Q_INVOKABLE virtual void handle_copy(Transfer*) = 0;
-    Q_INVOKABLE virtual void handle_paste(Transfer*) = 0;
 
   protected:
     ImportExportHandler(QObject* parent = nullptr); 

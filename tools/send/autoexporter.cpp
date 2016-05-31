@@ -41,18 +41,6 @@ void AutoExporter::handle_import(cuc::Transfer *transfer)
     Q_UNUSED(transfer);
 }
 
-void AutoExporter::handle_copy(cuc::Transfer *transfer)
-{
-    TRACE() << Q_FUNC_INFO << "not implemented";
-    Q_UNUSED(transfer);
-}
-
-void AutoExporter::handle_paste(cuc::Transfer *transfer)
-{
-    TRACE() << Q_FUNC_INFO << "not implemented";
-    Q_UNUSED(transfer);
-}
-
 void AutoExporter::handle_export(cuc::Transfer *transfer)
 {
     TRACE() << Q_FUNC_INFO;

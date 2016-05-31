@@ -58,18 +58,6 @@ void AutoSharer::handle_share(cuc::Transfer *transfer)
     }
 }
 
-void AutoSharer::handle_copy(cuc::Transfer *transfer)
-{
-    qDebug() << Q_FUNC_INFO << "not implemented";
-    Q_UNUSED(transfer);
-}
-
-void AutoSharer::handle_paste(cuc::Transfer *transfer)
-{
-    qDebug() << Q_FUNC_INFO << "not implemented";
-    Q_UNUSED(transfer);
-}
-
 void AutoSharer::stateChanged()
 {
     qDebug() << Q_FUNC_INFO;

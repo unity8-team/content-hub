@@ -87,27 +87,3 @@ void cucd::Handler::HandleShare(const QDBusObjectPath& transfer)
         m_handler->handle_share(t);
     }
 }
-
-void cucd::Handler::HandleCopy(const QDBusObjectPath& transfer)
-{
-    TRACE() << Q_FUNC_INFO;
-    cuc::Transfer* t = cuc::Transfer::Private::make_transfer(transfer, this);
-
-    TRACE() << Q_FUNC_INFO << "State:" << t->state();
-    if (t->state() == cuc::Transfer::charged)
-    {
-        m_handler->handle_copy(t);
-    }
-}
-
-void cucd::Handler::HandlePaste(const QDBusObjectPath& transfer)
-{
-    TRACE() << Q_FUNC_INFO;
-    cuc::Transfer* t = cuc::Transfer::Private::make_transfer(transfer, this);
-
-    TRACE() << Q_FUNC_INFO << "State:" << t->state();
-    if (t->state() == cuc::Transfer::charged)
-    {
-        m_handler->handle_paste(t);
-    }
-}

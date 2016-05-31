@@ -57,21 +57,3 @@ void QmlImportExportHandler::handle_share(com::ubuntu::content::Transfer *transf
     TRACE() << Q_FUNC_INFO;
     Q_EMIT shareRequested(transfer);
 }
-
-/*!
- * \reimp
- */
-void QmlImportExportHandler::handle_copy(com::ubuntu::content::Transfer *transfer)
-{
-    TRACE() << Q_FUNC_INFO << "not implemented";
-    Q_UNUSED(transfer);
-}
-
-/*!
- * \reimp
- */
-void QmlImportExportHandler::handle_paste(com::ubuntu::content::Transfer *transfer)
-{
-    TRACE() << Q_FUNC_INFO << "not implemented";
-    Q_UNUSED(transfer);
-}

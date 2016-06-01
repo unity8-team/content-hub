@@ -43,6 +43,7 @@ struct cucd::Paste::Private
     cuc::Paste::State state;
     const int id;
     const QString source;
+    QString destination;
     QVariantList items;
 };
 
@@ -66,20 +67,35 @@ int cucd::Paste::Id()
     return d->id;
 }
 
-/* returns the peer_id of the requested export handler */
+/* returns the add_id of the source app */
 QString cucd::Paste::source()
 {
     TRACE() << __PRETTY_FUNCTION__;
     return d->source;
 }
 
+/* returns the add_id of the destination app */
+QString cucd::Paste::destination()
+{
+    TRACE() << __PRETTY_FUNCTION__;
+    if (d->destination.isEmpty())
+        return d->source;
+    return d->destination;
+}
+
+void cucd::Paste::setDestination(QString& dest)
+{
+    TRACE() << __PRETTY_FUNCTION__;
+    d->destination = dest;
+}
+
 /* returns the object path for the paste */
 QString cucd::Paste::path()
 {
-    TRACE() << Q_FUNC_INFO << "source:" << d->source;
+    TRACE() << Q_FUNC_INFO << "destination:" << destination();
     static const QString path_pattern{"/pastes/%1/%2"};
     QString path = path_pattern
-            .arg(sanitize_id(d->source))
+            .arg(sanitize_id(destination()))
             .arg(d->id);
     return path;
 }

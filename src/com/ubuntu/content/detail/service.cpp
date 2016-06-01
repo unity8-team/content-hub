@@ -325,26 +325,51 @@ QDBusObjectPath cucd::Service::CreatePaste(const QString& app_id)
     return QDBusObjectPath{path};
 }
 
-QDBusObjectPath cucd::Service::GetLatestPaste()
+QDBusObjectPath cucd::Service::GetLatestPaste(const QString& app_id)
 {
-    TRACE() << Q_FUNC_INFO;
+    TRACE() << Q_FUNC_INFO << app_id;
     if (d->active_pastes.isEmpty())
         return QDBusObjectPath();
 
+    QString dest_id = app_id;
+    if (dest_id.isEmpty())
+    {
+        TRACE() << Q_FUNC_INFO << "APP_ID isnt' set, attempting to get it from AppArmor";
+        dest_id = aa_profile(this->message().service());
+    }
+
     auto paste = d->active_pastes.last();
+    d->connection.unregisterObject(paste->path());
+    paste->setDestination(dest_id);
+    auto path = paste->path();
+    if (not d->connection.registerObject(path, paste))
+        TRACE() << "Problem registering object for path: " << path;
     return QDBusObjectPath(paste->path());
 }
 
-QDBusObjectPath cucd::Service::GetPaste(const QString& id)
+QDBusObjectPath cucd::Service::GetPaste(const QString& id, const QString& app_id)
 {
     TRACE() << Q_FUNC_INFO << id;
     if (d->active_pastes.isEmpty())
         return QDBusObjectPath();
 
+    QString dest_id = app_id;
+    if (dest_id.isEmpty())
+    {
+        TRACE() << Q_FUNC_INFO << "APP_ID isnt' set, attempting to get it from AppArmor";
+        dest_id = aa_profile(this->message().service());
+    }
+
     Q_FOREACH (cucd::Paste *p, d->active_pastes)
     {
-        if (p->Id() == id.toInt())
-            return QDBusObjectPath(p->path());
+        if (p->Id() == id.toInt()) {
+            d->connection.unregisterObject(p->path());
+            p->setDestination(dest_id);
+            auto path = p->path();
+            if (not d->connection.registerObject(path, p))
+                TRACE() << "Problem registering object for path: " << path;
+            return QDBusObjectPath(path);
+        }
     }
     return QDBusObjectPath();
 }
@@ -588,7 +613,25 @@ void cucd::Service::handle_exports(int state)
 
 void cucd::Service::handle_pastes(int state)
 {
-    TRACE() << Q_FUNC_INFO << state;
+    TRACE() << Q_FUNC_INFO;
+    cucd::Paste *paste = static_cast<cucd::Paste*>(sender());
+    TRACE() << Q_FUNC_INFO << "STATE:" << paste->State();
+
+    if (state == cuc::Paste::charged)
+    {
+        TRACE() << Q_FUNC_INFO << "charged";
+        auto path = paste->path();
+        TRACE() << Q_FUNC_INFO << "Unregistering path:" << path;
+        d->connection.unregisterObject(path);
+    }
+
+    if (state == cuc::Paste::collected)
+    {
+        TRACE() << Q_FUNC_INFO << "collected";
+        auto path = paste->path();
+        TRACE() << Q_FUNC_INFO << "Unregistering path:" << path;
+        d->connection.unregisterObject(path);
+    }
 }
 
 void cucd::Service::handler_unregistered(const QString& s)

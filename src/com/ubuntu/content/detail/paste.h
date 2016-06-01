@@ -56,6 +56,8 @@ Q_SIGNALS:
     void Finalize();
     int Id();
     QString source();
+    QString destination();
+    void setDestination(QString&);
     QString path();
 
   private:

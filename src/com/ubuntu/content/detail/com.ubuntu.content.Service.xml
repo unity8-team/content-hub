@@ -41,10 +41,12 @@
       <arg name="paste_object" type="o" direction="out" />
     </method>
     <method name="GetLatestPaste">
+      <arg name="app_id" type="s" direction="in" />
       <arg name="paste_object" type="o" direction="out" />
     </method>
     <method name="GetPaste">
       <arg name="id" type="s" direction="in" />
+      <arg name="app_id" type="s" direction="in" />
       <arg name="paste_object" type="o" direction="out" />
     </method>
     <method name="RegisterImportExportHandler">

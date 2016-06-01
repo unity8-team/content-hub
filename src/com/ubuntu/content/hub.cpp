@@ -352,26 +352,34 @@ cuc::Paste* cuc::Hub::create_paste(const char * data) {
 const char* cuc::Hub::latest_paste_buf() {
     qWarning() << Q_FUNC_INFO;
     const char* ret = NULL;
-    auto reply = d->service->GetLatestPaste();
+    QString dest_id = app_id();
+    qWarning() << Q_FUNC_INFO << dest_id;
+    auto reply = d->service->GetLatestPaste(dest_id);
     reply.waitForFinished();
 
     cuc::Paste *paste = cuc::Paste::Private::make_paste(reply.value(), this);
     auto items = paste->collect();
-    auto item = items.first();
-    ret = item.stream().constData();
+    if (items.count() > 0) {
+        auto item = items.first();
+        ret = item.stream().constData();
+    }
+    qWarning() << Q_FUNC_INFO << "ret";
     return ret;
 }
 
 const char* cuc::Hub::paste_buf_by_id(int id) {
     qWarning() << Q_FUNC_INFO;
     const char* ret = NULL;
-    auto reply = d->service->GetPaste(QString::number(id));
+    QString dest_id = app_id();
+    auto reply = d->service->GetPaste(QString::number(id), dest_id);
     reply.waitForFinished();
 
     cuc::Paste *paste = cuc::Paste::Private::make_paste(reply.value(), this);
     auto items = paste->collect();
-    auto item = items.first();
-    ret = item.stream().constData();
+    if (items.count() > 0) {
+        auto item = items.first();
+        ret = item.stream().constData();
+    }
     return ret;
 }
 

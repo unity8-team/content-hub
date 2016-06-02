@@ -120,7 +120,7 @@ void cucd::Paste::Abort()
 
 void cucd::Paste::Charge(const QVariantList& items)
 {
-    TRACE() << __PRETTY_FUNCTION__;
+    TRACE() << __PRETTY_FUNCTION__ << "STATE:" << d->state;
 
     if (d->state == cuc::Paste::charged)
         return;
@@ -130,13 +130,10 @@ void cucd::Paste::Charge(const QVariantList& items)
         cuc::Item item = qdbus_cast<Item>(iv);
         ret.append(QVariant::fromValue(item));
     }
-    if (ret.count() <= 0)
-    {
+    if (ret.count() <= 0) {
         qWarning() << "Failed to charge items, aborting";
         d->state = cuc::Paste::aborted;
-    }
-    else
-    {
+    } else {
         d->items = ret;
         d->state = cuc::Paste::charged;
     }

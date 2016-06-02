@@ -308,7 +308,7 @@ QDBusObjectPath cucd::Service::CreateShareToPeer(const QString& peer_id, const Q
 
 QDBusObjectPath cucd::Service::CreatePaste(const QString& app_id)
 {
-    TRACE() << Q_FUNC_INFO;
+    TRACE() << Q_FUNC_INFO << app_id;
     static size_t import_counter{0}; import_counter++;
 
     QUuid uuid{QUuid::createUuid()};
@@ -319,7 +319,7 @@ QDBusObjectPath cucd::Service::CreatePaste(const QString& app_id)
 
     auto path = paste->path();
     if (not d->connection.registerObject(path, paste))
-        TRACE() << "Problem registering object for path: " << path;
+        qWarning() << "Problem registering object for path: " << path;
 
     connect(paste, SIGNAL(StateChanged(int)), this, SLOT(handle_pastes(int)));
     return QDBusObjectPath{path};
@@ -343,7 +343,7 @@ QDBusObjectPath cucd::Service::GetLatestPaste(const QString& app_id)
     paste->setDestination(dest_id);
     auto path = paste->path();
     if (not d->connection.registerObject(path, paste))
-        TRACE() << "Problem registering object for path: " << path;
+        qWarning() << "Problem registering object for path: " << path;
     return QDBusObjectPath(paste->path());
 }
 
@@ -367,7 +367,7 @@ QDBusObjectPath cucd::Service::GetPaste(const QString& id, const QString& app_id
             p->setDestination(dest_id);
             auto path = p->path();
             if (not d->connection.registerObject(path, p))
-                TRACE() << "Problem registering object for path: " << path;
+                qWarning() << "Problem registering object for path: " << path;
             return QDBusObjectPath(path);
         }
     }

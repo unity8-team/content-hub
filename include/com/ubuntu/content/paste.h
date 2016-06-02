@@ -33,7 +33,6 @@ namespace content
 {
 namespace detail
 {
-class Handler;
 }
 }
 }
@@ -86,7 +85,6 @@ class Paste : public QObject
     struct Private;
     friend struct Private;
     friend class Hub;
-    friend class com::ubuntu::content::detail::Handler;
     QSharedPointer<Private> d;
 
     Paste(const QSharedPointer<Private>&, QObject* parent = nullptr);    

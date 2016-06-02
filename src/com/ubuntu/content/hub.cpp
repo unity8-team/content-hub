@@ -336,6 +336,7 @@ cuc::Peer cuc::Hub::peer_for_app_id(QString app_id)
 cuc::Paste* cuc::Hub::create_paste(const char * data) {
     /* This needs to be replaced with a better way to get the APP_ID */
     QString id = app_id();
+    TRACE() << Q_FUNC_INFO << id;
 
     auto reply = d->service->CreatePaste(id);
     reply.waitForFinished();
@@ -350,10 +351,10 @@ cuc::Paste* cuc::Hub::create_paste(const char * data) {
 }
 
 const char* cuc::Hub::latest_paste_buf() {
-    qWarning() << Q_FUNC_INFO;
+    TRACE() << Q_FUNC_INFO;
     const char* ret = NULL;
     QString dest_id = app_id();
-    qWarning() << Q_FUNC_INFO << dest_id;
+    TRACE() << Q_FUNC_INFO << dest_id;
     auto reply = d->service->GetLatestPaste(dest_id);
     reply.waitForFinished();
 
@@ -363,12 +364,11 @@ const char* cuc::Hub::latest_paste_buf() {
         auto item = items.first();
         ret = item.stream().constData();
     }
-    qWarning() << Q_FUNC_INFO << "ret";
     return ret;
 }
 
 const char* cuc::Hub::paste_buf_by_id(int id) {
-    qWarning() << Q_FUNC_INFO;
+    TRACE() << Q_FUNC_INFO;
     const char* ret = NULL;
     QString dest_id = app_id();
     auto reply = d->service->GetPaste(QString::number(id), dest_id);

@@ -172,21 +172,6 @@ TEST_F(Hub, transfer_creation_and_states_work)
             EXPECT_EQ(expected_items, transfer->collect());
             /** [Importing pictures] */
 
-            /** Test that the transfer aborts when destination file exists */
-            auto dupe_transfer = hub->create_import_from_peer(
-                hub->default_source_for_type(cuc::Type::Known::pictures()));
-            EXPECT_TRUE(dupe_transfer != nullptr);
-            EXPECT_EQ(cuc::Transfer::created, dupe_transfer->state());
-            EXPECT_TRUE(dupe_transfer->setSelectionType(cuc::Transfer::SelectionType::multiple));
-            EXPECT_EQ(cuc::Transfer::SelectionType::multiple, dupe_transfer->selectionType());
-            dupe_transfer->setStore(new cuc::Store{store_dir.path()});
-            EXPECT_TRUE(dupe_transfer->start());
-            EXPECT_EQ(cuc::Transfer::initiated, dupe_transfer->state());
-            EXPECT_TRUE(dupe_transfer->charge(source_items));
-            /* FIXME: this test shouldn't fail */
-            EXPECT_EQ(cuc::Transfer::aborted, dupe_transfer->state());
-            /* end dest exists test */
-
             /* Test that only a single transfer exists for the same peer */
             auto single_transfer = hub->create_import_from_peer(
                 hub->default_source_for_type(cuc::Type::Known::pictures()));

@@ -18,8 +18,8 @@
 
 #include "app_manager_mock.h"
 #include "test_harness.h"
-#include "../cross_process_sync.h"
-#include "../fork_and_run.h"
+#include <core/testing/cross_process_sync.h>
+#include <core/testing/fork_and_run.h>
 
 #include <com/ubuntu/content/hub.h>
 #include <com/ubuntu/content/peer.h>
@@ -49,6 +49,10 @@ namespace cucd = com::ubuntu::content::detail;
 void PrintTo(const QString& s, ::std::ostream* os) {
     *os << std::string(qPrintable(s));
 }
+
+struct Hub : public ::testing::Test
+{
+};
 
 namespace
 {
@@ -83,11 +87,11 @@ TEST(Hub, querying_default_peer_returns_correct_value)
 {
     using namespace ::testing;
 
-    test::CrossProcessSync sync;
+    core::testing::CrossProcessSync sync;
     
     QString default_peer_id{"com.does.not.exist.anywhere.application"};
 
-    auto parent = [&sync, default_peer_id]()
+    auto service = [this, &sync, default_peer_id]() -> core::posix::exit::Status
     {
         int argc = 0;
         QCoreApplication app{argc, nullptr};
@@ -101,26 +105,26 @@ TEST(Hub, querying_default_peer_returns_correct_value)
 
         QSharedPointer<cucd::PeerRegistry> registry{mock};
 
-        auto app_manager = QSharedPointer<cua::ApplicationManager>(new MockedAppManager());
-
+        auto app_manager = QSharedPointer<cua::ApplicationManager>(new ::testing::NiceMock<MockedAppManager>);
         auto implementation = new cucd::Service(connection, registry, app_manager, &app);
         new ServiceAdaptor(implementation);
 
-        ASSERT_TRUE(connection.registerService(service_name));
-        ASSERT_TRUE(connection.registerObject("/", implementation));
+        EXPECT_TRUE(connection.registerService(service_name));
+        EXPECT_TRUE(connection.registerObject("/", implementation));
 
-        sync.signal_ready();
+        sync.try_signal_ready_for(std::chrono::milliseconds{500});
 
         app.exec();
 
         connection.unregisterObject("/");
         connection.unregisterService(service_name);
+        return ::testing::Test::HasFailure() ? core::posix::exit::Status::failure : core::posix::exit::Status::success;
     };
 
-    auto child = [&sync, default_peer_id]()
+    auto client = [this, &sync, default_peer_id]() -> core::posix::exit::Status
     {
-        sync.wait_for_signal_ready();
-        
+        sync.wait_for_signal_ready_for(std::chrono::milliseconds{500});
+
         int argc = 0;
         QCoreApplication app(argc, nullptr);
         
@@ -135,8 +139,8 @@ TEST(Hub, querying_default_peer_returns_correct_value)
         EXPECT_EQ(0, QTest::qExec(std::addressof(harness)));
         
         hub->quit();
-
+        return ::testing::Test::HasFailure() ? core::posix::exit::Status::failure : core::posix::exit::Status::success;
     };
 
-    EXPECT_TRUE(test::fork_and_run(child, parent) != EXIT_FAILURE);
+    EXPECT_EQ(core::testing::ForkAndRunResult::empty, core::testing::fork_and_run(service, client));
 }

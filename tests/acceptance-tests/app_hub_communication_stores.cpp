@@ -105,16 +105,16 @@ TEST(Hub, stores_are_reported_correctly_to_clients)
 
         app.exec();
 
+        delete implementation;
         connection.unregisterObject("/");
         connection.unregisterService(service_name);
 
-        delete implementation;
         return ::testing::Test::HasFailure() ? core::posix::exit::Status::failure : core::posix::exit::Status::success;
     };
 
     auto client = [this, &sync]() -> core::posix::exit::Status
     {
-        sync.wait_for_signal_ready_for(std::chrono::milliseconds{500});
+        EXPECT_EQ(1, sync.wait_for_signal_ready_for(std::chrono::milliseconds{500}));
         
         test::TestHarness harness;
         harness.add_test_case([]()

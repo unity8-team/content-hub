@@ -107,16 +107,18 @@ TEST_F(Hub, transfer_creation_and_states_work)
         
         QSharedPointer<cucd::PeerRegistry> registry{mock};
         auto app_manager = QSharedPointer<cua::ApplicationManager>(new ::testing::NiceMock<MockedAppManager>);
-        cucd::Service implementation(connection, registry, app_manager, &app);
-        new ServiceAdaptor(std::addressof(implementation));
+        auto implementation = new cucd::Service(connection, registry, app_manager, &app);
+
+        new ServiceAdaptor(implementation);
 
         EXPECT_TRUE(connection.registerService(service_name));
-        EXPECT_TRUE(connection.registerObject("/", std::addressof(implementation)));
+        EXPECT_TRUE(connection.registerObject("/", implementation));
 
         sync.try_signal_ready_for(std::chrono::milliseconds{500});
 
         app.exec();
 
+        delete implementation;
         connection.unregisterObject("/");
         connection.unregisterService(service_name);
         return ::testing::Test::HasFailure() ? core::posix::exit::Status::failure : core::posix::exit::Status::success;
@@ -128,7 +130,7 @@ TEST_F(Hub, transfer_creation_and_states_work)
         QCoreApplication app(argc, nullptr);
         app.setApplicationName("com.some.test.app");
 
-        sync.wait_for_signal_ready_for(std::chrono::milliseconds{500});
+        EXPECT_EQ(1, sync.wait_for_signal_ready_for(std::chrono::milliseconds{500}));
         
         test::TestHarness harness;
         harness.add_test_case([]()

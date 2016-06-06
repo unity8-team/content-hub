@@ -133,6 +133,7 @@ TEST(Hub, querying_known_peers_returns_correct_value)
 
         app.exec();
 
+        delete implementation;
         connection.unregisterObject("/");
         connection.unregisterService(service_name);
         return ::testing::Test::HasFailure() ? core::posix::exit::Status::failure : core::posix::exit::Status::success;
@@ -140,7 +141,7 @@ TEST(Hub, querying_known_peers_returns_correct_value)
 
     auto client = [this, &sync, default_peers]() -> core::posix::exit::Status
     {
-        sync.wait_for_signal_ready_for(std::chrono::milliseconds{500});
+        EXPECT_EQ(1, sync.wait_for_signal_ready_for(std::chrono::milliseconds{500}));
         
         int argc = 0;
         QCoreApplication app(argc, nullptr);

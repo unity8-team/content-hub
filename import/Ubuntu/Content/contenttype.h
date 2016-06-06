@@ -40,7 +40,8 @@ public:
         Links = 6,
         EBooks = 7,
         Text = 8,
-        Events = 9
+        Events = 9,
+        Application = 10
     };
 
     ContentType(QObject *parent = nullptr);

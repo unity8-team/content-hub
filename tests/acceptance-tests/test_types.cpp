@@ -66,3 +66,8 @@ TEST(Types, id_events)
 {
     EXPECT_EQ(cuc::Type::Known::events().id(), "events");
 }
+
+TEST(Types, id_application)
+{
+    EXPECT_EQ(cuc::Type::Known::application().id(), "application");
+}

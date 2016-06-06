@@ -136,3 +136,9 @@ const cuc::Type& cuc::Type::Known::events()
     static cuc::Type t("events", nullptr);
     return t;
 }
+
+const cuc::Type& cuc::Type::Known::application()
+{
+    static cuc::Type t("application", nullptr);
+    return t;
+}

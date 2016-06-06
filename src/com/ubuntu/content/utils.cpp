@@ -55,6 +55,7 @@ QList<cuc::Type> known_types()
     types << cuc::Type::Known::ebooks();
     types << cuc::Type::Known::text();
     types << cuc::Type::Known::events();
+    types << cuc::Type::Known::application();
     return types;
 }
 

@@ -58,6 +58,12 @@
      \li ContentType.Text
      \li Text
    \row
+     \li ContentType.Events
+     \li Events
+   \row
+     \li ContentType.Application
+     \li Application
+   \row
      \li ContentType.All
      \li Any of the above content types
    \endtable
@@ -102,6 +108,7 @@ const com::ubuntu::content::Type &ContentType::contentType2HubType(Type type)
     case EBooks: return cuc::Type::Known::ebooks();
     case Text: return cuc::Type::Known::text();
     case Events: return cuc::Type::Known::events();
+    case Application: return cuc::Type::Known::application();
     default: return cuc::Type::unknown();
     }
 }
@@ -131,6 +138,8 @@ ContentType::Type ContentType::hubType2contentType(const QString& type)
         return Text;
     else if (type ==  cuc::Type::Known::events().id())
         return Events;
+    else if (type ==  cuc::Type::Known::application().id())
+        return Application;
     else
       return Unknown;
 }

@@ -331,6 +331,13 @@ QDBusObjectPath cucd::Service::GetLatestPaste(const QString& app_id)
     if (d->active_pastes.isEmpty())
         return QDBusObjectPath();
 
+    pid_t pid = d->connection.interface()->servicePid(this->message().service()); 
+    qWarning() << Q_FUNC_INFO << "PID: " << pid;
+    if (!app_id_matches(app_id, pid)) {
+        qWarning() << "APP_ID doesn't match requesting APP";
+        return QDBusObjectPath();
+    }
+
     QString dest_id = app_id;
     if (dest_id.isEmpty())
     {
@@ -352,6 +359,12 @@ QDBusObjectPath cucd::Service::GetPaste(const QString& id, const QString& app_id
     TRACE() << Q_FUNC_INFO << id;
     if (d->active_pastes.isEmpty())
         return QDBusObjectPath();
+
+    pid_t pid = d->connection.interface()->servicePid(this->message().service()); 
+    if (!app_id_matches(app_id, pid)) {
+        qWarning() << "APP_ID doesn't match requesting APP";
+        return QDBusObjectPath();
+    }
 
     QString dest_id = app_id;
     if (dest_id.isEmpty())

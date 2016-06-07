@@ -33,6 +33,9 @@
 #include "com/ubuntu/content/type.h"
 #include <unistd.h>
 #include <liblibertine/libertine.h>
+#include <ubuntu-app-launch/appid.h>
+#include <ubuntu-app-launch/application.h>
+#include <ubuntu-app-launch/registry.h>
 
 #include <sys/apparmor.h>
 /* need to be exposed in libapparmor but for now ... */
@@ -40,6 +43,7 @@
 #define AA_MAY_READ (1 << 2)
 
 namespace cuc = com::ubuntu::content;
+namespace ual = ubuntu::app_launch;
 
 namespace {
 
@@ -101,6 +105,24 @@ QString app_id()
      * later use the application manager
      */
     return QString(qgetenv("APP_ID"));
+}
+
+
+bool app_id_matches(QString id, pid_t pid)
+{
+    TRACE() << Q_FUNC_INFO << id << pid;
+    std::shared_ptr<ual::Registry> reg = ual::Registry::getDefault();
+    auto app_id = ual::AppID::parse(id.toStdString());
+    if (app_id.empty())
+        return false;
+    auto app = ual::Application::create(app_id, reg);
+    if (!app.get()->hasInstances())
+        return false;
+    Q_FOREACH (std::shared_ptr<ual::Application::Instance> instance, app.get()->instances()) {
+        if (instance.get()->hasPid(pid))
+            return true;
+    }
+    return false;
 }
 
 

@@ -1,3 +1,9 @@
+content-hub (0.1+16.10.20160602-0ubuntu1) yakkety; urgency=medium
+
+  * Call qmlplugindump with -noinstantiate
+
+ -- Ken VanDine <ken.vandine@canonical.com>  Thu, 02 Jun 2016 18:36:44 +0000
+
 content-hub (0.1+16.04.20160309-0ubuntu1) xenial; urgency=medium
 
   * Fix documentation for toDataURI method (LP: #1555116)

@@ -157,7 +157,6 @@ TEST(Handler, handler_on_bus)
             EXPECT_TRUE(transfer != nullptr);
             EXPECT_TRUE(transfer->start());
             EXPECT_EQ(cuc::Transfer::in_progress, transfer->state());
-            //EXPECT_EQ(cuc::Transfer::charged, transfer->state());
             hub->quit();
         });
 

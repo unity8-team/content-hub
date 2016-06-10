@@ -6,6 +6,9 @@ export DPKG_GENSYMBOLS_CHECK_LEVEL=4
 %:
 	dh $@ --with click,translations --fail-missing -- -B build
 
+override_dh_auto_test:
+	make -C build/tests/acceptance-tests test
+
 override_dh_auto_install:
 	dh_auto_install
 	dh_apparmor -pcontent-hub-testability --profile-name=content-hub-testability

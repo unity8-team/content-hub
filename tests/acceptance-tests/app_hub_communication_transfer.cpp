@@ -141,7 +141,7 @@ TEST_F(Hub, transfer_creation_and_states_work)
             source_items[0].setName("name3");
             source_items[0].setText("data3");
             /* Work around issue of charging the transfer when run under sbuild */
-            if (!qgetenv("CONTENT_HUB_TESTING").isEmpty()) {
+            if (qgetenv("CONTENT_HUB_TESTING").isEmpty()) {
                 source_items << cuc::Item(QUrl::fromLocalFile(QFileInfo("file1").absoluteFilePath()));
                 source_items[1].setName("name1");
                 source_items << cuc::Item(QUrl::fromLocalFile(QFileInfo("file2").absoluteFilePath()));
@@ -153,7 +153,7 @@ TEST_F(Hub, transfer_creation_and_states_work)
             expected_items[0].setName("name3");
             expected_items[0].setText("data3");
             /* Work around issue of charging the transfer when run under sbuild */
-            if (!qgetenv("CONTENT_HUB_TESTING").isEmpty()) {
+            if (qgetenv("CONTENT_HUB_TESTING").isEmpty()) {
                 expected_items << cuc::Item(QUrl("file://" + store_dir.path() + "/file1"));
                 expected_items[1].setName("name1");
                 expected_items << cuc::Item(QUrl("file://" + store_dir.path() + "/file2"));

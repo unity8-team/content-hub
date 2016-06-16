@@ -101,7 +101,7 @@ TEST(Hub, stores_are_reported_correctly_to_clients)
         EXPECT_TRUE(connection.registerService(service_name));
         EXPECT_TRUE(connection.registerObject("/", implementation));
 
-        sync.try_signal_ready_for(std::chrono::milliseconds{10000});
+        sync.try_signal_ready_for(std::chrono::milliseconds{20000});
 
         app.exec();
 
@@ -114,7 +114,7 @@ TEST(Hub, stores_are_reported_correctly_to_clients)
 
     auto client = [this, &sync]() -> core::posix::exit::Status
     {
-        EXPECT_EQ(1, sync.wait_for_signal_ready_for(std::chrono::milliseconds{10000}));
+        EXPECT_EQ(1, sync.wait_for_signal_ready_for(std::chrono::milliseconds{20000}));
         
         test::TestHarness harness;
         harness.add_test_case([]()

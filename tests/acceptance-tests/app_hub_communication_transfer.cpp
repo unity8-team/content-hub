@@ -114,7 +114,7 @@ TEST_F(Hub, transfer_creation_and_states_work)
         EXPECT_TRUE(connection.registerService(service_name));
         EXPECT_TRUE(connection.registerObject("/", implementation));
 
-        sync.try_signal_ready_for(std::chrono::milliseconds{500});
+        sync.try_signal_ready_for(std::chrono::milliseconds{10000});
 
         app.exec();
 
@@ -130,7 +130,7 @@ TEST_F(Hub, transfer_creation_and_states_work)
         QCoreApplication app(argc, nullptr);
         app.setApplicationName("com.some.test.app");
 
-        EXPECT_EQ(1, sync.wait_for_signal_ready_for(std::chrono::milliseconds{500}));
+        EXPECT_EQ(1, sync.wait_for_signal_ready_for(std::chrono::milliseconds{10000}));
         
         test::TestHarness harness;
         harness.add_test_case([]()

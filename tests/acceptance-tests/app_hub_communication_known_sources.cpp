@@ -129,7 +129,7 @@ TEST(Hub, querying_known_peers_returns_correct_value)
         EXPECT_TRUE(connection.registerService(service_name));
         EXPECT_TRUE(connection.registerObject("/", implementation));
 
-        sync.try_signal_ready_for(std::chrono::milliseconds{500});
+        sync.try_signal_ready_for(std::chrono::milliseconds{10000});
 
         app.exec();
 
@@ -141,7 +141,7 @@ TEST(Hub, querying_known_peers_returns_correct_value)
 
     auto client = [this, &sync, default_peers]() -> core::posix::exit::Status
     {
-        EXPECT_EQ(1, sync.wait_for_signal_ready_for(std::chrono::milliseconds{500}));
+        EXPECT_EQ(1, sync.wait_for_signal_ready_for(std::chrono::milliseconds{10000}));
         
         int argc = 0;
         QCoreApplication app(argc, nullptr);

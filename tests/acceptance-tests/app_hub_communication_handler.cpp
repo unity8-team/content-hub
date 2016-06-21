@@ -128,7 +128,7 @@ TEST(Handler, handler_on_bus)
         hub->register_import_export_handler(mock_handler);
         hub->quit();
 
-        sync.try_signal_ready_for(std::chrono::seconds{60});
+        sync.try_signal_ready_for(std::chrono::seconds{120});
 
         app.exec();
 
@@ -142,7 +142,7 @@ TEST(Handler, handler_on_bus)
     auto client = [this, &sync, default_peer_id, default_dest_peer_id]() -> core::posix::exit::Status
 
     {
-        EXPECT_EQ(1, sync.wait_for_signal_ready_for(std::chrono::seconds{60}));
+        EXPECT_EQ(1, sync.wait_for_signal_ready_for(std::chrono::seconds{120}));
 
         int argc = 0;
         QCoreApplication app(argc, nullptr);

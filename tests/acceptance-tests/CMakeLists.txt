@@ -88,14 +88,19 @@ target_link_libraries(test_utils content-hub gmock gtest gtest_main)
 target_link_libraries(test_types content-hub gmock gtest gtest_main)
 target_link_libraries(test_hook content-hub gmock gtest gtest_main ${GSETTINGS_LDFLAGS})
 
-add_test(NAME app_hub_communication_default_source COMMAND dbus-test-runner --task ${CMAKE_CURRENT_BINARY_DIR}/app_hub_communication_default_source)
-add_test(NAME app_hub_communication_known_sources COMMAND dbus-test-runner --task ${CMAKE_CURRENT_BINARY_DIR}/app_hub_communication_known_sources)
-add_test(NAME app_hub_communication_stores COMMAND dbus-test-runner --task ${CMAKE_CURRENT_BINARY_DIR}/app_hub_communication_stores)
-add_test(NAME app_hub_communication_transfer COMMAND dbus-test-runner --task ${CMAKE_CURRENT_BINARY_DIR}/app_hub_communication_transfer)
-add_test(NAME app_hub_communication_handler COMMAND dbus-test-runner --task ${CMAKE_CURRENT_BINARY_DIR}/app_hub_communication_handler)
-add_test(NAME test_utils COMMAND dbus-test-runner --task ${CMAKE_CURRENT_BINARY_DIR}/test_utils)
-add_test(NAME test_types COMMAND dbus-test-runner --task ${CMAKE_CURRENT_BINARY_DIR}/test_types)
-add_test(NAME test_hook COMMAND dbus-test-runner --task ${CMAKE_CURRENT_BINARY_DIR}/test_hook)
+set(
+  RUNNER
+  dbus-test-runner -m 120 --task
+)
+
+add_test(NAME app_hub_communication_default_source COMMAND ${RUNNER} ${CMAKE_CURRENT_BINARY_DIR}/app_hub_communication_default_source)
+add_test(NAME app_hub_communication_known_sources COMMAND ${RUNNER} ${CMAKE_CURRENT_BINARY_DIR}/app_hub_communication_known_sources)
+add_test(NAME app_hub_communication_stores COMMAND ${RUNNER} ${CMAKE_CURRENT_BINARY_DIR}/app_hub_communication_stores)
+add_test(NAME app_hub_communication_transfer COMMAND ${RUNNER} ${CMAKE_CURRENT_BINARY_DIR}/app_hub_communication_transfer)
+add_test(NAME app_hub_communication_handler COMMAND ${RUNNER} ${CMAKE_CURRENT_BINARY_DIR}/app_hub_communication_handler)
+add_test(NAME test_utils COMMAND ${RUNNER} ${CMAKE_CURRENT_BINARY_DIR}/test_utils)
+add_test(NAME test_types COMMAND ${RUNNER} ${CMAKE_CURRENT_BINARY_DIR}/test_types)
+add_test(NAME test_hook COMMAND ${RUNNER} ${CMAKE_CURRENT_BINARY_DIR}/test_hook)
 
 set_target_properties(
   test_hook

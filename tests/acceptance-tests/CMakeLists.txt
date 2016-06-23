@@ -101,6 +101,17 @@ add_test(NAME app_hub_communication_handler COMMAND ${RUNNER} ${CMAKE_CURRENT_BI
 add_test(NAME test_utils COMMAND ${RUNNER} ${CMAKE_CURRENT_BINARY_DIR}/test_utils)
 add_test(NAME test_types COMMAND ${RUNNER} ${CMAKE_CURRENT_BINARY_DIR}/test_types)
 add_test(NAME test_hook COMMAND ${RUNNER} ${CMAKE_CURRENT_BINARY_DIR}/test_hook)
+set_tests_properties(
+  app_hub_communication_default_source
+  app_hub_communication_known_sources
+  app_hub_communication_stores
+  app_hub_communication_transfer
+  app_hub_communication_handler
+  test_utils
+  test_types
+  test_hook
+  PROPERTIES RUN_SERIAL TRUE
+)
 
 set_target_properties(
   test_hook

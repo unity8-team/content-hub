@@ -98,8 +98,8 @@ TEST(Hub, stores_are_reported_correctly_to_clients)
         auto implementation = new cucd::Service(connection, registry, app_manager, &app);
         new ServiceAdaptor(implementation);
 
-        EXPECT_TRUE(connection.registerService(service_name));
-        EXPECT_TRUE(connection.registerObject("/", implementation));
+        connection.registerService(service_name);
+        connection.registerObject("/", implementation);
 
         sync.try_signal_ready_for(std::chrono::seconds{120});
 

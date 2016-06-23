@@ -111,8 +111,8 @@ TEST_F(Hub, transfer_creation_and_states_work)
 
         new ServiceAdaptor(implementation);
 
-        EXPECT_TRUE(connection.registerService(service_name));
-        EXPECT_TRUE(connection.registerObject("/", implementation));
+        connection.registerService(service_name);
+        connection.registerObject("/", implementation);
 
         sync.try_signal_ready_for(std::chrono::seconds{120});
 

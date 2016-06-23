@@ -118,7 +118,7 @@ TEST(Hub, querying_known_peers_returns_correct_value)
         WillRepeatedly(Return(true));
 
         EXPECT_TRUE(mock->install_source_for_type(cuc::Type::Known::documents(),
-                                                cuc::Peer("com.does.not.exist.anywhere.application4")));
+                                                  cuc::Peer("com.does.not.exist.anywhere.application4")));
 
         QSharedPointer<cucd::PeerRegistry> registry{mock};
         
@@ -126,8 +126,8 @@ TEST(Hub, querying_known_peers_returns_correct_value)
         auto implementation = new cucd::Service(connection, registry, app_manager, &app);
         new ServiceAdaptor(implementation);
 
-        EXPECT_TRUE(connection.registerService(service_name));
-        EXPECT_TRUE(connection.registerObject("/", implementation));
+        connection.registerService(service_name);
+        connection.registerObject("/", implementation);
 
         sync.try_signal_ready_for(std::chrono::seconds{120});
 

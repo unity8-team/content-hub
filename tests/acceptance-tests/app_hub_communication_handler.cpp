@@ -117,8 +117,8 @@ TEST(Handler, handler_on_bus)
         auto implementation = new cucd::Service(connection, registry, app_manager, &app);
         new ServiceAdaptor(implementation);
 
-        EXPECT_TRUE(connection.registerService(service_name));
-        EXPECT_TRUE(connection.registerObject("/", implementation));
+        connection.registerService(service_name);
+        connection.registerObject("/", implementation);
 
         /* register handler on the service */
         auto mock_handler = new MockedHandler{};

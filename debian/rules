@@ -3,6 +3,7 @@
 
 export DPKG_GENSYMBOLS_CHECK_LEVEL=4
 export CONTENT_HUB_TESTING=1
+export CTEST_OUTPUT_ON_FAILURE=1
 
 %:
 	dh $@ --with click,translations --fail-missing -- -B build

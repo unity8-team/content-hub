@@ -95,9 +95,7 @@ TEST_F(Hub, transfer_creation_and_states_work)
     {
         int argc = 0;
         QCoreApplication app{argc, nullptr};
-
         QString default_peer_id{"com.does.not.exist.anywhere.application"};
-
         QDBusConnection connection = QDBusConnection::sessionBus();        
         
         auto mock = new ::testing::NiceMock<MockedPeerRegistry>{};
@@ -114,15 +112,17 @@ TEST_F(Hub, transfer_creation_and_states_work)
         connection.registerService(service_name);
         connection.registerObject("/", implementation);
 
+        QObject::connect(&app, &QCoreApplication::aboutToQuit, [&](){
+            delete implementation;
+            connection.unregisterObject("/");
+            connection.unregisterService(service_name);
+        });
+
         sync.try_signal_ready_for(std::chrono::seconds{120});
 
         app.exec();
 
-        delete implementation;
-        connection.unregisterObject("/");
-        connection.unregisterService(service_name);
-        //return ::testing::Test::HasFailure() ? core::posix::exit::Status::failure : core::posix::exit::Status::success;
-        return core::posix::exit::Status::success;
+        return ::testing::Test::HasFailure() ? core::posix::exit::Status::failure : core::posix::exit::Status::success;
     };
 
     auto client = [this, &sync]() -> core::posix::exit::Status

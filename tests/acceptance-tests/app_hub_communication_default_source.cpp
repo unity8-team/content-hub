@@ -83,7 +83,7 @@ struct MockedPeerRegistry : public cucd::PeerRegistry
 };
 }
 
-TEST(Hub, querying_default_peer_returns_correct_value)
+TEST_F(Hub, querying_default_peer_returns_correct_value)
 {
     using namespace ::testing;
 
@@ -95,7 +95,6 @@ TEST(Hub, querying_default_peer_returns_correct_value)
     {
         int argc = 0;
         QCoreApplication app{argc, nullptr};
-
         QDBusConnection connection = QDBusConnection::sessionBus();        
         
         auto mock = new MockedPeerRegistry{};
@@ -112,15 +111,17 @@ TEST(Hub, querying_default_peer_returns_correct_value)
         connection.registerService(service_name);
         connection.registerObject("/", implementation);
 
+        QObject::connect(&app, &QCoreApplication::aboutToQuit, [&](){
+            delete implementation;
+            connection.unregisterObject("/");
+            connection.unregisterService(service_name);
+        });
+
         sync.try_signal_ready_for(std::chrono::seconds{120});
 
         app.exec();
 
-        delete implementation;
-        connection.unregisterObject("/");
-        connection.unregisterService(service_name);
-        //return ::testing::Test::HasFailure() ? core::posix::exit::Status::failure : core::posix::exit::Status::success;
-        return core::posix::exit::Status::success;
+        return ::testing::Test::HasFailure() ? core::posix::exit::Status::failure : core::posix::exit::Status::success;
     };
 
     auto client = [this, &sync, default_peer_id]() -> core::posix::exit::Status

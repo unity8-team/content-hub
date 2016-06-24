@@ -82,7 +82,7 @@ struct MockedPeerRegistry : public cucd::PeerRegistry
 };
 }
 
-TEST(Hub, stores_are_reported_correctly_to_clients)
+TEST_F(Hub, stores_are_reported_correctly_to_clients)
 {
     core::testing::CrossProcessSync sync;
     
@@ -90,7 +90,6 @@ TEST(Hub, stores_are_reported_correctly_to_clients)
     {
         int argc = 0;
         QCoreApplication app{argc, nullptr};
-
         QDBusConnection connection = QDBusConnection::sessionBus();        
 
         QSharedPointer<cucd::PeerRegistry> registry{new MockedPeerRegistry{}};
@@ -101,16 +100,17 @@ TEST(Hub, stores_are_reported_correctly_to_clients)
         connection.registerService(service_name);
         connection.registerObject("/", implementation);
 
+        QObject::connect(&app, &QCoreApplication::aboutToQuit, [&](){
+            delete implementation;
+            connection.unregisterObject("/");
+            connection.unregisterService(service_name);
+        });
+
         sync.try_signal_ready_for(std::chrono::seconds{120});
 
         app.exec();
 
-        delete implementation;
-        connection.unregisterObject("/");
-        connection.unregisterService(service_name);
-
-        //return ::testing::Test::HasFailure() ? core::posix::exit::Status::failure : core::posix::exit::Status::success;
-        return core::posix::exit::Status::success;
+        return ::testing::Test::HasFailure() ? core::posix::exit::Status::failure : core::posix::exit::Status::success;
     };
 
     auto client = [this, &sync]() -> core::posix::exit::Status

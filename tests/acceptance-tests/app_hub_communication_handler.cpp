@@ -96,7 +96,7 @@ struct MockedHandler : public cuc::ImportExportHandler
 };
 }
 
-TEST(Handler, handler_on_bus)
+TEST_F(Hub, handler_on_bus)
 {
     using namespace ::testing;
 
@@ -109,7 +109,6 @@ TEST(Handler, handler_on_bus)
     {
         int argc = 0;
         QCoreApplication app{argc, nullptr};
-
         QDBusConnection connection = QDBusConnection::sessionBus();
 
         QSharedPointer<cucd::PeerRegistry> registry{new MockedPeerRegistry{}};
@@ -128,16 +127,18 @@ TEST(Handler, handler_on_bus)
         hub->register_import_export_handler(mock_handler);
         hub->quit();
 
+        QObject::connect(&app, &QCoreApplication::aboutToQuit, [&](){
+            delete implementation;
+            delete mock_handler;
+            connection.unregisterObject("/");
+            connection.unregisterService(service_name);
+        });
+
         sync.try_signal_ready_for(std::chrono::seconds{120});
 
         app.exec();
 
-        delete implementation;
-        delete mock_handler;
-        connection.unregisterObject("/");
-        connection.unregisterService(service_name);
-        //return ::testing::Test::HasFailure() ? core::posix::exit::Status::failure : core::posix::exit::Status::success;
-        return core::posix::exit::Status::success;
+        return ::testing::Test::HasFailure() ? core::posix::exit::Status::failure : core::posix::exit::Status::success;
     };
 
     auto client = [this, &sync, default_peer_id, default_dest_peer_id]() -> core::posix::exit::Status

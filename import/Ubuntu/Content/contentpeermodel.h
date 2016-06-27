@@ -52,7 +52,7 @@ public:
 
 Q_SIGNALS:
     void contentTypeChanged();
-    void contentMimeTypesChanged();
+    void mimeTypesChanged();
     void handlerChanged();
     void peersChanged();
     void findPeersCompleted();

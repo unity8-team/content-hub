@@ -74,6 +74,7 @@ Q_SIGNALS:
     void handlerChanged();
     void contentTypeChanged();
     void selectionTypeChanged();
+    void mimeTypesChanged();
 
 private:
     void init();

@@ -14,6 +14,8 @@
 #
 # Authored by: Thomas Voss <thomas.voss@canonical.com>
 
+add_definitions(-DQT_NO_KEYWORDS)
+
 include_directories(${CMAKE_CURRENT_BINARY_DIR})
 
 qt5_add_dbus_adaptor(
@@ -23,9 +25,11 @@ qt5_add_dbus_adaptor(
 include_directories(
   ${CMAKE_SOURCE_DIR}/src
   ${CMAKE_SOURCE_DIR}/src/com/ubuntu/content
+  ${GIO_INCLUDE_DIRS}
   ${GSETTINGS_INCLUDE_DIRS}
   ${UBUNTU_LAUNCH_INCLUDE_DIRS}
   ${MIRCLIENT_INCLUDE_DIRS}
+  ${LIBERTINE_INCLUDE_DIRS}
 )
 
 add_executable(
@@ -44,8 +48,10 @@ target_link_libraries(
   content-hub-service
  
   content-hub
+  ${GIO_LDFLAGS}
   ${GSETTINGS_LDFLAGS}
   ${UBUNTU_LAUNCH_LDFLAGS}
+  ${LIBERTINE_LDFLAGS}
 )
 
 install(
@@ -116,4 +122,9 @@ install(
 FILES
 "${CLICK_HOOK}"
 DESTINATION "/usr/share/click/hooks"
+)
+
+install(
+  FILES xorg.png
+  DESTINATION ${CMAKE_INSTALL_DATADIR}/content-hub/icons/
 )

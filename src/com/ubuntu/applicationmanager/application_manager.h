@@ -18,6 +18,7 @@
 
 #include <string>
 #include "../content/detail/mir-helper.h"
+#include <glib.h>
 
 namespace com
 {
@@ -38,7 +39,7 @@ class ApplicationManager
      * \brief invoke_application starts an application, and brings it to foreground
      * \param app_id ID for the application (for example "gallery-app" - used for the desktop)
      */
-    virtual bool invoke_application(const std::string &app_id) = 0;
+    virtual bool invoke_application(const std::string &app_id, gchar ** uris) = 0;
 
     /*!
      * \brief invoke_application_with_session starts an application without a trusted session

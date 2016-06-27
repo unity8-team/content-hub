@@ -166,6 +166,13 @@ QDBusVariant cucd::Service::DefaultSourceForType(const QString& type_id)
     return QDBusVariant(QVariant::fromValue(peer));
 }
 
+QDBusVariant cucd::Service::PeerForId(const QString& app_id)
+{
+    cuc::Peer peer = cuc::Peer{app_id};
+
+    return QDBusVariant(QVariant::fromValue(peer));
+}
+
 QDBusObjectPath cucd::Service::CreateImportFromPeer(const QString& peer_id, const QString& app_id, const QString& type_id)
 {
     TRACE() << Q_FUNC_INFO << "APP_ID:" << app_id << "SERVICE:" << this->message().service();
@@ -194,7 +201,10 @@ void action_dismiss(NotifyNotification *notification, char *action, gpointer dat
     TRACE() << Q_FUNC_INFO;
     Q_UNUSED(notification);
     Q_UNUSED(action);
-    Q_UNUSED(data);
+
+    cucd::Transfer* t = (cucd::Transfer*)data;
+    t->SetShouldBeStartedByContentHub(false);
+    t->Charge(QVariantList());
 }
 
 void action_accept(NotifyNotification *notification, char *action, gpointer data)
@@ -389,9 +399,10 @@ void cucd::Service::handle_imports(int state)
             }
         }
 
-        if (!transfer->PromptSession() || !transfer->WasSourceStartedByContentHub())
-            d->app_manager->invoke_application(transfer->source().toStdString());
-        else {
+        if (!transfer->PromptSession() || !transfer->WasSourceStartedByContentHub()) {
+            gchar ** uris = NULL;
+            d->app_manager->invoke_application(transfer->source().toStdString(), uris);
+        } else {
             std::string instance_id = d->app_manager->invoke_application_with_session(transfer->source().toStdString(), transfer->PromptSession());
             transfer->SetInstanceId(QString::fromStdString(instance_id));
         }
@@ -412,7 +423,24 @@ void cucd::Service::handle_imports(int state)
             }
         }
         
-        d->app_manager->invoke_application(transfer->destination().toStdString());
+        gchar ** uris = NULL;
+        if (d->registry->peer_is_legacy(transfer->destination())) {
+            TRACE() << Q_FUNC_INFO << "Destination is a legacy app, collecting";
+            transfer->SetStore(shared_dir_for_peer(transfer->destination()));
+            auto items = transfer->Collect();
+            gchar* urls[2] = {0};
+            gint i = 0;
+            Q_FOREACH (QVariant item, items) {
+                QString s = copy_to_store(item.value<cuc::Item>().url().toString(), transfer->Store()).split("/shared")[1];
+                QUrl u = QUrl::fromLocalFile(QStandardPaths::writableLocation(QStandardPaths::HomeLocation) + "/shared" + s);
+                urls[i] = g_str_to_ascii(u.toString().toStdString().c_str(), NULL);
+                i++;
+            }
+            uris = (gchar **)urls;
+        }
+
+        if (transfer->ShouldBeStartedByContentHub())
+            d->app_manager->invoke_application(transfer->destination().toStdString(), uris);
 
         Q_FOREACH (RegHandler *r, d->handlers)
         {
@@ -460,7 +488,8 @@ void cucd::Service::handle_imports(int state)
                 }
             }
         }
-        d->app_manager->invoke_application(transfer->destination().toStdString());
+        gchar ** uris = NULL;
+        d->app_manager->invoke_application(transfer->destination().toStdString(), uris);
     }
 }
 
@@ -492,7 +521,25 @@ void cucd::Service::handle_exports(int state)
         else
             transfer->SetSourceStartedByContentHub(true);
 
-        d->app_manager->invoke_application(transfer->destination().toStdString());
+        gchar ** uris = NULL;
+        if (d->registry->peer_is_legacy(transfer->destination())) {
+            TRACE() << Q_FUNC_INFO << "Destination is a legacy app, collecting";
+            transfer->SetStore(shared_dir_for_peer(transfer->destination()));
+            
+            auto items = transfer->Collect();
+            gchar* urls[2] = {0};
+            gint i = 0;
+            Q_FOREACH (QVariant item, items) {
+                QString s = copy_to_store(item.value<cuc::Item>().url().toString(), transfer->Store()).split("/shared")[1];
+                QUrl u = QUrl::fromLocalFile(QStandardPaths::writableLocation(QStandardPaths::HomeLocation) + "/shared" + s);
+                urls[i] = g_str_to_ascii(u.toString().toStdString().c_str(), NULL);
+                i++;
+            }
+            uris = (gchar **)urls;
+        }
+
+        if (transfer->ShouldBeStartedByContentHub())
+            d->app_manager->invoke_application(transfer->destination().toStdString(), uris);
 
         Q_FOREACH (RegHandler *r, d->handlers)
         {
@@ -543,7 +590,8 @@ void cucd::Service::handle_exports(int state)
                 }
             }
         }
-        d->app_manager->invoke_application(transfer->source().toStdString());
+        gchar ** uris = NULL;
+        d->app_manager->invoke_application(transfer->source().toStdString(), uris);
     }
 }
 

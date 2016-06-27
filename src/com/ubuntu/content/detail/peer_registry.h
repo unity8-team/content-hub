@@ -50,7 +50,7 @@ class PeerRegistry
     virtual bool install_destination_for_type(Type, Peer) = 0;
     virtual bool install_share_for_type(Type, Peer) = 0;
     virtual bool remove_peer(Peer peer) = 0;
-
+    virtual bool peer_is_legacy(QString type) = 0;
 
 };
 }

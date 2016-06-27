@@ -1,16 +1,16 @@
-# Croatian translation for content-hub
-# Copyright (c) 2014 Rosetta Contributors and Canonical Ltd 2014
+# Kannada translation for content-hub
+# Copyright (c) 2016 Rosetta Contributors and Canonical Ltd 2016
 # This file is distributed under the same license as the content-hub package.
-# FIRST AUTHOR <EMAIL@ADDRESS>, 2014.
+# FIRST AUTHOR <EMAIL@ADDRESS>, 2016.
 #
 msgid ""
 msgstr ""
 "Project-Id-Version: content-hub\n"
 "Report-Msgid-Bugs-To: FULL NAME <EMAIL@ADDRESS>\n"
 "POT-Creation-Date: 2014-08-14 12:39+0100\n"
-"PO-Revision-Date: 2014-12-07 23:29+0000\n"
+"PO-Revision-Date: 2016-03-26 10:15+0000\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
-"Language-Team: Croatian <hr@li.org>\n"
+"Language-Team: Kannada <kn@li.org>\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
@@ -20,22 +20,22 @@ msgstr ""
 #: import/Ubuntu/Content/ContentPeerPicker10.qml:48
 #: import/Ubuntu/Content/ContentPeerPicker11.qml:49
 msgid "Choose from"
-msgstr "Odaberi s(a)"
+msgstr ""
 
 #: import/Ubuntu/Content/ContentPeerPicker10.qml:48
 #: import/Ubuntu/Content/ContentPeerPicker11.qml:49
 msgid "Open with"
-msgstr "Otvori s(a)"
+msgstr "ಇದರೊಂದಿಗೆ ತೆರೆಯಿರಿ"
 
 #: import/Ubuntu/Content/ContentPeerPicker10.qml:48
 #: import/Ubuntu/Content/ContentPeerPicker11.qml:49
 msgid "Share to"
-msgstr "Podijeli s(a)"
+msgstr ""
 
 #: import/Ubuntu/Content/ContentPeerPicker10.qml:158
 #: import/Ubuntu/Content/ContentPeerPicker11.qml:175
 msgid "Apps"
-msgstr "Aplikacije"
+msgstr "ಆಪ್ಸ್‌‌"
 
 #: import/Ubuntu/Content/ContentPeerPicker10.qml:194
 #: import/Ubuntu/Content/ContentPeerPicker11.qml:211
@@ -43,8 +43,6 @@ msgid ""
 "Sorry, there aren't currently any apps installed that can provide this type "
 "of content."
 msgstr ""
-"Isprika, trenutno nema instaliranih aplikacija koje pružaju ovakvu vrstu "
-"sadržaja."
 
 #: import/Ubuntu/Content/ContentPeerPicker10.qml:194
 #: import/Ubuntu/Content/ContentPeerPicker11.qml:211
@@ -52,36 +50,34 @@ msgid ""
 "Sorry, there aren't currently any apps installed that can handle this type "
 "of content."
 msgstr ""
-"Isprika, trenutno nema instaliranih aplikacija koje mogu rukovati ovakvom "
-"vrstom sadržaja."
 
 #: import/Ubuntu/Content/ContentPeerPicker10.qml:210
 #: import/Ubuntu/Content/ContentPeerPicker11.qml:227
 msgid "Devices"
-msgstr "Uređaji"
+msgstr "ಸಾಧನಗಳು"
 
 #: import/Ubuntu/Content/ContentPeerPicker10.qml:247
 #: import/Ubuntu/Content/ContentPeerPicker11.qml:56
 #: import/Ubuntu/Content/ContentTransferHint.qml:65
 msgid "Cancel"
-msgstr "Odustani"
+msgstr "ರದ್ದುಗೊಳಿಸು"
 
 #: import/Ubuntu/Content/ContentTransferHint.qml:52
 msgid "Transfer in progress"
-msgstr "Prijenos u tijeku"
+msgstr ""
 
 #: src/com/ubuntu/content/detail/service.cpp:216
 msgid "Download Complete"
-msgstr "Preuzimanje završeno"
+msgstr "ಡೌನ್‌ಲೋಡ್ ಸಂಪೂರ್ಣಗೊಂಡಿದೆ"
 
 #: src/com/ubuntu/content/detail/service.cpp:234
 msgid "Open"
-msgstr "Otvori"
+msgstr ""
 
 #: src/com/ubuntu/content/detail/service.cpp:241
 msgid "Dismiss"
-msgstr "Odbaci"
+msgstr ""
 
 #: src/com/ubuntu/content/detail/service.cpp:259
 msgid "Download Failed"
-msgstr "Preuzimanje neuspjelo"
+msgstr ""

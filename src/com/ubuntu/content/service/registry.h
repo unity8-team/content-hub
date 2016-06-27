@@ -43,6 +43,7 @@ public:
     bool install_destination_for_type(cuc::Type type, cuc::Peer peer);
     bool install_share_for_type(cuc::Type type, cuc::Peer peer);
     bool remove_peer(cuc::Peer peer);
+    bool peer_is_legacy(QString type);
 
 private:
     QScopedPointer<QGSettings> m_defaultSources;

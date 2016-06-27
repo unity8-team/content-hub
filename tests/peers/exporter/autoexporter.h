@@ -34,7 +34,7 @@ class AutoExporter : public cuc::ImportExportHandler
 public:
     AutoExporter();
        
-public slots:
+public Q_SLOTS:
     Q_INVOKABLE void handle_import(cuc::Transfer*);
     Q_INVOKABLE void handle_export(cuc::Transfer*);
     Q_INVOKABLE void handle_share(cuc::Transfer*);

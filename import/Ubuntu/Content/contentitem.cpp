@@ -78,8 +78,10 @@ void ContentItem::setUrl(const QUrl &url)
         return;
 
     QString oldName = m_item.name();
+    QString oldText = m_item.text();
     m_item = cuc::Item(url);
     m_item.setName(oldName);
+    m_item.setText(oldText);
     Q_EMIT urlChanged();
 }
 
@@ -128,7 +130,7 @@ void ContentItem::setItem(const com::ubuntu::content::Item &item)
 }
 
 /*!
- * \qmlmethod string ContentItem::toDataURI
+ * \qmlmethod string ContentItem::toDataURI()
  *  Returns the ContentItem base64 encoded with the mimetype as a 
  *  properly formated dataUri
  */

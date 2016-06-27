@@ -14,13 +14,13 @@ msgstr ""
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"X-Launchpad-Export-Date: 2015-09-17 05:46+0000\n"
-"X-Generator: Launchpad (build 17737)\n"
+"X-Launchpad-Export-Date: 2016-06-18 06:03+0000\n"
+"X-Generator: Launchpad (build 18097)\n"
 
 #: import/Ubuntu/Content/ContentPeerPicker10.qml:48
 #: import/Ubuntu/Content/ContentPeerPicker11.qml:49
 msgid "Choose from"
-msgstr "Одаберите између"
+msgstr "Изабери између"
 
 #: import/Ubuntu/Content/ContentPeerPicker10.qml:48
 #: import/Ubuntu/Content/ContentPeerPicker11.qml:49
@@ -43,7 +43,7 @@ msgid ""
 "Sorry, there aren't currently any apps installed that can provide this type "
 "of content."
 msgstr ""
-"Жао нам је, тренутно нема инсталираних програма који могу пружити овај тип "
+"Жао нам је, тренутно нема инсталираних програма који могу пружити ову врсту "
 "садржаја."
 
 #: import/Ubuntu/Content/ContentPeerPicker10.qml:194
@@ -52,8 +52,8 @@ msgid ""
 "Sorry, there aren't currently any apps installed that can handle this type "
 "of content."
 msgstr ""
-"Жао нам је, тренутно нема инсталираних програма који могу руковати овим "
-"типом садржаја."
+"Жао нам је, тренутно нема инсталираних програма који могу радити са овом "
+"врстом садржаја."
 
 #: import/Ubuntu/Content/ContentPeerPicker10.qml:210
 #: import/Ubuntu/Content/ContentPeerPicker11.qml:227
@@ -68,11 +68,11 @@ msgstr "Откажи"
 
 #: import/Ubuntu/Content/ContentTransferHint.qml:52
 msgid "Transfer in progress"
-msgstr "Пренос у току"
+msgstr "Пренос је у току"
 
 #: src/com/ubuntu/content/detail/service.cpp:216
 msgid "Download Complete"
-msgstr "Преузимање завршено"
+msgstr "Преузимање је завршено"
 
 #: src/com/ubuntu/content/detail/service.cpp:234
 msgid "Open"
@@ -84,4 +84,4 @@ msgstr "Одбаци"
 
 #: src/com/ubuntu/content/detail/service.cpp:259
 msgid "Download Failed"
-msgstr "Преузимање неуспешно"
+msgstr "Преузимање није успело"

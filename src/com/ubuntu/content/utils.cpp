@@ -32,6 +32,7 @@
 #include "debug.h"
 #include "com/ubuntu/content/type.h"
 #include <unistd.h>
+#include <liblibertine/libertine.h>
 
 #include <sys/apparmor.h>
 /* need to be exposed in libapparmor but for now ... */
@@ -149,12 +150,21 @@ QString copy_to_store(const QString& src, const QString& store)
     QDir st(store);
     if (not st.exists())
         st.mkpath(st.absolutePath());
-    QString destFilePath = store + QDir::separator() + fi.fileName();
-    TRACE() << Q_FUNC_INFO << destFilePath;
+    QString suffix = fi.completeSuffix();
+    QString filename = fi.fileName();
+    QString filenameWithoutSuffix = filename.left(filename.size() - suffix.size());
+    QString destFilePath = store + QDir::separator() + filenameWithoutSuffix + suffix;
+    // Avoid filename collision by automatically inserting an incremented
+    // number into the filename if the original name already exists.
     if (QFile::exists(destFilePath)) {
-            qWarning() << "Destination file already exists, aborting:" << destFilePath;
-            return QString();
+        qWarning() << "Destination file already exists, attempt to resolve:" << destFilePath;
+        int append = 1;
+        do {
+            destFilePath = QString("%1%2.%3").arg(store + QDir::separator() + filenameWithoutSuffix, QString::number(append), suffix);
+            append++;
+        } while (QFile::exists(destFilePath));
     }
+    TRACE() << Q_FUNC_INFO << destFilePath;
     bool copy_failed = true;
     if (not is_persistent(store))
     {
@@ -233,6 +243,19 @@ bool check_profile_read(QString profile, QString path)
     TRACE() << "NOT ALLOWED:" << QString::number(allowed);
     return false;
 
+}
+
+QString shared_dir_for_peer(QString peer)
+{
+    TRACE() << Q_FUNC_INFO << "PEER:" << peer;
+    QString container = peer.split("_")[0];
+    if (container.isEmpty())
+        return QString();
+    QString home_path = libertine_container_home_path(container.toStdString().c_str());
+    if (home_path.isEmpty())
+        return QString();
+    QString path = home_path + "/shared";
+    return path;
 }
 
 }

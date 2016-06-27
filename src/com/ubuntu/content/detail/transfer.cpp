@@ -45,6 +45,7 @@ struct cucd::Transfer::Private
             direction(direction),
             selection_type(cuc::Transfer::single),
             source_started_by_content_hub(false),
+            should_be_started_by_content_hub(true),
             content_type(content_type)
     {
     }
@@ -58,6 +59,7 @@ struct cucd::Transfer::Private
     int selection_type;
     QVariantList items;
     bool source_started_by_content_hub;
+    bool should_be_started_by_content_hub;
     QString download_id;
     const QString content_type;
     QString instance_id = "";
@@ -238,6 +240,9 @@ void cucd::Transfer::Download()
         download->setDestinationDir(d->store);
         connect(download, SIGNAL(finished(QString)), this, SLOT(DownloadComplete(QString)));
         connect(download, SIGNAL(error(Ubuntu::DownloadManager::Error*)), this, SLOT(DownloadError(Ubuntu::DownloadManager::Error*)));
+        QVariantMap metadata = download->metadata();
+        metadata["app-id"] = d->destination;
+        download->setMetadata(metadata);
         download->start();
         d->state = cuc::Transfer::downloading;
         Q_EMIT(StateChanged(d->state));
@@ -246,7 +251,7 @@ void cucd::Transfer::Download()
 
 void cucd::Transfer::AddItemsFromDir(QDir dir) {
     QFileInfoList files = dir.entryInfoList(QDir::NoDotAndDotDot | QDir::Dirs | QDir::Files);
-    foreach(const QFileInfo &fileInfo, files) {
+    Q_FOREACH(const QFileInfo &fileInfo, files) {
         QString path = fileInfo.absoluteFilePath();
         if(fileInfo.isDir()) {
             AddItemsFromDir(QDir(path));
@@ -395,6 +400,18 @@ bool com::ubuntu::content::detail::Transfer::WasSourceStartedByContentHub() cons
 {
     TRACE() << Q_FUNC_INFO << d->source_started_by_content_hub;;
     return d->source_started_by_content_hub;
+}
+
+/* sets, if the dest app should be invoked by the content hub */
+void cucd::Transfer::SetShouldBeStartedByContentHub(bool start)
+{
+    d->should_be_started_by_content_hub = start;
+}
+
+/* returns if the dest app should be invoked by the content hub */
+bool com::ubuntu::content::detail::Transfer::ShouldBeStartedByContentHub() const
+{
+    return d->should_be_started_by_content_hub;
 }
 
 QString cucd::Transfer::ContentType()

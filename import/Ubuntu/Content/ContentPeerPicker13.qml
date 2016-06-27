@@ -1,5 +1,5 @@
 /*
- * Copyright 2013 Canonical Ltd.
+ * Copyright 2013-2015 Canonical Ltd.
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as published by
@@ -14,11 +14,11 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-import QtQuick 2.0
-import Ubuntu.Components 0.1
-import Ubuntu.Components.Popups 0.1
-import Ubuntu.Components.ListItems 0.1 as ListItem
-import Ubuntu.Content 0.1
+import QtQuick 2.4
+import Ubuntu.Components 1.3
+import Ubuntu.Components.Popups 1.3
+import Ubuntu.Components.ListItems 1.3 as ListItem
+import Ubuntu.Content 1.3
 
 /*!
   \internal
@@ -33,6 +33,7 @@ Item {
     property alias showTitle: header.visible
     property var peer
     property var customPeerModelLoader
+    property string headerText
     property var completed: false
 
     signal peerSelected
@@ -44,9 +45,15 @@ Item {
         color: Theme.palette.normal.background
     }
 
-    Header {
+    ContentPageHeader {
         id: header
-        title: (handler === ContentHandler.Source) ? i18n.dtr("content-hub", "Choose from") : (handler === ContentHandler.Destination ? i18n.dtr("content-hub", "Open with") : i18n.dtr("content-hub", "Share to"))
+        title: headerText ? headerText : (handler === ContentHandler.Source) ? i18n.dtr("content-hub", "Choose from") : (handler === ContentHandler.Destination ? i18n.dtr("content-hub", "Open with") : i18n.dtr("content-hub", "Share to"))
+        onCancel: {
+            if(root.activeTransfer) {
+                root.activeTransfer.state = ContentTransfer.Aborted;
+            }
+            cancelPressed()
+        }
     }
 
     Loader {
@@ -114,15 +121,15 @@ Item {
                     radius: "medium"
                     width: units.gu(8)
                     height: units.gu(7.5)
-                    image: Image {
+                    sourceHorizontalAlignment: Image.AlignHCenter
+                    sourceVerticalAlignment: Image.AlignVCenter
+                    source: Image {
                         id: image
                         objectName: "image"
                         sourceSize { width: icon.width; height: icon.height }
                         asynchronous: true
                         cache: false
                         source: "image://content-hub/" + modelData.appId
-                        horizontalAlignment: Image.AlignHCenter
-                        verticalAlignment: Image.AlignVCenter
                     }
                }
 
@@ -169,7 +176,7 @@ Item {
             left: parent.left
             right: parent.right
             top: appTitle.bottom
-            bottom: devTitle.visible ? devTitle.top : cancelButton.top
+            bottom: devTitle.visible ? devTitle.top : parent.bottom
             bottomMargin: units.gu(1)
         }
 
@@ -224,7 +231,7 @@ Item {
             left: parent.left
             right: parent.right
             top: devTitle.bottom
-            bottom: cancelButton.top
+            bottom: parent.bottom
             bottomMargin: units.gu(1)
         }
 
@@ -241,23 +248,6 @@ Item {
                 verticalSpacing: units.gu(2)
                 delegate: peerDelegate
             }
-        }
-    }
-
-    Button {
-        id: cancelButton
-        objectName: "contentPeerPickerCancelButton"
-        text: i18n.dtr("content-hub", "Cancel")
-        anchors {
-            left: parent.left
-            bottom: parent.bottom
-            margins: units.gu(1)
-        }
-        onClicked: {
-            if(root.activeTransfer) {
-                root.activeTransfer.state = ContentTransfer.Aborted;
-            }
-            cancelPressed();
         }
     }
 

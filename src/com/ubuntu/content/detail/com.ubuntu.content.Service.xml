@@ -47,5 +47,9 @@
       <arg name="peer_id" type="s" direction="in" />
       <arg name="pending" type="b" direction="out" />
     </method>
+    <method name="PeerForId">
+      <arg name="app_id" type="s" direction="in" />
+      <arg name="peer" type="v" direction="out" />
+    </method>
  </interface>
 </node>

@@ -18,8 +18,8 @@
 
 #include "app_manager_mock.h"
 #include "test_harness.h"
-#include "../cross_process_sync.h"
-#include "../fork_and_run.h"
+#include <core/testing/cross_process_sync.h>
+#include <core/testing/fork_and_run.h>
 
 #include <com/ubuntu/content/hub.h>
 #include <com/ubuntu/content/peer.h>
@@ -51,6 +51,10 @@ namespace cucd = com::ubuntu::content::detail;
 void PrintTo(const QString& s, ::std::ostream* os) {
     *os << std::string(qPrintable(s));
 }
+
+struct Hub : public ::testing::Test
+{
+};
 
 namespace
 {
@@ -92,42 +96,55 @@ struct MockedHandler : public cuc::ImportExportHandler
 };
 }
 
-TEST(Handler, handler_on_bus)
+TEST_F(Hub, handler_on_bus)
 {
     using namespace ::testing;
 
     QString default_peer_id{"com.does.not.exist.anywhere.application"};
     QString default_dest_peer_id{"com.also.does.not.exist.anywhere.application"};
 
-    test::CrossProcessSync sync;
+    core::testing::CrossProcessSync sync;
     
-    auto parent = [&sync, default_peer_id]()
+    auto service = [this, &sync, default_peer_id]() -> core::posix::exit::Status
     {
         int argc = 0;
         QCoreApplication app{argc, nullptr};
-
         QDBusConnection connection = QDBusConnection::sessionBus();
 
         QSharedPointer<cucd::PeerRegistry> registry{new MockedPeerRegistry{}};
-        auto app_manager = QSharedPointer<cua::ApplicationManager>(new MockedAppManager());
+        auto app_manager = QSharedPointer<cua::ApplicationManager>(new ::testing::NiceMock<MockedAppManager>);
         auto implementation = new cucd::Service(connection, registry, app_manager, &app);
         new ServiceAdaptor(implementation);
 
-        ASSERT_TRUE(connection.registerService(service_name));
-        ASSERT_TRUE(connection.registerObject("/", implementation));
+        connection.registerService(service_name);
+        connection.registerObject("/", implementation);
 
-        sync.signal_ready();
+        /* register handler on the service */
+        auto mock_handler = new MockedHandler{};
+        EXPECT_CALL(*mock_handler, handle_export(_)).Times(Exactly(1));
+        qputenv("APP_ID", default_peer_id.toLatin1());
+        auto hub = cuc::Hub::Client::instance();
+        hub->register_import_export_handler(mock_handler);
+        hub->quit();
+
+        QObject::connect(&app, &QCoreApplication::aboutToQuit, [&](){
+            delete implementation;
+            delete mock_handler;
+            connection.unregisterObject("/");
+            connection.unregisterService(service_name);
+        });
+
+        sync.try_signal_ready_for(std::chrono::seconds{120});
 
         app.exec();
 
-        connection.unregisterObject("/");
-        connection.unregisterService(service_name);
-        delete implementation;
+        return ::testing::Test::HasFailure() ? core::posix::exit::Status::failure : core::posix::exit::Status::success;
     };
 
-    auto child = [&sync, default_peer_id, default_dest_peer_id]()
+    auto client = [this, &sync, default_peer_id, default_dest_peer_id]() -> core::posix::exit::Status
+
     {
-        sync.wait_for_signal_ready();
+        EXPECT_EQ(1, sync.wait_for_signal_ready_for(std::chrono::seconds{120}));
 
         int argc = 0;
         QCoreApplication app(argc, nullptr);
@@ -135,27 +152,19 @@ TEST(Handler, handler_on_bus)
         test::TestHarness harness;
         harness.add_test_case([default_peer_id, default_dest_peer_id]()
         {
-            /* register handler on the service */
-            auto mock_handler = new MockedHandler{};
-            EXPECT_CALL(*mock_handler, handle_export(_)).Times(Exactly(1));
-            qputenv("APP_ID", default_peer_id.toLatin1());
-            auto hub = cuc::Hub::Client::instance();
-            hub->register_import_export_handler(mock_handler);
-            hub->quit();
-
             qputenv("APP_ID", default_dest_peer_id.toLatin1());
+            auto hub = cuc::Hub::Client::instance();
             hub = cuc::Hub::Client::instance();
             auto transfer = hub->create_import_from_peer(cuc::Peer(default_peer_id));
-            ASSERT_TRUE(transfer != nullptr);
+            EXPECT_TRUE(transfer != nullptr);
             EXPECT_TRUE(transfer->start());
             EXPECT_EQ(cuc::Transfer::in_progress, transfer->state());
-            EXPECT_EQ(cuc::Transfer::charged, transfer->state());
             hub->quit();
-            delete mock_handler;
         });
 
         EXPECT_EQ(0, QTest::qExec(std::addressof(harness)));
+        return ::testing::Test::HasFailure() ? core::posix::exit::Status::failure : core::posix::exit::Status::success;
     };
 
-    EXPECT_TRUE(test::fork_and_run(child, parent) != EXIT_FAILURE);
+    EXPECT_EQ(core::testing::ForkAndRunResult::empty, core::testing::fork_and_run(service, client));
 }

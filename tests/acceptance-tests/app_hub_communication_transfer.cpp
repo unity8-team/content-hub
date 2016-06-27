@@ -18,8 +18,8 @@
 
 #include "app_manager_mock.h"
 #include "test_harness.h"
-#include "../cross_process_sync.h"
-#include "../fork_and_run.h"
+#include <core/testing/cross_process_sync.h>
+#include <core/testing/fork_and_run.h>
 
 #include <com/ubuntu/content/hub.h>
 #include <com/ubuntu/content/item.h>
@@ -52,6 +52,10 @@ void PrintTo(const QString& s, ::std::ostream* os) {
     *os << std::string(qPrintable(s));
 }
 
+struct Hub : public ::testing::Test
+{
+};
+
 namespace
 {
 QString service_name{"com.ubuntu.content.dbus.Service"};
@@ -81,19 +85,17 @@ struct MockedPeerRegistry : public cucd::PeerRegistry
 };
 }
 
-TEST(Hub, transfer_creation_and_states_work)
+TEST_F(Hub, transfer_creation_and_states_work)
 {
     using namespace ::testing;
 
-    test::CrossProcessSync sync;
+    core::testing::CrossProcessSync sync;
     
-    auto parent = [&sync]()
+    auto service = [this, &sync]() -> core::posix::exit::Status
     {
         int argc = 0;
         QCoreApplication app{argc, nullptr};
-
         QString default_peer_id{"com.does.not.exist.anywhere.application"};
-
         QDBusConnection connection = QDBusConnection::sessionBus();        
         
         auto mock = new ::testing::NiceMock<MockedPeerRegistry>{};
@@ -102,28 +104,34 @@ TEST(Hub, transfer_creation_and_states_work)
         WillRepeatedly(Return(cuc::Peer{default_peer_id}));
         
         QSharedPointer<cucd::PeerRegistry> registry{mock};
-        auto app_manager = QSharedPointer<cua::ApplicationManager>(new MockedAppManager());
-        cucd::Service implementation(connection, registry, app_manager, &app);
-        new ServiceAdaptor(std::addressof(implementation));
+        auto app_manager = QSharedPointer<cua::ApplicationManager>(new ::testing::NiceMock<MockedAppManager>);
+        auto implementation = new cucd::Service(connection, registry, app_manager, &app);
 
-        ASSERT_TRUE(connection.registerService(service_name));
-        ASSERT_TRUE(connection.registerObject("/", std::addressof(implementation)));
+        new ServiceAdaptor(implementation);
 
-        sync.signal_ready();
+        connection.registerService(service_name);
+        connection.registerObject("/", implementation);
+
+        QObject::connect(&app, &QCoreApplication::aboutToQuit, [&](){
+            delete implementation;
+            connection.unregisterObject("/");
+            connection.unregisterService(service_name);
+        });
+
+        sync.try_signal_ready_for(std::chrono::seconds{120});
 
         app.exec();
 
-        connection.unregisterObject("/");
-        connection.unregisterService(service_name);
+        return ::testing::Test::HasFailure() ? core::posix::exit::Status::failure : core::posix::exit::Status::success;
     };
 
-    auto child = [&sync]()
+    auto client = [this, &sync]() -> core::posix::exit::Status
     {
         int argc = 0;
         QCoreApplication app(argc, nullptr);
         app.setApplicationName("com.some.test.app");
 
-        sync.wait_for_signal_ready();
+        EXPECT_EQ(1, sync.wait_for_signal_ready_for(std::chrono::seconds{120}));
         
         test::TestHarness harness;
         harness.add_test_case([]()
@@ -157,47 +165,33 @@ TEST(Hub, transfer_creation_and_states_work)
             auto hub = cuc::Hub::Client::instance();
             auto transfer = hub->create_import_from_peer(
                 hub->default_source_for_type(cuc::Type::Known::pictures()));
-            ASSERT_TRUE(transfer != nullptr);
+            EXPECT_TRUE(transfer != nullptr);
             EXPECT_EQ(cuc::Transfer::created, transfer->state());
-            ASSERT_FALSE(hub->has_pending(transfer->destination()));
+            EXPECT_FALSE(hub->has_pending(transfer->destination()));
             EXPECT_TRUE(transfer->setSelectionType(cuc::Transfer::SelectionType::multiple));
-            ASSERT_EQ(cuc::Transfer::SelectionType::multiple, transfer->selectionType());
+            EXPECT_EQ(cuc::Transfer::SelectionType::multiple, transfer->selectionType());
             transfer->setStore(new cuc::Store{store_dir.path()});
             EXPECT_TRUE(transfer->start());
             EXPECT_EQ(cuc::Transfer::initiated, transfer->state());
-            ASSERT_TRUE(hub->has_pending(transfer->destination()));
+            EXPECT_TRUE(hub->has_pending(transfer->destination()));
             EXPECT_TRUE(transfer->setSelectionType(cuc::Transfer::SelectionType::single));
-            ASSERT_EQ(cuc::Transfer::SelectionType::multiple, transfer->selectionType());
+            EXPECT_EQ(cuc::Transfer::SelectionType::multiple, transfer->selectionType());
             EXPECT_TRUE(transfer->charge(source_items));
             EXPECT_EQ(cuc::Transfer::charged, transfer->state());
             EXPECT_EQ(expected_items, transfer->collect());
             /** [Importing pictures] */
 
-            /** Test that the transfer aborts when destination file exists */
-            auto dupe_transfer = hub->create_import_from_peer(
-                hub->default_source_for_type(cuc::Type::Known::pictures()));
-            ASSERT_TRUE(dupe_transfer != nullptr);
-            EXPECT_EQ(cuc::Transfer::created, dupe_transfer->state());
-            EXPECT_TRUE(dupe_transfer->setSelectionType(cuc::Transfer::SelectionType::multiple));
-            ASSERT_EQ(cuc::Transfer::SelectionType::multiple, dupe_transfer->selectionType());
-            dupe_transfer->setStore(new cuc::Store{store_dir.path()});
-            EXPECT_TRUE(dupe_transfer->start());
-            EXPECT_EQ(cuc::Transfer::initiated, dupe_transfer->state());
-            EXPECT_TRUE(dupe_transfer->charge(source_items));
-            EXPECT_EQ(cuc::Transfer::aborted, dupe_transfer->state());
-            /* end dest exists test */
-
             /* Test that only a single transfer exists for the same peer */
             auto single_transfer = hub->create_import_from_peer(
                 hub->default_source_for_type(cuc::Type::Known::pictures()));
-            ASSERT_TRUE(single_transfer != nullptr);
+            EXPECT_TRUE(single_transfer != nullptr);
             EXPECT_EQ(cuc::Transfer::created, single_transfer->state());
             EXPECT_TRUE(single_transfer->start());
             EXPECT_EQ(cuc::Transfer::initiated, single_transfer->state());
 
             auto second_transfer = hub->create_import_from_peer(
                 hub->default_source_for_type(cuc::Type::Known::pictures()));
-            ASSERT_TRUE(second_transfer != nullptr);
+            EXPECT_TRUE(second_transfer != nullptr);
             EXPECT_EQ(cuc::Transfer::created, second_transfer->state());
             /* Now that a second transfer was created, the previous
              * transfer should have been aborted */
@@ -208,13 +202,13 @@ TEST(Hub, transfer_creation_and_states_work)
             auto type_transfer = hub->create_import_from_peer_for_type(
                 hub->default_source_for_type(cuc::Type::Known::pictures()),
                 cuc::Type::Known::pictures());
-            ASSERT_TRUE(type_transfer != nullptr);
+            EXPECT_TRUE(type_transfer != nullptr);
             EXPECT_EQ(cuc::Transfer::created, type_transfer->state());
             EXPECT_TRUE(transfer->setSelectionType(cuc::Transfer::SelectionType::multiple));
-            ASSERT_EQ(cuc::Transfer::SelectionType::multiple, transfer->selectionType());
+            EXPECT_EQ(cuc::Transfer::SelectionType::multiple, transfer->selectionType());
             EXPECT_TRUE(type_transfer->start());
             EXPECT_EQ(cuc::Transfer::initiated, type_transfer->state());
-            ASSERT_EQ(cuc::Type::Known::pictures().id(), type_transfer->contentType());
+            EXPECT_EQ(cuc::Type::Known::pictures().id(), type_transfer->contentType());
             EXPECT_TRUE(type_transfer->abort());
             EXPECT_EQ(cuc::Transfer::aborted, type_transfer->state());
             /* end create_import_from_peer_for_type test */
@@ -222,7 +216,8 @@ TEST(Hub, transfer_creation_and_states_work)
             hub->quit();
         });
         EXPECT_EQ(0, QTest::qExec(std::addressof(harness)));
+        return ::testing::Test::HasFailure() ? core::posix::exit::Status::failure : core::posix::exit::Status::success;
     };
     
-    EXPECT_EQ(EXIT_SUCCESS, test::fork_and_run(child, parent));
+    EXPECT_EQ(core::testing::ForkAndRunResult::empty, core::testing::fork_and_run(service, client));
 }

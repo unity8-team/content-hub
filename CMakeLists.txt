@@ -70,6 +70,7 @@ pkg_check_modules(DBUS REQUIRED dbus-1)
 pkg_check_modules(UBUNTU_DOWNLOAD_MANAGER REQUIRED ubuntu-download-manager-client)
 pkg_check_modules(NOTIFY REQUIRED libnotify)
 pkg_check_modules(APPARMOR REQUIRED libapparmor)
+pkg_check_modules(PROCESS_CPP REQUIRED process-cpp)
 
 add_definitions(-DDEBUG_ENABLED)
 

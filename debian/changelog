@@ -1,3 +1,10 @@
+content-hub (0.1+16.10.20160627-0ubuntu1) yakkety; urgency=medium
+
+  * Use dbus-test-runner for tests by default
+  * Port tests to use process-cpp for forkandrun (LP: #1433297)
+
+ -- Ken VanDine <ken.vandine@canonical.com>  Mon, 27 Jun 2016 14:20:12 +0000
+
 content-hub (0.1+16.10.20160610.2-0ubuntu1) yakkety; urgency=medium
 
   * Ensure all the properties are set when the url is set on a

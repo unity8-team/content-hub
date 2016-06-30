@@ -44,6 +44,7 @@ public:
     bool install_share_for_type(cuc::Type type, cuc::Peer peer);
     bool remove_peer(cuc::Peer peer);
     bool peer_is_legacy(QString type);
+    void enumerate_types_for_app_id(const QString& app_id, const std::function<void(const cuc::Type&)>&for_each);
 
 private:
     QScopedPointer<QGSettings> m_defaultSources;

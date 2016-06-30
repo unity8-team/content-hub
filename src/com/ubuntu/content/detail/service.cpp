@@ -92,6 +92,7 @@ cucd::Service::Service(QDBusConnection connection, const QSharedPointer<cucd::Pe
 {
     assert(!peer_registry.isNull());
 
+    //    qDBusRegisterMetaType<cuc::Type>();
     qDBusRegisterMetaType<cuc::Peer>();
     qDBusRegisterMetaType<cuc::Item>();
 
@@ -660,4 +661,18 @@ bool cucd::Service::HasPending(const QString& peer_id)
         }
     }
     return false;
+}
+
+QVariantList cucd::Service::SupportedTypesForAppId(const QString& app_id)
+{
+    QVariantList result;
+
+    d->registry->enumerate_types_for_app_id(
+        app_id,
+        [&result](const cuc::Type& type)
+        {
+            result.append(QVariant::fromValue(type));
+        });
+
+    return result;
 }

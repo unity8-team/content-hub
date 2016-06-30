@@ -210,6 +210,25 @@ QVector<cuc::Peer> cuc::Hub::known_destinations_for_type(cuc::Type t)
     return result;
 }
 
+QVector<cuc::Type> cuc::Hub::supported_types_for_app_id(QString app_id)
+{
+    QVector<cuc::Type> result;
+
+    auto reply = d->service->SupportedTypesForAppId(app_id);
+    reply.waitForFinished();
+
+    if (reply.isError())
+        return result;
+
+    auto types = reply.value();
+
+    Q_FOREACH(const QVariant& t, types)
+    {
+        result << qdbus_cast<cuc::Type>(t);
+    }
+    return result;
+}
+
 QVector<cuc::Peer> cuc::Hub::known_shares_for_type(cuc::Type t)
 {
     QVector<cuc::Peer> result;

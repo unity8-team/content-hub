@@ -58,6 +58,7 @@ class Hub : public QObject
     Q_INVOKABLE virtual Transfer* create_import_from_peer(Peer peer);
     Q_INVOKABLE virtual Transfer* create_export_to_peer(Peer peer);
     Q_INVOKABLE virtual Transfer* create_share_to_peer(Peer peer);
+    Q_INVOKABLE virtual QVector<Type> supported_types_for_app_id(QString app_id);
 
     Q_INVOKABLE virtual void quit();
 

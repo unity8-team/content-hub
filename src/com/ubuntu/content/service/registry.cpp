@@ -256,7 +256,7 @@ void Registry::enumerate_known_peers(const std::function<void(const cuc::Peer&)>
 }
 
 void Registry::enumerate_types_for_app_id(const QString& app_id,
-                                          const std::function<void(const cuc::Type&)>&for_each)
+                                          const std::function<void(const QString&)>&for_each)
 {
     TRACE() << Q_FUNC_INFO;
 
@@ -266,7 +266,7 @@ void Registry::enumerate_types_for_app_id(const QString& app_id,
         Q_FOREACH (QString k, m_sources->get(type_id).toStringList())
         {
             TRACE() << Q_FUNC_INFO << k;
-            if (k == peer_id) {
+            if (k == app_id) {
                 for_each(type_id);
                 break;
             }
@@ -278,7 +278,7 @@ void Registry::enumerate_types_for_app_id(const QString& app_id,
         Q_FOREACH (QString k, m_dests->get(type_id).toStringList())
         {
             TRACE() << Q_FUNC_INFO << k;
-            if (k == peer_id) {
+            if (k == app_id) {
                 for_each(type_id);
                 break;
             }
@@ -290,7 +290,7 @@ void Registry::enumerate_types_for_app_id(const QString& app_id,
         Q_FOREACH (QString k, m_shares->get(type_id).toStringList())
         {
             TRACE() << Q_FUNC_INFO << k;
-            if (k == peer_id) {
+            if (k == app_id) {
                 for_each(type_id);
                 break;
             }

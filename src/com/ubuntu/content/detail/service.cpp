@@ -92,7 +92,6 @@ cucd::Service::Service(QDBusConnection connection, const QSharedPointer<cucd::Pe
 {
     assert(!peer_registry.isNull());
 
-    //    qDBusRegisterMetaType<cuc::Type>();
     qDBusRegisterMetaType<cuc::Peer>();
     qDBusRegisterMetaType<cuc::Item>();
 
@@ -669,7 +668,7 @@ QVariantList cucd::Service::SupportedTypesForAppId(const QString& app_id)
 
     d->registry->enumerate_types_for_app_id(
         app_id,
-        [&result](const cuc::Type& type)
+        [&result](const QString& type)
         {
             result.append(QVariant::fromValue(type));
         });

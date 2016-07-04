@@ -23,6 +23,7 @@
 #include <QQmlListProperty>
 #include "contentpeer.h"
 #include "contenttransfer.h"
+#include "contenttype.h"
 
 class ContentStore;
 class QmlImportExportHandler;
@@ -58,6 +59,7 @@ public:
     Q_INVOKABLE ContentTransfer* importContent(com::ubuntu::content::Peer peer, ContentType::Type type);
     Q_INVOKABLE ContentTransfer* exportContent(com::ubuntu::content::Peer peer, ContentType::Type type);
     Q_INVOKABLE ContentTransfer* shareContent(com::ubuntu::content::Peer peer, ContentType::Type type);
+    Q_INVOKABLE QList<ContentType::Type> getSupportedTypes();
 
 Q_SIGNALS:
     void importRequested(ContentTransfer *transfer);

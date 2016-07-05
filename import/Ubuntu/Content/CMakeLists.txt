@@ -17,17 +17,8 @@ project(content-hub-plugin)
 find_package(Qt5Quick REQUIRED)
 set(CMAKE_AUTOMOC TRUE)
 
-execute_process(
-    COMMAND qmake -query QT_INSTALL_QML
-    OUTPUT_VARIABLE QT_INSTALL_QML
-    OUTPUT_STRIP_TRAILING_WHITESPACE
-)
-execute_process(
-    COMMAND qmake -query QT_INSTALL_BINS
-    OUTPUT_VARIABLE QT_INSTALL_BINS
-    OUTPUT_STRIP_TRAILING_WHITESPACE
-)
-set(CONTENT_HUB_IMPORTS_DIR "${QT_INSTALL_QML}/Ubuntu/Content")
+set(QT_IMPORTS_DIR "${CMAKE_INSTALL_LIBDIR}/qt5/qml")
+set(CONTENT_HUB_IMPORTS_DIR "${QT_IMPORTS_DIR}/Ubuntu/Content")
 
 set(PLUGIN ubuntu-content-hub-plugin)
 
@@ -100,11 +91,13 @@ if(NOT ${CMAKE_CURRENT_BINARY_DIR} STREQUAL ${CMAKE_CURRENT_SOURCE_DIR})
   add_dependencies(${PLUGIN} copy_files_to_build_dir)
 endif()
 
+if(NOT CMAKE_CROSSCOMPILING)
 add_custom_command(OUTPUT ${CMAKE_CURRENT_BINARY_DIR}/plugins.qmltypes
-    COMMAND ${QT_INSTALL_BINS}/qmlplugindump -noinstantiate -notrelocatable Ubuntu.Content 1.1 ../../ > ${CMAKE_CURRENT_BINARY_DIR}/plugins.qmltypes
+    COMMAND qmlplugindump -qt=qt5 -noinstantiate -notrelocatable Ubuntu.Content 1.1 ../../ > ${CMAKE_CURRENT_BINARY_DIR}/plugins.qmltypes
     DEPENDS ${PLUGIN}
     WORKING_DIRECTORY "${CMAKE_CURRENT_BINARY_DIR}"
 )
+endif()
 
 add_custom_target(Content_generated_files ALL SOURCES ${CMAKE_CURRENT_BINARY_DIR}/plugins.qmltypes)
 install(FILES ${CMAKE_CURRENT_BINARY_DIR}/plugins.qmltypes DESTINATION ${CONTENT_HUB_IMPORTS_DIR})

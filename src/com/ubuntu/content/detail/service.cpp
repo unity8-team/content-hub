@@ -329,13 +329,13 @@ QDBusObjectPath cucd::Service::GetLatestPaste(const QString& app_id)
 {
     TRACE() << Q_FUNC_INFO << app_id;
     if (d->active_pastes.isEmpty())
-        return QDBusObjectPath();
+        return QDBusObjectPath("/FAILED");
 
     pid_t pid = d->connection.interface()->servicePid(this->message().service()); 
     qWarning() << Q_FUNC_INFO << "PID: " << pid;
     if (!app_id_matches(app_id, pid)) {
         qWarning() << "APP_ID doesn't match requesting APP";
-        return QDBusObjectPath();
+        return QDBusObjectPath("/FAILED");
     }
 
     QString dest_id = app_id;
@@ -358,12 +358,12 @@ QDBusObjectPath cucd::Service::GetPaste(const QString& id, const QString& app_id
 {
     TRACE() << Q_FUNC_INFO << id;
     if (d->active_pastes.isEmpty())
-        return QDBusObjectPath();
+        return QDBusObjectPath("/FAILED");
 
     pid_t pid = d->connection.interface()->servicePid(this->message().service()); 
     if (!app_id_matches(app_id, pid)) {
         qWarning() << "APP_ID doesn't match requesting APP";
-        return QDBusObjectPath();
+        return QDBusObjectPath("/FAILED");
     }
 
     QString dest_id = app_id;
@@ -384,7 +384,7 @@ QDBusObjectPath cucd::Service::GetPaste(const QString& id, const QString& app_id
             return QDBusObjectPath(path);
         }
     }
-    return QDBusObjectPath();
+    return QDBusObjectPath("/FAILED");
 }
 
 QDBusObjectPath cucd::Service::CreateTransfer(const QString& dest_id, const QString& src_id, int dir, const QString& type_id)

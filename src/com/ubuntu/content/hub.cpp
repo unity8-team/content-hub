@@ -358,6 +358,12 @@ const char* cuc::Hub::latest_paste_buf() {
     auto reply = d->service->GetLatestPaste(dest_id);
     reply.waitForFinished();
 
+    /* If no pastes on the stack, return NULL */
+    if (reply.value().path() == "/FAILED") {
+        qWarning() << "PasteBoard stack is empty";
+        return NULL;
+    }
+
     cuc::Paste *paste = cuc::Paste::Private::make_paste(reply.value(), this);
     auto items = paste->collect();
     if (items.count() > 0) {
@@ -373,6 +379,12 @@ const char* cuc::Hub::paste_buf_by_id(int id) {
     QString dest_id = app_id();
     auto reply = d->service->GetPaste(QString::number(id), dest_id);
     reply.waitForFinished();
+
+    /* If no pastes on the stack, return NULL */
+    if (reply.value().path() == "/FAILED") {
+        qWarning() << "PasteBoard: Paste doesn't exist for ID " << id;
+        return NULL;
+    }
 
     cuc::Paste *paste = cuc::Paste::Private::make_paste(reply.value(), this);
     auto items = paste->collect();

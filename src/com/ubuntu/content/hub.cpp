@@ -359,10 +359,8 @@ const char* cuc::Hub::latest_paste_buf() {
     reply.waitForFinished();
 
     /* If no pastes on the stack, return NULL */
-    if (reply.value().path() == "/FAILED") {
-        qWarning() << "PasteBoard stack is empty";
+    if (reply.value().path() == "/FAILED")
         return NULL;
-    }
 
     cuc::Paste *paste = cuc::Paste::Private::make_paste(reply.value(), this);
     auto items = paste->collect();

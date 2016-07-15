@@ -1,3 +1,9 @@
+content-hub (0.1+16.10.20160715-0ubuntu1) yakkety; urgency=medium
+
+  * Filter current app out of the peer model (LP: #1603508)
+
+ -- Ken VanDine <ken.vandine@canonical.com>  Fri, 15 Jul 2016 19:12:46 +0000
+
 content-hub (0.1+16.10.20160610.2-0ubuntu1) yakkety; urgency=medium
 
   * Ensure all the properties are set when the url is set on a

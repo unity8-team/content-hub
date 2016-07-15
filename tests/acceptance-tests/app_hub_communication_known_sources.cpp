@@ -89,6 +89,10 @@ TEST(Hub, querying_known_peers_returns_correct_value)
     default_peers << cuc::Peer("com.does.not.exist.anywhere.application2");
     default_peers << cuc::Peer("com.does.not.exist.anywhere.application3");
 
+    QVector<cuc::Peer> expected_peers;
+    expected_peers << default_peers[1];
+    expected_peers << default_peers[2];
+
     auto parent = [&sync, default_peers]()
     {
         int argc = 0;
@@ -134,24 +138,26 @@ TEST(Hub, querying_known_peers_returns_correct_value)
         connection.unregisterService(service_name);
     };
 
-    auto child = [&sync, default_peers]()
+    auto child = [&sync, default_peers, expected_peers]()
     {
         sync.wait_for_signal_ready();
         
         int argc = 0;
         QCoreApplication app(argc, nullptr);
         
-        auto hub = cuc::Hub::Client::instance();
-        
         test::TestHarness harness;
-        harness.add_test_case([hub, default_peers]()
+
+        QString appId = default_peers[0].id();
+        qputenv("APP_ID", appId.toLatin1());
+        auto hub = cuc::Hub::Client::instance();
+        harness.add_test_case([hub, expected_peers]()
         {            
             auto peers = hub->known_sources_for_type(cuc::Type::Known::documents());
-            ASSERT_EQ(default_peers, peers);
+            ASSERT_EQ(expected_peers, peers);
         });
         
         EXPECT_EQ(0, QTest::qExec(std::addressof(harness)));
-        
+
         hub->quit();
 
     };

@@ -51,7 +51,6 @@ class Paste : public QObject
     Q_ENUMS(State)
     Q_PROPERTY(int id READ id)
     Q_PROPERTY(State state READ state NOTIFY stateChanged)
-    //Q_PROPERTY(QMimeData mimeData READ mimeData WRITE charge)
     Q_PROPERTY(QString source READ source)
 
   public:

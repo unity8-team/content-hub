@@ -44,7 +44,7 @@ struct cucd::Paste::Private
     const int id;
     const QString source;
     QString destination;
-    QVariantList items;
+    QVariant mimeData;
 };
 
 cucd::Paste::Paste(const int id,
@@ -106,41 +106,19 @@ int cucd::Paste::State()
     return d->state;
 }
 
-void cucd::Paste::Abort()
-{
-    TRACE() << __PRETTY_FUNCTION__;
-
-    if (d->state == cuc::Paste::aborted)
-        return;
-
-    d->items.clear();
-    d->state = cuc::Paste::aborted;
-    Q_EMIT(StateChanged(d->state));
-}
-
-void cucd::Paste::Charge(const QVariantList& items)
+void cucd::Paste::Charge(const QVariantList& mimeData)
 {
     TRACE() << __PRETTY_FUNCTION__ << "STATE:" << d->state;
 
     if (d->state == cuc::Paste::charged)
         return;
 
-    QVariantList ret;
-    Q_FOREACH(QVariant iv, items) {
-        cuc::Item item = qdbus_cast<Item>(iv);
-        ret.append(QVariant::fromValue(item));
-    }
-    if (ret.count() <= 0) {
-        qWarning() << "Failed to charge items, aborting";
-        d->state = cuc::Paste::aborted;
-    } else {
-        d->items = ret;
-        d->state = cuc::Paste::charged;
-    }
+    d->mimeData = mimeData.first();
+    d->state = cuc::Paste::charged;
     Q_EMIT(StateChanged(d->state));
 }
 
-QVariantList cucd::Paste::Collect()
+QVariantList cucd::Paste::MimeData()
 {
     TRACE() << __PRETTY_FUNCTION__;
 
@@ -150,17 +128,7 @@ QVariantList cucd::Paste::Collect()
         Q_EMIT(StateChanged(d->state));
     }
 
-    return d->items;
-}
-
-void cucd::Paste::Finalize()
-{
-    TRACE() << __PRETTY_FUNCTION__;
-
-    if (d->state == cuc::Paste::finalized)
-        return;
-
-    d->items.clear();
-    d->state = cuc::Paste::finalized;
-    Q_EMIT(StateChanged(d->state));
+    QVariantList ret;
+    ret << QVariant::fromValue(d->mimeData);
+    return ret;
 }

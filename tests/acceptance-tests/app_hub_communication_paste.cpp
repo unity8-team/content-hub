@@ -119,13 +119,14 @@ TEST(Hub, transfer_creation_and_states_work)
         harness.add_test_case([]()
         {
             qputenv("APP_ID", "some-app");
-            const char * data = "some text";
-            auto hub = cuc::Hub::Client::instance();
 
-            auto paste = hub->create_paste(data);
+            QMimeData data;
+            data.setText("some text");
+            auto hub = cuc::Hub::Client::instance();
+            auto paste = hub->create_paste(const_cast<const QMimeData&>(data));
             ASSERT_TRUE(paste != nullptr);
-            EXPECT_EQ(QString(data), QString(hub->latest_paste_buf()));
-            EXPECT_EQ(QString(data), QString(hub->paste_buf_by_id(1)));
+            EXPECT_EQ(QString(data.text()), QString(hub->latest_paste_buf()->text()));
+            EXPECT_EQ(QString(data.text()), QString(hub->paste_buf_by_id(1)->text()));
 
             hub->quit();
         });

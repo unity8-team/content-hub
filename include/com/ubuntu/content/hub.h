@@ -23,7 +23,7 @@
 #include <com/ubuntu/content/type.h>
 
 #include <QObject>
-#include <QVector>
+#include <QMimeData>
 
 namespace com
 {
@@ -67,9 +67,9 @@ class Hub : public QObject
     Q_INVOKABLE virtual Transfer* create_share_to_peer_for_type(Peer peer, Type type);
     Q_INVOKABLE virtual bool has_pending(QString peer_id);
     Q_INVOKABLE virtual Peer peer_for_app_id(QString app_id);
-    Q_INVOKABLE virtual Paste* create_paste(const char * data);
-    Q_INVOKABLE virtual const char* latest_paste_buf();
-    Q_INVOKABLE virtual const char* paste_buf_by_id(int id);
+    Q_INVOKABLE virtual Paste* create_paste(const QMimeData& data);
+    Q_INVOKABLE virtual const QMimeData* latest_paste_buf();
+    Q_INVOKABLE virtual const QMimeData* paste_buf_by_id(int id);
        
   protected:
     Hub(QObject* = nullptr);

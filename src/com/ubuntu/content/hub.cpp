@@ -333,7 +333,7 @@ cuc::Peer cuc::Hub::peer_for_app_id(QString app_id)
     return qdbus_cast<cuc::Peer>(peer.variant());
 }
 
-cuc::Paste* cuc::Hub::create_paste(const char * data) {
+cuc::Paste* cuc::Hub::create_paste(const QMimeData& mimeData) {
     /* This needs to be replaced with a better way to get the APP_ID */
     QString id = app_id();
     TRACE() << Q_FUNC_INFO << id;
@@ -342,17 +342,12 @@ cuc::Paste* cuc::Hub::create_paste(const char * data) {
     reply.waitForFinished();
 
     cuc::Paste *paste = cuc::Paste::Private::make_paste(reply.value(), this);
-    auto item = cuc::Item();
-    item.setStream(QByteArray(data));
-    QVector<cuc::Item> items;
-    items << item;
-    paste->charge(items);
+    paste->charge(mimeData);
     return paste;
 }
 
-const char* cuc::Hub::latest_paste_buf() {
+const QMimeData* cuc::Hub::latest_paste_buf() {
     TRACE() << Q_FUNC_INFO;
-    const char* ret = NULL;
     QString dest_id = app_id();
     TRACE() << Q_FUNC_INFO << dest_id;
     auto reply = d->service->GetLatestPaste(dest_id);
@@ -363,17 +358,11 @@ const char* cuc::Hub::latest_paste_buf() {
         return NULL;
 
     cuc::Paste *paste = cuc::Paste::Private::make_paste(reply.value(), this);
-    auto items = paste->collect();
-    if (items.count() > 0) {
-        auto item = items.first();
-        ret = item.stream().constData();
-    }
-    return ret;
+    return paste->mimeData();
 }
 
-const char* cuc::Hub::paste_buf_by_id(int id) {
+const QMimeData* cuc::Hub::paste_buf_by_id(int id) {
     TRACE() << Q_FUNC_INFO;
-    const char* ret = NULL;
     QString dest_id = app_id();
     auto reply = d->service->GetPaste(QString::number(id), dest_id);
     reply.waitForFinished();
@@ -385,11 +374,6 @@ const char* cuc::Hub::paste_buf_by_id(int id) {
     }
 
     cuc::Paste *paste = cuc::Paste::Private::make_paste(reply.value(), this);
-    auto items = paste->collect();
-    if (items.count() > 0) {
-        auto item = items.first();
-        ret = item.stream().constData();
-    }
-    return ret;
+    return paste->mimeData();
 }
 

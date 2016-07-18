@@ -48,24 +48,14 @@ cuc::Paste::State cuc::Paste::state() const
     return d->state();
 }
 
-bool cuc::Paste::abort()
+bool cuc::Paste::charge(const QMimeData& mimeData)
 {
-    return d->abort();
+    return d->charge(mimeData);
 }
 
-bool cuc::Paste::charge(const QVector<cuc::Item>& items)
+QMimeData* cuc::Paste::mimeData()
 {
-    return d->charge(items);
-}
-
-QVector<cuc::Item> cuc::Paste::collect()
-{
-    return d->collect();
-}
-
-bool cuc::Paste::finalize()
-{
-    return d->finalize();
+    return d->mimeData();
 }
 
 QString cuc::Paste::source() const

@@ -51,9 +51,7 @@ Q_SIGNALS:
   public Q_SLOTS:
     int State();
     void Charge(const QVariantList&);
-    QVariantList Collect();
-    void Abort();
-    void Finalize();
+    QVariantList MimeData();
     int Id();
     QString source();
     QString destination();

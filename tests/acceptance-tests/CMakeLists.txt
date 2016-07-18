@@ -104,6 +104,9 @@ add_test(test_utils test_utils)
 add_test(test_types test_types)
 add_test(test_hook test_hook)
 
+SET_TESTS_PROPERTIES(app_hub_communication_paste
+    PROPERTIES ENVIRONMENT "CONTENT_HUB_TESTING=1")
+
 set_target_properties(
   test_hook
   PROPERTIES

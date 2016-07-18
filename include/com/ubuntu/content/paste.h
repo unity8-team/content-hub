@@ -22,7 +22,7 @@
 
 #include <QObject>
 #include <QSharedPointer>
-#include <QVector>
+#include <QMimeData>
 #include <QString>
 
 namespace com
@@ -44,7 +44,6 @@ namespace ubuntu
 {
 namespace content
 {
-class Item;
 
 class Paste : public QObject
 {
@@ -52,7 +51,7 @@ class Paste : public QObject
     Q_ENUMS(State)
     Q_PROPERTY(int id READ id)
     Q_PROPERTY(State state READ state NOTIFY stateChanged)
-    Q_PROPERTY(QVector<Item> items READ collect WRITE charge)
+    //Q_PROPERTY(QMimeData mimeData READ mimeData WRITE charge)
     Q_PROPERTY(QString source READ source)
 
   public:
@@ -61,9 +60,7 @@ class Paste : public QObject
         created,
         charged,
         saved,
-        collected,
-        aborted,
-        finalized
+        collected
     };
 
     Paste(const Paste&) = delete;
@@ -73,10 +70,8 @@ class Paste : public QObject
 
     Q_INVOKABLE virtual int id() const;
     Q_INVOKABLE virtual State state() const;
-    Q_INVOKABLE virtual bool abort();
-    Q_INVOKABLE virtual bool finalize();
-    Q_INVOKABLE virtual bool charge(const QVector<Item>& items);
-    Q_INVOKABLE virtual QVector<Item> collect();
+    Q_INVOKABLE virtual bool charge(const QMimeData&  mimeData);
+    Q_INVOKABLE virtual QMimeData* mimeData();
     Q_INVOKABLE virtual QString source() const;
 
     Q_SIGNAL void stateChanged();

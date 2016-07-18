@@ -35,11 +35,12 @@ int main(int argc, char *argv[])
         id = a.arguments().at(1);
 
     auto hub = cuc::Hub::Client::instance();
-    const char* buf = NULL;
-    if (id == "latest")
-        buf = hub->latest_paste_buf();
-    else
-        buf = hub->paste_buf_by_id(id.toInt());
-    qDebug() << id << ":" << buf;
+    if (id == "latest") {
+        auto buf = hub->latest_paste_buf();
+        qDebug() << id << ":" << buf->text();
+    } else {
+        auto buf = hub->paste_buf_by_id(id.toInt());
+        qDebug() << id << ":" << buf->text();
+    }
     return 0;
 }

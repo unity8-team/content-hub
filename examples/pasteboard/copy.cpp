@@ -36,9 +36,11 @@ int main(int argc, char *argv[])
     if (a.arguments().size() > 1)
         text = a.arguments().at(1);
 
-    const char * data = text.toStdString().c_str();
+    QMimeData data;
+    data.setText(text);
+
     auto hub = cuc::Hub::Client::instance();
 
-    auto paste = hub->create_paste(data);
+    auto paste = hub->create_paste(const_cast<const QMimeData&>(data));
     qDebug() << paste->id() << ":" << text;
 }

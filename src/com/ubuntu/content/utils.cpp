@@ -1,5 +1,5 @@
 /*
- * Copyright © 2013 Canonical Ltd.
+ * Copyright © 2013-2016 Canonical Ltd.
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License version 3 as
@@ -20,6 +20,7 @@
 #include <QDir>
 #include <QFile>
 #include <QFileInfo>
+#include <QMimeData>
 #include <QProcess>
 #include <QtCore>
 #include <QtDBus/QDBusMessage>
@@ -111,6 +112,11 @@ QString app_id()
 bool app_id_matches(QString id, pid_t pid)
 {
     TRACE() << Q_FUNC_INFO << id << pid;
+
+    /* Don't verify app_id while testing */
+    if (!qgetenv("CONTENT_HUB_TESTING").isNull())
+        return true;
+
     std::shared_ptr<ual::Registry> reg = ual::Registry::getDefault();
     auto app_id = ual::AppID::parse(id.toStdString());
     if (app_id.empty())

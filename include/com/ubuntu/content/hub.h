@@ -71,7 +71,7 @@ class Hub : public QObject
     Q_INVOKABLE virtual bool create_paste(const QMimeData& data);
     Q_INVOKABLE virtual const QMimeData* latest_paste_buf();
     Q_INVOKABLE virtual const QMimeData* paste_buf_by_id(int id);
-    Q_INVOKABLE virtual QStringList pasteFormats();
+    virtual QStringList pasteFormats();
 
   Q_SIGNALS:
     void pasteFormatsChanged();

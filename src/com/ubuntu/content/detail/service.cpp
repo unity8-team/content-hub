@@ -311,8 +311,6 @@ QDBusObjectPath cucd::Service::CreatePaste(const QString& app_id, const QVariant
     TRACE() << Q_FUNC_INFO << app_id;
     static size_t import_counter{0}; import_counter++;
 
-    QUuid uuid{QUuid::createUuid()};
-
     pid_t pid = d->connection.interface()->servicePid(this->message().service());
     qWarning() << Q_FUNC_INFO << "PID: " << pid;
     if (!app_id_matches(app_id, pid)) {
@@ -400,8 +398,6 @@ QDBusObjectPath cucd::Service::CreateTransfer(const QString& dest_id, const QStr
     TRACE() << Q_FUNC_INFO << "DEST:" << dest_id << "SRC:" << src_id << "DIRECTION:" << dir;
 
     static size_t import_counter{0}; import_counter++;
-
-    QUuid uuid{QUuid::createUuid()};
 
     Q_FOREACH (cucd::Transfer *t, d->active_transfers)
     {

@@ -78,8 +78,10 @@ void ContentItem::setUrl(const QUrl &url)
         return;
 
     QString oldName = m_item.name();
+    QString oldText = m_item.text();
     m_item = cuc::Item(url);
     m_item.setName(oldName);
+    m_item.setText(oldText);
     Q_EMIT urlChanged();
 }
 

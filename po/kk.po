@@ -1,4 +1,4 @@
-# Faroese translation for content-hub
+# Kazakh translation for content-hub
 # Copyright (c) 2016 Rosetta Contributors and Canonical Ltd 2016
 # This file is distributed under the same license as the content-hub package.
 # FIRST AUTHOR <EMAIL@ADDRESS>, 2016.
@@ -8,34 +8,34 @@ msgstr ""
 "Project-Id-Version: content-hub\n"
 "Report-Msgid-Bugs-To: FULL NAME <EMAIL@ADDRESS>\n"
 "POT-Creation-Date: 2014-08-14 12:39+0100\n"
-"PO-Revision-Date: 2016-04-19 11:04+0000\n"
+"PO-Revision-Date: 2016-07-04 21:56+0000\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
-"Language-Team: Faroese <fo@li.org>\n"
+"Language-Team: Kazakh <kk@li.org>\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"X-Launchpad-Export-Date: 2016-06-18 06:03+0000\n"
-"X-Generator: Launchpad (build 18097)\n"
+"X-Launchpad-Export-Date: 2016-07-05 05:58+0000\n"
+"X-Generator: Launchpad (build 18115)\n"
 
 #: import/Ubuntu/Content/ContentPeerPicker10.qml:48
 #: import/Ubuntu/Content/ContentPeerPicker11.qml:49
 msgid "Choose from"
-msgstr "Vel frá"
+msgstr ""
 
 #: import/Ubuntu/Content/ContentPeerPicker10.qml:48
 #: import/Ubuntu/Content/ContentPeerPicker11.qml:49
 msgid "Open with"
-msgstr "Opna við"
+msgstr "Арқылы ашу"
 
 #: import/Ubuntu/Content/ContentPeerPicker10.qml:48
 #: import/Ubuntu/Content/ContentPeerPicker11.qml:49
 msgid "Share to"
-msgstr "Luta til"
+msgstr ""
 
 #: import/Ubuntu/Content/ContentPeerPicker10.qml:158
 #: import/Ubuntu/Content/ContentPeerPicker11.qml:175
 msgid "Apps"
-msgstr "Forritanir"
+msgstr "Бағдарлама"
 
 #: import/Ubuntu/Content/ContentPeerPicker10.qml:194
 #: import/Ubuntu/Content/ContentPeerPicker11.qml:211
@@ -54,13 +54,13 @@ msgstr ""
 #: import/Ubuntu/Content/ContentPeerPicker10.qml:210
 #: import/Ubuntu/Content/ContentPeerPicker11.qml:227
 msgid "Devices"
-msgstr "Tóleindir"
+msgstr "Құрылғылар"
 
 #: import/Ubuntu/Content/ContentPeerPicker10.qml:247
 #: import/Ubuntu/Content/ContentPeerPicker11.qml:56
 #: import/Ubuntu/Content/ContentTransferHint.qml:65
 msgid "Cancel"
-msgstr "Angra"
+msgstr "Болдырмау"
 
 #: import/Ubuntu/Content/ContentTransferHint.qml:52
 msgid "Transfer in progress"
@@ -72,11 +72,11 @@ msgstr ""
 
 #: src/com/ubuntu/content/detail/service.cpp:234
 msgid "Open"
-msgstr "Opna"
+msgstr ""
 
 #: src/com/ubuntu/content/detail/service.cpp:241
 msgid "Dismiss"
-msgstr "Vís burtur"
+msgstr ""
 
 #: src/com/ubuntu/content/detail/service.cpp:259
 msgid "Download Failed"

@@ -16,7 +16,7 @@
 
 import QtQuick 2.0
 import QtTest 1.0
-import Ubuntu.Content 0.1
+import Ubuntu.Content 1.3
 
 TestCase {
     name: "ContentHub"
@@ -51,6 +51,17 @@ TestCase {
         ContentHub.exportRequested(transfer);
         compare(test.exportTransfer, transfer, "Transfer object not correcty set");
         compare(test.exportTransfer.items[0].text, "some text", "Transfer text incorrect");
+    }
+
+    function test_export_request_text_and_url() {
+        var transfer = textPeer.request();
+        transfer.items = [ resultComponent.createObject(test, {"url": "http://www.ubuntu.com", "name": "test", "text": "some text"}) ];
+        transfer.state = ContentTransfer.Charged;
+        // This shouldn't be necessary, but without it we compare the results to fast
+        ContentHub.exportRequested(transfer);
+        compare(test.exportTransfer, transfer, "Transfer object not correcty set");
+        compare(test.exportTransfer.items[0].text, "some text", "Transfer text incorrect");
+        compare(test.exportTransfer.items[0].url, "http://www.ubuntu.com", "Transfer text incorrect");
     }
 
     Component {

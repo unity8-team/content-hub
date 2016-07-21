@@ -41,7 +41,12 @@ int main(int argc, char *argv[])
 
     auto hub = cuc::Hub::Client::instance();
 
-    hub->create_paste(const_cast<const QMimeData&>(data));
+    auto pendingReply = hub->createPaste(const_cast<const QMimeData&>(data));
+
+    // Block and wait until we receive a reply from the content hub server that it received our paste.
+    // NB: Not recommended for production code which should normally strive for non-blocking, asynchronous, operation.
+    pendingReply.waitForFinished();
+
     qDebug() << text;
     qDebug() << hub->pasteFormats();
 }

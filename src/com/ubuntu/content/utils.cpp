@@ -52,6 +52,16 @@ namespace {
 const int maxFormatsCount = 16;
 const int maxBufferSize = 4 * 1024 * 1024;  // 4 Mb
 
+/*
+  Data format:
+   number of mime types      (sizeof(int))
+   data layout               ((4 * sizeof(int)) * number of mime types)
+     mime type string offset (sizeof(int))
+     mime type string size   (sizeof(int))
+     data offset             (sizeof(int))
+     data size               (sizeof(int))
+   data                      (n bytes)
+*/
 QByteArray serializeMimeData(QMimeData *mimeData)
 {
     Q_ASSERT(mimeData != nullptr);
@@ -61,7 +71,7 @@ QByteArray serializeMimeData(QMimeData *mimeData)
     const int headerSize = sizeof(int) + (formatCount * 4 * sizeof(int));
     int bufferSize = headerSize;
 
-    for (int i = 0; i < formatCount; i++) 
+    for (int i = 0; i < formatCount; i++)
         bufferSize += formats[i].size() + mimeData->data(formats[i]).size();
 
     QByteArray serializedMimeData;
@@ -345,7 +355,7 @@ bool check_profile_read(QString profile, QString path)
         qWarning() << "error:" << strerror(errno) << path;
         return false;
     }
-   
+
     if (allowed) {
         TRACE() << "ALLOWED:" << QString::number(allowed);
         return true;

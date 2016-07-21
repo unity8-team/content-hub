@@ -82,16 +82,16 @@ TEST(Hub, transfer_creation_and_states_work)
     using namespace ::testing;
 
     test::CrossProcessSync sync;
-    
+
     auto parent = [&sync]()
     {
         int argc = 0;
         QCoreApplication app{argc, nullptr};
 
-        QDBusConnection connection = QDBusConnection::sessionBus();        
-        
+        QDBusConnection connection = QDBusConnection::sessionBus();
+
         auto mock = new ::testing::NiceMock<MockedPeerRegistry>{};
-        
+
         QSharedPointer<cucd::PeerRegistry> registry{mock};
         auto app_manager = QSharedPointer<cua::ApplicationManager>(new MockedAppManager());
         cucd::Service implementation(connection, registry, app_manager, &app);
@@ -114,7 +114,7 @@ TEST(Hub, transfer_creation_and_states_work)
         QCoreApplication app(argc, nullptr);
 
         sync.wait_for_signal_ready();
-        
+
         test::TestHarness harness;
         harness.add_test_case([]()
         {
@@ -123,15 +123,16 @@ TEST(Hub, transfer_creation_and_states_work)
             QMimeData data;
             data.setText("some text");
             auto hub = cuc::Hub::Client::instance();
-            bool ret = hub->create_paste(const_cast<const QMimeData&>(data));
-            ASSERT_TRUE(ret);
-            EXPECT_EQ(QString(data.text()), QString(hub->latest_paste_buf()->text()));
-            EXPECT_EQ(QString(data.text()), QString(hub->paste_buf_by_id(1)->text()));
+            QDBusPendingCall reply = hub->createPaste(const_cast<const QMimeData&>(data));
+            reply.waitForFinished();
+            ASSERT_FALSE(reply.isError());
+            EXPECT_EQ(QString(data.text()), QString(hub->latestPaste()->text()));
+            EXPECT_EQ(QString(data.text()), QString(hub->pasteById(1)->text()));
 
             hub->quit();
         });
         EXPECT_EQ(0, QTest::qExec(std::addressof(harness)));
     };
-    
+
     EXPECT_EQ(EXIT_SUCCESS, test::fork_and_run(child, parent));
 }

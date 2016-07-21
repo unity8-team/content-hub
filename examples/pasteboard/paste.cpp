@@ -36,11 +36,11 @@ int main(int argc, char *argv[])
 
     auto hub = cuc::Hub::Client::instance();
     if (id == "latest") {
-        auto buf = hub->latest_paste_buf();
-        qDebug() << id << ":" << buf->text();
+        auto mimeData = hub->latestPaste();
+        qDebug() << id << ":" << mimeData->text();
     } else {
-        auto buf = hub->paste_buf_by_id(id.toInt());
-        qDebug() << id << ":" << buf->text();
+        auto mimeData = hub->pasteById(id.toInt());
+        qDebug() << id << ":" << mimeData->text();
     }
     return 0;
 }

@@ -83,6 +83,7 @@ struct cucd::Service::Private : public QObject
     QSharedPointer<cucd::PeerRegistry> registry;
     QSet<cucd::Transfer*> active_transfers;
     QList<cucd::Paste*> active_pastes;
+    QStringList pasteFormats;
     QSet<RegHandler*> handlers;
     QSharedPointer<cua::ApplicationManager> app_manager;
 
@@ -306,9 +307,9 @@ QDBusObjectPath cucd::Service::CreateShareToPeer(const QString& peer_id, const Q
     return CreateTransfer(peer_id, src_id, cuc::Transfer::Share, type_id);
 }
 
-QDBusObjectPath cucd::Service::CreatePaste(const QString& app_id, const QVariantList& mimeData)
+QDBusObjectPath cucd::Service::CreatePaste(const QString& app_id, const QVariantList& mimeData, const QStringList& types)
 {
-    TRACE() << Q_FUNC_INFO << app_id;
+    TRACE() << Q_FUNC_INFO << app_id << types;
     static size_t import_counter{0}; import_counter++;
 
     pid_t pid = d->connection.interface()->servicePid(this->message().service());
@@ -321,6 +322,13 @@ QDBusObjectPath cucd::Service::CreatePaste(const QString& app_id, const QVariant
     auto paste = new cucd::Paste(import_counter, app_id, this);
     new PasteAdaptor(paste);
     d->active_pastes.append(paste);
+    Q_FOREACH (QString t, types) {
+        TRACE() << Q_FUNC_INFO << "Type: " << t;
+        if (!d->pasteFormats.contains(t)) {
+            d->pasteFormats.append(t);
+            Q_EMIT(PasteFormatsChanged());
+        }
+    }
 
     auto path = paste->path();
     if (not d->connection.registerObject(path, paste))
@@ -772,4 +780,10 @@ bool cucd::Service::HasPending(const QString& peer_id)
         }
     }
     return false;
+}
+
+QStringList cucd::Service::PasteFormats()
+{
+    TRACE() << Q_FUNC_INFO;
+    return d->pasteFormats;
 }

@@ -61,9 +61,10 @@ class Service : public QObject, protected QDBusContext
     QDBusObjectPath CreateImportFromPeer(const QString&, const QString&, const QString&);
     QDBusObjectPath CreateExportToPeer(const QString&, const QString&, const QString&);
     QDBusObjectPath CreateShareToPeer(const QString&, const QString&, const QString&);
-    QDBusObjectPath CreatePaste(const QString&, const QVariantList&);
+    QDBusObjectPath CreatePaste(const QString&, const QVariantList&, const QStringList&);
     QDBusObjectPath GetLatestPaste(const QString&);
     QDBusObjectPath GetPaste(const QString&, const QString&);
+    QStringList PasteFormats();
 
     void RegisterImportExportHandler(const QString&, const QDBusObjectPath& handler);
     void HandlerActive(const QString&);
@@ -78,6 +79,9 @@ class Service : public QObject, protected QDBusContext
     struct RegHandler;
     QDBusServiceWatcher* m_watcher;
     QScopedPointer<Private> d;
+
+  Q_SIGNALS:
+    void PasteFormatsChanged();
 
   private Q_SLOTS:
     void handle_imports(int);

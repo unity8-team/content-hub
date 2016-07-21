@@ -53,6 +53,7 @@ struct cuc::Hub::Private
     }
 
     com::ubuntu::content::dbus::Service* service;
+    QStringList pasteFormats;
 };
 
 cuc::Hub::Hub(QObject* parent) : QObject(parent), d{new cuc::Hub::Private{this}}
@@ -80,6 +81,11 @@ cuc::Hub::Hub(QObject* parent) : QObject(parent), d{new cuc::Hub::Private{this}}
         iconPaths << QString(path + "/usr/share/icons/");
     }
     QIcon::setThemeSearchPaths(iconPaths);
+
+    QObject::connect(d->service, SIGNAL(PasteFormatsChanged()),
+            this,
+            SLOT(onPasteFormatsChanged()));
+    onPasteFormatsChanged();
 }
 
 cuc::Hub::~Hub()
@@ -90,6 +96,20 @@ cuc::Hub* cuc::Hub::Client::instance()
 {
     static cuc::Hub* hub = new cuc::Hub(nullptr);
     return hub;
+}
+
+void cuc::Hub::onPasteFormatsChanged()
+{
+    TRACE() << Q_FUNC_INFO;
+    auto reply = d->service->PasteFormats();
+    reply.waitForFinished();
+
+    if (reply.isError())
+        return;
+    
+    d->pasteFormats = reply.value();
+    TRACE() << Q_FUNC_INFO << d->pasteFormats;
+    Q_EMIT(pasteFormatsChanged());
 }
 
 bool cuc::Hub::eventFilter(QObject *obj, QEvent *event)
@@ -352,7 +372,7 @@ bool cuc::Hub::create_paste(const QMimeData& mimeData) {
     QVariantList vv;
     vv << QVariant::fromValue(v);
 
-    auto reply = d->service->CreatePaste(id, vv);
+    auto reply = d->service->CreatePaste(id, vv, mimeData.formats());
     reply.waitForFinished();
     if (reply.isError())
         return false;
@@ -399,3 +419,7 @@ const QMimeData* cuc::Hub::paste_buf_by_id(int id) {
     return mimeData;
 }
 
+QStringList cuc::Hub::pasteFormats() {
+    TRACE() << Q_FUNC_INFO;
+    return d->pasteFormats;
+}

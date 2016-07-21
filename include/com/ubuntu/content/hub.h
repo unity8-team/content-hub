@@ -1,5 +1,5 @@
 /*
- * Copyright © 2013 Canonical Ltd.
+ * Copyright © 2013,2016 Canonical Ltd.
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License version 3 as
@@ -36,6 +36,21 @@ class Store;
 class Transfer;
 class Paste;
 
+/*
+  Can be used to wait until an asynchronous call or operation completes.
+ */
+class WaitHandle
+{
+public
+    void wait_for_finished();
+    bool is_finished() const;
+    bool is_error() const;
+
+private:
+    struct Private;
+    QScopedPointer<Private> d;
+};
+
 class Hub : public QObject
 {
     Q_OBJECT
@@ -68,9 +83,10 @@ class Hub : public QObject
     Q_INVOKABLE virtual Transfer* create_share_to_peer_for_type(Peer peer, Type type);
     Q_INVOKABLE virtual bool has_pending(QString peer_id);
     Q_INVOKABLE virtual Peer peer_for_app_id(QString app_id);
-    Q_INVOKABLE virtual bool create_paste(const QMimeData& data);
-    Q_INVOKABLE virtual const QMimeData* latest_paste_buf();
-    Q_INVOKABLE virtual const QMimeData* paste_buf_by_id(int id);
+
+    virtual WaitHandle create_paste(const QMimeData& data);
+    virtual const QMimeData* latest_paste_buf();
+    virtual const QMimeData* paste_buf_by_id(int id);
     virtual QStringList pasteFormats();
 
   Q_SIGNALS:
@@ -78,10 +94,9 @@ class Hub : public QObject
 
   private Q_SLOTS:
     void onPasteFormatsChanged();
-       
   protected:
     Hub(QObject* = nullptr);
-    
+
   private:
     struct Private;
     QScopedPointer<Private> d;

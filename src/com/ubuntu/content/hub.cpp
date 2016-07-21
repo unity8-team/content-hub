@@ -106,7 +106,7 @@ void cuc::Hub::onPasteFormatsChanged()
 
     if (reply.isError())
         return;
-    
+
     d->pasteFormats = reply.value();
     TRACE() << Q_FUNC_INFO << d->pasteFormats;
     Q_EMIT(pasteFormatsChanged());
@@ -121,7 +121,7 @@ bool cuc::Hub::eventFilter(QObject *obj, QEvent *event)
        {
            TRACE() << Q_FUNC_INFO << id << "Activated";
            d->service->HandlerActive(id);
-       } else 
+       } else
        {
            qWarning() << "APP_ID isn't set, the handler ignored";
        }
@@ -202,7 +202,7 @@ QVector<cuc::Peer> cuc::Hub::known_sources_for_type(cuc::Type t)
 
     if (reply.isError())
         return result;
-    
+
     auto peers = reply.value();
 
     Q_FOREACH(const QVariant& p, peers)
@@ -353,7 +353,7 @@ cuc::Peer cuc::Hub::peer_for_app_id(QString app_id)
     return qdbus_cast<cuc::Peer>(peer.variant());
 }
 
-bool cuc::Hub::create_paste(const QMimeData& mimeData) {
+WaitHandle cuc::Hub::create_paste(const QMimeData& mimeData) {
     /* This needs to be replaced with a better way to get the APP_ID */
     QString id = app_id();
     TRACE() << Q_FUNC_INFO << id;
@@ -373,10 +373,7 @@ bool cuc::Hub::create_paste(const QMimeData& mimeData) {
     vv << QVariant::fromValue(v);
 
     auto reply = d->service->CreatePaste(id, vv, mimeData.formats());
-    reply.waitForFinished();
-    if (reply.isError())
-        return false;
-    return true;
+    return WaitHandle(reply);
 }
 
 const QMimeData* cuc::Hub::latest_paste_buf() {

@@ -65,7 +65,7 @@ class Paste : public QObject
     friend class Hub;
     QSharedPointer<Private> d;
 
-    Paste(const QSharedPointer<Private>&, QObject* parent = nullptr);    
+    Paste(const QSharedPointer<Private>&, QObject* parent = nullptr);
 };
 }
 }

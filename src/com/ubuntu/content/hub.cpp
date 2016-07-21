@@ -359,13 +359,7 @@ QDBusPendingCall cuc::Hub::createPaste(const QMimeData& mimeData)
     QString id = app_id();
     TRACE() << Q_FUNC_INFO << id;
 
-    QMimeData *data = new QMimeData();
-
-    Q_FOREACH(QString t, mimeData.formats()) {
-        data->setData(t, mimeData.data(t));
-    }
-
-    auto serializedMimeData = serializeMimeData(data);
+    auto serializedMimeData = serializeMimeData(mimeData);
     if (serializedMimeData.isEmpty()) {
         return QDBusPendingCall::fromCompletedCall(
                 QDBusMessage::createError("Data serialization failed","Could not serialize mimeData"));

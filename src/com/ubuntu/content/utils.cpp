@@ -62,17 +62,15 @@ const int maxBufferSize = 4 * 1024 * 1024;  // 4 Mb
      data size               (sizeof(int))
    data                      (n bytes)
 */
-QByteArray serializeMimeData(QMimeData *mimeData)
+QByteArray serializeMimeData(const QMimeData &mimeData)
 {
-    Q_ASSERT(mimeData != nullptr);
-
-    const QStringList formats = mimeData->formats();
+    const QStringList formats = mimeData.formats();
     const int formatCount = qMin(formats.size(), maxFormatsCount);
     const int headerSize = sizeof(int) + (formatCount * 4 * sizeof(int));
     int bufferSize = headerSize;
 
     for (int i = 0; i < formatCount; i++)
-        bufferSize += formats[i].size() + mimeData->data(formats[i]).size();
+        bufferSize += formats[i].size() + mimeData.data(formats[i]).size();
 
     QByteArray serializedMimeData;
     if (bufferSize <= maxBufferSize) {
@@ -84,7 +82,7 @@ QByteArray serializeMimeData(QMimeData *mimeData)
             int offset = headerSize;
             header[0] = formatCount;
             for (int i = 0; i < formatCount; i++) {
-                const QByteArray data = mimeData->data(formats[i]);
+                const QByteArray data = mimeData.data(formats[i]);
                 const int formatOffset = offset;
                 const int formatSize = formats[i].size();
                 const int dataOffset = offset + formatSize;

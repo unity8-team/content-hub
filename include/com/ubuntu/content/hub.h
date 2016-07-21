@@ -25,6 +25,8 @@
 #include <QObject>
 #include <QMimeData>
 
+class QDBusPendingCall;
+
 namespace com
 {
 namespace ubuntu
@@ -34,22 +36,6 @@ namespace content
 class ImportExportHandler;
 class Store;
 class Transfer;
-class Paste;
-
-/*
-  Can be used to wait until an asynchronous call or operation completes.
- */
-class WaitHandle
-{
-public
-    void wait_for_finished();
-    bool is_finished() const;
-    bool is_error() const;
-
-private:
-    struct Private;
-    QScopedPointer<Private> d;
-};
 
 class Hub : public QObject
 {
@@ -84,10 +70,12 @@ class Hub : public QObject
     Q_INVOKABLE virtual bool has_pending(QString peer_id);
     Q_INVOKABLE virtual Peer peer_for_app_id(QString app_id);
 
-    virtual WaitHandle create_paste(const QMimeData& data);
-    virtual const QMimeData* latest_paste_buf();
-    virtual const QMimeData* paste_buf_by_id(int id);
-    virtual QStringList pasteFormats();
+    ///
+    // Copy & Paste
+    QDBusPendingCall createPaste(const QMimeData& data);
+    const QMimeData* latestPaste();
+    const QMimeData* pasteById(int id);
+    QStringList pasteFormats();
 
   Q_SIGNALS:
     void pasteFormatsChanged();

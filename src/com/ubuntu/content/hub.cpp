@@ -353,7 +353,8 @@ cuc::Peer cuc::Hub::peer_for_app_id(QString app_id)
     return qdbus_cast<cuc::Peer>(peer.variant());
 }
 
-WaitHandle cuc::Hub::create_paste(const QMimeData& mimeData) {
+QDBusPendingCall cuc::Hub::createPaste(const QMimeData& mimeData)
+{
     /* This needs to be replaced with a better way to get the APP_ID */
     QString id = app_id();
     TRACE() << Q_FUNC_INFO << id;
@@ -365,18 +366,19 @@ WaitHandle cuc::Hub::create_paste(const QMimeData& mimeData) {
     }
 
     auto serializedMimeData = serializeMimeData(data);
-    if (serializedMimeData.isEmpty())
-        return false;
+    if (serializedMimeData.isEmpty()) {
+        return QDBusPendingCall::fromCompletedCall(
+                QDBusMessage::createError("Data serialization failed","Could not serialize mimeData"));
+    }
     QVariant v(serializedMimeData);
 
     QVariantList vv;
     vv << QVariant::fromValue(v);
 
-    auto reply = d->service->CreatePaste(id, vv, mimeData.formats());
-    return WaitHandle(reply);
+    return d->service->CreatePaste(id, vv, mimeData.formats());
 }
 
-const QMimeData* cuc::Hub::latest_paste_buf() {
+const QMimeData* cuc::Hub::latestPaste() {
     TRACE() << Q_FUNC_INFO;
     QString dest_id = app_id();
     TRACE() << Q_FUNC_INFO << dest_id;
@@ -396,7 +398,7 @@ const QMimeData* cuc::Hub::latest_paste_buf() {
 
 }
 
-const QMimeData* cuc::Hub::paste_buf_by_id(int id) {
+const QMimeData* cuc::Hub::pasteById(int id) {
     TRACE() << Q_FUNC_INFO;
     QString dest_id = app_id();
     auto reply = d->service->GetPaste(QString::number(id), dest_id);

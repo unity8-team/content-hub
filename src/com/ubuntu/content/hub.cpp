@@ -333,17 +333,30 @@ cuc::Peer cuc::Hub::peer_for_app_id(QString app_id)
     return qdbus_cast<cuc::Peer>(peer.variant());
 }
 
-cuc::Paste* cuc::Hub::create_paste(const QMimeData& mimeData) {
+bool cuc::Hub::create_paste(const QMimeData& mimeData) {
     /* This needs to be replaced with a better way to get the APP_ID */
     QString id = app_id();
     TRACE() << Q_FUNC_INFO << id;
 
-    auto reply = d->service->CreatePaste(id);
-    reply.waitForFinished();
+    QMimeData *data = new QMimeData();
 
-    cuc::Paste *paste = cuc::Paste::Private::make_paste(reply.value(), this);
-    paste->charge(mimeData);
-    return paste;
+    Q_FOREACH(QString t, mimeData.formats()) {
+        data->setData(t, mimeData.data(t));
+    }
+
+    auto serializedMimeData = serializeMimeData(data);
+    if (serializedMimeData.isEmpty())
+        return false;
+    QVariant v(serializedMimeData);
+
+    QVariantList vv;
+    vv << QVariant::fromValue(v);
+
+    auto reply = d->service->CreatePaste(id, vv);
+    reply.waitForFinished();
+    if (reply.isError())
+        return false;
+    return true;
 }
 
 const QMimeData* cuc::Hub::latest_paste_buf() {
@@ -358,7 +371,12 @@ const QMimeData* cuc::Hub::latest_paste_buf() {
         return NULL;
 
     cuc::Paste *paste = cuc::Paste::Private::make_paste(reply.value(), this);
-    return paste->mimeData();
+    QMimeData *mimeData = paste->mimeData();
+    if (mimeData == nullptr)
+        qWarning() << "Got invalid serialized mime data. Ignoring it.";
+
+    return mimeData;
+
 }
 
 const QMimeData* cuc::Hub::paste_buf_by_id(int id) {
@@ -374,6 +392,10 @@ const QMimeData* cuc::Hub::paste_buf_by_id(int id) {
     }
 
     cuc::Paste *paste = cuc::Paste::Private::make_paste(reply.value(), this);
-    return paste->mimeData();
+    QMimeData *mimeData = paste->mimeData();
+    if (mimeData == nullptr)
+        qWarning() << "Got invalid serialized mime data. Ignoring it.";
+
+    return mimeData;
 }
 

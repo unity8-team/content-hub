@@ -28,12 +28,6 @@
 #include <QMimeData>
 #include <QObject>
 
-namespace {
-    /* Used for pasteboard */
-    const int maxFormatsCount = 16;
-    const int maxBufferSize = 4 * 1024 * 1024;  // 4 Mb
-}
-
 namespace com
 {
 namespace ubuntu
@@ -76,29 +70,7 @@ class Paste::Private : public QObject
         return static_cast<Paste::State>(reply.value());
     }
 
-    bool charge(const QMimeData& mimeData)
-    {
-        QMimeData *data = new QMimeData();
-
-        Q_FOREACH(QString t, mimeData.formats()) {
-            data->setData(t, mimeData.data(t));
-        }
-
-        auto serializedMimeData = serializeMimeData(data);
-        if (serializedMimeData.isEmpty())
-            return false;
-        QVariant v(serializedMimeData);
-
-        QVariantList d;
-        d << QVariant::fromValue(v);
-
-        auto reply = remote_paste->Charge(d);
-        reply.waitForFinished();
-
-        return not reply.isError();
-    }
-
-    QMimeData* mimeData()
+    QByteArray mimeData()
     {
         auto reply = remote_paste->MimeData();
         reply.waitForFinished();
@@ -108,11 +80,7 @@ class Paste::Private : public QObject
 
         QByteArray serializedMimeData = qdbus_cast<QByteArray>(reply.value().first());
 
-        QMimeData *mimeData = deserializeMimeData(serializedMimeData);
-        if (mimeData == nullptr) 
-            qWarning() << "Got invalid serialized mime data. Ignoring it.";
-
-        return mimeData;
+        return serializedMimeData;
     }
 
     QString source()
@@ -121,83 +89,6 @@ class Paste::Private : public QObject
         reply.waitForFinished();
 
         return static_cast<QString>(reply.value());
-    }
-
-    QByteArray serializeMimeData(QMimeData *mimeData) const
-    {
-        Q_ASSERT(mimeData != nullptr);
-
-        const QStringList formats = mimeData->formats();
-        const int formatCount = qMin(formats.size(), maxFormatsCount);
-        const int headerSize = sizeof(int) + (formatCount * 4 * sizeof(int));
-        int bufferSize = headerSize;
-
-        for (int i = 0; i < formatCount; i++) 
-            bufferSize += formats[i].size() + mimeData->data(formats[i]).size();
-
-        QByteArray serializedMimeData;
-        if (bufferSize <= maxBufferSize) {
-            // Serialize data.
-            serializedMimeData.resize(bufferSize);
-            {
-                char *buffer = serializedMimeData.data();
-                int* header = reinterpret_cast<int*>(serializedMimeData.data());
-                int offset = headerSize;
-                header[0] = formatCount;
-                for (int i = 0; i < formatCount; i++) {
-                    const QByteArray data = mimeData->data(formats[i]);
-                    const int formatOffset = offset;
-                    const int formatSize = formats[i].size();
-                    const int dataOffset = offset + formatSize;
-                    const int dataSize = data.size();
-                    memcpy(&buffer[formatOffset], formats[i].toLatin1().data(), formatSize);
-                    memcpy(&buffer[dataOffset], data.data(), dataSize);
-                    header[i*4+1] = formatOffset;
-                    header[i*4+2] = formatSize;
-                    header[i*4+3] = dataOffset;
-                    header[i*4+4] = dataSize;
-                    offset += formatSize + dataSize;
-                }
-            }
-        } else {
-            qWarning("Not sending contents (%d bytes) to the global clipboard as it's"
-                    " bigger than the maximum allowed size of %d bytes", bufferSize, maxBufferSize);
-        }
-
-        return serializedMimeData;
-    }
-
-    QMimeData *deserializeMimeData(const QByteArray &serializedMimeData) const
-    {
-        if (static_cast<std::size_t>(serializedMimeData.size()) < sizeof(int)) {
-            // Data is invalid
-            return nullptr;
-        }
-
-        QMimeData *mimeData = new QMimeData;
-   
-        const char* const buffer = serializedMimeData.constData();
-        const int* const header = reinterpret_cast<const int*>(serializedMimeData.constData());
-
-        const int count = qMin(header[0], maxFormatsCount);
-
-        for (int i = 0; i < count; i++) {
-            const int formatOffset = header[i*4+1];
-            const int formatSize = header[i*4+2];
-            const int dataOffset = header[i*4+3];
-            const int dataSize = header[i*4+4];
-
-            if (formatOffset + formatSize <= serializedMimeData.size()
-                && dataOffset + dataSize <= serializedMimeData.size()) {
-
-                QString mimeType = QString::fromLatin1(&buffer[formatOffset], formatSize);
-                QByteArray mimeDataBytes(&buffer[dataOffset], dataSize);
-
-                mimeData->setData(mimeType, mimeDataBytes);
-            }
-        }
-
-        return mimeData;
     }
 
     com::ubuntu::content::dbus::Paste* remote_paste;

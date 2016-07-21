@@ -41,6 +41,6 @@ int main(int argc, char *argv[])
 
     auto hub = cuc::Hub::Client::instance();
 
-    auto paste = hub->create_paste(const_cast<const QMimeData&>(data));
-    qDebug() << paste->id() << ":" << text;
+    hub->create_paste(const_cast<const QMimeData&>(data));
+    qDebug() << text;
 }

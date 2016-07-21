@@ -123,8 +123,8 @@ TEST(Hub, transfer_creation_and_states_work)
             QMimeData data;
             data.setText("some text");
             auto hub = cuc::Hub::Client::instance();
-            auto paste = hub->create_paste(const_cast<const QMimeData&>(data));
-            ASSERT_TRUE(paste != nullptr);
+            bool ret = hub->create_paste(const_cast<const QMimeData&>(data));
+            ASSERT_TRUE(ret);
             EXPECT_EQ(QString(data.text()), QString(hub->latest_paste_buf()->text()));
             EXPECT_EQ(QString(data.text()), QString(hub->paste_buf_by_id(1)->text()));
 

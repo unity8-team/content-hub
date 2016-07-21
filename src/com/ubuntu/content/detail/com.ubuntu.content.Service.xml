@@ -38,6 +38,7 @@
     </method>
     <method name="CreatePaste">
       <arg name="app_id" type="s" direction="in" />
+      <arg name="mimeData" type="av" direction="in" />
       <arg name="paste_object" type="o" direction="out" />
     </method>
     <method name="GetLatestPaste">

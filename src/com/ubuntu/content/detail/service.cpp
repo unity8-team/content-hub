@@ -306,7 +306,7 @@ QDBusObjectPath cucd::Service::CreateShareToPeer(const QString& peer_id, const Q
     return CreateTransfer(peer_id, src_id, cuc::Transfer::Share, type_id);
 }
 
-QDBusObjectPath cucd::Service::CreatePaste(const QString& app_id)
+QDBusObjectPath cucd::Service::CreatePaste(const QString& app_id, const QVariantList& mimeData)
 {
     TRACE() << Q_FUNC_INFO << app_id;
     static size_t import_counter{0}; import_counter++;
@@ -322,6 +322,7 @@ QDBusObjectPath cucd::Service::CreatePaste(const QString& app_id)
         qWarning() << "Problem registering object for path: " << path;
 
     connect(paste, SIGNAL(StateChanged(int)), this, SLOT(handle_pastes(int)));
+    paste->Charge(mimeData);
     return QDBusObjectPath{path};
 }
 

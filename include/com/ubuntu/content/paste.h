@@ -18,25 +18,10 @@
 #ifndef COM_UBUNTU_CONTENT_PASTE_H_
 #define COM_UBUNTU_CONTENT_PASTE_H_
 
-#include <com/ubuntu/content/item.h>
-
 #include <QObject>
 #include <QSharedPointer>
 #include <QMimeData>
 #include <QString>
-
-namespace com
-{
-namespace ubuntu
-{
-namespace content
-{
-namespace detail
-{
-}
-}
-}
-}
 
 namespace com
 {
@@ -69,7 +54,6 @@ class Paste : public QObject
 
     Q_INVOKABLE virtual int id() const;
     Q_INVOKABLE virtual State state() const;
-    Q_INVOKABLE virtual bool charge(const QMimeData&  mimeData);
     Q_INVOKABLE virtual QMimeData* mimeData();
     Q_INVOKABLE virtual QString source() const;
 

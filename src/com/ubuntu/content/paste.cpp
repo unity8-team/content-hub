@@ -48,14 +48,9 @@ cuc::Paste::State cuc::Paste::state() const
     return d->state();
 }
 
-bool cuc::Paste::charge(const QMimeData& mimeData)
-{
-    return d->charge(mimeData);
-}
-
 QMimeData* cuc::Paste::mimeData()
 {
-    return d->mimeData();
+    return deserializeMimeData(d->mimeData());
 }
 
 QString cuc::Paste::source() const

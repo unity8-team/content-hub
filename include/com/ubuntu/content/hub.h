@@ -39,6 +39,7 @@ class Paste;
 class Hub : public QObject
 {
     Q_OBJECT
+    Q_PROPERTY(QStringList pasteFormats READ pasteFormats NOTIFY pasteFormatsChanged)
 
   public:
     struct Client
@@ -70,6 +71,13 @@ class Hub : public QObject
     Q_INVOKABLE virtual bool create_paste(const QMimeData& data);
     Q_INVOKABLE virtual const QMimeData* latest_paste_buf();
     Q_INVOKABLE virtual const QMimeData* paste_buf_by_id(int id);
+    Q_INVOKABLE virtual QStringList pasteFormats();
+
+  Q_SIGNALS:
+    void pasteFormatsChanged();
+
+  private Q_SLOTS:
+    void onPasteFormatsChanged();
        
   protected:
     Hub(QObject* = nullptr);

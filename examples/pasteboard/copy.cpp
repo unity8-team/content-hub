@@ -43,4 +43,5 @@ int main(int argc, char *argv[])
 
     hub->create_paste(const_cast<const QMimeData&>(data));
     qDebug() << text;
+    qDebug() << hub->pasteFormats();
 }

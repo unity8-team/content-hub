@@ -39,6 +39,7 @@
     <method name="CreatePaste">
       <arg name="app_id" type="s" direction="in" />
       <arg name="mimeData" type="av" direction="in" />
+      <arg name="types" type="as" direction="in" />
       <arg name="paste_object" type="o" direction="out" />
     </method>
     <method name="GetLatestPaste">
@@ -65,5 +66,10 @@
       <arg name="app_id" type="s" direction="in" />
       <arg name="peer" type="v" direction="out" />
     </method>
+    <method name="PasteFormats">
+      <arg name="formats" type="as" direction="out" />
+    </method>
+    <signal name="PasteFormatsChanged">
+    </signal>
  </interface>
 </node>

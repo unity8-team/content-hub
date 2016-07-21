@@ -313,6 +313,13 @@ QDBusObjectPath cucd::Service::CreatePaste(const QString& app_id, const QVariant
 
     QUuid uuid{QUuid::createUuid()};
 
+    pid_t pid = d->connection.interface()->servicePid(this->message().service());
+    qWarning() << Q_FUNC_INFO << "PID: " << pid;
+    if (!app_id_matches(app_id, pid)) {
+        qWarning() << "APP_ID doesn't match requesting APP";
+        return QDBusObjectPath("/FAILED");
+    }
+
     auto paste = new cucd::Paste(import_counter, app_id, this);
     new PasteAdaptor(paste);
     d->active_pastes.append(paste);

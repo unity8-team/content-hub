@@ -1,5 +1,5 @@
 /*
- * Copyright © 2013 Canonical Ltd.
+ * Copyright © 2013-2016 Canonical Ltd.
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License version 3 as
@@ -20,6 +20,7 @@
 #include <QDir>
 #include <QFile>
 #include <QFileInfo>
+#include <QMimeData>
 #include <QProcess>
 #include <QtCore>
 #include <QtDBus/QDBusMessage>
@@ -33,6 +34,9 @@
 #include "com/ubuntu/content/type.h"
 #include <unistd.h>
 #include <liblibertine/libertine.h>
+#include <ubuntu-app-launch/appid.h>
+#include <ubuntu-app-launch/application.h>
+#include <ubuntu-app-launch/registry.h>
 
 #include <sys/apparmor.h>
 /* need to be exposed in libapparmor but for now ... */
@@ -40,8 +44,91 @@
 #define AA_MAY_READ (1 << 2)
 
 namespace cuc = com::ubuntu::content;
+namespace ual = ubuntu::app_launch;
 
 namespace {
+
+/* Used for pasteboard */
+const int maxFormatsCount = 16;
+const int maxBufferSize = 4 * 1024 * 1024;  // 4 Mb
+
+QByteArray serializeMimeData(QMimeData *mimeData)
+{
+    Q_ASSERT(mimeData != nullptr);
+
+    const QStringList formats = mimeData->formats();
+    const int formatCount = qMin(formats.size(), maxFormatsCount);
+    const int headerSize = sizeof(int) + (formatCount * 4 * sizeof(int));
+    int bufferSize = headerSize;
+
+    for (int i = 0; i < formatCount; i++) 
+        bufferSize += formats[i].size() + mimeData->data(formats[i]).size();
+
+    QByteArray serializedMimeData;
+    if (bufferSize <= maxBufferSize) {
+        // Serialize data.
+        serializedMimeData.resize(bufferSize);
+        {
+            char *buffer = serializedMimeData.data();
+            int* header = reinterpret_cast<int*>(serializedMimeData.data());
+            int offset = headerSize;
+            header[0] = formatCount;
+            for (int i = 0; i < formatCount; i++) {
+                const QByteArray data = mimeData->data(formats[i]);
+                const int formatOffset = offset;
+                const int formatSize = formats[i].size();
+                const int dataOffset = offset + formatSize;
+                const int dataSize = data.size();
+                memcpy(&buffer[formatOffset], formats[i].toLatin1().data(), formatSize);
+                memcpy(&buffer[dataOffset], data.data(), dataSize);
+                header[i*4+1] = formatOffset;
+                header[i*4+2] = formatSize;
+                header[i*4+3] = dataOffset;
+                header[i*4+4] = dataSize;
+                offset += formatSize + dataSize;
+            }
+        }
+    } else {
+        qWarning("Not sending contents (%d bytes) to the global clipboard as it's"
+                " bigger than the maximum allowed size of %d bytes", bufferSize, maxBufferSize);
+    }
+
+    return serializedMimeData;
+}
+
+QMimeData *deserializeMimeData(const QByteArray &serializedMimeData)
+{
+    if (static_cast<std::size_t>(serializedMimeData.size()) < sizeof(int)) {
+        // Data is invalid
+        return nullptr;
+    }
+
+    QMimeData *mimeData = new QMimeData;
+
+    const char* const buffer = serializedMimeData.constData();
+    const int* const header = reinterpret_cast<const int*>(serializedMimeData.constData());
+
+    const int count = qMin(header[0], maxFormatsCount);
+
+    for (int i = 0; i < count; i++) {
+        const int formatOffset = header[i*4+1];
+        const int formatSize = header[i*4+2];
+        const int dataOffset = header[i*4+3];
+        const int dataSize = header[i*4+4];
+
+        if (formatOffset + formatSize <= serializedMimeData.size()
+            && dataOffset + dataSize <= serializedMimeData.size()) {
+
+            QString mimeType = QString::fromLatin1(&buffer[formatOffset], formatSize);
+            QByteArray mimeDataBytes(&buffer[dataOffset], dataSize);
+
+            mimeData->setData(mimeType, mimeDataBytes);
+        }
+    }
+
+    return mimeData;
+}
+
 
 QList<cuc::Type> known_types()
 {
@@ -101,6 +188,29 @@ QString app_id()
      * later use the application manager
      */
     return QString(qgetenv("APP_ID"));
+}
+
+
+bool app_id_matches(QString id, pid_t pid)
+{
+    TRACE() << Q_FUNC_INFO << id << pid;
+
+    /* Don't verify app_id while testing */
+    if (!qgetenv("CONTENT_HUB_TESTING").isNull())
+        return true;
+
+    std::shared_ptr<ual::Registry> reg = ual::Registry::getDefault();
+    auto app_id = ual::AppID::parse(id.toStdString());
+    if (app_id.empty())
+        return false;
+    auto app = ual::Application::create(app_id, reg);
+    if (!app.get()->hasInstances())
+        return false;
+    Q_FOREACH (std::shared_ptr<ual::Application::Instance> instance, app.get()->instances()) {
+        if (instance.get()->hasPid(pid))
+            return true;
+    }
+    return false;
 }
 
 

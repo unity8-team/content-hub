@@ -23,7 +23,7 @@
 #include <com/ubuntu/content/type.h>
 
 #include <QObject>
-#include <QVector>
+#include <QMimeData>
 
 namespace com
 {
@@ -34,10 +34,12 @@ namespace content
 class ImportExportHandler;
 class Store;
 class Transfer;
+class Paste;
 
 class Hub : public QObject
 {
     Q_OBJECT
+    Q_PROPERTY(QStringList pasteFormats READ pasteFormats NOTIFY pasteFormatsChanged)
 
   public:
     struct Client
@@ -66,6 +68,16 @@ class Hub : public QObject
     Q_INVOKABLE virtual Transfer* create_share_to_peer_for_type(Peer peer, Type type);
     Q_INVOKABLE virtual bool has_pending(QString peer_id);
     Q_INVOKABLE virtual Peer peer_for_app_id(QString app_id);
+    Q_INVOKABLE virtual bool create_paste(const QMimeData& data);
+    Q_INVOKABLE virtual const QMimeData* latest_paste_buf();
+    Q_INVOKABLE virtual const QMimeData* paste_buf_by_id(int id);
+    virtual QStringList pasteFormats();
+
+  Q_SIGNALS:
+    void pasteFormatsChanged();
+
+  private Q_SLOTS:
+    void onPasteFormatsChanged();
        
   protected:
     Hub(QObject* = nullptr);

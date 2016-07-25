@@ -71,5 +71,7 @@
     </method>
     <signal name="PasteFormatsChanged">
     </signal>
+    <signal name="PasteboardChanged">
+    </signal>
  </interface>
 </node>

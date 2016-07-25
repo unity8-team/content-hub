@@ -82,6 +82,7 @@ class Service : public QObject, protected QDBusContext
 
   Q_SIGNALS:
     void PasteFormatsChanged();
+    void PasteboardChanged();
 
   private Q_SLOTS:
     void handle_imports(int);

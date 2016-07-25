@@ -86,6 +86,9 @@ cuc::Hub::Hub(QObject* parent) : QObject(parent), d{new cuc::Hub::Private{this}}
             this,
             SLOT(onPasteFormatsChanged()));
     onPasteFormatsChanged();
+    QObject::connect(d->service, SIGNAL(PasteboardChanged()),
+            this,
+            SIGNAL(pasteboardChanged()));
 }
 
 cuc::Hub::~Hub()

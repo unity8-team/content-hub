@@ -322,6 +322,7 @@ QDBusObjectPath cucd::Service::CreatePaste(const QString& app_id, const QVariant
     auto paste = new cucd::Paste(import_counter, app_id, this);
     new PasteAdaptor(paste);
     d->active_pastes.append(paste);
+    Q_EMIT(PasteboardChanged());
     Q_FOREACH (QString t, types) {
         TRACE() << Q_FUNC_INFO << "Type: " << t;
         if (!d->pasteFormats.contains(t)) {

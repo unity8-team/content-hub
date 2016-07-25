@@ -79,6 +79,7 @@ class Hub : public QObject
 
   Q_SIGNALS:
     void pasteFormatsChanged();
+    void pasteboardChanged();
 
   private Q_SLOTS:
     void onPasteFormatsChanged();

@@ -1,0 +1,22 @@
+<node>
+  <interface name="com.ubuntu.content.dbus.Paste">
+    <signal name="StateChanged">
+      <arg name="state" type="i"/>
+    </signal>
+    <method name="Id">
+      <arg name="id" type="i" direction="out" />
+    </method>
+    <method name="State">
+      <arg name="state" type="i" direction="out" />
+    </method>
+    <method name="Charge">
+      <arg name="mimeData" type="av" direction="in" />
+    </method>
+    <method name="MimeData">
+      <arg name="mimeData" type="av" direction="out" />
+    </method>
+    <method name="source">
+      <arg name="source" type="s" direction="out" />
+    </method>
+ </interface>
+</node>

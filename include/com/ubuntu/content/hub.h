@@ -1,5 +1,5 @@
 /*
- * Copyright © 2013 Canonical Ltd.
+ * Copyright © 2013,2016 Canonical Ltd.
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License version 3 as
@@ -23,7 +23,9 @@
 #include <com/ubuntu/content/type.h>
 
 #include <QObject>
-#include <QVector>
+#include <QMimeData>
+
+class QDBusPendingCall;
 
 namespace com
 {
@@ -38,6 +40,7 @@ class Transfer;
 class Hub : public QObject
 {
     Q_OBJECT
+    Q_PROPERTY(QStringList pasteFormats READ pasteFormats NOTIFY pasteFormatsChanged)
 
   public:
     struct Client
@@ -66,10 +69,23 @@ class Hub : public QObject
     Q_INVOKABLE virtual Transfer* create_share_to_peer_for_type(Peer peer, Type type);
     Q_INVOKABLE virtual bool has_pending(QString peer_id);
     Q_INVOKABLE virtual Peer peer_for_app_id(QString app_id);
-       
+
+    ///
+    // Copy & Paste
+    QDBusPendingCall createPaste(const QMimeData& data);
+    const QMimeData* latestPaste();
+    const QMimeData* pasteById(int id);
+    QStringList pasteFormats();
+
+  Q_SIGNALS:
+    void pasteFormatsChanged();
+    void pasteboardChanged();
+
+  private Q_SLOTS:
+    void onPasteFormatsChanged();
   protected:
     Hub(QObject* = nullptr);
-    
+
   private:
     struct Private;
     QScopedPointer<Private> d;

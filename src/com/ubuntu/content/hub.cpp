@@ -21,6 +21,7 @@
 #include "ContentServiceInterface.h"
 #include "ContentHandlerInterface.h"
 #include "handleradaptor.h"
+#include "paste_p.h"
 #include "transfer_p.h"
 #include "utils.cpp"
 
@@ -52,6 +53,7 @@ struct cuc::Hub::Private
     }
 
     com::ubuntu::content::dbus::Service* service;
+    QStringList pasteFormats;
 };
 
 cuc::Hub::Hub(QObject* parent) : QObject(parent), d{new cuc::Hub::Private{this}}
@@ -79,6 +81,14 @@ cuc::Hub::Hub(QObject* parent) : QObject(parent), d{new cuc::Hub::Private{this}}
         iconPaths << QString(path + "/usr/share/icons/");
     }
     QIcon::setThemeSearchPaths(iconPaths);
+
+    QObject::connect(d->service, SIGNAL(PasteFormatsChanged()),
+            this,
+            SLOT(onPasteFormatsChanged()));
+    onPasteFormatsChanged();
+    QObject::connect(d->service, SIGNAL(PasteboardChanged()),
+            this,
+            SIGNAL(pasteboardChanged()));
 }
 
 cuc::Hub::~Hub()
@@ -91,6 +101,20 @@ cuc::Hub* cuc::Hub::Client::instance()
     return hub;
 }
 
+void cuc::Hub::onPasteFormatsChanged()
+{
+    TRACE() << Q_FUNC_INFO;
+    auto reply = d->service->PasteFormats();
+    reply.waitForFinished();
+
+    if (reply.isError())
+        return;
+
+    d->pasteFormats = reply.value();
+    TRACE() << Q_FUNC_INFO << d->pasteFormats;
+    Q_EMIT(pasteFormatsChanged());
+}
+
 bool cuc::Hub::eventFilter(QObject *obj, QEvent *event)
 {
    if (event->type() == QEvent::ApplicationActivate)
@@ -100,7 +124,7 @@ bool cuc::Hub::eventFilter(QObject *obj, QEvent *event)
        {
            TRACE() << Q_FUNC_INFO << id << "Activated";
            d->service->HandlerActive(id);
-       } else 
+       } else
        {
            qWarning() << "APP_ID isn't set, the handler ignored";
        }
@@ -181,7 +205,7 @@ QVector<cuc::Peer> cuc::Hub::known_sources_for_type(cuc::Type t)
 
     if (reply.isError())
         return result;
-    
+
     auto peers = reply.value();
     QString id = app_id();
 
@@ -339,4 +363,68 @@ cuc::Peer cuc::Hub::peer_for_app_id(QString app_id)
 
     auto peer = reply.value();
     return qdbus_cast<cuc::Peer>(peer.variant());
+}
+
+QDBusPendingCall cuc::Hub::createPaste(const QMimeData& mimeData)
+{
+    /* This needs to be replaced with a better way to get the APP_ID */
+    QString id = app_id();
+    TRACE() << Q_FUNC_INFO << id;
+
+    auto serializedMimeData = serializeMimeData(mimeData);
+    if (serializedMimeData.isEmpty()) {
+        return QDBusPendingCall::fromCompletedCall(
+                QDBusMessage::createError("Data serialization failed","Could not serialize mimeData"));
+    }
+    QVariant v(serializedMimeData);
+
+    QVariantList vv;
+    vv << QVariant::fromValue(v);
+
+    return d->service->CreatePaste(id, vv, mimeData.formats());
+}
+
+const QMimeData* cuc::Hub::latestPaste() {
+    TRACE() << Q_FUNC_INFO;
+    QString dest_id = app_id();
+    TRACE() << Q_FUNC_INFO << dest_id;
+    auto reply = d->service->GetLatestPaste(dest_id);
+    reply.waitForFinished();
+
+    /* If no pastes on the stack, return NULL */
+    if (reply.value().path() == "/FAILED")
+        return NULL;
+
+    cuc::Paste *paste = cuc::Paste::Private::make_paste(reply.value(), this);
+    QMimeData *mimeData = paste->mimeData();
+    if (mimeData == nullptr)
+        qWarning() << "Got invalid serialized mime data. Ignoring it.";
+
+    return mimeData;
+
+}
+
+const QMimeData* cuc::Hub::pasteById(int id) {
+    TRACE() << Q_FUNC_INFO;
+    QString dest_id = app_id();
+    auto reply = d->service->GetPaste(QString::number(id), dest_id);
+    reply.waitForFinished();
+
+    /* If no pastes on the stack, return NULL */
+    if (reply.value().path() == "/FAILED") {
+        qWarning() << "PasteBoard: Paste doesn't exist for ID " << id;
+        return NULL;
+    }
+
+    cuc::Paste *paste = cuc::Paste::Private::make_paste(reply.value(), this);
+    QMimeData *mimeData = paste->mimeData();
+    if (mimeData == nullptr)
+        qWarning() << "Got invalid serialized mime data. Ignoring it.";
+
+    return mimeData;
+}
+
+QStringList cuc::Hub::pasteFormats() {
+    TRACE() << Q_FUNC_INFO;
+    return d->pasteFormats;
 }

@@ -23,6 +23,8 @@
 #include "service.h"
 #include "peer_registry.h"
 #include "i18n.h"
+#include "paste.h"
+#include "pasteadaptor.h"
 #include "transfer.h"
 #include "transferadaptor.h"
 #include "utils.cpp"
@@ -33,6 +35,7 @@
 #include <libnotify/notify.h>
 
 #include <com/ubuntu/content/item.h>
+#include <com/ubuntu/content/paste.h>
 #include <com/ubuntu/content/peer.h>
 #include <com/ubuntu/content/type.h>
 #include <com/ubuntu/content/transfer.h>
@@ -79,6 +82,8 @@ struct cucd::Service::Private : public QObject
     QDBusConnection connection;
     QSharedPointer<cucd::PeerRegistry> registry;
     QSet<cucd::Transfer*> active_transfers;
+    QList<cucd::Paste*> active_pastes;
+    QStringList pasteFormats;
     QSet<RegHandler*> handlers;
     QSharedPointer<cua::ApplicationManager> app_manager;
 
@@ -302,13 +307,106 @@ QDBusObjectPath cucd::Service::CreateShareToPeer(const QString& peer_id, const Q
     return CreateTransfer(peer_id, src_id, cuc::Transfer::Share, type_id);
 }
 
+QDBusObjectPath cucd::Service::CreatePaste(const QString& app_id, const QVariantList& mimeData, const QStringList& types)
+{
+    TRACE() << Q_FUNC_INFO << app_id << types;
+    static size_t import_counter{0}; import_counter++;
+
+    pid_t pid = d->connection.interface()->servicePid(this->message().service());
+    qWarning() << Q_FUNC_INFO << "PID: " << pid;
+    if (!app_id_matches(app_id, pid)) {
+        qWarning() << "APP_ID doesn't match requesting APP";
+        return QDBusObjectPath("/FAILED");
+    }
+
+    auto paste = new cucd::Paste(import_counter, app_id, this);
+    new PasteAdaptor(paste);
+    d->active_pastes.append(paste);
+    Q_EMIT(PasteboardChanged());
+    Q_FOREACH (QString t, types) {
+        TRACE() << Q_FUNC_INFO << "Type: " << t;
+        if (!d->pasteFormats.contains(t)) {
+            d->pasteFormats.append(t);
+            Q_EMIT(PasteFormatsChanged());
+        }
+    }
+
+    auto path = paste->path();
+    if (not d->connection.registerObject(path, paste))
+        qWarning() << "Problem registering object for path: " << path;
+
+    connect(paste, SIGNAL(StateChanged(int)), this, SLOT(handle_pastes(int)));
+    paste->Charge(mimeData);
+    return QDBusObjectPath{path};
+}
+
+QDBusObjectPath cucd::Service::GetLatestPaste(const QString& app_id)
+{
+    TRACE() << Q_FUNC_INFO << app_id;
+    if (d->active_pastes.isEmpty())
+        return QDBusObjectPath("/FAILED");
+
+    pid_t pid = d->connection.interface()->servicePid(this->message().service()); 
+    qWarning() << Q_FUNC_INFO << "PID: " << pid;
+    if (!app_id_matches(app_id, pid)) {
+        qWarning() << "APP_ID doesn't match requesting APP";
+        return QDBusObjectPath("/FAILED");
+    }
+
+    QString dest_id = app_id;
+    if (dest_id.isEmpty())
+    {
+        TRACE() << Q_FUNC_INFO << "APP_ID isnt' set, attempting to get it from AppArmor";
+        dest_id = aa_profile(this->message().service());
+    }
+
+    auto paste = d->active_pastes.last();
+    d->connection.unregisterObject(paste->path());
+    paste->setDestination(dest_id);
+    auto path = paste->path();
+    if (not d->connection.registerObject(path, paste))
+        qWarning() << "Problem registering object for path: " << path;
+    return QDBusObjectPath(paste->path());
+}
+
+QDBusObjectPath cucd::Service::GetPaste(const QString& id, const QString& app_id)
+{
+    TRACE() << Q_FUNC_INFO << id;
+    if (d->active_pastes.isEmpty())
+        return QDBusObjectPath("/FAILED");
+
+    pid_t pid = d->connection.interface()->servicePid(this->message().service()); 
+    if (!app_id_matches(app_id, pid)) {
+        qWarning() << "APP_ID doesn't match requesting APP";
+        return QDBusObjectPath("/FAILED");
+    }
+
+    QString dest_id = app_id;
+    if (dest_id.isEmpty())
+    {
+        TRACE() << Q_FUNC_INFO << "APP_ID isnt' set, attempting to get it from AppArmor";
+        dest_id = aa_profile(this->message().service());
+    }
+
+    Q_FOREACH (cucd::Paste *p, d->active_pastes)
+    {
+        if (p->Id() == id.toInt()) {
+            d->connection.unregisterObject(p->path());
+            p->setDestination(dest_id);
+            auto path = p->path();
+            if (not d->connection.registerObject(path, p))
+                qWarning() << "Problem registering object for path: " << path;
+            return QDBusObjectPath(path);
+        }
+    }
+    return QDBusObjectPath("/FAILED");
+}
+
 QDBusObjectPath cucd::Service::CreateTransfer(const QString& dest_id, const QString& src_id, int dir, const QString& type_id)
 {
     TRACE() << Q_FUNC_INFO << "DEST:" << dest_id << "SRC:" << src_id << "DIRECTION:" << dir;
 
     static size_t import_counter{0}; import_counter++;
-
-    QUuid uuid{QUuid::createUuid()};
 
     Q_FOREACH (cucd::Transfer *t, d->active_transfers)
     {
@@ -539,6 +637,29 @@ void cucd::Service::handle_exports(int state)
     }
 }
 
+void cucd::Service::handle_pastes(int state)
+{
+    TRACE() << Q_FUNC_INFO;
+    cucd::Paste *paste = static_cast<cucd::Paste*>(sender());
+    TRACE() << Q_FUNC_INFO << "STATE:" << paste->State();
+
+    if (state == cuc::Paste::charged)
+    {
+        TRACE() << Q_FUNC_INFO << "charged";
+        auto path = paste->path();
+        TRACE() << Q_FUNC_INFO << "Unregistering path:" << path;
+        d->connection.unregisterObject(path);
+    }
+
+    if (state == cuc::Paste::collected)
+    {
+        TRACE() << Q_FUNC_INFO << "collected";
+        auto path = paste->path();
+        TRACE() << Q_FUNC_INFO << "Unregistering path:" << path;
+        d->connection.unregisterObject(path);
+    }
+}
+
 void cucd::Service::handler_unregistered(const QString& s)
 {
     TRACE() << Q_FUNC_INFO << s;
@@ -660,4 +781,10 @@ bool cucd::Service::HasPending(const QString& peer_id)
         }
     }
     return false;
+}
+
+QStringList cucd::Service::PasteFormats()
+{
+    TRACE() << Q_FUNC_INFO;
+    return d->pasteFormats;
 }

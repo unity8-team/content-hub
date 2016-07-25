@@ -204,10 +204,13 @@ QVector<cuc::Peer> cuc::Hub::known_sources_for_type(cuc::Type t)
         return result;
 
     auto peers = reply.value();
+    QString id = app_id();
 
     Q_FOREACH(const QVariant& p, peers)
     {
-        result << qdbus_cast<cuc::Peer>(p);
+        auto peer = qdbus_cast<cuc::Peer>(p);
+        if (peer.id() != id)
+            result << peer;
     }
     return result;
 }
@@ -223,10 +226,13 @@ QVector<cuc::Peer> cuc::Hub::known_destinations_for_type(cuc::Type t)
         return result;
 
     auto peers = reply.value();
+    QString id = app_id();
 
     Q_FOREACH(const QVariant& p, peers)
     {
-        result << qdbus_cast<cuc::Peer>(p);
+        auto peer = qdbus_cast<cuc::Peer>(p);
+        if (peer.id() != id)
+            result << peer;
     }
     return result;
 }
@@ -242,10 +248,13 @@ QVector<cuc::Peer> cuc::Hub::known_shares_for_type(cuc::Type t)
         return result;
 
     auto peers = reply.value();
+    QString id = app_id();
 
     Q_FOREACH(const QVariant& p, peers)
     {
-        result << qdbus_cast<cuc::Peer>(p);
+        auto peer = qdbus_cast<cuc::Peer>(p);
+        if (peer.id() != id)
+            result << peer;
     }
     return result;
 }

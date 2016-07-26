@@ -49,7 +49,7 @@ class Paste::Private : public QObject
               remote_paste(
                   new com::ubuntu::content::dbus::Paste(
                       HUB_SERVICE_NAME,
-                      paste.path(), 
+                      paste.path(),
                       QDBusConnection::sessionBus(), this))
     {
     }
@@ -78,7 +78,7 @@ class Paste::Private : public QObject
         if (reply.isError())
             return nullptr;
 
-        QByteArray serializedMimeData = qdbus_cast<QByteArray>(reply.value().first());
+        QByteArray serializedMimeData = qdbus_cast<QByteArray>(reply.value());
 
         return serializedMimeData;
     }

@@ -376,52 +376,53 @@ QDBusPendingCall cuc::Hub::createPaste(const QMimeData& mimeData)
         return QDBusPendingCall::fromCompletedCall(
                 QDBusMessage::createError("Data serialization failed","Could not serialize mimeData"));
     }
-    QVariant v(serializedMimeData);
 
-    QVariantList vv;
-    vv << QVariant::fromValue(v);
-
-    return d->service->CreatePaste(id, vv, mimeData.formats());
+    return d->service->CreatePaste(id, serializedMimeData, mimeData.formats());
 }
 
-const QMimeData* cuc::Hub::latestPaste() {
+bool cuc::Hub::createPasteSync(const QMimeData& data)
+{
+    QDBusPendingCall reply = createPaste(data);
+    reply.waitForFinished();
+    return !reply.isError();
+}
+
+QDBusPendingCall cuc::Hub::requestLatestPaste()
+{
     TRACE() << Q_FUNC_INFO;
     QString dest_id = app_id();
     TRACE() << Q_FUNC_INFO << dest_id;
-    auto reply = d->service->GetLatestPaste(dest_id);
-    reply.waitForFinished();
-
-    /* If no pastes on the stack, return NULL */
-    if (reply.value().path() == "/FAILED")
-        return NULL;
-
-    cuc::Paste *paste = cuc::Paste::Private::make_paste(reply.value(), this);
-    QMimeData *mimeData = paste->mimeData();
-    if (mimeData == nullptr)
-        qWarning() << "Got invalid serialized mime data. Ignoring it.";
-
-    return mimeData;
-
+    return d->service->GetLatestPasteData(dest_id);
 }
 
-const QMimeData* cuc::Hub::pasteById(int id) {
+QDBusPendingCall cuc::Hub::requestPasteById(int id)
+{
     TRACE() << Q_FUNC_INFO;
     QString dest_id = app_id();
-    auto reply = d->service->GetPaste(QString::number(id), dest_id);
+    TRACE() << Q_FUNC_INFO << dest_id;
+    return d->service->GetPasteData(QString::number(id), dest_id);
+}
+
+QMimeData* cuc::Hub::paste(QDBusPendingCall pendingCall)
+{
+    auto reply = QDBusPendingReply<QByteArray>(pendingCall);
     reply.waitForFinished();
 
-    /* If no pastes on the stack, return NULL */
-    if (reply.value().path() == "/FAILED") {
-        qWarning() << "PasteBoard: Paste doesn't exist for ID " << id;
-        return NULL;
-    }
+    if (reply.isError())
+        return nullptr;
 
-    cuc::Paste *paste = cuc::Paste::Private::make_paste(reply.value(), this);
-    QMimeData *mimeData = paste->mimeData();
-    if (mimeData == nullptr)
-        qWarning() << "Got invalid serialized mime data. Ignoring it.";
+    QByteArray serializedMimeData = qdbus_cast<QByteArray>(reply.value());
+    return deserializeMimeData(serializedMimeData);
+}
 
-    return mimeData;
+QMimeData* cuc::Hub::latestPaste()
+{
+    return paste(requestLatestPaste());
+}
+
+QMimeData* cuc::Hub::pasteById(int id)
+{
+    return paste(requestPasteById(id));
 }
 
 QStringList cuc::Hub::pasteFormats() {

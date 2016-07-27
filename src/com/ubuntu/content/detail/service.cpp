@@ -307,7 +307,7 @@ QDBusObjectPath cucd::Service::CreateShareToPeer(const QString& peer_id, const Q
     return CreateTransfer(peer_id, src_id, cuc::Transfer::Share, type_id);
 }
 
-QDBusObjectPath cucd::Service::CreatePaste(const QString& app_id, const QVariantList& mimeData, const QStringList& types)
+QDBusObjectPath cucd::Service::CreatePaste(const QString& app_id, const QByteArray& mimeData, const QStringList& types)
 {
     TRACE() << Q_FUNC_INFO << app_id << types;
     static size_t import_counter{0}; import_counter++;
@@ -340,17 +340,17 @@ QDBusObjectPath cucd::Service::CreatePaste(const QString& app_id, const QVariant
     return QDBusObjectPath{path};
 }
 
-QDBusObjectPath cucd::Service::GetLatestPaste(const QString& app_id)
+QByteArray cucd::Service::GetLatestPasteData(const QString& app_id)
 {
     TRACE() << Q_FUNC_INFO << app_id;
     if (d->active_pastes.isEmpty())
-        return QDBusObjectPath("/FAILED");
+        return QByteArray();
 
-    pid_t pid = d->connection.interface()->servicePid(this->message().service()); 
+    pid_t pid = d->connection.interface()->servicePid(this->message().service());
     qWarning() << Q_FUNC_INFO << "PID: " << pid;
     if (!app_id_matches(app_id, pid)) {
         qWarning() << "APP_ID doesn't match requesting APP";
-        return QDBusObjectPath("/FAILED");
+        return QByteArray();
     }
 
     QString dest_id = app_id;
@@ -366,19 +366,19 @@ QDBusObjectPath cucd::Service::GetLatestPaste(const QString& app_id)
     auto path = paste->path();
     if (not d->connection.registerObject(path, paste))
         qWarning() << "Problem registering object for path: " << path;
-    return QDBusObjectPath(paste->path());
+    return paste->MimeData();
 }
 
-QDBusObjectPath cucd::Service::GetPaste(const QString& id, const QString& app_id)
+QByteArray cucd::Service::GetPasteData(const QString& id, const QString& app_id)
 {
     TRACE() << Q_FUNC_INFO << id;
     if (d->active_pastes.isEmpty())
-        return QDBusObjectPath("/FAILED");
+        return QByteArray();
 
-    pid_t pid = d->connection.interface()->servicePid(this->message().service()); 
+    pid_t pid = d->connection.interface()->servicePid(this->message().service());
     if (!app_id_matches(app_id, pid)) {
         qWarning() << "APP_ID doesn't match requesting APP";
-        return QDBusObjectPath("/FAILED");
+        return QByteArray();
     }
 
     QString dest_id = app_id;
@@ -396,10 +396,10 @@ QDBusObjectPath cucd::Service::GetPaste(const QString& id, const QString& app_id
             auto path = p->path();
             if (not d->connection.registerObject(path, p))
                 qWarning() << "Problem registering object for path: " << path;
-            return QDBusObjectPath(path);
+            return p->MimeData();
         }
     }
-    return QDBusObjectPath("/FAILED");
+    return QByteArray();
 }
 
 QDBusObjectPath cucd::Service::CreateTransfer(const QString& dest_id, const QString& src_id, int dir, const QString& type_id)
@@ -482,7 +482,7 @@ void cucd::Service::handle_imports(int state)
         TRACE() << Q_FUNC_INFO << "Charged";
         if (transfer->WasSourceStartedByContentHub())
             d->app_manager->stop_application(transfer->source().toStdString());
-        
+
         gchar ** uris = NULL;
         if (d->registry->peer_is_legacy(transfer->destination())) {
             TRACE() << Q_FUNC_INFO << "Destination is a legacy app, collecting";
@@ -537,7 +537,7 @@ void cucd::Service::handle_imports(int state)
                 }
             }
             if (shouldStop)
-                d->app_manager->stop_application(transfer->source().toStdString());            
+                d->app_manager->stop_application(transfer->source().toStdString());
         }
         gchar ** uris = NULL;
         d->app_manager->invoke_application(transfer->destination().toStdString(), uris);
@@ -576,7 +576,7 @@ void cucd::Service::handle_exports(int state)
         if (d->registry->peer_is_legacy(transfer->destination())) {
             TRACE() << Q_FUNC_INFO << "Destination is a legacy app, collecting";
             transfer->SetStore(shared_dir_for_peer(transfer->destination()));
-            
+
             auto items = transfer->Collect();
             gchar* urls[2] = {0};
             gint i = 0;

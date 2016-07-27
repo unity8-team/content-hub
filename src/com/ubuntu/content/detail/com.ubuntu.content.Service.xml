@@ -38,18 +38,18 @@
     </method>
     <method name="CreatePaste">
       <arg name="app_id" type="s" direction="in" />
-      <arg name="mimeData" type="av" direction="in" />
+      <arg name="mimeData" type="ay" direction="in" />
       <arg name="types" type="as" direction="in" />
       <arg name="paste_object" type="o" direction="out" />
     </method>
-    <method name="GetLatestPaste">
+    <method name="GetLatestPasteData">
       <arg name="app_id" type="s" direction="in" />
-      <arg name="paste_object" type="o" direction="out" />
+      <arg name="mimeData" type="ay" direction="out" />
     </method>
-    <method name="GetPaste">
+    <method name="GetPasteData">
       <arg name="id" type="s" direction="in" />
       <arg name="app_id" type="s" direction="in" />
-      <arg name="paste_object" type="o" direction="out" />
+      <arg name="mimeData" type="ay" direction="out" />
     </method>
     <method name="RegisterImportExportHandler">
       <arg name="peer_id" type="s" direction="in" />

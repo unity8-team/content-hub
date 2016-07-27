@@ -72,9 +72,18 @@ class Hub : public QObject
 
     ///
     // Copy & Paste
+
     QDBusPendingCall createPaste(const QMimeData& data);
-    const QMimeData* latestPaste();
-    const QMimeData* pasteById(int id);
+
+    QDBusPendingCall requestLatestPaste();
+    QDBusPendingCall requestPasteById(int id);
+    QMimeData* paste(QDBusPendingCall requestPeply);
+
+    // synchronous versions
+    bool createPasteSync(const QMimeData& data);
+    QMimeData* latestPaste();
+    QMimeData* pasteById(int id);
+
     QStringList pasteFormats();
 
   Q_SIGNALS:

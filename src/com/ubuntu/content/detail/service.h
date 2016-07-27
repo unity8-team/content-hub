@@ -61,9 +61,9 @@ class Service : public QObject, protected QDBusContext
     QDBusObjectPath CreateImportFromPeer(const QString&, const QString&, const QString&);
     QDBusObjectPath CreateExportToPeer(const QString&, const QString&, const QString&);
     QDBusObjectPath CreateShareToPeer(const QString&, const QString&, const QString&);
-    QDBusObjectPath CreatePaste(const QString&, const QVariantList&, const QStringList&);
-    QDBusObjectPath GetLatestPaste(const QString&);
-    QDBusObjectPath GetPaste(const QString&, const QString&);
+    QDBusObjectPath CreatePaste(const QString&, const QByteArray&, const QStringList&);
+    QByteArray GetLatestPasteData(const QString&);
+    QByteArray GetPasteData(const QString&, const QString&);
     QStringList PasteFormats();
 
     void RegisterImportExportHandler(const QString&, const QDBusObjectPath& handler);

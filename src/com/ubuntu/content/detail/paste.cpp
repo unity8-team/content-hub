@@ -39,12 +39,12 @@ struct cucd::Paste::Private
             source(source)
     {
     }
-    
+
     cuc::Paste::State state;
     const int id;
     const QString source;
     QString destination;
-    QVariant mimeData;
+    QByteArray mimeData;
 };
 
 cucd::Paste::Paste(const int id,
@@ -106,19 +106,19 @@ int cucd::Paste::State()
     return d->state;
 }
 
-void cucd::Paste::Charge(const QVariantList& mimeData)
+void cucd::Paste::Charge(const QByteArray& mimeData)
 {
     TRACE() << __PRETTY_FUNCTION__ << "STATE:" << d->state;
 
     if (d->state == cuc::Paste::charged)
         return;
 
-    d->mimeData = mimeData.first();
+    d->mimeData = mimeData;
     d->state = cuc::Paste::charged;
     Q_EMIT(StateChanged(d->state));
 }
 
-QVariantList cucd::Paste::MimeData()
+QByteArray cucd::Paste::MimeData()
 {
     TRACE() << __PRETTY_FUNCTION__;
 
@@ -128,7 +128,5 @@ QVariantList cucd::Paste::MimeData()
         Q_EMIT(StateChanged(d->state));
     }
 
-    QVariantList ret;
-    ret << QVariant::fromValue(d->mimeData);
-    return ret;
+    return d->mimeData;
 }

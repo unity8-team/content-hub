@@ -18,6 +18,7 @@
 #ifndef PASTE_H_
 #define PASTE_H_
 
+#include <QByteArray>
 #include <QDir>
 #include <QObject>
 #include <QtDBus/QDBusMessage>
@@ -50,8 +51,8 @@ Q_SIGNALS:
 
   public Q_SLOTS:
     int State();
-    void Charge(const QVariantList&);
-    QVariantList MimeData();
+    void Charge(const QByteArray& mimeData);
+    QByteArray MimeData();
     int Id();
     QString source();
     QString destination();

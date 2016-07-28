@@ -20,12 +20,12 @@ Build-Depends: cmake,
                libubuntu-app-launch2-dev (>= 0.3+14.04.20140124),
                qt5-default,
                qtbase5-dev,
-               qtbase5-dev-tools,
                qtdeclarative5-dev,
                qtdeclarative5-dev-tools,
                qtdeclarative5-qtquick2-plugin,
                qtdeclarative5-test-plugin,
                qtdeclarative5-ubuntu-ui-toolkit-plugin,
+               qttools5-dev-tools,
 Standards-Version: 3.9.4
 Section: libs
 Homepage: https://launchpad.net/content-hub

@@ -36,6 +36,21 @@
       <arg name="type_id" type="s" direction="in" />
       <arg name="transfer_object" type="o" direction="out" />
     </method>
+    <method name="CreatePaste">
+      <arg name="app_id" type="s" direction="in" />
+      <arg name="mimeData" type="ay" direction="in" />
+      <arg name="types" type="as" direction="in" />
+      <arg name="paste_object" type="o" direction="out" />
+    </method>
+    <method name="GetLatestPasteData">
+      <arg name="app_id" type="s" direction="in" />
+      <arg name="mimeData" type="ay" direction="out" />
+    </method>
+    <method name="GetPasteData">
+      <arg name="id" type="s" direction="in" />
+      <arg name="app_id" type="s" direction="in" />
+      <arg name="mimeData" type="ay" direction="out" />
+    </method>
     <method name="RegisterImportExportHandler">
       <arg name="peer_id" type="s" direction="in" />
       <arg name="handler_object" type="o" direction="in" />
@@ -51,5 +66,12 @@
       <arg name="app_id" type="s" direction="in" />
       <arg name="peer" type="v" direction="out" />
     </method>
+    <method name="PasteFormats">
+      <arg name="formats" type="as" direction="out" />
+    </method>
+    <signal name="PasteFormatsChanged">
+    </signal>
+    <signal name="PasteboardChanged">
+    </signal>
  </interface>
 </node>

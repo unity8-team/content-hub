@@ -208,7 +208,7 @@ bool app_id_matches(QString id, pid_t pid)
         return true;
 
     std::shared_ptr<ual::Registry> reg = ual::Registry::getDefault();
-    auto app_id = ual::AppID::parse(id.toStdString());
+    auto app_id = ual::AppID::find(id.toStdString());
     if (app_id.empty())
         return false;
     auto app = ual::Application::create(app_id, reg);

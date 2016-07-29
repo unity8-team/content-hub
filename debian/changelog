@@ -1,6 +1,6 @@
 content-hub (0.2-0ubuntu1) UNRELEASED; urgency=medium
 
-  * Pasteboard implemention
+  * Pasteboard implementation
 
  -- Ken VanDine <ken.vandine@canonical.com>  Wed, 27 Jul 2016 10:49:05 -0400
 

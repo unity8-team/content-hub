@@ -74,6 +74,7 @@ class Service : public QObject, protected QDBusContext
     QDBusVariant PeerForId(const QString&);
 
   private:
+    QByteArray getPasteData(int id, const QString &app_id);
     bool should_cancel(int);
     struct Private;
     struct RegHandler;

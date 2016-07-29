@@ -40,6 +40,7 @@
 #include <com/ubuntu/content/type.h>
 #include <com/ubuntu/content/transfer.h>
 
+#include <QDBusInterface>
 #include <QDBusMetaType>
 #include <QCache>
 #include <QCoreApplication>
@@ -77,6 +78,11 @@ struct cucd::Service::Private : public QObject
               registry(registry),
               app_manager(application_manager)
     {
+        unityFocus = new QDBusInterface("com.canonical.Unity.FocusInfo" /* service */,
+                                        "/com/canonical/Unity/FocusInfo" /* object path */,
+                                        "com.canonical.Unity.FocusInfo" /* interface */,
+                                        QDBusConnection::sessionBus(),
+                                        this);
     }
 
     QDBusConnection connection;
@@ -86,7 +92,7 @@ struct cucd::Service::Private : public QObject
     QStringList pasteFormats;
     QSet<RegHandler*> handlers;
     QSharedPointer<cua::ApplicationManager> app_manager;
-
+    QDBusInterface *unityFocus;
 };
 
 cucd::Service::Service(QDBusConnection connection, const QSharedPointer<cucd::PeerRegistry>& peer_registry,
@@ -343,30 +349,31 @@ QDBusObjectPath cucd::Service::CreatePaste(const QString& app_id, const QByteArr
 QByteArray cucd::Service::GetLatestPasteData(const QString& app_id)
 {
     TRACE() << Q_FUNC_INFO << app_id;
+
     if (d->active_pastes.isEmpty())
         return QByteArray();
 
-    QString dest_id = app_id;
-    if (dest_id.isEmpty())
-    {
-        TRACE() << Q_FUNC_INFO << "APP_ID isnt' set, attempting to get it from AppArmor";
-        dest_id = aa_profile(this->message().service());
-    }
-
-    auto paste = d->active_pastes.last();
-    d->connection.unregisterObject(paste->path());
-    paste->setDestination(dest_id);
-    auto path = paste->path();
-    if (not d->connection.registerObject(path, paste))
-        qWarning() << "Problem registering object for path: " << path;
-    return paste->MimeData();
+    return getPasteData(d->active_pastes.last()->Id(), app_id);
 }
 
 QByteArray cucd::Service::GetPasteData(const QString& id, const QString& app_id)
 {
     TRACE() << Q_FUNC_INFO << id;
+
     if (d->active_pastes.isEmpty())
         return QByteArray();
+
+    return getPasteData(id.toInt(), app_id);
+}
+
+QByteArray cucd::Service::getPasteData(int id, const QString &app_id)
+{
+    pid_t pid = d->connection.interface()->servicePid(this->message().service());
+    bool focused = d->unityFocus->call("isPidFocused", (unsigned int) pid).arguments().at(0).toBool();
+    if (!focused) {
+        qWarning().nospace() << "Application (pid="<<pid<<") isn't focused. Denying paste.";
+        return QByteArray();
+    }
 
     QString dest_id = app_id;
     if (dest_id.isEmpty())
@@ -377,7 +384,7 @@ QByteArray cucd::Service::GetPasteData(const QString& id, const QString& app_id)
 
     Q_FOREACH (cucd::Paste *p, d->active_pastes)
     {
-        if (p->Id() == id.toInt()) {
+        if (p->Id() == id) {
             d->connection.unregisterObject(p->path());
             p->setDestination(dest_id);
             auto path = p->path();

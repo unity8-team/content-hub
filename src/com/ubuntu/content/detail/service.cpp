@@ -93,6 +93,7 @@ struct cucd::Service::Private : public QObject
     QSet<RegHandler*> handlers;
     QSharedPointer<cua::ApplicationManager> app_manager;
     QDBusInterface *unityFocus;
+    const int maxActivePastes = 5;
 };
 
 cucd::Service::Service(QDBusConnection connection, const QSharedPointer<cucd::PeerRegistry>& peer_registry,
@@ -328,6 +329,19 @@ QDBusObjectPath cucd::Service::CreatePaste(const QString& app_id, const QByteArr
     auto paste = new cucd::Paste(import_counter, app_id, this);
     new PasteAdaptor(paste);
     d->active_pastes.append(paste);
+
+    auto path = paste->path();
+    if (not d->connection.registerObject(path, paste))
+        qWarning() << "Problem registering object for path: " << path;
+
+    connect(paste, SIGNAL(StateChanged(int)), this, SLOT(handle_pastes(int)));
+    paste->Charge(mimeData);
+
+    if (d->active_pastes.count() > d->maxActivePastes) {
+        // get rid of the oldest one
+        delete d->active_pastes.takeFirst();
+    }
+
     Q_EMIT(PasteboardChanged());
     Q_FOREACH (QString t, types) {
         TRACE() << Q_FUNC_INFO << "Type: " << t;
@@ -337,12 +351,6 @@ QDBusObjectPath cucd::Service::CreatePaste(const QString& app_id, const QByteArr
         }
     }
 
-    auto path = paste->path();
-    if (not d->connection.registerObject(path, paste))
-        qWarning() << "Problem registering object for path: " << path;
-
-    connect(paste, SIGNAL(StateChanged(int)), this, SLOT(handle_pastes(int)));
-    paste->Charge(mimeData);
     return QDBusObjectPath{path};
 }
 

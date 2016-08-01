@@ -23,6 +23,8 @@
 #include "service.h"
 #include "peer_registry.h"
 #include "i18n.h"
+#include "paste.h"
+#include "pasteadaptor.h"
 #include "transfer.h"
 #include "transferadaptor.h"
 #include "utils.cpp"
@@ -33,10 +35,12 @@
 #include <libnotify/notify.h>
 
 #include <com/ubuntu/content/item.h>
+#include <com/ubuntu/content/paste.h>
 #include <com/ubuntu/content/peer.h>
 #include <com/ubuntu/content/type.h>
 #include <com/ubuntu/content/transfer.h>
 
+#include <QDBusInterface>
 #include <QDBusMetaType>
 #include <QCache>
 #include <QCoreApplication>
@@ -74,14 +78,22 @@ struct cucd::Service::Private : public QObject
               registry(registry),
               app_manager(application_manager)
     {
+        unityFocus = new QDBusInterface("com.canonical.Unity.FocusInfo" /* service */,
+                                        "/com/canonical/Unity/FocusInfo" /* object path */,
+                                        "com.canonical.Unity.FocusInfo" /* interface */,
+                                        QDBusConnection::sessionBus(),
+                                        this);
     }
 
     QDBusConnection connection;
     QSharedPointer<cucd::PeerRegistry> registry;
     QSet<cucd::Transfer*> active_transfers;
+    QList<cucd::Paste*> active_pastes;
+    QStringList pasteFormats;
     QSet<RegHandler*> handlers;
     QSharedPointer<cua::ApplicationManager> app_manager;
-
+    QDBusInterface *unityFocus;
+    const int maxActivePastes = 5;
 };
 
 cucd::Service::Service(QDBusConnection connection, const QSharedPointer<cucd::PeerRegistry>& peer_registry,
@@ -302,13 +314,95 @@ QDBusObjectPath cucd::Service::CreateShareToPeer(const QString& peer_id, const Q
     return CreateTransfer(peer_id, src_id, cuc::Transfer::Share, type_id);
 }
 
+bool cucd::Service::CreatePaste(const QString& app_id, const QByteArray& mimeData, const QStringList& types)
+{
+    TRACE() << Q_FUNC_INFO << app_id << types;
+    static size_t import_counter{0}; import_counter++;
+
+    pid_t pid = d->connection.interface()->servicePid(this->message().service());
+    qWarning() << Q_FUNC_INFO << "PID: " << pid;
+    if (!app_id_matches(app_id, pid)) {
+        qWarning() << "APP_ID doesn't match requesting APP";
+        return false;
+    }
+
+    auto paste = new cucd::Paste(import_counter, app_id, this);
+    new PasteAdaptor(paste);
+    d->active_pastes.append(paste);
+
+    paste->Charge(mimeData);
+
+    if (d->active_pastes.count() > d->maxActivePastes) {
+        // get rid of the oldest one
+        delete d->active_pastes.takeFirst();
+    }
+
+    Q_EMIT(PasteboardChanged());
+    Q_FOREACH (QString t, types) {
+        TRACE() << Q_FUNC_INFO << "Type: " << t;
+        if (!d->pasteFormats.contains(t)) {
+            d->pasteFormats.append(t);
+            Q_EMIT(PasteFormatsChanged());
+        }
+    }
+
+    return true;
+}
+
+QByteArray cucd::Service::GetLatestPasteData(const QString& app_id)
+{
+    TRACE() << Q_FUNC_INFO << app_id;
+
+    if (d->active_pastes.isEmpty())
+        return QByteArray();
+
+    return getPasteData(d->active_pastes.last()->Id(), app_id);
+}
+
+QByteArray cucd::Service::GetPasteData(const QString& id, const QString& app_id)
+{
+    TRACE() << Q_FUNC_INFO << id;
+
+    if (d->active_pastes.isEmpty())
+        return QByteArray();
+
+    return getPasteData(id.toInt(), app_id);
+}
+
+QByteArray cucd::Service::getPasteData(int id, const QString &app_id)
+{
+    pid_t pid = d->connection.interface()->servicePid(this->message().service());
+
+    /* Only verify focus when not running under testing */
+    bool focused = true;
+    if (qgetenv("CONTENT_HUB_TESTING").isNull())
+        focused = d->unityFocus->call("isPidFocused", (unsigned int) pid).arguments().at(0).toBool();
+
+    if (!focused) {
+        qWarning().nospace() << "Application (pid="<<pid<<") isn't focused. Denying paste.";
+        return QByteArray();
+    }
+
+    QString dest_id = app_id;
+    if (dest_id.isEmpty())
+    {
+        TRACE() << Q_FUNC_INFO << "APP_ID isnt' set, attempting to get it from AppArmor";
+        dest_id = aa_profile(this->message().service());
+    }
+
+    Q_FOREACH (cucd::Paste *p, d->active_pastes)
+    {
+        if (p->Id() == id)
+            return p->MimeData();
+    }
+    return QByteArray();
+}
+
 QDBusObjectPath cucd::Service::CreateTransfer(const QString& dest_id, const QString& src_id, int dir, const QString& type_id)
 {
     TRACE() << Q_FUNC_INFO << "DEST:" << dest_id << "SRC:" << src_id << "DIRECTION:" << dir;
 
     static size_t import_counter{0}; import_counter++;
-
-    QUuid uuid{QUuid::createUuid()};
 
     Q_FOREACH (cucd::Transfer *t, d->active_transfers)
     {
@@ -384,7 +478,7 @@ void cucd::Service::handle_imports(int state)
         TRACE() << Q_FUNC_INFO << "Charged";
         if (transfer->WasSourceStartedByContentHub())
             d->app_manager->stop_application(transfer->source().toStdString());
-        
+
         gchar ** uris = NULL;
         if (d->registry->peer_is_legacy(transfer->destination())) {
             TRACE() << Q_FUNC_INFO << "Destination is a legacy app, collecting";
@@ -439,7 +533,7 @@ void cucd::Service::handle_imports(int state)
                 }
             }
             if (shouldStop)
-                d->app_manager->stop_application(transfer->source().toStdString());            
+                d->app_manager->stop_application(transfer->source().toStdString());
         }
         gchar ** uris = NULL;
         d->app_manager->invoke_application(transfer->destination().toStdString(), uris);
@@ -478,7 +572,7 @@ void cucd::Service::handle_exports(int state)
         if (d->registry->peer_is_legacy(transfer->destination())) {
             TRACE() << Q_FUNC_INFO << "Destination is a legacy app, collecting";
             transfer->SetStore(shared_dir_for_peer(transfer->destination()));
-            
+
             auto items = transfer->Collect();
             gchar* urls[2] = {0};
             gint i = 0;
@@ -660,4 +754,10 @@ bool cucd::Service::HasPending(const QString& peer_id)
         }
     }
     return false;
+}
+
+QStringList cucd::Service::PasteFormats()
+{
+    TRACE() << Q_FUNC_INFO;
+    return d->pasteFormats;
 }

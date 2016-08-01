@@ -314,7 +314,7 @@ QDBusObjectPath cucd::Service::CreateShareToPeer(const QString& peer_id, const Q
     return CreateTransfer(peer_id, src_id, cuc::Transfer::Share, type_id);
 }
 
-QDBusObjectPath cucd::Service::CreatePaste(const QString& app_id, const QByteArray& mimeData, const QStringList& types)
+bool cucd::Service::CreatePaste(const QString& app_id, const QByteArray& mimeData, const QStringList& types)
 {
     TRACE() << Q_FUNC_INFO << app_id << types;
     static size_t import_counter{0}; import_counter++;
@@ -323,18 +323,15 @@ QDBusObjectPath cucd::Service::CreatePaste(const QString& app_id, const QByteArr
     qWarning() << Q_FUNC_INFO << "PID: " << pid;
     if (!app_id_matches(app_id, pid)) {
         qWarning() << "APP_ID doesn't match requesting APP";
-        return QDBusObjectPath("/FAILED");
+        return false;
     }
 
     auto paste = new cucd::Paste(import_counter, app_id, this);
     new PasteAdaptor(paste);
     d->active_pastes.append(paste);
 
-    auto path = paste->path();
-    if (not d->connection.registerObject(path, paste))
-        qWarning() << "Problem registering object for path: " << path;
-
     connect(paste, SIGNAL(StateChanged(int)), this, SLOT(handle_pastes(int)));
+
     paste->Charge(mimeData);
 
     if (d->active_pastes.count() > d->maxActivePastes) {
@@ -351,7 +348,7 @@ QDBusObjectPath cucd::Service::CreatePaste(const QString& app_id, const QByteArr
         }
     }
 
-    return QDBusObjectPath{path};
+    return true;
 }
 
 QByteArray cucd::Service::GetLatestPasteData(const QString& app_id)

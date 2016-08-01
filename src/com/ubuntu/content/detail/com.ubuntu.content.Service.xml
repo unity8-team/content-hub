@@ -40,7 +40,7 @@
       <arg name="app_id" type="s" direction="in" />
       <arg name="mimeData" type="ay" direction="in" />
       <arg name="types" type="as" direction="in" />
-      <arg name="paste_object" type="o" direction="out" />
+      <arg name="success" type="b" direction="out" />
     </method>
     <method name="GetLatestPasteData">
       <arg name="app_id" type="s" direction="in" />

@@ -27,10 +27,6 @@ cuc::Paste::Paste(const QSharedPointer<cuc::Paste::Private>& d, QObject* parent)
         : QObject(parent),
           d(d)
 {
-    QObject::connect(d->remote_paste,
-                SIGNAL (StateChanged(int)),
-                this,
-                SIGNAL (stateChanged()));
 }
 
 cuc::Paste::~Paste()
@@ -41,11 +37,6 @@ cuc::Paste::~Paste()
 int cuc::Paste::id() const
 {
     return d->id();
-}
-
-cuc::Paste::State cuc::Paste::state() const
-{
-    return d->state();
 }
 
 QMimeData* cuc::Paste::mimeData()

@@ -35,7 +35,6 @@ class Paste : public QObject
     Q_OBJECT
     Q_ENUMS(State)
     Q_PROPERTY(int id READ id)
-    Q_PROPERTY(State state READ state NOTIFY stateChanged)
     Q_PROPERTY(QString source READ source)
 
   public:
@@ -53,11 +52,8 @@ class Paste : public QObject
     Paste& operator=(const Paste&) = delete;
 
     Q_INVOKABLE virtual int id() const;
-    Q_INVOKABLE virtual State state() const;
     Q_INVOKABLE virtual QMimeData* mimeData();
     Q_INVOKABLE virtual QString source() const;
-
-    Q_SIGNAL void stateChanged();
 
   private:
     struct Private;

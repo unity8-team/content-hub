@@ -43,12 +43,10 @@
       <arg name="success" type="b" direction="out" />
     </method>
     <method name="GetLatestPasteData">
-      <arg name="app_id" type="s" direction="in" />
       <arg name="mimeData" type="ay" direction="out" />
     </method>
     <method name="GetPasteData">
       <arg name="id" type="s" direction="in" />
-      <arg name="app_id" type="s" direction="in" />
       <arg name="mimeData" type="ay" direction="out" />
     </method>
     <method name="RegisterImportExportHandler">

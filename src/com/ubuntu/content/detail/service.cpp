@@ -321,12 +321,15 @@ bool cucd::Service::CreatePaste(const QString& app_id, const QByteArray& mimeDat
 
     pid_t pid = d->connection.interface()->servicePid(this->message().service());
     qWarning() << Q_FUNC_INFO << "PID: " << pid;
-    if (!app_id_matches(app_id, pid)) {
-        qWarning() << "APP_ID doesn't match requesting APP";
-        return false;
+    QString effective_app_id;
+    if (app_id_matches(app_id, pid)) {
+        effective_app_id = app_id;
+    } else {
+        qWarning() << "APP_ID" << app_id << "doesn't match requesting APP";
+        effective_app_id = "?";
     }
 
-    auto paste = new cucd::Paste(import_counter, app_id, this);
+    auto paste = new cucd::Paste(import_counter, effective_app_id, this);
     new PasteAdaptor(paste);
     d->active_pastes.append(paste);
 
@@ -349,27 +352,27 @@ bool cucd::Service::CreatePaste(const QString& app_id, const QByteArray& mimeDat
     return true;
 }
 
-QByteArray cucd::Service::GetLatestPasteData(const QString& app_id)
+QByteArray cucd::Service::GetLatestPasteData()
 {
-    TRACE() << Q_FUNC_INFO << app_id;
+    TRACE() << Q_FUNC_INFO;
 
     if (d->active_pastes.isEmpty())
         return QByteArray();
 
-    return getPasteData(d->active_pastes.last()->Id(), app_id);
+    return getPasteData(d->active_pastes.last()->Id());
 }
 
-QByteArray cucd::Service::GetPasteData(const QString& id, const QString& app_id)
+QByteArray cucd::Service::GetPasteData(const QString& id)
 {
     TRACE() << Q_FUNC_INFO << id;
 
     if (d->active_pastes.isEmpty())
         return QByteArray();
 
-    return getPasteData(id.toInt(), app_id);
+    return getPasteData(id.toInt());
 }
 
-QByteArray cucd::Service::getPasteData(int id, const QString &app_id)
+QByteArray cucd::Service::getPasteData(int id)
 {
     pid_t pid = d->connection.interface()->servicePid(this->message().service());
 
@@ -381,13 +384,6 @@ QByteArray cucd::Service::getPasteData(int id, const QString &app_id)
     if (!focused) {
         qWarning().nospace() << "Application (pid="<<pid<<") isn't focused. Denying paste.";
         return QByteArray();
-    }
-
-    QString dest_id = app_id;
-    if (dest_id.isEmpty())
-    {
-        TRACE() << Q_FUNC_INFO << "APP_ID isnt' set, attempting to get it from AppArmor";
-        dest_id = aa_profile(this->message().service());
     }
 
     Q_FOREACH (cucd::Paste *p, d->active_pastes)

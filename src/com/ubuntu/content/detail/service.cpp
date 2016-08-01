@@ -330,8 +330,6 @@ bool cucd::Service::CreatePaste(const QString& app_id, const QByteArray& mimeDat
     new PasteAdaptor(paste);
     d->active_pastes.append(paste);
 
-    connect(paste, SIGNAL(StateChanged(int)), this, SLOT(handle_pastes(int)));
-
     paste->Charge(mimeData);
 
     if (d->active_pastes.count() > d->maxActivePastes) {
@@ -632,29 +630,6 @@ void cucd::Service::handle_exports(int state)
         }
         gchar ** uris = NULL;
         d->app_manager->invoke_application(transfer->source().toStdString(), uris);
-    }
-}
-
-void cucd::Service::handle_pastes(int state)
-{
-    TRACE() << Q_FUNC_INFO;
-    cucd::Paste *paste = static_cast<cucd::Paste*>(sender());
-    TRACE() << Q_FUNC_INFO << "STATE:" << paste->State();
-
-    if (state == cuc::Paste::charged)
-    {
-        TRACE() << Q_FUNC_INFO << "charged";
-        auto path = paste->path();
-        TRACE() << Q_FUNC_INFO << "Unregistering path:" << path;
-        d->connection.unregisterObject(path);
-    }
-
-    if (state == cuc::Paste::collected)
-    {
-        TRACE() << Q_FUNC_INFO << "collected";
-        auto path = paste->path();
-        TRACE() << Q_FUNC_INFO << "Unregistering path:" << path;
-        d->connection.unregisterObject(path);
     }
 }
 

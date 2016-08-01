@@ -397,14 +397,8 @@ QByteArray cucd::Service::getPasteData(int id, const QString &app_id)
 
     Q_FOREACH (cucd::Paste *p, d->active_pastes)
     {
-        if (p->Id() == id) {
-            d->connection.unregisterObject(p->path());
-            p->setDestination(dest_id);
-            auto path = p->path();
-            if (not d->connection.registerObject(path, p))
-                qWarning() << "Problem registering object for path: " << path;
+        if (p->Id() == id)
             return p->MimeData();
-        }
     }
     return QByteArray();
 }

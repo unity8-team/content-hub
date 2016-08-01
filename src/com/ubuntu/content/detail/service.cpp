@@ -377,7 +377,12 @@ QByteArray cucd::Service::GetPasteData(const QString& id, const QString& app_id)
 QByteArray cucd::Service::getPasteData(int id, const QString &app_id)
 {
     pid_t pid = d->connection.interface()->servicePid(this->message().service());
-    bool focused = d->unityFocus->call("isPidFocused", (unsigned int) pid).arguments().at(0).toBool();
+
+    /* Only verify focus when not running under testing */
+    bool focused = true;
+    if (qgetenv("CONTENT_HUB_TESTING").isNull())
+        focused = d->unityFocus->call("isPidFocused", (unsigned int) pid).arguments().at(0).toBool();
+
     if (!focused) {
         qWarning().nospace() << "Application (pid="<<pid<<") isn't focused. Denying paste.";
         return QByteArray();

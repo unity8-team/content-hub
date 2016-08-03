@@ -74,6 +74,12 @@ add_executable(
   source_all.json
 )
 
+add_executable(
+  mimedata_test
+  mimedata_test.cpp
+  ${MOCS}
+)
+
 qt5_use_modules(app_hub_communication_default_source Core Gui DBus Test)
 qt5_use_modules(app_hub_communication_known_sources Core Gui DBus Test)
 qt5_use_modules(app_hub_communication_stores Core Gui DBus Test)
@@ -82,6 +88,7 @@ qt5_use_modules(app_hub_communication_paste Core Gui DBus Test)
 qt5_use_modules(app_hub_communication_handler Core Gui DBus Test)
 qt5_use_modules(test_utils Core Test)
 qt5_use_modules(test_hook Core Gui DBus Test)
+qt5_use_modules(mimedata_test Core Test)
 
 target_link_libraries(app_hub_communication_stores content-hub gmock gtest gtest_main)
 target_link_libraries(app_hub_communication_default_source content-hub gmock gtest gtest_main)
@@ -93,6 +100,7 @@ target_link_libraries(app_hub_communication_handler content-hub gmock gtest gtes
 target_link_libraries(test_utils content-hub gmock gtest gtest_main)
 target_link_libraries(test_types content-hub gmock gtest gtest_main)
 target_link_libraries(test_hook content-hub gmock gtest gtest_main ${GSETTINGS_LDFLAGS})
+target_link_libraries(mimedata_test content-hub gmock gtest gtest_main)
 
 add_test(app_hub_communication_default_source app_hub_communication_default_source)
 add_test(app_hub_communication_known_sources app_hub_communication_known_sources)
@@ -103,6 +111,7 @@ add_test(app_hub_communication_handler app_hub_communication_handler)
 add_test(test_utils test_utils)
 add_test(test_types test_types)
 add_test(test_hook test_hook)
+add_test(mimedata_test mimedata_test)
 
 SET_TESTS_PROPERTIES(app_hub_communication_paste
     PROPERTIES ENVIRONMENT "CONTENT_HUB_TESTING=1")

@@ -62,8 +62,8 @@ class Service : public QObject, protected QDBusContext
     QDBusObjectPath CreateExportToPeer(const QString&, const QString&, const QString&);
     QDBusObjectPath CreateShareToPeer(const QString&, const QString&, const QString&);
     bool CreatePaste(const QString&, const QByteArray&, const QStringList&);
-    QByteArray GetLatestPasteData(const QString&);
-    QByteArray GetPasteData(const QString&, const QString&);
+    QByteArray GetLatestPasteData();
+    QByteArray GetPasteData(const QString&);
     QStringList PasteFormats();
 
     void RegisterImportExportHandler(const QString&, const QDBusObjectPath& handler);
@@ -74,7 +74,7 @@ class Service : public QObject, protected QDBusContext
     QDBusVariant PeerForId(const QString&);
 
   private:
-    QByteArray getPasteData(int id, const QString &app_id);
+    QByteArray getPasteData(int id);
     bool should_cancel(int);
     struct Private;
     struct RegHandler;

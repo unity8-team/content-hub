@@ -390,17 +390,13 @@ bool cuc::Hub::createPasteSync(const QMimeData& data)
 QDBusPendingCall cuc::Hub::requestLatestPaste()
 {
     TRACE() << Q_FUNC_INFO;
-    QString dest_id = app_id();
-    TRACE() << Q_FUNC_INFO << dest_id;
-    return d->service->GetLatestPasteData(dest_id);
+    return d->service->GetLatestPasteData();
 }
 
 QDBusPendingCall cuc::Hub::requestPasteById(int id)
 {
     TRACE() << Q_FUNC_INFO;
-    QString dest_id = app_id();
-    TRACE() << Q_FUNC_INFO << dest_id;
-    return d->service->GetPasteData(QString::number(id), dest_id);
+    return d->service->GetPasteData(QString::number(id));
 }
 
 QMimeData* cuc::Hub::paste(QDBusPendingCall pendingCall)

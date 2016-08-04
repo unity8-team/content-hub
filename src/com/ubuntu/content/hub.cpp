@@ -21,6 +21,7 @@
 #include "ContentServiceInterface.h"
 #include "ContentHandlerInterface.h"
 #include "handleradaptor.h"
+#include "paste_p.h"
 #include "transfer_p.h"
 #include "utils.cpp"
 
@@ -52,6 +53,7 @@ struct cuc::Hub::Private
     }
 
     com::ubuntu::content::dbus::Service* service;
+    QStringList pasteFormats;
 };
 
 cuc::Hub::Hub(QObject* parent) : QObject(parent), d{new cuc::Hub::Private{this}}
@@ -79,6 +81,14 @@ cuc::Hub::Hub(QObject* parent) : QObject(parent), d{new cuc::Hub::Private{this}}
         iconPaths << QString(path + "/usr/share/icons/");
     }
     QIcon::setThemeSearchPaths(iconPaths);
+
+    QObject::connect(d->service, SIGNAL(PasteFormatsChanged()),
+            this,
+            SLOT(onPasteFormatsChanged()));
+    onPasteFormatsChanged();
+    QObject::connect(d->service, SIGNAL(PasteboardChanged()),
+            this,
+            SIGNAL(pasteboardChanged()));
 }
 
 cuc::Hub::~Hub()
@@ -91,6 +101,20 @@ cuc::Hub* cuc::Hub::Client::instance()
     return hub;
 }
 
+void cuc::Hub::onPasteFormatsChanged()
+{
+    TRACE() << Q_FUNC_INFO;
+    auto reply = d->service->PasteFormats();
+    reply.waitForFinished();
+
+    if (reply.isError())
+        return;
+
+    d->pasteFormats = reply.value();
+    TRACE() << Q_FUNC_INFO << d->pasteFormats;
+    Q_EMIT(pasteFormatsChanged());
+}
+
 bool cuc::Hub::eventFilter(QObject *obj, QEvent *event)
 {
    if (event->type() == QEvent::ApplicationActivate)
@@ -100,7 +124,7 @@ bool cuc::Hub::eventFilter(QObject *obj, QEvent *event)
        {
            TRACE() << Q_FUNC_INFO << id << "Activated";
            d->service->HandlerActive(id);
-       } else 
+       } else
        {
            qWarning() << "APP_ID isn't set, the handler ignored";
        }
@@ -181,7 +205,7 @@ QVector<cuc::Peer> cuc::Hub::known_sources_for_type(cuc::Type t)
 
     if (reply.isError())
         return result;
-    
+
     auto peers = reply.value();
     QString id = app_id();
 
@@ -339,4 +363,65 @@ cuc::Peer cuc::Hub::peer_for_app_id(QString app_id)
 
     auto peer = reply.value();
     return qdbus_cast<cuc::Peer>(peer.variant());
+}
+
+QDBusPendingCall cuc::Hub::createPaste(const QMimeData& mimeData)
+{
+    /* This needs to be replaced with a better way to get the APP_ID */
+    QString id = app_id();
+    TRACE() << Q_FUNC_INFO << id;
+
+    auto serializedMimeData = serializeMimeData(mimeData);
+    if (serializedMimeData.isEmpty()) {
+        return QDBusPendingCall::fromCompletedCall(
+                QDBusMessage::createError("Data serialization failed","Could not serialize mimeData"));
+    }
+
+    return d->service->CreatePaste(id, serializedMimeData, mimeData.formats());
+}
+
+bool cuc::Hub::createPasteSync(const QMimeData& data)
+{
+    QDBusPendingCall reply = createPaste(data);
+    reply.waitForFinished();
+    return !reply.isError();
+}
+
+QDBusPendingCall cuc::Hub::requestLatestPaste()
+{
+    TRACE() << Q_FUNC_INFO;
+    return d->service->GetLatestPasteData();
+}
+
+QDBusPendingCall cuc::Hub::requestPasteById(int id)
+{
+    TRACE() << Q_FUNC_INFO;
+    return d->service->GetPasteData(QString::number(id));
+}
+
+QMimeData* cuc::Hub::paste(QDBusPendingCall pendingCall)
+{
+    auto reply = QDBusPendingReply<QByteArray>(pendingCall);
+    reply.waitForFinished();
+
+    if (reply.isError())
+        return nullptr;
+
+    QByteArray serializedMimeData = qdbus_cast<QByteArray>(reply.value());
+    return deserializeMimeData(serializedMimeData);
+}
+
+QMimeData* cuc::Hub::latestPaste()
+{
+    return paste(requestLatestPaste());
+}
+
+QMimeData* cuc::Hub::pasteById(int id)
+{
+    return paste(requestPasteById(id));
+}
+
+QStringList cuc::Hub::pasteFormats() {
+    TRACE() << Q_FUNC_INFO;
+    return d->pasteFormats;
 }

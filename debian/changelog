@@ -1,8 +1,9 @@
-content-hub (0.2-0ubuntu1) UNRELEASED; urgency=medium
+content-hub (0.2+16.10.20160804.2-0ubuntu1) yakkety; urgency=medium
 
   * Pasteboard implementation
+  * build dep on qttools5-dev-tools for qdoc
 
- -- Ken VanDine <ken.vandine@canonical.com>  Wed, 27 Jul 2016 10:49:05 -0400
+ -- Ken VanDine <ken.vandine@canonical.com>  Thu, 04 Aug 2016 16:32:10 +0000
 
 content-hub (0.1+16.10.20160715-0ubuntu1) yakkety; urgency=medium
 

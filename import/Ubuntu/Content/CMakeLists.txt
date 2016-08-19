@@ -97,7 +97,7 @@ add_custom_command(OUTPUT ${CMAKE_CURRENT_BINARY_DIR}/plugins.qmltypes
     DEPENDS ${PLUGIN}
     WORKING_DIRECTORY "${CMAKE_CURRENT_BINARY_DIR}"
 )
-endif()
 
 add_custom_target(Content_generated_files ALL SOURCES ${CMAKE_CURRENT_BINARY_DIR}/plugins.qmltypes)
 install(FILES ${CMAKE_CURRENT_BINARY_DIR}/plugins.qmltypes DESTINATION ${CONTENT_HUB_IMPORTS_DIR})
+endif()

@@ -1,3 +1,9 @@
+content-hub (0.1+16.10.20160822-0ubuntu1) yakkety; urgency=medium
+
+  * No change rebuild for UAL ABI change
+
+ -- Ted Gould <ted@gould.cx>  Mon, 22 Aug 2016 17:01:38 +0000
+
 content-hub (0.1+16.10.20160809-0ubuntu1) yakkety; urgency=medium
 
   * build dep on qttools5-dev-tools for qdoc

@@ -399,10 +399,12 @@ void cucd::Service::handle_imports(int state)
             }
         }
 
-        if (!transfer->PromptSession() || !transfer->WasSourceStartedByContentHub()) {
+        if (!transfer->PromptSession() || transfer->WasSourceStartedByContentHub()) {
+            TRACE() << Q_FUNC_INFO << "Invoking application";
             gchar ** uris = NULL;
             d->app_manager->invoke_application(transfer->source().toStdString(), uris);
         } else {
+            TRACE() << Q_FUNC_INFO << "Invoking application with session";
             std::string instance_id = d->app_manager->invoke_application_with_session(transfer->source().toStdString(), transfer->PromptSession());
             transfer->SetInstanceId(QString::fromStdString(instance_id));
         }

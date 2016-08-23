@@ -365,11 +365,11 @@ cuc::Peer cuc::Hub::peer_for_app_id(QString app_id)
     return qdbus_cast<cuc::Peer>(peer.variant());
 }
 
-QDBusPendingCall cuc::Hub::createPaste(const QMimeData& mimeData)
+QDBusPendingCall cuc::Hub::createPaste(const QString &surfaceId, const QMimeData& mimeData)
 {
     /* This needs to be replaced with a better way to get the APP_ID */
-    QString id = app_id();
-    TRACE() << Q_FUNC_INFO << id;
+    QString appId = app_id();
+    TRACE() << Q_FUNC_INFO << appId;
 
     auto serializedMimeData = serializeMimeData(mimeData);
     if (serializedMimeData.isEmpty()) {
@@ -377,26 +377,26 @@ QDBusPendingCall cuc::Hub::createPaste(const QMimeData& mimeData)
                 QDBusMessage::createError("Data serialization failed","Could not serialize mimeData"));
     }
 
-    return d->service->CreatePaste(id, serializedMimeData, mimeData.formats());
+    return d->service->CreatePaste(appId, surfaceId, serializedMimeData, mimeData.formats());
 }
 
-bool cuc::Hub::createPasteSync(const QMimeData& data)
+bool cuc::Hub::createPasteSync(const QString &surfaceId, const QMimeData& data)
 {
-    QDBusPendingCall reply = createPaste(data);
+    QDBusPendingCall reply = createPaste(surfaceId, data);
     reply.waitForFinished();
     return !reply.isError();
 }
 
-QDBusPendingCall cuc::Hub::requestLatestPaste()
+QDBusPendingCall cuc::Hub::requestLatestPaste(const QString &surfaceId)
 {
     TRACE() << Q_FUNC_INFO;
-    return d->service->GetLatestPasteData();
+    return d->service->GetLatestPasteData(surfaceId);
 }
 
-QDBusPendingCall cuc::Hub::requestPasteById(int id)
+QDBusPendingCall cuc::Hub::requestPasteById(const QString &surfaceId, int pasteId)
 {
     TRACE() << Q_FUNC_INFO;
-    return d->service->GetPasteData(QString::number(id));
+    return d->service->GetPasteData(surfaceId, QString::number(pasteId));
 }
 
 QMimeData* cuc::Hub::paste(QDBusPendingCall pendingCall)
@@ -411,14 +411,14 @@ QMimeData* cuc::Hub::paste(QDBusPendingCall pendingCall)
     return deserializeMimeData(serializedMimeData);
 }
 
-QMimeData* cuc::Hub::latestPaste()
+QMimeData* cuc::Hub::latestPaste(const QString &surfaceId)
 {
-    return paste(requestLatestPaste());
+    return paste(requestLatestPaste(surfaceId));
 }
 
-QMimeData* cuc::Hub::pasteById(int id)
+QMimeData* cuc::Hub::pasteById(const QString &surfaceId, int pasteId)
 {
-    return paste(requestPasteById(id));
+    return paste(requestPasteById(surfaceId, pasteId));
 }
 
 QStringList cuc::Hub::pasteFormats() {

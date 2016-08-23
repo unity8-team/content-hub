@@ -314,9 +314,15 @@ QDBusObjectPath cucd::Service::CreateShareToPeer(const QString& peer_id, const Q
     return CreateTransfer(peer_id, src_id, cuc::Transfer::Share, type_id);
 }
 
-bool cucd::Service::CreatePaste(const QString& app_id, const QByteArray& mimeData, const QStringList& types)
+bool cucd::Service::CreatePaste(const QString& app_id, const QString& surfaceId, const QByteArray& mimeData,
+                                const QStringList& types)
 {
     TRACE() << Q_FUNC_INFO << app_id << types;
+
+    if (!verifiedSurfaceIsFocused(surfaceId)) {
+        return false;
+    }
+
     static size_t import_counter{0}; import_counter++;
 
     pid_t pid = d->connection.interface()->servicePid(this->message().service());
@@ -352,43 +358,36 @@ bool cucd::Service::CreatePaste(const QString& app_id, const QByteArray& mimeDat
     return true;
 }
 
-QByteArray cucd::Service::GetLatestPasteData()
+QByteArray cucd::Service::GetLatestPasteData(const QString& surfaceId)
 {
     TRACE() << Q_FUNC_INFO;
 
     if (d->active_pastes.isEmpty())
         return QByteArray();
 
-    return getPasteData(d->active_pastes.last()->Id());
+    return getPasteData(surfaceId, d->active_pastes.last()->Id());
 }
 
-QByteArray cucd::Service::GetPasteData(const QString& id)
+QByteArray cucd::Service::GetPasteData(const QString& surfaceId, const QString& pasteId)
 {
-    TRACE() << Q_FUNC_INFO << id;
+    TRACE() << Q_FUNC_INFO << pasteId;
 
     if (d->active_pastes.isEmpty())
         return QByteArray();
 
-    return getPasteData(id.toInt());
+    return getPasteData(surfaceId, pasteId.toInt());
 }
 
-QByteArray cucd::Service::getPasteData(int id)
+QByteArray cucd::Service::getPasteData(const QString &surfaceId, int pasteId)
 {
-    pid_t pid = d->connection.interface()->servicePid(this->message().service());
-
-    /* Only verify focus when not running under testing */
-    bool focused = true;
-    if (qgetenv("CONTENT_HUB_TESTING").isNull())
-        focused = d->unityFocus->call("isPidFocused", (unsigned int) pid).arguments().at(0).toBool();
-
-    if (!focused) {
-        qWarning().nospace() << "Application (pid="<<pid<<") isn't focused. Denying paste.";
+    if (!verifiedSurfaceIsFocused(surfaceId)) {
+        qWarning().nospace() << "Surface isn't focused. Denying paste.";
         return QByteArray();
     }
 
     Q_FOREACH (cucd::Paste *p, d->active_pastes)
     {
-        if (p->Id() == id)
+        if (p->Id() == pasteId)
             return p->MimeData();
     }
     return QByteArray();
@@ -756,4 +755,13 @@ QStringList cucd::Service::PasteFormats()
 {
     TRACE() << Q_FUNC_INFO;
     return d->pasteFormats;
+}
+
+bool cucd::Service::verifiedSurfaceIsFocused(const QString &surfaceId)
+{
+    /* Only verify focus when not running under testing */
+    if (!qgetenv("CONTENT_HUB_TESTING").isNull())
+        return true;
+
+    return d->unityFocus->call("isSurfaceFocused", surfaceId).arguments().at(0).toBool();
 }

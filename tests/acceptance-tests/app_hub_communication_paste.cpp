@@ -123,10 +123,11 @@ TEST(Hub, transfer_creation_and_states_work)
             QMimeData data;
             data.setText("some text");
             auto hub = cuc::Hub::Client::instance();
-            bool ok = hub->createPasteSync(const_cast<const QMimeData&>(data));
+            QString surfaceId("some-bogus-fake-surface-id");
+            bool ok = hub->createPasteSync(surfaceId, const_cast<const QMimeData&>(data));
             ASSERT_TRUE(ok);
-            EXPECT_EQ(QString(data.text()), QString(hub->latestPaste()->text()));
-            EXPECT_EQ(QString(data.text()), QString(hub->pasteById(1)->text()));
+            EXPECT_EQ(QString(data.text()), QString(hub->latestPaste(surfaceId)->text()));
+            EXPECT_EQ(QString(data.text()), QString(hub->pasteById(surfaceId, 1)->text()));
 
             hub->quit();
         });

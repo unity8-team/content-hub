@@ -41,7 +41,15 @@ int main(int argc, char *argv[])
 
     auto hub = cuc::Hub::Client::instance();
 
-    hub->createPasteSync(const_cast<const QMimeData&>(data));
+    /* Won't work unless you disable the surface Id verification with CONTENT_HUB_TESTING=1 env var
+       To get the surface Id of a MirSurface in a real GUI app you should to it like the following:
+          MirPersistentId* mirPermaId = mir_surface_request_persistent_id_sync(mirSurface);
+          QString surfaceId = mir_persistent_id_as_string(mirPermaId);
+          mir_persistent_id_release(mirPermaId);
+    */
+    QString surfaceId("some-bogus-fake-surface-id");
+
+    hub->createPasteSync(surfaceId, const_cast<const QMimeData&>(data));
 
     qDebug() << text;
     qDebug() << hub->pasteFormats();

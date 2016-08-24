@@ -4,6 +4,12 @@ content-hub (0.2-0ubuntu1) UNRELEASED; urgency=medium
 
  -- Ken VanDine <ken.vandine@canonical.com>  Wed, 27 Jul 2016 10:49:05 -0400
 
+content-hub (0.1+16.10.20160809-0ubuntu1) yakkety; urgency=medium
+
+  * build dep on qttools5-dev-tools for qdoc
+
+ -- Ken VanDine <ken.vandine@canonical.com>  Tue, 09 Aug 2016 14:15:14 +0000
+
 content-hub (0.1+16.10.20160715-0ubuntu1) yakkety; urgency=medium
 
   * Filter current app out of the peer model (LP: #1603508)

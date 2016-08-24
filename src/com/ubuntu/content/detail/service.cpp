@@ -347,12 +347,17 @@ bool cucd::Service::CreatePaste(const QString& app_id, const QString& surfaceId,
     }
 
     Q_EMIT(PasteboardChanged());
+
+    bool pendingPasteFormatsChangedSignal = false;
     Q_FOREACH (QString t, types) {
         TRACE() << Q_FUNC_INFO << "Type: " << t;
         if (!d->pasteFormats.contains(t)) {
             d->pasteFormats.append(t);
-            Q_EMIT(PasteFormatsChanged());
+            pendingPasteFormatsChangedSignal = true;
         }
+    }
+    if (pendingPasteFormatsChangedSignal) {
+        Q_EMIT(PasteFormatsChanged(d->pasteFormats));
     }
 
     return true;

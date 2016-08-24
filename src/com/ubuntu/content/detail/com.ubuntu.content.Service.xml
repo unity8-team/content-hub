@@ -71,6 +71,7 @@
       <arg name="formats" type="as" direction="out" />
     </method>
     <signal name="PasteFormatsChanged">
+      <arg name="formats" type="as" />
     </signal>
     <signal name="PasteboardChanged">
     </signal>

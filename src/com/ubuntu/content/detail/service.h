@@ -83,7 +83,7 @@ class Service : public QObject, protected QDBusContext
     QScopedPointer<Private> d;
 
   Q_SIGNALS:
-    void PasteFormatsChanged();
+    void PasteFormatsChanged(const QStringList &formats);
     void PasteboardChanged();
 
   private Q_SLOTS:

@@ -33,6 +33,7 @@
 #include <com/ubuntu/content/type.h>
 #include <libertine.h>
 
+#include <QDBusPendingCallWatcher>
 #include <QIcon>
 #include <QStandardPaths>
 #include <QStringList>
@@ -82,10 +83,9 @@ cuc::Hub::Hub(QObject* parent) : QObject(parent), d{new cuc::Hub::Private{this}}
     }
     QIcon::setThemeSearchPaths(iconPaths);
 
-    QObject::connect(d->service, SIGNAL(PasteFormatsChanged()),
-            this,
-            SLOT(onPasteFormatsChanged()));
-    onPasteFormatsChanged();
+    QObject::connect(d->service, &com::ubuntu::content::dbus::Service::PasteFormatsChanged,
+            this, &cuc::Hub::Hub::onPasteFormatsChanged);
+    requestPasteFormats();
     QObject::connect(d->service, SIGNAL(PasteboardChanged()),
             this,
             SIGNAL(pasteboardChanged()));
@@ -101,16 +101,27 @@ cuc::Hub* cuc::Hub::Client::instance()
     return hub;
 }
 
-void cuc::Hub::onPasteFormatsChanged()
+void cuc::Hub::requestPasteFormats()
+{
+    auto reply = d->service->PasteFormats();
+
+    auto replyWatcher = new QDBusPendingCallWatcher(reply, this);
+    connect(replyWatcher, &QDBusPendingCallWatcher::finished,
+            this, [this, replyWatcher]() {
+        QDBusPendingReply<QStringList> reply = *replyWatcher;
+        replyWatcher->deleteLater();
+        if (!reply.isError()) {
+            d->pasteFormats = reply.value();
+            Q_EMIT(pasteFormatsChanged());
+        }
+    });
+}
+
+void cuc::Hub::onPasteFormatsChanged(const QStringList &formats)
 {
     TRACE() << Q_FUNC_INFO;
-    auto reply = d->service->PasteFormats();
-    reply.waitForFinished();
 
-    if (reply.isError())
-        return;
-
-    d->pasteFormats = reply.value();
+    d->pasteFormats = formats;
     TRACE() << Q_FUNC_INFO << d->pasteFormats;
     Q_EMIT(pasteFormatsChanged());
 }

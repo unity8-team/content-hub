@@ -25,6 +25,7 @@
 #include <QObject>
 #include <QMimeData>
 
+class QStringList;
 class QDBusPendingCall;
 
 namespace com
@@ -91,11 +92,12 @@ class Hub : public QObject
     void pasteboardChanged();
 
   private Q_SLOTS:
-    void onPasteFormatsChanged();
+    void onPasteFormatsChanged(const QStringList &);
   protected:
     Hub(QObject* = nullptr);
 
   private:
+    void requestPasteFormats();
     struct Private;
     QScopedPointer<Private> d;
     bool eventFilter(QObject *obj, QEvent *event);

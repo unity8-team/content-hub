@@ -1,3 +1,10 @@
+content-hub (0.1+16.10.20160825-0ubuntu1) yakkety; urgency=medium
+
+  * Added isolation-machine to test restrictions as these tests need a
+    working upstart user session.
+
+ -- Ken VanDine <ken.vandine@canonical.com>  Thu, 25 Aug 2016 10:12:31 +0000
+
 content-hub (0.1+16.10.20160822-0ubuntu1) yakkety; urgency=medium
 
   * No change rebuild for UAL ABI change

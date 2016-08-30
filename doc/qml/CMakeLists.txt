@@ -3,7 +3,7 @@ FIND_PROGRAM(QDOC_EXECUTABLE qdoc)
 if(QDOC_EXECUTABLE)
 configure_file(${CMAKE_CURRENT_SOURCE_DIR}/ubuntu-content-hub.qdocconf.in ${CMAKE_CURRENT_BINARY_DIR}/ubuntu-content-hub.qdocconf @ONLY)
 add_custom_target(qmldoc
-${QDOC_EXECUTABLE} ${CMAKE_CURRENT_BINARY_DIR}/ubuntu-content-hub.qdocconf
+${QDOC_EXECUTABLE} -qt=qt5 ${CMAKE_CURRENT_BINARY_DIR}/ubuntu-content-hub.qdocconf
 WORKING_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}
 COMMENT "Generating QML API documentation with qdoc" VERBATIM
 )

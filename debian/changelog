@@ -1,8 +1,12 @@
-content-hub (0.2-0ubuntu1) UNRELEASED; urgency=medium
+content-hub (0.2+16.10.20160830-0ubuntu1) yakkety; urgency=medium
 
+  [ Ken VanDine ]
   * Pasteboard implementation
 
- -- Ken VanDine <ken.vandine@canonical.com>  Wed, 27 Jul 2016 10:49:05 -0400
+  [ Florian Boucault ]
+  * Fixes for crossbuilding.
+
+ -- Ken VanDine <ken.vandine@canonical.com>  Tue, 30 Aug 2016 13:41:21 +0000
 
 content-hub (0.1+16.10.20160825-0ubuntu1) yakkety; urgency=medium
 

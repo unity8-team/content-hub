@@ -14,7 +14,6 @@ endif()
 
 macro(add_schema SCHEMA_NAME)
 
-    set(PKG_CONFIG_EXECUTABLE pkg-config)
     # Have an option to not install the schema into where GLib is
     if (GSETTINGS_LOCALINSTALL)
         SET (GSETTINGS_DIR "${CMAKE_INSTALL_PREFIX}/share/glib-2.0/schemas/")

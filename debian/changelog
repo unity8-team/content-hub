@@ -1,3 +1,38 @@
+content-hub (0.2+16.10.20160830-0ubuntu1) yakkety; urgency=medium
+
+  [ Ken VanDine ]
+  * Pasteboard implementation
+
+  [ Florian Boucault ]
+  * Fixes for crossbuilding.
+
+ -- Ken VanDine <ken.vandine@canonical.com>  Tue, 30 Aug 2016 13:41:21 +0000
+
+content-hub (0.1+16.10.20160825-0ubuntu1) yakkety; urgency=medium
+
+  * Added isolation-machine to test restrictions as these tests need a
+    working upstart user session.
+
+ -- Ken VanDine <ken.vandine@canonical.com>  Thu, 25 Aug 2016 10:12:31 +0000
+
+content-hub (0.1+16.10.20160822-0ubuntu1) yakkety; urgency=medium
+
+  * No change rebuild for UAL ABI change
+
+ -- Ted Gould <ted@gould.cx>  Mon, 22 Aug 2016 17:01:38 +0000
+
+content-hub (0.1+16.10.20160809-0ubuntu1) yakkety; urgency=medium
+
+  * build dep on qttools5-dev-tools for qdoc
+
+ -- Ken VanDine <ken.vandine@canonical.com>  Tue, 09 Aug 2016 14:15:14 +0000
+
+content-hub (0.1+16.10.20160715-0ubuntu1) yakkety; urgency=medium
+
+  * Filter current app out of the peer model (LP: #1603508)
+
+ -- Ken VanDine <ken.vandine@canonical.com>  Fri, 15 Jul 2016 19:12:46 +0000
+
 content-hub (0.1+16.10.20160610.2-0ubuntu1) yakkety; urgency=medium
 
   * Ensure all the properties are set when the url is set on a

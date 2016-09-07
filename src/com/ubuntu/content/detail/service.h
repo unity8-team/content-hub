@@ -62,6 +62,10 @@ class Service : public QObject, protected QDBusContext
     QDBusObjectPath CreateExportToPeer(const QString&, const QString&, const QString&);
     QDBusObjectPath CreateShareToPeer(const QString&, const QString&, const QString&);
     QVariantList SupportedTypesForAppId(const QString &);
+    bool CreatePaste(const QString&, const QString&, const QByteArray&, const QStringList&);
+    QByteArray GetLatestPasteData(const QString& surfaceId);
+    QByteArray GetPasteData(const QString& surfaceId, const QString& pasteId);
+    QStringList PasteFormats();
 
     void RegisterImportExportHandler(const QString&, const QDBusObjectPath& handler);
     void HandlerActive(const QString&);
@@ -71,11 +75,17 @@ class Service : public QObject, protected QDBusContext
     QDBusVariant PeerForId(const QString&);
 
   private:
+    QByteArray getPasteData(const QString &surfaceId, int pasteId);
     bool should_cancel(int);
+    bool verifiedSurfaceIsFocused(const QString &surfaceId);
     struct Private;
     struct RegHandler;
     QDBusServiceWatcher* m_watcher;
     QScopedPointer<Private> d;
+
+  Q_SIGNALS:
+    void PasteFormatsChanged(const QStringList &formats);
+    void PasteboardChanged();
 
   private Q_SLOTS:
     void handle_imports(int);

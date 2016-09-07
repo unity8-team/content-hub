@@ -255,6 +255,52 @@ void Registry::enumerate_known_peers(const std::function<void(const cuc::Peer&)>
     }
 }
 
+void Registry::enumerate_types_for_app_id(const QString& app_id,
+                                          const std::function<void(const QString&)>&for_each)
+{
+    TRACE() << Q_FUNC_INFO;
+
+    Q_FOREACH (QString type_id, m_sources->keys())
+    {
+        TRACE() << Q_FUNC_INFO << type_id;
+        Q_FOREACH (QString k, m_sources->get(type_id).toStringList())
+        {
+            TRACE() << Q_FUNC_INFO << k;
+            if (k == app_id)
+            {
+                for_each(type_id);
+                break;
+            }
+        }
+    }
+    Q_FOREACH (QString type_id, m_dests->keys())
+    {
+        TRACE() << Q_FUNC_INFO << type_id;
+        Q_FOREACH (QString k, m_dests->get(type_id).toStringList())
+        {
+            TRACE() << Q_FUNC_INFO << k;
+            if (k == app_id)
+            {
+                for_each(type_id);
+                break;
+            }
+        }
+    }
+    Q_FOREACH (QString type_id, m_shares->keys())
+    {
+        TRACE() << Q_FUNC_INFO << type_id;
+        Q_FOREACH (QString k, m_shares->get(type_id).toStringList())
+        {
+            TRACE() << Q_FUNC_INFO << k;
+            if (k == app_id)
+            {
+                for_each(type_id);
+                break;
+            }
+        }
+    }
+}
+
 void Registry::enumerate_known_sources_for_type(cuc::Type type, const std::function<void(const cuc::Peer&)>&for_each)
 {
     TRACE() << Q_FUNC_INFO << type.id();

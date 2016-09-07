@@ -756,6 +756,20 @@ bool cucd::Service::HasPending(const QString& peer_id)
     return false;
 }
 
+QVariantList cucd::Service::SupportedTypesForAppId(const QString& app_id)
+{
+    QVariantList result;
+
+    d->registry->enumerate_types_for_app_id(
+        app_id,
+        [&result](const QString& type)
+        {
+            result.append(QVariant::fromValue(type));
+        });
+
+    return result;
+}
+
 QStringList cucd::Service::PasteFormats()
 {
     TRACE() << Q_FUNC_INFO;

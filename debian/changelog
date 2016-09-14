@@ -1,3 +1,9 @@
+content-hub (0.2+16.10.20160914-0ubuntu1) yakkety; urgency=medium
+
+  * Build with hardening=+all (LP: #1597453)
+
+ -- Ken VanDine <ken.vandine@canonical.com>  Wed, 14 Sep 2016 14:30:52 +0000
+
 content-hub (0.2+16.10.20160830-0ubuntu1) yakkety; urgency=medium
 
   [ Ken VanDine ]

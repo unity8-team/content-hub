@@ -316,6 +316,30 @@ bool ContentHub::hasPending()
 }
 
 /*!
+ * \brief ContentHub::getSupportedTypes returns the list of supported types by the current host application
+ * \return List of supported ContentType
+ */
+QList<ContentType::Type> ContentHub::getSupportedTypes()
+{
+    TRACE() << Q_FUNC_INFO;
+
+    QList<ContentType::Type> type_ids;
+
+    QString appId = QString(qgetenv("APP_ID"));
+    if (appId.isEmpty())
+    {
+        return type_ids;
+    }
+
+    QVector<QString> types = m_hub->supported_types_for_app_id(appId);
+    Q_FOREACH(const QString& t, types)
+    {
+        type_ids.append(ContentType::hubType2contentType(t));
+    }
+    return type_ids;
+}
+
+/*!
  * \qmlsignal ContentHub::importRequested(ContentTransfer transfer)
  *
  * The signal is triggered when an import is requested.

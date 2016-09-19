@@ -51,6 +51,7 @@ class PeerRegistry
     virtual bool install_share_for_type(Type, Peer) = 0;
     virtual bool remove_peer(Peer peer) = 0;
     virtual bool peer_is_legacy(QString type) = 0;
+    virtual void enumerate_types_for_app_id(const QString& app_id, const std::function<void(const QString&)>&for_each) = 0;
 
 };
 }

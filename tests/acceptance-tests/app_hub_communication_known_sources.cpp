@@ -75,6 +75,7 @@ struct MockedPeerRegistry : public cucd::PeerRegistry
     MOCK_METHOD2(install_share_for_type, bool(cuc::Type, cuc::Peer));
     MOCK_METHOD1(remove_peer, bool(cuc::Peer));
     MOCK_METHOD1(peer_is_legacy, bool(QString));
+    MOCK_METHOD2(enumerate_types_for_app_id, void(const QString&, const std::function<void(const QString&)>&));
 };
 }
 

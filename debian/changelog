@@ -1,3 +1,11 @@
+content-hub (0.2+16.10.20160919-0ubuntu1) yakkety; urgency=medium
+
+  [ Alexandre Abreu ]
+  * Give apps access to their currently supported content-types (LP:
+    #1560086, #1596542)
+
+ -- Robert Bruce Park <robert.park@canonical.com>  Mon, 19 Sep 2016 22:01:58 +0000
+
 content-hub (0.2+16.10.20160914-0ubuntu1) yakkety; urgency=medium
 
   * Build with hardening=+all (LP: #1597453)

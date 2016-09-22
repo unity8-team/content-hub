@@ -221,6 +221,18 @@ bool app_id_matches(QString id, pid_t pid)
     return false;
 }
 
+QString icon_path_for_app_id(QString id)
+{
+    std::shared_ptr<ual::Registry> reg = ual::Registry::getDefault();
+    auto app_id = ual::AppID::find(id.toStdString());
+    if (app_id.empty()) {
+        qWarning() << Q_FUNC_INFO << "Invalid APP_ID:" << id;
+        return QString();
+    }
+    auto app = ual::Application::create(app_id, reg);
+
+    return QString::fromStdString(app.get()->info()->iconPath());
+}
 
 QString aa_profile(QString uniqueConnectionId)
 {

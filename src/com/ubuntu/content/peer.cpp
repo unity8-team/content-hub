@@ -16,13 +16,13 @@
  * Authored by: Thomas Voß <thomas.voss@canonical.com>
  */
 
-#include <gio/gdesktopappinfo.h>
-#include <ubuntu-app-launch.h>
 #include <com/ubuntu/content/peer.h>
 #include <QMetaType>
 #include "debug.h"
+#include "utils.cpp"
 
 namespace cuc = com::ubuntu::content;
+namespace ual = ubuntu::app_launch;
 
 struct cuc::Peer::Private
 {
@@ -31,60 +31,16 @@ struct cuc::Peer::Private
         TRACE() << Q_FUNC_INFO << id;
         if (not id.isEmpty()) {
             TRACE() << Q_FUNC_INFO << "Getting appinfo for" << id;
-            char * dir = nullptr;
-            char * file = nullptr;
-            GDesktopAppInfo* app;
 
-            if (ubuntu_app_launch_application_info(id.toStdString().c_str(), &dir, &file)) {
-                app = g_desktop_app_info_new_from_filename (g_strjoin("/", dir, file, NULL));
-                if (QString::fromUtf8(dir).contains("libertine-container")) {
-                    TRACE() << Q_FUNC_INFO << "Legacy app detected";
-                    legacy = true;
-                }
-
-                Q_UNUSED(app);
-
-                GKeyFile *key_file = g_key_file_new();
-                GError *error = NULL;
-                if (!g_key_file_load_from_file(key_file,
-                                               g_strjoin("/", dir, file, NULL),
-                                               G_KEY_FILE_NONE,
-                                               &error)) {
-                    qWarning() << "ERROR:" <<error->message;
-                } else {
-                    QString iconPath;
-                    name = QString::fromUtf8 (g_key_file_get_locale_string(key_file,
-                                                                           G_KEY_FILE_DESKTOP_GROUP,
-                                                                           G_KEY_FILE_DESKTOP_KEY_NAME,
-                                                                           NULL,
-                                                                           &error));
-                    TRACE() << Q_FUNC_INFO << "name:" << name;
-                    if (!legacy) {
-                        iconName = QString::fromUtf8 (g_key_file_get_locale_string(key_file,
-                                                                                   G_KEY_FILE_DESKTOP_GROUP,
-                                                                                   G_KEY_FILE_DESKTOP_KEY_ICON,
-                                                                                   NULL,
-                                                                                   &error));
-                        if (iconName.startsWith("/"))
-                            iconPath = iconName;
-                        else
-                            iconPath = QString::fromUtf8 (dir) + "/" + iconName;
-                    } else {
-                        iconPath = "/usr/share/content-hub/icons/xorg.png";
-                    }
-                    TRACE() << Q_FUNC_INFO << "iconName:" << iconName;
-                    if (QFile::exists(iconPath)) {
-                        QFile iconFile(iconPath);
-                        if(iconFile.open(QIODevice::ReadOnly)) {
-                            iconData = iconFile.readAll();
-                            iconFile.close();
-                        }
-                    }
-
+            QString iconPath = icon_path_for_app_id(id);
+            qWarning() << Q_FUNC_INFO << "iconPath:" << iconPath;
+            if (QFile::exists(iconPath)) {
+                QFile iconFile(iconPath);
+                if(iconFile.open(QIODevice::ReadOnly)) {
+                    iconData = iconFile.readAll();
+                    iconFile.close();
                 }
             }
-            g_free(dir);
-            g_free(file);
         }
     }
 

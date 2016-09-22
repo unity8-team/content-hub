@@ -26,7 +26,7 @@ namespace ual = ubuntu::app_launch;
 
 struct cuc::Peer::Private
 {
-    Private (QString id, bool isDefaultPeer, bool legacy) : id(id), isDefaultPeer(isDefaultPeer), legacy(legacy)
+    Private (QString id, bool isDefaultPeer) : id(id), isDefaultPeer(isDefaultPeer)
     {
         TRACE() << Q_FUNC_INFO << id;
         if (not id.isEmpty()) {
@@ -44,7 +44,7 @@ struct cuc::Peer::Private
         }
     }
 
-    Private (QString id, QString name, QByteArray iconData, QString iconName, bool isDefaultPeer, bool legacy) : id(id), name(name), iconData(iconData), iconName(iconName), isDefaultPeer(isDefaultPeer), legacy(legacy)
+    Private (QString id, QString name, QByteArray iconData, QString iconName, bool isDefaultPeer) : id(id), name(name), iconData(iconData), iconName(iconName), isDefaultPeer(isDefaultPeer)
     {
         TRACE() << Q_FUNC_INFO << id;
     }
@@ -54,7 +54,6 @@ struct cuc::Peer::Private
     QByteArray iconData;
     QString iconName;
     bool isDefaultPeer;
-    bool legacy;
 };
 
 const cuc::Peer& cuc::Peer::unknown()
@@ -63,12 +62,12 @@ const cuc::Peer& cuc::Peer::unknown()
     return peer;
 }
 
-cuc::Peer::Peer(const QString& id, bool isDefaultPeer, bool legacy, QObject* parent) : QObject(parent), d(new cuc::Peer::Private{id, isDefaultPeer, legacy})
+cuc::Peer::Peer(const QString& id, bool isDefaultPeer, QObject* parent) : QObject(parent), d(new cuc::Peer::Private{id, isDefaultPeer})
 {
     TRACE() << Q_FUNC_INFO;
 }
 
-cuc::Peer::Peer(const QString& id, const QString& name, QByteArray& iconData, const QString& iconName, bool isDefaultPeer, bool legacy, QObject* parent) : QObject(parent), d(new cuc::Peer::Private{id, name, iconData, iconName, isDefaultPeer, legacy})
+cuc::Peer::Peer(const QString& id, const QString& name, QByteArray& iconData, const QString& iconName, bool isDefaultPeer, QObject* parent) : QObject(parent), d(new cuc::Peer::Private{id, name, iconData, iconName, isDefaultPeer})
 {
     TRACE() << Q_FUNC_INFO;
 }
@@ -138,15 +137,10 @@ bool cuc::Peer::isDefaultPeer() const
     return d->isDefaultPeer;
 }
 
-bool cuc::Peer::legacy() const
-{
-    return d->legacy;
-}
-
 QDBusArgument &operator<<(QDBusArgument &argument, const cuc::Peer& peer)
 {
     argument.beginStructure();
-    argument << peer.id() << peer.name() << peer.iconData() << peer.iconName() << peer.isDefaultPeer() << peer.legacy();
+    argument << peer.id() << peer.name() << peer.iconData() << peer.iconName() << peer.isDefaultPeer();
     argument.endStructure();
     return argument;
 }
@@ -159,12 +153,11 @@ const QDBusArgument &operator>>(const QDBusArgument &argument, cuc::Peer &peer)
     QByteArray ic;
     QString iconName;
     bool isDefaultPeer;
-    bool legacy;
 
     argument.beginStructure();
-    argument >> id >> name >> ic >> iconName >> isDefaultPeer >> legacy;
+    argument >> id >> name >> ic >> iconName >> isDefaultPeer;
     argument.endStructure();
 
-    peer = cuc::Peer{id, name, ic, iconName, isDefaultPeer, legacy};
+    peer = cuc::Peer{id, name, ic, iconName, isDefaultPeer};
     return argument;
 }

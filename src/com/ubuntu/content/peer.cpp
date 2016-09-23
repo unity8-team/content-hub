@@ -33,8 +33,8 @@ struct cuc::Peer::Private
             TRACE() << Q_FUNC_INFO << "Getting appinfo for" << id;
 
             auto info = info_for_app_id(id);
-            qWarning() << Q_FUNC_INFO << "name:" << info["name"];
-            qWarning() << Q_FUNC_INFO << "iconPath:" << info["iconPath"];
+            TRACE() << Q_FUNC_INFO << "name:" << info["name"];
+            TRACE() << Q_FUNC_INFO << "iconPath:" << info["iconPath"];
             name = info["name"];
             if (QFile::exists(info["iconPath"])) {
                 QFile iconFile(info["iconPath"]);

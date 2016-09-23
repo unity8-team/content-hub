@@ -20,6 +20,7 @@
 #include <QDir>
 #include <QFile>
 #include <QFileInfo>
+#include <QMap>
 #include <QMimeData>
 #include <QProcess>
 #include <QtCore>
@@ -221,12 +222,14 @@ bool app_id_matches(QString id, pid_t pid)
     return false;
 }
 
-QString icon_path_for_app_id(QString id)
+QMap<QString, QString> info_for_app_id(QString id)
 {
-    QString iconPath;
+    QMap<QString, QString> map;
+    map["name"] = id;
+    map["iconPath"] = QString();
 
     if (!qgetenv("CONTENT_HUB_TESTING").isNull())
-        return iconPath;
+        return map;
 
     std::shared_ptr<ual::Registry> reg = ual::Registry::getDefault();
     auto app_id = ual::AppID::find(id.toStdString());
@@ -234,9 +237,10 @@ QString icon_path_for_app_id(QString id)
         qWarning() << Q_FUNC_INFO << "Invalid APP_ID:" << id;
     } else {
         auto app = ual::Application::create(app_id, reg);
-        iconPath = QString::fromStdString(app.get()->info()->iconPath());
+        map["name"] = QString::fromStdString(app.get()->info()->name());
+        map["iconPath"] = QString::fromStdString(app.get()->info()->iconPath());
     }
-    return iconPath;
+    return map;
 }
 
 QString aa_profile(QString uniqueConnectionId)

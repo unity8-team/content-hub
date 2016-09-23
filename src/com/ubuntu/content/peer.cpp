@@ -32,10 +32,12 @@ struct cuc::Peer::Private
         if (not id.isEmpty()) {
             TRACE() << Q_FUNC_INFO << "Getting appinfo for" << id;
 
-            QString iconPath = icon_path_for_app_id(id);
-            qWarning() << Q_FUNC_INFO << "iconPath:" << iconPath;
-            if (QFile::exists(iconPath)) {
-                QFile iconFile(iconPath);
+            auto info = info_for_app_id(id);
+            qWarning() << Q_FUNC_INFO << "name:" << info["name"];
+            qWarning() << Q_FUNC_INFO << "iconPath:" << info["iconPath"];
+            name = info["name"];
+            if (QFile::exists(info["iconPath"])) {
+                QFile iconFile(info["iconPath"]);
                 if(iconFile.open(QIODevice::ReadOnly)) {
                     iconData = iconFile.readAll();
                     iconFile.close();

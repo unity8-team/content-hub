@@ -223,15 +223,20 @@ bool app_id_matches(QString id, pid_t pid)
 
 QString icon_path_for_app_id(QString id)
 {
+    QString iconPath;
+
+    if (!qgetenv("CONTENT_HUB_TESTING").isNull())
+        return iconPath;
+
     std::shared_ptr<ual::Registry> reg = ual::Registry::getDefault();
     auto app_id = ual::AppID::find(id.toStdString());
     if (app_id.empty()) {
         qWarning() << Q_FUNC_INFO << "Invalid APP_ID:" << id;
-        return QString();
+    } else {
+        auto app = ual::Application::create(app_id, reg);
+        iconPath = QString::fromStdString(app.get()->info()->iconPath());
     }
-    auto app = ual::Application::create(app_id, reg);
-
-    return QString::fromStdString(app.get()->info()->iconPath());
+    return iconPath;
 }
 
 QString aa_profile(QString uniqueConnectionId)

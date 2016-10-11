@@ -1,3 +1,10 @@
+content-hub (0.2+16.10.20161011.1-0ubuntu1) yakkety; urgency=medium
+
+  * Use UAL to get iconPath instead of parsing the desktop file
+    ourselves
+
+ -- Ken VanDine <ken.vandine@canonical.com>  Tue, 11 Oct 2016 16:16:14 +0000
+
 content-hub (0.2+16.10.20160914-0ubuntu1) yakkety; urgency=medium
 
   * Build with hardening=+all (LP: #1597453)

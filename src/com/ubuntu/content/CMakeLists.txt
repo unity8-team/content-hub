@@ -48,6 +48,13 @@ qt5_add_dbus_adaptor(
   detail/transfer.h com::ubuntu::content::detail::Transfer)
 
 qt5_add_dbus_interface(
+  CONTENT_PASTE_STUB ${CMAKE_CURRENT_SOURCE_DIR}/detail/com.ubuntu.content.Paste.xml
+  ContentPasteInterface)
+qt5_add_dbus_adaptor(
+  CONTENT_PASTE_SKELETON ${CMAKE_CURRENT_SOURCE_DIR}/detail/com.ubuntu.content.Paste.xml 
+  detail/paste.h com::ubuntu::content::detail::Paste)
+
+qt5_add_dbus_interface(
   CONTENT_HANDLER_STUB ${CMAKE_CURRENT_SOURCE_DIR}/detail/com.ubuntu.content.Handler.xml 
   ContentHandlerInterface)
 qt5_add_dbus_adaptor(
@@ -57,6 +64,7 @@ qt5_add_dbus_adaptor(
 qt5_wrap_cpp(CONTENT_HUB_MOCS ${CMAKE_SOURCE_DIR}/include/com/ubuntu/content/hub.h)
 qt5_wrap_cpp(CONTENT_HUB_MOCS ${CMAKE_SOURCE_DIR}/include/com/ubuntu/content/import_export_handler.h)
 qt5_wrap_cpp(CONTENT_HUB_MOCS ${CMAKE_SOURCE_DIR}/include/com/ubuntu/content/item.h)
+qt5_wrap_cpp(CONTENT_HUB_MOCS ${CMAKE_SOURCE_DIR}/include/com/ubuntu/content/paste.h)
 qt5_wrap_cpp(CONTENT_HUB_MOCS ${CMAKE_SOURCE_DIR}/include/com/ubuntu/content/peer.h)
 qt5_wrap_cpp(CONTENT_HUB_MOCS ${CMAKE_SOURCE_DIR}/include/com/ubuntu/content/store.h)
 qt5_wrap_cpp(CONTENT_HUB_MOCS ${CMAKE_SOURCE_DIR}/include/com/ubuntu/content/transfer.h)
@@ -68,6 +76,7 @@ add_library(
   hub.cpp
   import_export_handler.cpp
   item.cpp
+  paste.cpp
   peer.cpp
   store.cpp
   transfer.cpp
@@ -76,6 +85,7 @@ add_library(
   debug.cpp
 
   detail/app_manager.cpp
+  detail/paste.cpp
   detail/service.cpp
   detail/transfer.cpp
   detail/handler.cpp
@@ -85,6 +95,8 @@ add_library(
   ${CONTENT_HUB_MOCS}
   ${CONTENT_SERVICE_STUB}
   ${CONTENT_SERVICE_SKELETON}
+  ${CONTENT_PASTE_STUB}
+  ${CONTENT_PASTE_SKELETON}
   ${CONTENT_TRANSFER_STUB}
   ${CONTENT_TRANSFER_SKELETON}
   ${CONTENT_HANDLER_STUB}

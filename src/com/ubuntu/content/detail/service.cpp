@@ -366,10 +366,14 @@ void cucd::Service::setupPromptSession(cucd::Transfer* t, uint clientPid)
     t->SetPromptSession(session);
     TRACE() << Q_FUNC_INFO << "mirSocket:" << mirSocket;
 
-    /*
     QObject::connect(session.data(), SIGNAL(finished()),
-                     q, SIGNAL(finished()));
-    */
+                     this, SLOT(onPromptFinished(session)));
+}
+
+void cucd::Service::onPromptFinished(PromptSessionP session)
+{
+    TRACE() << Q_FUNC_INFO;
+    Q_UNUSED(session);
 }
 
 void cucd::Service::handle_imports(int state)

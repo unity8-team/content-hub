@@ -133,6 +133,17 @@ ContentHub::ContentHub(QObject *parent)
             this, SLOT(handleExport(com::ubuntu::content::Transfer*)));
     connect(m_handler, SIGNAL(shareRequested(com::ubuntu::content::Transfer*)),
             this, SLOT(handleShare(com::ubuntu::content::Transfer*)));
+    connect(m_hub, SIGNAL(peerSelected(QString)),
+        this,
+        SLOT(onPeerSelected(QString)));
+}
+
+void ContentHub::onPeerSelected(QString peer_id)
+{
+    TRACE() << Q_FUNC_INFO << peer_id;
+    ContentPeer* peer;
+    peer->setPeer(m_hub->peer_for_app_id(peer_id));
+    Q_EMIT(peerSelected(peer));
 }
 
 ContentHub *ContentHub::instance()
@@ -316,6 +327,18 @@ bool ContentHub::hasPending()
 }
 
 /*!
+ * \brief ContentHub::requestPeerForType raises the peer picker
+ * peerSelected is emitted when a peer is selected in the peer picker
+ * \a type
+ */
+void ContentHub::requestPeerForType(ContentType::Type contentType)
+{
+    TRACE() << Q_FUNC_INFO;
+    const cuc::Type &hubType = ContentType::contentType2HubType(contentType);
+    m_hub->requestPeerForType(hubType);
+}
+
+/*!
  * \qmlsignal ContentHub::importRequested(ContentTransfer transfer)
  *
  * The signal is triggered when an import is requested.
@@ -331,5 +354,11 @@ bool ContentHub::hasPending()
  * \qmlsignal ContentHub::shareRequested(ContentTransfer transfer)
  *
  * The signal is triggered when a share is requested.
+ */
+
+/*!
+ * \qmlsignal ContentHub::peerSelected(QString peer_id)
+ *
+ * The signal is emitted when the user selects a peer.
  */
 

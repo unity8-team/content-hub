@@ -185,7 +185,7 @@ QDBusVariant cucd::Service::PeerForId(const QString& app_id)
     return QDBusVariant(QVariant::fromValue(peer));
 }
 
-void cucd::Service::RequestPeerForAppId(const QString& app_id)
+void cucd::Service::RequestPeerForTypeByAppId(const QString& type_id, const QString& app_id)
 {
     TRACE() << Q_FUNC_INFO << app_id;
     // FIXME: add logic to launch peer picker

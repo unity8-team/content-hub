@@ -72,7 +72,7 @@ class Service : public QObject, protected QDBusContext
     void DownloadManagerError(QString);
     bool HasPending(const QString&);
     QDBusVariant PeerForId(const QString&);
-    void RequestPeerForAppId(const QString&);
+    void RequestPeerForTypeByAppId(const QString&, const QString&);
     void SelectPeerForAppId(const QString&, const QString&);
 
   private:

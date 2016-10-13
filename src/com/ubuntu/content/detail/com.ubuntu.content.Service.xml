@@ -75,7 +75,8 @@
     </signal>
     <signal name="PasteboardChanged">
     </signal>
-    <method name="RequestPeerForAppId">
+    <method name="RequestPeerForTypeByAppId">
+      <arg name="type_id" type="s" direction="in" />
       <arg name="app_id" type="s" direction="in" />
     </method>
     <method name="SelectPeerForAppId">

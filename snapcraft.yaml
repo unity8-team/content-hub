@@ -11,7 +11,8 @@ confinement: strict
 apps:
   service:
     command: usr/bin/content-hub-service
-    slots: [gsettings]
+    slots: [content-hub]
+    plugs: [gsettings]
 
 parts:
   service:

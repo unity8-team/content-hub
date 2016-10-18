@@ -1,0 +1,73 @@
+name: content-hub
+version: 0.2
+summary: content sharing/picking service
+description: |
+  Content sharing/picking infrastructure and service, designed to allow apps to
+  securely and efficiently exchange content.
+  Please find the source code at:
+  https://code.launchpad.net/content-hub
+confinement: strict
+
+apps:
+  service:
+    command: usr/bin/content-hub-service
+
+parts:
+  service:
+    plugin: cmake
+    source: .
+
+    build-packages:
+      - build-essential
+      - cmake
+      - dbus-test-runner
+      - dh-apparmor
+      - dh-translations
+      - doxygen
+      - google-mock
+      - lcov
+      - libapparmor-dev
+      - libglib2.0-dev
+      - libgsettings-qt-dev
+      - liblibertine-dev
+      - libnih-dbus-dev
+      - libnotify-dev
+      - libubuntu-download-manager-client-dev
+      - libubuntu-app-launch2-dev
+      - qt5-default
+      - qtbase5-dev
+      - qtdeclarative5-dev
+      - qtdeclarative5-dev-tools
+      - qtdeclarative5-qtquick2-plugin
+      - qtdeclarative5-test-plugin
+      - qtdeclarative5-ubuntu-ui-toolkit-plugin
+      - qttools5-dev-tools
+
+    configflags:
+      - -DCMAKE_INSTALL_PREFIX:PATH=/usr
+      - -DCMAKE_LIBRARY_PATH=/usr/lib
+
+    filesets:
+      unwanted:
+        # Files that we don't want/need in the final snap package
+        - -etc
+        - -usr/lib/debug
+        - -usr/lib/*/libogg*
+        - -usr/lib/*/libpulse*
+        - -usr/lib/python*
+        - -usr/share/apport
+        - -usr/share/bug
+        - -usr/share/doc
+        - -usr/share/fonts
+        - -usr/share/libwacom
+        - -usr/share/lintian
+        - -usr/share/man
+        - -usr/share/X11
+        - -usr/lib/*.a
+        - -usr/lib/*/*.a
+        - -usr/lib/*.la
+        - -usr/lib/*/*.la
+        - -usr/lib/*/*.o
+
+    snap:
+      - $unwanted

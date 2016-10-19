@@ -58,6 +58,8 @@ parts:
         - -usr/lib/debug
         - -usr/lib/*/libogg*
         - -usr/lib/*/libpulse*
+        - -usr/lib/*/qt5
+        - -usr/lib/*/pkgconfig
         - -usr/lib/python*
         - -usr/share/applications
         - -usr/share/apport

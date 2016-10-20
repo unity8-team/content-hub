@@ -1,0 +1,9 @@
+[Unit]
+Description=Content Hub Service
+PartOf=graphical-session.target
+
+[Service]
+Type=dbus
+BusName=com.ubuntu.content.dbus.Service
+ExecStart=/usr/bin/content-hub-service
+Restart=on-failure

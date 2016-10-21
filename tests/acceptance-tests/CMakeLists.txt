@@ -102,7 +102,7 @@ target_link_libraries(test_types content-hub gmock gtest gtest_main)
 target_link_libraries(test_hook content-hub gmock gtest gtest_main ${GSETTINGS_LDFLAGS})
 target_link_libraries(mimedata_test content-hub gmock gtest gtest_main)
 
-#add_test(app_hub_communication_default_source app_hub_communication_default_source)
+add_test(app_hub_communication_default_source app_hub_communication_default_source)
 add_test(app_hub_communication_known_sources app_hub_communication_known_sources)
 add_test(app_hub_communication_stores app_hub_communication_stores)
 add_test(app_hub_communication_transfer app_hub_communication_transfer)
@@ -113,7 +113,7 @@ add_test(test_types test_types)
 add_test(test_hook test_hook)
 add_test(mimedata_test mimedata_test)
 
-SET_TESTS_PROPERTIES(app_hub_communication_paste
+SET_TESTS_PROPERTIES(app_hub_communication_paste app_hub_communication_default_source app_hub_communication_stores app_hub_communication_known_sources
     PROPERTIES ENVIRONMENT "CONTENT_HUB_TESTING=1")
 
 set_target_properties(

@@ -18,7 +18,7 @@ override_dh_auto_install:
 
 override_dh_auto_test:
 ifeq ($(DEB_BUILD_GNU_TYPE),$(DEB_HOST_GNU_TYPE))
-	dbus-test-runner -t make -p "-C" -p "build/tests/acceptance-tests" -p test
+	dbus-test-runner -t make -p "-C" -p "build/tests/acceptance-tests" -p test -m 240
 endif
 	
 override_dh_translations:

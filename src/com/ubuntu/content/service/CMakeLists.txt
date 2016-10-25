@@ -64,6 +64,21 @@ install(
 )
 
 ###########################
+# Systemd Unit File
+###########################
+
+# where to install
+# Uncomment when we drop Vivid
+# pkg_get_variable(SYSTEMD_USER_DIR systemd systemduserunitdir)
+set (SYSTEMD_USER_DIR "/usr/lib/systemd/user")
+message (STATUS "${SYSTEMD_USER_DIR} is the systemd user unit file install dir")
+
+install(
+  FILES content-hub.service
+  DESTINATION ${SYSTEMD_USER_DIR}/
+)
+
+###########################
 # GSettings
 ###########################
 

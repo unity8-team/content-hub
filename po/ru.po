@@ -14,8 +14,8 @@ msgstr ""
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"X-Launchpad-Export-Date: 2016-03-17 05:55+0000\n"
-"X-Generator: Launchpad (build 17947)\n"
+"X-Launchpad-Export-Date: 2016-09-22 08:54+0000\n"
+"X-Generator: Launchpad (build 18204)\n"
 
 #: import/Ubuntu/Content/ContentPeerPicker10.qml:48
 #: import/Ubuntu/Content/ContentPeerPicker11.qml:49
@@ -43,7 +43,7 @@ msgid ""
 "Sorry, there aren't currently any apps installed that can provide this type "
 "of content."
 msgstr ""
-"Извините, но приложения предоставляющие данный тип содержимого не "
+"Извините, но приложения, предоставляющие данный тип содержимого, не "
 "установлены."
 
 #: import/Ubuntu/Content/ContentPeerPicker10.qml:194
@@ -52,7 +52,8 @@ msgid ""
 "Sorry, there aren't currently any apps installed that can handle this type "
 "of content."
 msgstr ""
-"Извините, но приложения работающие с данным типом содержимого не установлены."
+"Извините, но приложения, работающие с данным типом содержимого, не "
+"установлены."
 
 #: import/Ubuntu/Content/ContentPeerPicker10.qml:210
 #: import/Ubuntu/Content/ContentPeerPicker11.qml:227

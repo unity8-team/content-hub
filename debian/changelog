@@ -1,3 +1,57 @@
+content-hub (0.2+16.10.20160914-0ubuntu1) yakkety; urgency=medium
+
+  * Build with hardening=+all (LP: #1597453)
+
+ -- Ken VanDine <ken.vandine@canonical.com>  Wed, 14 Sep 2016 14:30:52 +0000
+
+content-hub (0.2+16.10.20160830-0ubuntu1) yakkety; urgency=medium
+
+  [ Ken VanDine ]
+  * Pasteboard implementation
+
+  [ Florian Boucault ]
+  * Fixes for crossbuilding.
+
+ -- Ken VanDine <ken.vandine@canonical.com>  Tue, 30 Aug 2016 13:41:21 +0000
+
+content-hub (0.1+16.10.20160825-0ubuntu1) yakkety; urgency=medium
+
+  * Added isolation-machine to test restrictions as these tests need a
+    working upstart user session.
+
+ -- Ken VanDine <ken.vandine@canonical.com>  Thu, 25 Aug 2016 10:12:31 +0000
+
+content-hub (0.1+16.10.20160822-0ubuntu1) yakkety; urgency=medium
+
+  * No change rebuild for UAL ABI change
+
+ -- Ted Gould <ted@gould.cx>  Mon, 22 Aug 2016 17:01:38 +0000
+
+content-hub (0.1+16.10.20160809-0ubuntu1) yakkety; urgency=medium
+
+  * build dep on qttools5-dev-tools for qdoc
+
+ -- Ken VanDine <ken.vandine@canonical.com>  Tue, 09 Aug 2016 14:15:14 +0000
+
+content-hub (0.1+16.10.20160715-0ubuntu1) yakkety; urgency=medium
+
+  * Filter current app out of the peer model (LP: #1603508)
+
+ -- Ken VanDine <ken.vandine@canonical.com>  Fri, 15 Jul 2016 19:12:46 +0000
+
+content-hub (0.1+16.10.20160610.2-0ubuntu1) yakkety; urgency=medium
+
+  * Ensure all the properties are set when the url is set on a
+    ContentItem (LP: #1571361)
+
+ -- Ken VanDine <ken.vandine@canonical.com>  Fri, 10 Jun 2016 14:02:46 +0000
+
+content-hub (0.1+16.10.20160602-0ubuntu1) yakkety; urgency=medium
+
+  * Call qmlplugindump with -noinstantiate
+
+ -- Ken VanDine <ken.vandine@canonical.com>  Thu, 02 Jun 2016 18:36:44 +0000
+
 content-hub (0.1+16.04.20160309-0ubuntu1) xenial; urgency=medium
 
   * Fix documentation for toDataURI method (LP: #1555116)

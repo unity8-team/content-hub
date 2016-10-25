@@ -25,6 +25,7 @@ Build-Depends: cmake,
                qtdeclarative5-qtquick2-plugin,
                qtdeclarative5-test-plugin,
                qtdeclarative5-ubuntu-ui-toolkit-plugin,
+               qttools5-dev-tools,
                xvfb,
 Standards-Version: 3.9.4
 Section: libs
@@ -34,7 +35,6 @@ Homepage: https://launchpad.net/content-hub
 Vcs-Bzr: https://code.launchpad.net/~phablet-team/content-hub/trunk
 Vcs-Browser: https://bazaar.launchpad.net/~phablet-team/content-hub/trunk/files
 X-Ubuntu-Use-Langpack: yes
-XS-Testsuite: autopkgtest
 
 Package: content-hub
 Architecture: any

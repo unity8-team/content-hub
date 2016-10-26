@@ -26,7 +26,7 @@ Page {
 
     property var handler
     property var contentType
-    property alias showTitle: header.visible
+    property alias showTitle: pageHeader.visible
     property var peer
     property var customPeerModelLoader
     property var completed: false
@@ -39,8 +39,8 @@ Page {
         color: Theme.palette.normal.background
     }
 
-    ContentPageHeader {
-        id: header
+    header: ContentPageHeader {
+        id: pageHeader
         title: (handler === ContentHandler.Source) ? i18n.dtr("content-hub", "Choose from") : (handler === ContentHandler.Destination ? i18n.dtr("content-hub", "Open with") : i18n.dtr("content-hub", "Share to"))
         onCancel: {
             if(root.activeTransfer) {

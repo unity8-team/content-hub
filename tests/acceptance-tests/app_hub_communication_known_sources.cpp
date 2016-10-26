@@ -123,19 +123,20 @@ TEST(Hub, querying_known_peers_returns_correct_value)
         QSharedPointer<cucd::PeerRegistry> registry{mock};
         
         auto app_manager = QSharedPointer<cua::ApplicationManager>(new MockedAppManager());
+        cucd::Service implementation(connection, registry, app_manager, &app);
+        new ServiceAdaptor(std::addressof(implementation));
 
-        auto implementation = new cucd::Service(connection, registry, app_manager, &app);
-        new ServiceAdaptor(implementation);
+        connection.registerService(service_name);
+        connection.registerObject("/", std::addressof(implementation));
 
-        ASSERT_TRUE(connection.registerService(service_name));
-        ASSERT_TRUE(connection.registerObject("/", implementation));
+        QObject::connect(&app, &QCoreApplication::aboutToQuit, [&](){
+            connection.unregisterObject("/");
+            connection.unregisterService(service_name);
+        });
 
         sync.signal_ready();
 
         app.exec();
-
-        connection.unregisterObject("/");
-        connection.unregisterService(service_name);
     };
 
     auto child = [&sync, default_peers, expected_peers]()

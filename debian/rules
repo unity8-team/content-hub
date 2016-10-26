@@ -4,6 +4,12 @@
 export DPKG_GENSYMBOLS_CHECK_LEVEL=4
 export CONTENT_HUB_TESTING=1
 export CTEST_OUTPUT_ON_FAILURE=1
+export DEB_BUILD_MAINT_OPTIONS=hardening=+all
+
+CPPFLAGS:=$(shell dpkg-buildflags --get CPPFLAGS)
+CFLAGS:=$(shell dpkg-buildflags --get CFLAGS) $(CPPFLAGS)
+CXXFLAGS:=$(shell dpkg-buildflags --get CXXFLAGS) $(CPPFLAGS)
+LDFLAGS:=$(shell dpkg-buildflags --get LDFLAGS)
 
 %:
 	dh $@ --with click,translations --fail-missing -- -B build

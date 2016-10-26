@@ -94,6 +94,10 @@ TEST_F(Hub, querying_known_peers_returns_correct_value)
     default_peers << cuc::Peer("com.does.not.exist.anywhere.application3");
 
     auto service = [this, &sync, default_peers]() -> core::posix::exit::Status
+    QVector<cuc::Peer> expected_peers;
+    expected_peers << default_peers[1];
+    expected_peers << default_peers[2];
+
     {
         int argc = 0;
         QCoreApplication app{argc, nullptr};
@@ -148,17 +152,19 @@ TEST_F(Hub, querying_known_peers_returns_correct_value)
         int argc = 0;
         QCoreApplication app(argc, nullptr);
         
-        auto hub = cuc::Hub::Client::instance();
-        
         test::TestHarness harness;
-        harness.add_test_case([hub, default_peers]()
+
+        QString appId = default_peers[0].id();
+        qputenv("APP_ID", appId.toLatin1());
+        auto hub = cuc::Hub::Client::instance();
+        harness.add_test_case([hub, expected_peers]()
         {            
             auto peers = hub->known_sources_for_type(cuc::Type::Known::documents());
-            EXPECT_EQ(default_peers, peers);
+            ASSERT_EQ(expected_peers, peers);
         });
         
         EXPECT_EQ(0, QTest::qExec(std::addressof(harness)));
-        
+
         hub->quit();
         return ::testing::Test::HasFailure() ? core::posix::exit::Status::failure : core::posix::exit::Status::success;
     };

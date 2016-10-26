@@ -16,3 +16,4 @@
 
 add_subdirectory(importer)
 add_subdirectory(exporter)
+add_subdirectory(pasteboard)

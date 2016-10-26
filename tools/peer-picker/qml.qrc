@@ -1,0 +1,9 @@
+<RCC>
+    <qresource prefix="/">
+        <file>main.qml</file>
+        <file>ContentPageHeader.qml</file>
+        <file>PeerPicker.qml</file>
+        <file>ResponsiveGridView.qml</file>
+    </qresource>
+</RCC>
+

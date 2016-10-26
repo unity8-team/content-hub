@@ -113,11 +113,11 @@ TEST_F(Hub, handler_on_bus)
 
         QSharedPointer<cucd::PeerRegistry> registry{new MockedPeerRegistry{}};
         auto app_manager = QSharedPointer<cua::ApplicationManager>(new ::testing::NiceMock<MockedAppManager>);
-        auto implementation = new cucd::Service(connection, registry, app_manager, &app);
-        new ServiceAdaptor(implementation);
+        cucd::Service implementation(connection, registry, app_manager, &app);
+        new ServiceAdaptor(std::addressof(implementation));
 
         connection.registerService(service_name);
-        connection.registerObject("/", implementation);
+        connection.registerObject("/", std::addressof(implementation));
 
         /* register handler on the service */
         auto mock_handler = new MockedHandler{};
@@ -128,7 +128,6 @@ TEST_F(Hub, handler_on_bus)
         hub->quit();
 
         QObject::connect(&app, &QCoreApplication::aboutToQuit, [&](){
-            delete implementation;
             delete mock_handler;
             connection.unregisterObject("/");
             connection.unregisterService(service_name);

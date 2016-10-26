@@ -127,14 +127,13 @@ TEST_F(Hub, querying_known_peers_returns_correct_value)
         QSharedPointer<cucd::PeerRegistry> registry{mock};
         
         auto app_manager = QSharedPointer<cua::ApplicationManager>(new ::testing::NiceMock<MockedAppManager>);
-        auto implementation = new cucd::Service(connection, registry, app_manager, &app);
-        new ServiceAdaptor(implementation);
+        cucd::Service implementation(connection, registry, app_manager, &app);
+        new ServiceAdaptor(std::addressof(implementation));
 
         connection.registerService(service_name);
-        connection.registerObject("/", implementation);
+        connection.registerObject("/", std::addressof(implementation));
 
         QObject::connect(&app, &QCoreApplication::aboutToQuit, [&](){
-            delete implementation;
             connection.unregisterObject("/");
             connection.unregisterService(service_name);
         });

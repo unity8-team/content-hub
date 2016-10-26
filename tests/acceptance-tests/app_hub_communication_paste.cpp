@@ -48,6 +48,10 @@ void PrintTo(const QString& s, ::std::ostream* os) {
     *os << std::string(qPrintable(s));
 }
 
+struct Hub : public ::testing::Test
+{
+};
+
 namespace
 {
 QString service_name{"com.ubuntu.content.dbus.Service"};
@@ -77,13 +81,13 @@ struct MockedPeerRegistry : public cucd::PeerRegistry
 };
 }
 
-TEST(Hub, transfer_creation_and_states_work)
+TEST_F(Hub, transfer_creation_and_states_work)
 {
     using namespace ::testing;
 
-    test::CrossProcessSync sync;
+    core::testing::CrossProcessSync sync;
 
-    auto parent = [&sync]()
+    auto service = [this, &sync]() -> core::posix::exit::Status
     {
         int argc = 0;
         QCoreApplication app{argc, nullptr};
@@ -93,27 +97,29 @@ TEST(Hub, transfer_creation_and_states_work)
         auto mock = new ::testing::NiceMock<MockedPeerRegistry>{};
 
         QSharedPointer<cucd::PeerRegistry> registry{mock};
-        auto app_manager = QSharedPointer<cua::ApplicationManager>(new MockedAppManager());
+        auto app_manager = QSharedPointer<cua::ApplicationManager>(new ::testing::NiceMock<MockedAppManager>);
         cucd::Service implementation(connection, registry, app_manager, &app);
         new ServiceAdaptor(std::addressof(implementation));
 
-        ASSERT_TRUE(connection.registerService(service_name));
-        ASSERT_TRUE(connection.registerObject("/", std::addressof(implementation)));
+        connection.registerService(service_name);
+        connection.registerObject("/", std::addressof(implementation));
 
-        sync.signal_ready();
+        QObject::connect(&app, &QCoreApplication::aboutToQuit, [&](){
+            connection.unregisterObject("/");
+            connection.unregisterService(service_name);
+        });
 
+        sync.try_signal_ready_for(std::chrono::seconds{120});
         app.exec();
-
-        connection.unregisterObject("/");
-        connection.unregisterService(service_name);
+        return ::testing::Test::HasFailure() ? core::posix::exit::Status::failure : core::posix::exit::Status::success;
     };
 
-    auto child = [&sync]()
+    auto client = [this, &sync]() -> core::posix::exit::Status
     {
         int argc = 0;
         QCoreApplication app(argc, nullptr);
 
-        sync.wait_for_signal_ready();
+        EXPECT_EQ(1, sync.wait_for_signal_ready_for(std::chrono::seconds{120}));
 
         test::TestHarness harness;
         harness.add_test_case([]()
@@ -134,5 +140,5 @@ TEST(Hub, transfer_creation_and_states_work)
         EXPECT_EQ(0, QTest::qExec(std::addressof(harness)));
     };
 
-    EXPECT_EQ(EXIT_SUCCESS, test::fork_and_run(child, parent));
+    EXPECT_EQ(core::testing::ForkAndRunResult::empty, core::testing::fork_and_run(service, client));
 }

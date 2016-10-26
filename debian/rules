@@ -2,16 +2,13 @@
 # -*- makefile -*-
 
 export DPKG_GENSYMBOLS_CHECK_LEVEL=4
-<<<<<<< TREE
 export CONTENT_HUB_TESTING=1
-=======
 export DEB_BUILD_MAINT_OPTIONS=hardening=+all
 
 CPPFLAGS:=$(shell dpkg-buildflags --get CPPFLAGS)
 CFLAGS:=$(shell dpkg-buildflags --get CFLAGS) $(CPPFLAGS)
 CXXFLAGS:=$(shell dpkg-buildflags --get CXXFLAGS) $(CPPFLAGS)
 LDFLAGS:=$(shell dpkg-buildflags --get LDFLAGS)
->>>>>>> MERGE-SOURCE
 
 %:
 	dh $@ --with click,translations --fail-missing -- -B build

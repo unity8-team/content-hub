@@ -72,6 +72,8 @@ class Service : public QObject, protected QDBusContext
     void DownloadManagerError(QString);
     bool HasPending(const QString&);
     QDBusVariant PeerForId(const QString&);
+    void RequestPeerForTypeByAppId(const QString&, const QString&);
+    void SelectPeerForAppId(const QString&, const QString&);
 
   private:
     QByteArray getPasteData(const QString &surfaceId, int pasteId);
@@ -85,6 +87,7 @@ class Service : public QObject, protected QDBusContext
   Q_SIGNALS:
     void PasteFormatsChanged(const QStringList &formats);
     void PasteboardChanged();
+    void PeerSelected(const QString &app_id, const QString &peer_id);
 
   private Q_SLOTS:
     void handle_imports(int);

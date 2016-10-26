@@ -185,6 +185,18 @@ QDBusVariant cucd::Service::PeerForId(const QString& app_id)
     return QDBusVariant(QVariant::fromValue(peer));
 }
 
+void cucd::Service::RequestPeerForTypeByAppId(const QString& type_id, const QString& app_id)
+{
+    TRACE() << Q_FUNC_INFO << app_id;
+    // FIXME: add logic to launch peer picker
+}
+
+void cucd::Service::SelectPeerForAppId(const QString& app_id, const QString& peer_id)
+{
+    TRACE() << Q_FUNC_INFO << app_id << peer_id;
+    Q_EMIT(PeerSelected(app_id, peer_id));
+}
+
 QDBusObjectPath cucd::Service::CreateImportFromPeer(const QString& peer_id, const QString& app_id, const QString& type_id)
 {
     TRACE() << Q_FUNC_INFO;

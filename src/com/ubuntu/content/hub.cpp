@@ -89,6 +89,9 @@ cuc::Hub::Hub(QObject* parent) : QObject(parent), d{new cuc::Hub::Private{this}}
     QObject::connect(d->service, SIGNAL(PasteboardChanged()),
             this,
             SIGNAL(pasteboardChanged()));
+    QObject::connect(d->service, SIGNAL(PeerSelected(const QString&, const QString&)),
+            this,
+            SLOT(onPeerSelected(const QString&, const QString&)));
 }
 
 cuc::Hub::~Hub()
@@ -99,6 +102,18 @@ cuc::Hub* cuc::Hub::Client::instance()
 {
     static cuc::Hub* hub = new cuc::Hub(nullptr);
     return hub;
+}
+
+void cuc::Hub::requestPeerForType(cuc::Type type)
+{
+    TRACE() << Q_FUNC_INFO << type.id();
+    d->service->RequestPeerForTypeByAppId(type.id(), app_id());
+}
+
+void cuc::Hub::selectPeerForAppId(QString app_id, QString peer_id)
+{
+    TRACE() << Q_FUNC_INFO << app_id << peer_id;
+    d->service->SelectPeerForAppId(app_id, peer_id);
 }
 
 void cuc::Hub::requestPasteFormats()
@@ -124,6 +139,13 @@ void cuc::Hub::onPasteFormatsChanged(const QStringList &formats)
     d->pasteFormats = formats;
     TRACE() << Q_FUNC_INFO << d->pasteFormats;
     Q_EMIT(pasteFormatsChanged());
+}
+
+void cuc::Hub::onPeerSelected(const QString &id, const QString &peer_id)
+{
+    TRACE() << Q_FUNC_INFO << id << peer_id;
+    if (id == app_id())
+        Q_EMIT(peerSelected(peer_id));
 }
 
 bool cuc::Hub::eventFilter(QObject *obj, QEvent *event)

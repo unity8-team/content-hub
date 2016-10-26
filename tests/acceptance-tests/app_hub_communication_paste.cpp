@@ -18,8 +18,8 @@
 
 #include "app_manager_mock.h"
 #include "test_harness.h"
-#include "../cross_process_sync.h"
-#include "../fork_and_run.h"
+#include <core/testing/cross_process_sync.h>
+#include <core/testing/fork_and_run.h>
 
 #include <com/ubuntu/content/hub.h>
 #include <com/ubuntu/content/item.h>

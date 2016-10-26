@@ -43,11 +43,11 @@ add_executable(
   ${MOCS}
 )
 
-add_executable(
-  app_hub_communication_paste
-  app_hub_communication_paste.cpp
-  ${MOCS}
-)
+#add_executable(
+#  app_hub_communication_paste
+#  app_hub_communication_paste.cpp
+#  ${MOCS}
+#)
 
 add_executable(
   app_hub_communication_handler
@@ -87,7 +87,7 @@ qt5_use_modules(app_hub_communication_default_source Core Gui DBus Test)
 qt5_use_modules(app_hub_communication_known_sources Core Gui DBus Test)
 qt5_use_modules(app_hub_communication_stores Core Gui DBus Test)
 qt5_use_modules(app_hub_communication_transfer Core Gui DBus Test)
-qt5_use_modules(app_hub_communication_paste Core Gui DBus Test)
+#qt5_use_modules(app_hub_communication_paste Core Gui DBus Test)
 qt5_use_modules(app_hub_communication_handler Core Gui DBus Test)
 qt5_use_modules(test_utils Core Test)
 qt5_use_modules(test_hook Core Gui DBus Test)
@@ -98,11 +98,12 @@ target_link_libraries(app_hub_communication_default_source content-hub gmock gte
 target_link_libraries(app_hub_communication_known_sources content-hub gmock gtest gtest_main ${PROCESS_CPP_LIBRARIES})
 target_link_libraries(app_hub_communication_stores content-hub gmock gtest gtest_main ${PROCESS_CPP_LIBRARIES})
 target_link_libraries(app_hub_communication_transfer content-hub gmock gtest gtest_main ${PROCESS_CPP_LIBRARIES})
-target_link_libraries(app_hub_communication_paste content-hub gmock gtest gtest_main ${PROCESS_CPP_LIBRARIES})
+#target_link_libraries(app_hub_communication_paste content-hub gmock gtest gtest_main ${PROCESS_CPP_LIBRARIES})
 target_link_libraries(app_hub_communication_handler content-hub gmock gtest gtest_main ${PROCESS_CPP_LIBRARIES})
 target_link_libraries(test_utils content-hub gmock gtest gtest_main)
 target_link_libraries(test_types content-hub gmock gtest gtest_main)
 target_link_libraries(test_hook content-hub gmock gtest gtest_main ${GSETTINGS_LDFLAGS})
+target_link_libraries(mimedata_test content-hub gmock gtest gtest_main)
 
 set(
   RUNNER
@@ -113,7 +114,7 @@ add_test(NAME app_hub_communication_default_source COMMAND ${RUNNER} ${CMAKE_CUR
 add_test(NAME app_hub_communication_known_sources COMMAND ${RUNNER} ${CMAKE_CURRENT_BINARY_DIR}/app_hub_communication_known_sources)
 add_test(NAME app_hub_communication_stores COMMAND ${RUNNER} ${CMAKE_CURRENT_BINARY_DIR}/app_hub_communication_stores)
 add_test(NAME app_hub_communication_transfer COMMAND ${RUNNER} ${CMAKE_CURRENT_BINARY_DIR}/app_hub_communication_transfer)
-add_test(NAME app_hub_communication_paste COMMAND ${RUNNER} ${CMAKE_CURRENT_BINARY_DIR}/app_hub_communication_paste)
+#add_test(NAME app_hub_communication_paste COMMAND ${RUNNER} ${CMAKE_CURRENT_BINARY_DIR}/app_hub_communication_paste)
 add_test(NAME app_hub_communication_handler COMMAND ${RUNNER} ${CMAKE_CURRENT_BINARY_DIR}/app_hub_communication_handler)
 add_test(NAME test_utils COMMAND ${RUNNER} ${CMAKE_CURRENT_BINARY_DIR}/test_utils)
 add_test(NAME test_types COMMAND ${RUNNER} ${CMAKE_CURRENT_BINARY_DIR}/test_types)
@@ -124,7 +125,6 @@ set_tests_properties(
   app_hub_communication_known_sources
   app_hub_communication_stores
   app_hub_communication_transfer
-  app_hub_communication_paste
   app_hub_communication_handler
   test_utils
   test_types
@@ -132,8 +132,8 @@ set_tests_properties(
   PROPERTIES RUN_SERIAL TRUE
 )
 
-set_tests_properties(app_hub_communication_paste
-    PROPERTIES ENVIRONMENT "CONTENT_HUB_TESTING=1")
+#set_tests_properties(app_hub_communication_paste
+#    PROPERTIES ENVIRONMENT "CONTENT_HUB_TESTING=1")
 
 set_target_properties(
   test_hook

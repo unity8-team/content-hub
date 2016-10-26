@@ -93,10 +93,11 @@ TEST_F(Hub, querying_known_peers_returns_correct_value)
     default_peers << cuc::Peer("com.does.not.exist.anywhere.application2");
     default_peers << cuc::Peer("com.does.not.exist.anywhere.application3");
 
-    auto service = [this, &sync, default_peers]() -> core::posix::exit::Status
     QVector<cuc::Peer> expected_peers;
     expected_peers << default_peers[1];
     expected_peers << default_peers[2];
+
+    auto service = [this, &sync, default_peers]() -> core::posix::exit::Status
 
     {
         int argc = 0;
@@ -145,7 +146,7 @@ TEST_F(Hub, querying_known_peers_returns_correct_value)
         return ::testing::Test::HasFailure() ? core::posix::exit::Status::failure : core::posix::exit::Status::success;
     };
 
-    auto client = [this, &sync, default_peers]() -> core::posix::exit::Status
+    auto client = [this, &sync, default_peers, expected_peers]() -> core::posix::exit::Status
     {
         EXPECT_EQ(1, sync.wait_for_signal_ready_for(std::chrono::seconds{120}));
         

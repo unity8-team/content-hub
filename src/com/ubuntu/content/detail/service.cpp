@@ -189,6 +189,15 @@ void cucd::Service::RequestPeerForTypeByAppId(const QString& type_id, const QStr
 {
     TRACE() << Q_FUNC_INFO << app_id;
     // FIXME: add logic to launch peer picker
+    if (d->app_manager->is_application_started(PEER_PICKER_APP_ID.toStdString()))
+        d->app_manager->stop_application(PEER_PICKER_APP_ID.toStdString());
+    gchar * uris[] = {
+        g_strdup(app_id.toStdString().c_str()),
+        g_strdup(type_id.toStdString().c_str()),
+        NULL
+    };
+
+    d->app_manager->invoke_application(PEER_PICKER_APP_ID.toStdString(), uris);
 }
 
 void cucd::Service::SelectPeerForAppId(const QString& app_id, const QString& peer_id)

@@ -194,6 +194,7 @@ void cucd::Service::RequestPeerForTypeByAppId(const QString& type_id, const QStr
 void cucd::Service::SelectPeerForAppId(const QString& app_id, const QString& peer_id)
 {
     TRACE() << Q_FUNC_INFO << app_id << peer_id;
+    // FIXME: lock this down to only all the peer picker APP_ID to call this
     Q_EMIT(PeerSelected(app_id, peer_id));
 }
 

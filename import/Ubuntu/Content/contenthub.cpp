@@ -135,10 +135,16 @@ ContentHub::ContentHub(QObject *parent)
             this, SLOT(handleShare(com::ubuntu::content::Transfer*)));
     connect(m_hub, SIGNAL(peerSelected(QString)),
         this,
-        SLOT(selectPeer(QString)));
+        SLOT(onPeerSelected(QString)));
 }
 
-void ContentHub::selectPeer(QString peer_id)
+void ContentHub::selectPeerForAppId(QString app_id, QString peer_id)
+{
+    TRACE() << Q_FUNC_INFO << app_id << peer_id;
+    m_hub->selectPeerForAppId(app_id, peer_id);
+}
+
+void ContentHub::onPeerSelected(QString peer_id)
 {
     TRACE() << Q_FUNC_INFO << peer_id;
     ContentPeer* peer;

@@ -60,7 +60,8 @@ public:
     Q_INVOKABLE ContentTransfer* shareContent(com::ubuntu::content::Peer peer, ContentType::Type type);
 
     Q_INVOKABLE void requestPeerForType(ContentType::Type type);
-    Q_INVOKABLE void selectPeer(QString);
+    void onPeerSelected(QString);
+    Q_INVOKABLE void selectPeerForAppId(QString, QString);
 
 Q_SIGNALS:
     void importRequested(ContentTransfer *transfer);

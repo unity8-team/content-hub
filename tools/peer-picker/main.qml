@@ -49,6 +49,9 @@ MainView {
         }
 
         onPeerSelected: {
+            console.debug("onPeerSelected:" + peer.name)
+            console.debug("onPeerSelected:" + peer.appId)
+            ContentHub.selectPeer(peer.appId)
         }
 
         onCancelPressed: {

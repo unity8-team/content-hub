@@ -6,11 +6,6 @@ MainView {
     id: mainView
     width: units.gu(50)
     height: units.gu(75)
-    Component.onCompleted: {
-        console.debug("contentType: " + wellKnownType)
-        console.debug("requesterId: " + requesterId)
-        console.debug("handlerType: " + handlerType)
-    }
 
     PeerPicker {
         showTitle: true
@@ -49,9 +44,8 @@ MainView {
         }
 
         onPeerSelected: {
-            console.debug("onPeerSelected:" + peer.name)
-            console.debug("onPeerSelected:" + peer.appId)
             ContentHub.selectPeerForAppId(requesterId, peer.appId)
+            Qt.quit()
         }
 
         onCancelPressed: {

@@ -21,6 +21,7 @@
 #include <QList>
 #include <QObject>
 #include <QQmlListProperty>
+#include "contenthandler.h"
 #include "contentpeer.h"
 #include "contenttransfer.h"
 
@@ -59,7 +60,7 @@ public:
     Q_INVOKABLE ContentTransfer* exportContent(com::ubuntu::content::Peer peer, ContentType::Type type);
     Q_INVOKABLE ContentTransfer* shareContent(com::ubuntu::content::Peer peer, ContentType::Type type);
 
-    Q_INVOKABLE void requestPeerForType(ContentType::Type type);
+    Q_INVOKABLE void requestPeerForType(ContentType::Type type, ContentHandler::Handler handler);
     void onPeerSelected(QString);
     Q_INVOKABLE void selectPeerForAppId(QString, QString);
 

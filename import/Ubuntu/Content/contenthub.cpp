@@ -337,11 +337,18 @@ bool ContentHub::hasPending()
  * peerSelected is emitted when a peer is selected in the peer picker
  * \a type
  */
-void ContentHub::requestPeerForType(ContentType::Type contentType)
+void ContentHub::requestPeerForType(ContentType::Type contentType, ContentHandler::Handler handler)
 {
     TRACE() << Q_FUNC_INFO;
     const cuc::Type &hubType = ContentType::contentType2HubType(contentType);
-    m_hub->requestPeerForType(hubType);
+    QString handler_id;
+    if (handler == ContentHandler::Source)
+        handler_id = "source";
+    else if (handler == ContentHandler::Share)
+        handler_id = "share";
+    else
+        handler_id = "destination";
+    m_hub->requestPeerForType(hubType, handler_id);
 }
 
 /*!

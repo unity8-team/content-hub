@@ -104,10 +104,10 @@ cuc::Hub* cuc::Hub::Client::instance()
     return hub;
 }
 
-void cuc::Hub::requestPeerForType(cuc::Type type)
+void cuc::Hub::requestPeerForType(cuc::Type type, QString handler_id)
 {
     TRACE() << Q_FUNC_INFO << type.id();
-    d->service->RequestPeerForTypeByAppId(type.id(), app_id());
+    d->service->RequestPeerForTypeByAppId(type.id(), handler_id, app_id());
 }
 
 void cuc::Hub::selectPeerForAppId(QString app_id, QString peer_id)

@@ -14,7 +14,7 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#include <QDebug>
+#include <iostream>
 #include <QGuiApplication>
 #include <QObject>
 #include <QQmlContext>
@@ -24,16 +24,21 @@ int main(int argc, char *argv[])
 {
     QGuiApplication app(argc, argv);
 
-    if (!app.arguments().count() > 3) {
-        qWarning() << "failed";
-        return 1;
-    }
-
-    QString requesterId = app.arguments()[1];
-    QString contentType = app.arguments()[2];
-    QString handlerType = app.arguments()[3];
-
     QQuickView *view = new QQuickView;
+    QString requesterId;
+    QString contentType;
+    QString handlerType;
+
+    QStringList args = app.arguments();
+
+    if (args.count() < 4) {
+        std::cout << "Usage: content-hub-peer-picker app_id content_type handler_type\n";
+        return 1;
+    } else {
+        requesterId = args.at(1);
+        contentType = args.at(2);
+        handlerType = args.at(3);
+    }
     // Set context properties needed by the picker
     view->rootContext()->setContextProperty("requesterId", requesterId);
     view->rootContext()->setContextProperty("wellKnownType", contentType);

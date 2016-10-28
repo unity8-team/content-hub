@@ -7,3 +7,4 @@ Terminal=false
 Type=Application
 OnlyShowIn=Old
 X-Ubuntu-Touch=true
+X-Ubuntu-Single-Instance=false

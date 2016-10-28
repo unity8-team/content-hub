@@ -1,0 +1,52 @@
+/*
+ * Copyright (C) 2016 Canonical, Ltd.
+ *
+ * This program is free software; you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation; version 3.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ *
+ * Authored by: Arthur Mello <arthur.mello@canonical.com>
+ */
+
+#include <QtCore/QCoreApplication>
+#include <QDir>
+
+static QString SNAP_ENV = qgetenv("SNAP");
+
+inline bool isRunningInstalled() {
+    static bool installed = (QCoreApplication::applicationDirPath() ==
+                             QDir(("@CMAKE_INSTALL_PREFIX@/@CMAKE_INSTALL_BINDIR@")).canonicalPath());
+    return installed;
+}
+
+inline QString clipboardAppDirectory() {
+    static QString clipboardPath("tools/clipboard/");
+    if (!SNAP_ENV.isEmpty()) {
+        return SNAP_ENV + "@CMAKE_INSTALL_PREFIX@/@CLIPBOARD_APP_DIR@/" + clipboardPath;
+    } else if (isRunningInstalled()) {
+        return QString("@CMAKE_INSTALL_PREFIX@/@CLIPBOARD_APP_DIR@/") +clipboardPath;
+    } else {
+        return QString("@CMAKE_SOURCE_DIR@") + clipboardPath;
+    }
+}
+
+inline QString clipboardAppImportDirectory() {
+    if (!SNAP_ENV.isEmpty()) {
+        return SNAP_ENV + "@CMAKE_INSTALL_PREFIX@/@PLUGIN_BASE@";
+    } else {
+        return "@CMAKE_INSTALL_PREFIX@/@PLUGIN_BASE@";
+    }
+}
+
+inline QString sourceQml() {
+    static QString qmlFile("clipboard-app.qml");
+    return QDir::currentPath() + "/" + qmlFile;
+}

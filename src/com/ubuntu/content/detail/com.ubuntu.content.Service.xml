@@ -52,6 +52,10 @@
       <arg name="pasteid" type="s" direction="in" />
       <arg name="mimeData" type="ay" direction="out" />
     </method>
+    <method name="GetAllPasteData">
+      <arg name="surfaceId" type="s" direction="in" />
+      <arg name="pastes" type="ai" direction="out" />
+    </method>
     <method name="RegisterImportExportHandler">
       <arg name="peer_id" type="s" direction="in" />
       <arg name="handler_object" type="o" direction="in" />

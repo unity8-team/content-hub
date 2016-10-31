@@ -64,6 +64,7 @@ class Service : public QObject, protected QDBusContext
     bool CreatePaste(const QString&, const QString&, const QByteArray&, const QStringList&);
     QByteArray GetLatestPasteData(const QString& surfaceId);
     QByteArray GetPasteData(const QString& surfaceId, const QString& pasteId);
+    QList<int> GetAllPasteData(const QString& surfaceId);
     QStringList PasteFormats();
 
     void RegisterImportExportHandler(const QString&, const QDBusObjectPath& handler);
@@ -75,6 +76,7 @@ class Service : public QObject, protected QDBusContext
 
   private:
     QByteArray getPasteData(const QString &surfaceId, int pasteId);
+    QList<int> getAllPasteData(const QString &surfaceId);
     bool should_cancel(int);
     bool verifiedSurfaceIsFocused(const QString &surfaceId);
     struct Private;

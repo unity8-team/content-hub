@@ -1,0 +1,3 @@
+usr/include/com/ubuntu/content/glib/*
+usr/lib/*/libcontent-hub-glib.so
+usr/lib/*/pkgconfig/libcontent-hub-glib.pc

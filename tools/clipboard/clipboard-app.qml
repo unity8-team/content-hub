@@ -129,7 +129,6 @@ MainView {
                         onTriggered: {
                             PasteDataModel.cancelEntriesDeleted()
                             mainPage.editMode = false
-                            editState.cleanUpSelection()
                         }
                     }
                 ]
@@ -141,7 +140,6 @@ MainView {
                         onTriggered: {
                             PasteDataModel.saveEntriesDeleted()
                             mainPage.editMode = false
-                            editState.cleanUpSelection()
                         }
                     }
                 ]
@@ -167,11 +165,6 @@ MainView {
                             PasteDataModel.setAllEntriesSelected(editState.allEntriesSelected)
                         }
                     }
-                }
-
-                function cleanUpSelection() {
-                    editState.allEntriesSelected = false
-                    PasteDataModel.setAllEntriesSelected(editState.allEntriesSelected)
                 }
 
                 PropertyChanges {

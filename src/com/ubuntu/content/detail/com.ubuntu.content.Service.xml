@@ -54,7 +54,7 @@
     </method>
     <method name="GetAllPasteData">
       <arg name="surfaceId" type="s" direction="in" />
-      <arg name="pastes" type="ai" direction="out" />
+      <arg name="pastes" type="as" direction="out" />
     </method>
     <method name="RegisterImportExportHandler">
       <arg name="peer_id" type="s" direction="in" />

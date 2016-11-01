@@ -60,8 +60,7 @@ public:
     Q_INVOKABLE ContentTransfer* exportContent(com::ubuntu::content::Peer peer, ContentType::Type type);
     Q_INVOKABLE ContentTransfer* shareContent(com::ubuntu::content::Peer peer, ContentType::Type type);
 
-    Q_INVOKABLE void requestPeerForType(ContentType::Type type, ContentHandler::Handler handler);
-    void onPeerSelected(QString);
+    Q_INVOKABLE void requestPeerForType(int, int);
     Q_INVOKABLE void selectPeerForAppId(QString, QString);
 
 Q_SIGNALS:
@@ -70,13 +69,14 @@ Q_SIGNALS:
     void shareRequested(ContentTransfer *transfer);
 
     void finishedImportsChanged();
-    void peerSelected(ContentPeer*);
+    void peerSelected(ContentPeer* peer);
 
 private Q_SLOTS:
     void handleImport(com::ubuntu::content::Transfer* transfer);
     void handleExport(com::ubuntu::content::Transfer* transfer);
     void handleShare(com::ubuntu::content::Transfer* transfer);
     void updateState();
+    void onPeerSelected(QString);
 
 private:
     QList<ContentTransfer *> m_finishedImports;

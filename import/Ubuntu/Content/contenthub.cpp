@@ -147,9 +147,9 @@ void ContentHub::selectPeerForAppId(QString app_id, QString peer_id)
 void ContentHub::onPeerSelected(QString peer_id)
 {
     TRACE() << Q_FUNC_INFO << peer_id;
-    ContentPeer* peer;
-    peer->setPeer(m_hub->peer_for_app_id(peer_id));
-    Q_EMIT(peerSelected(peer));
+    ContentPeer peer;
+    peer.setAppId(peer_id);
+    Q_EMIT(peerSelected(&peer));
 }
 
 ContentHub *ContentHub::instance()
@@ -337,7 +337,8 @@ bool ContentHub::hasPending()
  * peerSelected is emitted when a peer is selected in the peer picker
  * \a type
  */
-void ContentHub::requestPeerForType(ContentType::Type contentType, ContentHandler::Handler handler)
+//void ContentHub::requestPeerForType(ContentType::Type contentType, ContentHandler::Handler handler)
+void ContentHub::requestPeerForType(int contentType, int handler)
 {
     TRACE() << Q_FUNC_INFO;
     const cuc::Type &hubType = ContentType::contentType2HubType(contentType);

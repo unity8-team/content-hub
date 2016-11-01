@@ -24,12 +24,18 @@ int main(int argc, char *argv[])
 {
     QGuiApplication app(argc, argv);
 
+    bool fullScreen = false;
     QQuickView *view = new QQuickView;
     QString requesterId;
     QString contentType;
     QString handlerType;
 
     QStringList args = app.arguments();
+
+    if (args.contains("--fullscreen")) {
+        args.removeAll("--fullscreen");
+        fullScreen = true;
+    }
 
     if (args.count() < 4) {
         std::cout << "Usage: content-hub-peer-picker app_id content_type handler_type\n";
@@ -46,7 +52,11 @@ int main(int argc, char *argv[])
     // Hook up quit
     QObject::connect((QObject*)view->engine(), SIGNAL(quit()), (QObject*)&app, SLOT(quit()));
     view->setSource(QUrl(QStringLiteral("qrc:/main.qml")));
-    view->show();
+    if (fullScreen) {
+        view->showFullScreen();
+    } else {
+        view->show();
+    }
     return app.exec();
 }
 

@@ -8,3 +8,5 @@ Type=Application
 OnlyShowIn=Old
 X-Ubuntu-Touch=true
 X-Ubuntu-Single-Instance=false
+X-Ubuntu-Splash-Show-Header=true
+X-Ubuntu-Splash-Title=Choose from

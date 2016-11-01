@@ -42,12 +42,7 @@ Page {
     header: ContentPageHeader {
         id: pageHeader
         title: (handler === ContentHandler.Source) ? i18n.dtr("content-hub", "Choose from") : (handler === ContentHandler.Destination ? i18n.dtr("content-hub", "Open with") : i18n.dtr("content-hub", "Share to"))
-        onCancel: {
-            if(root.activeTransfer) {
-                root.activeTransfer.state = ContentTransfer.Aborted;
-            }
-            cancelPressed()
-        }
+        onCancel: cancelPressed()
     }
 
     Loader {

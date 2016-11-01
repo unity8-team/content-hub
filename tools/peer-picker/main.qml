@@ -6,6 +6,7 @@ MainView {
     id: mainView
     width: units.gu(50)
     height: units.gu(75)
+    applicationName: "content-hub-peer-picker"
 
     PeerPicker {
         showTitle: true

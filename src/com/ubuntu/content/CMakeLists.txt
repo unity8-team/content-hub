@@ -28,6 +28,8 @@ include_directories(
   ${UBUNTU_DOWNLOAD_MANAGER_INCLUDE_DIRS}
   ${NOTIFY_INCLUDE_DIRS}
   ${APPARMOR_INCLUDE_DIRS}
+  ${GLIB_INCLUDE_DIRS}
+  ${GIO_INCLUDE_DIRS}
 )
 
 qt5_add_dbus_interface(

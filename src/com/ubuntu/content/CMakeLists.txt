@@ -151,7 +151,6 @@ add_custom_command(
           --interface-prefix com.ubuntu.content.dbus
           --generate-c-code glib/content-hub-glib
           --c-namespace ContentHub
-          --c-generate-autocleanup all
           ${DBUS_ANNOTATIONS}
           ${DBUS_XML}
   DEPENDS ${DBUS_XML}

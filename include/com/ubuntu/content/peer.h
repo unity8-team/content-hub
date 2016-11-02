@@ -35,12 +35,11 @@ class Peer : public QObject
     Q_PROPERTY(QString name READ name WRITE setName)
     Q_PROPERTY(QString iconName READ iconName WRITE setIconName)
     Q_PROPERTY(bool isDefaultPeer READ isDefaultPeer)
-    Q_PROPERTY(bool legacy READ legacy)
 
   public:
     static const Peer& unknown();
-    Peer(const QString& id = QString(), bool isDefaultPeer = false, bool legacy = false, QObject* parent = nullptr);
-    Peer(const QString&, const QString&, QByteArray&, const QString&, bool, bool, QObject* parent = nullptr);
+    Peer(const QString& id = QString(), bool isDefaultPeer = false, QObject* parent = nullptr);
+    Peer(const QString&, const QString&, QByteArray&, const QString&, bool, QObject* parent = nullptr);
     Peer(const Peer& rhs);
     virtual ~Peer();
     
@@ -55,7 +54,6 @@ class Peer : public QObject
     Q_INVOKABLE virtual QString iconName() const;
     Q_INVOKABLE void setIconName(const QString&);
     Q_INVOKABLE virtual bool isDefaultPeer() const;
-    Q_INVOKABLE virtual bool legacy() const;
 
   private:
     struct Private;

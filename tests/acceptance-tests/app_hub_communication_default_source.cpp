@@ -106,15 +106,17 @@ TEST(Hub, querying_default_peer_returns_correct_value)
         auto implementation = new cucd::Service(connection, registry, app_manager, &app);
         new ServiceAdaptor(implementation);
 
-        ASSERT_TRUE(connection.registerService(service_name));
-        ASSERT_TRUE(connection.registerObject("/", implementation));
+        connection.registerService(service_name);
+        connection.registerObject("/", implementation);
+
+        QObject::connect(&app, &QCoreApplication::aboutToQuit, [&](){
+            connection.unregisterObject("/");
+            connection.unregisterService(service_name);
+        });
 
         sync.signal_ready();
 
         app.exec();
-
-        connection.unregisterObject("/");
-        connection.unregisterService(service_name);
     };
 
     auto child = [&sync, default_peer_id]()

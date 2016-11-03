@@ -1,3 +1,4 @@
+usr/bin/content-hub-peer-picker
 usr/bin/content-hub-send
 usr/bin/content-hub-service
 usr/lib/*/content-hub
@@ -7,6 +8,7 @@ usr/share/dbus-1
 usr/share/glib-2.0/schemas
 usr/share/locale/*/LC_MESSAGES/content-hub.mo
 usr/share/applications/content-hub-send.desktop
+usr/share/applications/content-hub-peer-picker.desktop
 usr/share/url-dispatcher/urls/content-hub-send.url-dispatcher
 usr/share/content-hub/icons
 debian/apparmor/content-hub-trust-prompt etc/apparmor.d

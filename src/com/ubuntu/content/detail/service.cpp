@@ -185,6 +185,29 @@ QDBusVariant cucd::Service::PeerForId(const QString& app_id)
     return QDBusVariant(QVariant::fromValue(peer));
 }
 
+void cucd::Service::RequestPeerForTypeByAppId(const QString& type_id, const QString& handler_id, const QString& app_id)
+{
+    TRACE() << Q_FUNC_INFO << app_id;
+    // FIXME: add logic to launch peer picker
+    if (d->app_manager->is_application_started(PEER_PICKER_APP_ID.toStdString()))
+        d->app_manager->stop_application(PEER_PICKER_APP_ID.toStdString());
+    gchar * uris[] = {
+        g_strdup(app_id.toStdString().c_str()),
+        g_strdup(type_id.toStdString().c_str()),
+        g_strdup(handler_id.toStdString().c_str()),
+        NULL
+    };
+
+    d->app_manager->invoke_application(PEER_PICKER_APP_ID.toStdString(), uris);
+}
+
+void cucd::Service::SelectPeerForAppId(const QString& app_id, const QString& peer_id)
+{
+    TRACE() << Q_FUNC_INFO << app_id << peer_id;
+    // FIXME: lock this down to only all the peer picker APP_ID to call this
+    Q_EMIT(PeerSelected(app_id, peer_id));
+}
+
 QDBusObjectPath cucd::Service::CreateImportFromPeer(const QString& peer_id, const QString& app_id, const QString& type_id)
 {
     TRACE() << Q_FUNC_INFO << "APP_ID:" << app_id << "SERVICE:" << this->message().service();

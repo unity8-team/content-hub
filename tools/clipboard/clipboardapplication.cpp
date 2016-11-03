@@ -24,7 +24,7 @@
 
 #include "config.h"
 #include "paste-data-model.h"
-#include "paste-data-deleted-model.h"
+#include "paste-data-filter-model.h"
 
 static QObject* PasteDataModel_singleton_factory(QQmlEngine* engine, QJSEngine* scriptEngine) {
     Q_UNUSED(engine);
@@ -46,7 +46,7 @@ bool ClipboardApplication::setup()
 {
     const char* uri = "clipboardapp.private";
     qmlRegisterSingletonType<PasteDataModel>(uri, 0, 1, "PasteDataModel", PasteDataModel_singleton_factory);
-    qmlRegisterType<PasteDataDeletedModel>(uri, 0, 1, "PasteDataDeletedModel");
+    qmlRegisterType<PasteDataFilterModel>(uri, 0, 1, "PasteDataFilterModel");
 
     m_view = new QQuickView();
     QObject::connect(m_view->engine(), SIGNAL(quit()), SLOT(quit()));

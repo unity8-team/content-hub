@@ -24,8 +24,8 @@ MainView {
     width: units.gu(48)
     height: units.gu(60)
 
-    PasteDataDeletedModel {
-        id: pasteDataDeletedModel
+    PasteDataFilterModel {
+        id: pasteDataFilterModel
         sourceModel: PasteDataModel
     }
 
@@ -95,7 +95,7 @@ MainView {
                 name: "edit"
                 when: mainPage.editMode
 
-                property bool allEntriesSelected: false
+                property bool entriesEdited: false
 
                 property Component delegate: Component {
                     AbstractButton {
@@ -129,6 +129,7 @@ MainView {
                         onTriggered: {
                             PasteDataModel.cancelEntriesDeleted()
                             mainPage.editMode = false
+                            editState.entriesEdited = false
                         }
                     }
                 ]
@@ -137,9 +138,11 @@ MainView {
                     Action {
                         text: i18n.tr("Save")
                         iconName: "tick"
+                        enabled: editState.entriesEdited
                         onTriggered: {
                             PasteDataModel.saveEntriesDeleted()
                             mainPage.editMode = false
+                            editState.entriesEdited = false
                         }
                     }
                 ]
@@ -154,16 +157,17 @@ MainView {
                     leadingActionBar.actions: Action {
                         iconName: "delete"
                         text: i18n.tr("Delete")
-                        onTriggered: PasteDataModel.setSelectedEntriesDeleted()
+                        enabled: PasteDataModel.anyEntrySelected
+                        onTriggered: {
+                            editState.entriesEdited = true
+                            PasteDataModel.setSelectedEntriesDeleted()
+                        }
                     }
 
                     trailingActionBar.actions: Action {
-                        iconName: editState.allEntriesSelected ? "select-none" : "select"
+                        iconName: PasteDataModel.allEntriesSelected ? "select-none" : "select"
                         text: i18n.tr("Select All")
-                        onTriggered: {
-                            editState.allEntriesSelected = !editState.allEntriesSelected
-                            PasteDataModel.setAllEntriesSelected(editState.allEntriesSelected)
-                        }
+                        onTriggered: PasteDataModel.setAllEntriesSelected(!PasteDataModel.allEntriesSelected)
                     }
                 }
 
@@ -189,7 +193,7 @@ MainView {
 
             width: parent.width
 
-            model: pasteDataDeletedModel
+            model: pasteDataFilterModel
 
             delegate: ClipboardItemDelegate {
                 id: delegate
@@ -197,24 +201,24 @@ MainView {
                 summary: source
                 imageSource: dataType === PasteDataModel.ImageType ? pasteData : ""
 
-                selectMode: mainPage.editMode
-
                 Binding {
                     target: delegate
                     property: "selected"
                     value: itemSelected
                 }
+                
 
-                onSelectModeChanged: delegate.selected = false
-
-                onSelectedChanged: {
-                    if (!selected) {
-                        editState.allEntriesSelected = false
-                    }
-
-                    PasteDataModel.setEntrySelectedByIndex(index, selected)
+                Component.onCompleted: {
+                    selectMode = Qt.binding(function() { return mainPage.editMode })
                 }
 
+                onSelectedChanged: PasteDataModel.setEntrySelectedByIndex(index, selected)
+
+                onPressAndHold: {
+                    if (!mainPage.editMode) {
+                        mainPage.editMode = true
+                    }
+                }
                 onClicked: {
                     if (!selectMode) {
                         PasteDataModel.pasteEntryByIndex(index)

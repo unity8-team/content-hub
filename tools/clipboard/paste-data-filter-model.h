@@ -16,15 +16,15 @@
  * Authored by: Arthur Mello <arthur.mello@canonical.com>
  */
 
-#ifndef PASTEDATADELETEDMODEL_H
-#define PASTEDATADELETEDMODEL_H
+#ifndef PASTEDATAFILTERMODEL_H
+#define PASTEDATAFILTERMODEL_H
 
 #include <QSortFilterProxyModel>
 
 class PasteDataModel;
 class PasteDataEntry;
 
-class PasteDataDeletedModel : public QSortFilterProxyModel
+class PasteDataFilterModel : public QSortFilterProxyModel
 {
     Q_OBJECT
 
@@ -32,7 +32,7 @@ class PasteDataDeletedModel : public QSortFilterProxyModel
     Q_PROPERTY(int count READ count NOTIFY countChanged)
 
 public:
-    PasteDataDeletedModel(QObject* parent=0);
+    PasteDataFilterModel(QObject* parent=0);
 
     PasteDataModel* sourceModel() const;
     void setSourceModel(PasteDataModel* sourceModel);
@@ -51,4 +51,4 @@ private Q_SLOTS:
     void onModelChanged();
 };
 
-#endif // PASTEDATADELETEDMODEL_H
+#endif // PASTEDATAFILTERMODEL_H

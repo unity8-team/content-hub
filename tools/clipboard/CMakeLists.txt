@@ -26,12 +26,12 @@ include_directories(
 
 set(clipboard_app_HDRS
     paste-data-model.h
-    paste-data-deleted-model.h
+    paste-data-filter-model.h
     clipboardapplication.h)
 
 set(clipboard_app_SRCS
     paste-data-model.cpp
-    paste-data-deleted-model.cpp
+    paste-data-filter-model.cpp
     clipboardapplication.cpp
     main.cpp)
 

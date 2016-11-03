@@ -16,11 +16,11 @@
  * Authored by: Arthur Mello <arthur.mello@canonical.com>
  */
 
-#include "paste-data-deleted-model.h"
+#include "paste-data-filter-model.h"
 
 #include "paste-data-model.h"
 
-PasteDataDeletedModel::PasteDataDeletedModel(QObject* parent)
+PasteDataFilterModel::PasteDataFilterModel(QObject* parent)
     : QSortFilterProxyModel(parent)
 {
     setDynamicSortFilter(true);
@@ -29,12 +29,12 @@ PasteDataDeletedModel::PasteDataDeletedModel(QObject* parent)
     connect(this, SIGNAL(rowsRemoved(QModelIndex, int, int)), SLOT(onModelChanged()));
 }
 
-PasteDataModel* PasteDataDeletedModel::sourceModel() const
+PasteDataModel* PasteDataFilterModel::sourceModel() const
 {
     return qobject_cast<PasteDataModel*>(QSortFilterProxyModel::sourceModel());
 }
 
-void PasteDataDeletedModel::setSourceModel(PasteDataModel* sourceModel)
+void PasteDataFilterModel::setSourceModel(PasteDataModel* sourceModel)
 {
     if (sourceModel != this->sourceModel()) {
         QSortFilterProxyModel::setSourceModel(sourceModel);
@@ -43,18 +43,18 @@ void PasteDataDeletedModel::setSourceModel(PasteDataModel* sourceModel)
     }
 }
 
-int PasteDataDeletedModel::count() const
+int PasteDataFilterModel::count() const
 {
     return rowCount();
 }
 
-bool PasteDataDeletedModel::filterAcceptsRow(int source_row, const QModelIndex& source_parent) const
+bool PasteDataFilterModel::filterAcceptsRow(int source_row, const QModelIndex& source_parent) const
 {
     QModelIndex index = sourceModel()->index(source_row, 0, source_parent);
-    return !sourceModel()->data(index, PasteDataModel::Deleted).toBool();
+    return !sourceModel()->data(index, PasteDataModel::ItemDeleted).toBool();
 }
 
-void PasteDataDeletedModel::onModelChanged()
+void PasteDataFilterModel::onModelChanged()
 {
     Q_EMIT countChanged();
 }

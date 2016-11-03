@@ -21,7 +21,10 @@
 #include "paste-data-model.h"
 
 PasteDataModel::PasteDataModel(QObject* parent)
-    : QAbstractListModel(parent)
+    : QAbstractListModel(parent),
+    m_entriesSelected(0),
+    m_anyEntrySelected(false),
+    m_allEntriesSelected(false)
 {
     // This way populateModel can be override during tests
     QTimer::singleShot(0, this, SLOT(populateModel()));
@@ -40,7 +43,7 @@ QHash<int, QByteArray> PasteDataModel::roleNames() const
         roles[DataType] = "dataType";
         roles[PasteData] = "pasteData";
         roles[ItemSelected] = "itemSelected";
-        roles[Deleted] = "deleted";
+        roles[ItemDeleted] = "itemDeleted";
     }
     return roles;
 }
@@ -69,23 +72,27 @@ QVariant PasteDataModel::data(const QModelIndex& index, int role) const
         return entry.pasteData;
     case ItemSelected:
         return entry.itemSelected;
-    case Deleted:
-        return entry.deleted;
+    case ItemDeleted:
+        return entry.itemDeleted;
     default:
         return QVariant();
     }
 }
 
+bool PasteDataModel::anyEntrySelected() const
+{
+    return m_anyEntrySelected;
+}
+
+bool PasteDataModel::allEntriesSelected() const
+{
+    return m_allEntriesSelected;
+}
+
 void PasteDataModel::setAllEntriesSelected(bool selected)
 {
-    QVector<int> roles;
-    roles << ItemSelected;
-
     for (int i = 0; i < m_entries.size(); ++i) {
-        if (m_entries[i].itemSelected != selected) {
-            m_entries[i].itemSelected = selected;
-            Q_EMIT dataChanged(this->index(i, 0), this->index(i, 0), roles);
-        }
+        setEntrySelectedByIndex(i, selected);
     }
 }
 
@@ -96,23 +103,36 @@ void PasteDataModel::setEntrySelectedByIndex(int index, bool selected)
     }
 
     if (m_entries[index].itemSelected != selected) {
-        m_entries[index].itemSelected = selected;
-
         QVector<int> roles;
         roles << ItemSelected;
+
+        m_entries[index].itemSelected = selected;
+
         Q_EMIT dataChanged(this->index(index, 0), this->index(index, 0), roles);
-    }
-}
 
-void PasteDataModel::cancelEntriesDeleted()
-{
-    QVector<int> roles;
-    roles << Deleted;
+        // Keep count of how many entries are selected
+        if (selected) {
+            m_entriesSelected++;
+        } else {
+            m_entriesSelected--;
+        }
 
-    for (int i = 0; i < m_entries.size(); ++i) {
-        if (m_entries[i].deleted) {
-            m_entries[i].deleted = false;
-            Q_EMIT dataChanged(this->index(i, 0), this->index(i, 0), roles);
+        // Verify if any entry is selected and notify
+        if (m_entriesSelected > 0 && !m_anyEntrySelected) {
+            m_anyEntrySelected = true;
+            Q_EMIT anyEntrySelectedChanged();
+        } else if (m_entriesSelected <= 0 && m_anyEntrySelected) {
+            m_anyEntrySelected = false;
+            Q_EMIT anyEntrySelectedChanged();
+        }
+
+        // Verify if all entries are selected and notify
+        if (m_entriesSelected == rowCount() && !m_allEntriesSelected) {
+            m_allEntriesSelected = true;
+            Q_EMIT allEntriesSelectedChanged();
+        } else if (m_entriesSelected != rowCount() && m_allEntriesSelected) {
+            m_allEntriesSelected = false;
+            Q_EMIT allEntriesSelectedChanged();
         }
     }
 }
@@ -120,22 +140,47 @@ void PasteDataModel::cancelEntriesDeleted()
 void PasteDataModel::saveEntriesDeleted()
 {
     for (int i = m_entries.size() - 1; i >= 0; --i) {
-        if (m_entries[i].deleted) {
+        if (m_entries[i].itemDeleted) {
             removeEntryByIndex(i);
         }
     }
 }
 
+void PasteDataModel::cancelEntriesDeleted()
+{
+    for (int i = 0; i < m_entries.size(); ++i) {
+        setEntryDeletedByIndex(i, false);
+    }
+}
+
 void PasteDataModel::setSelectedEntriesDeleted()
 {
-    QVector<int> roles;
-    roles << Deleted;
-
+    QList<int> idxs;
     for (int i = 0; i < m_entries.size(); ++i) {
-        if (m_entries[i].itemSelected && !m_entries[i].deleted) {
-            m_entries[i].deleted = true;
-            Q_EMIT dataChanged(this->index(i, 0), this->index(i, 0), roles);
+        if (m_entries[i].itemSelected) {
+            idxs << i;
+            setEntrySelectedByIndex(i, false);
         }
+    }
+
+    for (int i = 0; i < idxs.size(); ++i) {
+        setEntryDeletedByIndex(idxs[i], true);
+    }
+}
+
+void PasteDataModel::setEntryDeletedByIndex(int index, bool deleted)
+{
+    if (index < 0 || index >= m_entries.size()) {
+        return;
+    }
+
+    if (m_entries[index].itemDeleted != deleted) {
+        QVector<int> roles;
+        roles << ItemDeleted;
+
+        m_entries[index].itemDeleted = deleted;
+
+        Q_EMIT dataChanged(this->index(index, 0), this->index(index, 0), roles);
     }
 }
 
@@ -148,19 +193,19 @@ void PasteDataModel::pasteEntryByIndex(int index)
     qDebug() << "[TODO] Paste Required (pasteId):" << m_entries[index].pasteId;
 }
 
-void PasteDataModel::removeEntryByIndex(int index)
-{
-    beginRemoveRows(QModelIndex(), index, index);
-    m_entries.removeAt(index);
-    endRemoveRows();
-    Q_EMIT rowCountChanged();
-}
-
 void PasteDataModel::addEntry(PasteDataEntry& entry)
 {
     beginInsertRows(QModelIndex(), rowCount(), rowCount());
     m_entries << entry;
     endInsertRows();
+    Q_EMIT rowCountChanged();
+}
+
+void PasteDataModel::removeEntryByIndex(int index)
+{
+    beginRemoveRows(QModelIndex(), index, index);
+    m_entries.removeAt(index);
+    endRemoveRows();
     Q_EMIT rowCountChanged();
 }
 
@@ -174,7 +219,7 @@ void PasteDataModel::populateModel()
     entry.dataType = TextType;
     entry.pasteData = "Secrets lie deep within Jupiter";
     entry.itemSelected = false;
-    entry.deleted = false;
+    entry.itemDeleted = false;
     addEntry(entry);
 
     entry.pasteId = "02";
@@ -182,7 +227,7 @@ void PasteDataModel::populateModel()
     entry.dataType = ImageType;
     entry.pasteData = "ubuntu.png";
     entry.itemSelected = false;
-    entry.deleted = false;
+    entry.itemDeleted = false;
     addEntry(entry);
 
     entry.pasteId = "03";
@@ -190,7 +235,7 @@ void PasteDataModel::populateModel()
     entry.dataType = ImageType;
     entry.pasteData = "ubuntu.png";
     entry.itemSelected = false;
-    entry.deleted = false;
+    entry.itemDeleted = false;
     addEntry(entry);
 
     entry.pasteId = "04";
@@ -198,6 +243,6 @@ void PasteDataModel::populateModel()
     entry.dataType = TextType;
     entry.pasteData = "Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy text ever since the 1500s, when an unknown printer took a galley of type and scrambled it to make a type specimen book. It has survived not only five centuries, but also the leap into electronic typesetting, remaining essentially unchanged. It was popularised in the 1960s with the release of Letraset sheets containing Lorem Ipsum passages, and more recently with desktop publishing software like Aldus PageMaker including versions of Lorem Ipsum.";
     entry.itemSelected = false;
-    entry.deleted = false;
+    entry.itemDeleted = false;
     addEntry(entry);
 }

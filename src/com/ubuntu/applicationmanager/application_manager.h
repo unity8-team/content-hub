@@ -17,6 +17,7 @@
 #define COM_UBUNTU_APPLICATION_MANAGER_H_
 
 #include <string>
+#include "../content/detail/mir-helper.h"
 #include <glib.h>
 
 namespace com
@@ -39,6 +40,20 @@ class ApplicationManager
      * \param app_id ID for the application (for example "gallery-app" - used for the desktop)
      */
     virtual bool invoke_application(const std::string &app_id, gchar ** uris) = 0;
+
+    /*!
+     * \brief invoke_application_with_session starts an application without a trusted session
+     * \param app_id ID for the application (for example "gallery-app" - used for the desktop)
+     * \param session
+     */
+    virtual std::string invoke_application_with_session(const std::string &app_id, const PromptSessionP &session) = 0;
+
+    /*!
+     * \brief stop_application_with_helper stops an application started by the content-hub helper
+     * \param app_id ID for the application (for example "gallery-app" - used for the desktop)
+     */
+    virtual bool stop_application_with_helper(const std::string &app_id, const std::string &instance_id) = 0;
+
     /*!
      * \brief stop_application stops an application started by ubuntu
      * \param app_id ID for the application (for example "gallery-app" - used for the desktop)

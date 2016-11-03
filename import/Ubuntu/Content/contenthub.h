@@ -73,6 +73,7 @@ private Q_SLOTS:
     void updateState();
 
 private:
+    QString setupPromptSession();
     QList<ContentTransfer *> m_finishedImports;
     QHash<com::ubuntu::content::Transfer *, ContentTransfer *> m_activeImports;
     com::ubuntu::content::Hub *m_hub;

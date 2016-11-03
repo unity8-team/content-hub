@@ -25,9 +25,11 @@
 #include <QtDBus/QDBusMessage>
 #include <QtDBus/QDBusServiceWatcher>
 #include <QtDBus/QDBusContext>
+#include <QDBusUnixFileDescriptor>
 
 #include <com/ubuntu/applicationmanager/application_manager.h>
 #include "handler.h"
+#include "mir-helper.h"
 #include "transfer.h"
 
 namespace com
@@ -81,6 +83,7 @@ class Service : public QObject, protected QDBusContext
     struct RegHandler;
     QDBusServiceWatcher* m_watcher;
     QScopedPointer<Private> d;
+    MirHelper* m_mirHelper = 0;
 
   Q_SIGNALS:
     void PasteFormatsChanged(const QStringList &formats);
@@ -91,8 +94,9 @@ class Service : public QObject, protected QDBusContext
     void handle_exports(int);
     void handler_unregistered(const QString&);
     QDBusObjectPath CreateTransfer(const QString&, const QString&, int, const QString&);
+    void setupPromptSession(com::ubuntu::content::detail::Transfer*, uint);
     void download_notify(com::ubuntu::content::detail::Transfer*);
-
+    void onPromptFinished(PromptSessionP session);
 };
 }
 }

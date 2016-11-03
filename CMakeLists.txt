@@ -16,7 +16,7 @@
 
 cmake_minimum_required(VERSION 2.8)
 
-project(content-hub)
+project (content-hub C CXX)
 
 set(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} ${CMAKE_CURRENT_SOURCE_DIR}/cmake)
 
@@ -69,6 +69,8 @@ pkg_check_modules(NIH_DBUS REQUIRED libnih-dbus)
 pkg_check_modules(DBUS REQUIRED dbus-1)
 pkg_check_modules(UBUNTU_DOWNLOAD_MANAGER REQUIRED ubuntu-download-manager-client)
 pkg_check_modules(NOTIFY REQUIRED libnotify)
+pkg_check_modules(MIRCLIENT REQUIRED mirclient)
+pkg_check_modules(CLICK REQUIRED click-0.4)
 pkg_check_modules(APPARMOR REQUIRED libapparmor)
 
 add_definitions(-DDEBUG_ENABLED)

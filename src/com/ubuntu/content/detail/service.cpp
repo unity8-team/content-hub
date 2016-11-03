@@ -187,7 +187,7 @@ QDBusVariant cucd::Service::PeerForId(const QString& app_id)
 
 QDBusObjectPath cucd::Service::CreateImportFromPeer(const QString& peer_id, const QString& app_id, const QString& type_id)
 {
-    TRACE() << Q_FUNC_INFO;
+    TRACE() << Q_FUNC_INFO << "APP_ID:" << app_id << "SERVICE:" << this->message().service();
     QString dest_id = app_id;
     if (dest_id.isEmpty())
     {
@@ -418,6 +418,10 @@ QDBusObjectPath cucd::Service::CreateTransfer(const QString& dest_id, const QStr
     }
 
     auto transfer = new cucd::Transfer(import_counter, src_id, dest_id, dir, type_id, this);
+    if (dir == cuc::Transfer::Import) {
+        uint clientPid = d->connection.interface()->servicePid(this->message().service());
+        setupPromptSession(transfer, clientPid);
+    }
     new TransferAdaptor(transfer);
     d->active_transfers.insert(transfer);
 
@@ -440,6 +444,30 @@ QDBusObjectPath cucd::Service::CreateTransfer(const QString& dest_id, const QStr
 
     connect(transfer, SIGNAL(StateChanged(int)), this, SLOT(handle_exports(int)));
     return QDBusObjectPath{source};
+}
+
+void cucd::Service::setupPromptSession(cucd::Transfer* t, uint clientPid)
+{
+    TRACE() << Q_FUNC_INFO << "PID:" << clientPid;
+    if (!m_mirHelper) {
+        TRACE() << "No MirHelper, creating one";
+        m_mirHelper = MirHelper::instance();
+    }
+    PromptSessionP session = m_mirHelper->createPromptSession(clientPid);
+    if (!session) return;
+
+    QString mirSocket = session->requestSocket();
+    t->SetPromptSession(session);
+    TRACE() << Q_FUNC_INFO << "mirSocket:" << mirSocket;
+
+    QObject::connect(session.data(), SIGNAL(finished()),
+                     this, SLOT(onPromptFinished(session)));
+}
+
+void cucd::Service::onPromptFinished(PromptSessionP session)
+{
+    TRACE() << Q_FUNC_INFO;
+    Q_UNUSED(session);
 }
 
 void cucd::Service::handle_imports(int state)
@@ -469,15 +497,31 @@ void cucd::Service::handle_imports(int state)
             }
         }
 
-        gchar ** uris = NULL;
-        d->app_manager->invoke_application(transfer->source().toStdString(), uris);
+        if (!transfer->PromptSession() || transfer->WasSourceStartedByContentHub()) {
+            TRACE() << Q_FUNC_INFO << "Invoking application";
+            gchar ** uris = NULL;
+            d->app_manager->invoke_application(transfer->source().toStdString(), uris);
+        } else {
+            TRACE() << Q_FUNC_INFO << "Invoking application with session";
+            std::string instance_id = d->app_manager->invoke_application_with_session(transfer->source().toStdString(), transfer->PromptSession());
+            transfer->SetInstanceId(QString::fromStdString(instance_id));
+        }
     }
 
     if (state == cuc::Transfer::charged)
     {
         TRACE() << Q_FUNC_INFO << "Charged";
-        if (transfer->WasSourceStartedByContentHub())
-            d->app_manager->stop_application(transfer->source().toStdString());
+        if (transfer->WasSourceStartedByContentHub()) {
+            if (transfer->PromptSession()) {
+                PromptSessionP pSession = transfer->PromptSession();
+                PromptSession* session = pSession.data();
+                if (session)
+                    session->release();
+                d->app_manager->stop_application_with_helper(transfer->source().toStdString(), transfer->InstanceId().toStdString());
+            } else {
+                d->app_manager->stop_application(transfer->source().toStdString());
+            }
+        }
 
         gchar ** uris = NULL;
         if (d->registry->peer_is_legacy(transfer->destination())) {
@@ -532,8 +576,17 @@ void cucd::Service::handle_imports(int state)
                     }
                 }
             }
-            if (shouldStop)
-                d->app_manager->stop_application(transfer->source().toStdString());
+            if (shouldStop) {
+                if (transfer->PromptSession()) {
+                    PromptSessionP pSession = transfer->PromptSession();
+                    PromptSession* session = pSession.data();
+                    if (session)
+                        session->release();
+                    d->app_manager->stop_application_with_helper(transfer->source().toStdString(), transfer->InstanceId().toStdString());
+                } else {
+                    d->app_manager->stop_application(transfer->source().toStdString());
+                }
+            }
         }
         gchar ** uris = NULL;
         d->app_manager->invoke_application(transfer->destination().toStdString(), uris);
@@ -625,8 +678,17 @@ void cucd::Service::handle_exports(int state)
                     }
                 }
             }
-            if (shouldStop)
-                d->app_manager->stop_application(transfer->destination().toStdString());
+            if (shouldStop) {
+                if (transfer->PromptSession()) {
+                    PromptSessionP pSession = transfer->PromptSession();
+                    PromptSession* session = pSession.data();
+                    if (session)
+                        session->release();
+                    d->app_manager->stop_application_with_helper(transfer->destination().toStdString(), transfer->InstanceId().toStdString());
+                } else {
+                    d->app_manager->stop_application(transfer->destination().toStdString());
+                }
+            }
         }
         gchar ** uris = NULL;
         d->app_manager->invoke_application(transfer->source().toStdString(), uris);

@@ -21,6 +21,8 @@
 
 #include <QAbstractListModel>
 
+class PasteDataProvider;
+
 class PasteDataModel : public QAbstractListModel
 {
     Q_OBJECT
@@ -87,11 +89,12 @@ Q_SIGNALS:
     void allEntriesSelectedChanged();
 
 private:
+    void addEntry(PasteDataEntry& entry);
+
+    PasteDataProvider* m_provider;
     int m_entriesSelected;
     bool m_anyEntrySelected;
     bool m_allEntriesSelected;
-
-    void addEntry(PasteDataEntry& entry);
 };
 
 #endif // PASTEDATAMODEL_H

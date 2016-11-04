@@ -22,14 +22,17 @@ configure_file(config.h.in ${CMAKE_CURRENT_BINARY_DIR}/config.h @ONLY)
 
 include_directories(
   ${CMAKE_CURRENT_BINARY_DIR}
+  ${CMAKE_SOURCE_DIR}/src/com/ubuntu/content
 )
 
 set(clipboard_app_HDRS
+    paste-data-provider.h
     paste-data-model.h
     paste-data-filter-model.h
     clipboardapplication.h)
 
 set(clipboard_app_SRCS
+    paste-data-provider.cpp
     paste-data-model.cpp
     paste-data-filter-model.cpp
     clipboardapplication.cpp

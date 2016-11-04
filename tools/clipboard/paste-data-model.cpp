@@ -15,13 +15,16 @@
  *
 */
 
+#include "paste-data-model.h"
+
 #include <QTimer>
 #include <QDebug>
 
-#include "paste-data-model.h"
+#include "paste-data-provider.h"
 
 PasteDataModel::PasteDataModel(QObject* parent)
     : QAbstractListModel(parent),
+    m_provider(new PasteDataProvider()),
     m_entriesSelected(0),
     m_anyEntrySelected(false),
     m_allEntriesSelected(false)
@@ -211,6 +214,13 @@ void PasteDataModel::removeEntryByIndex(int index)
 
 void PasteDataModel::populateModel()
 {
+    qDebug() << "[DEBUG] PasteDataProvider (begin)";
+    QStringList pasteData = m_provider->allPasteData();
+    for (int i = 0; i < pasteData.size(); ++i) {
+        qDebug() << pasteData.at(i);
+    }
+    qDebug() << "[DEBUG] PasteDataProvider (end)";
+
     //Dummy entries
     PasteDataEntry entry;
 

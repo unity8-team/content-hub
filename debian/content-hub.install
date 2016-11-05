@@ -10,4 +10,4 @@ usr/share/applications/content-hub-send.desktop
 usr/share/applications/content-hub-clipboard.desktop
 usr/share/url-dispatcher/urls/content-hub-send.url-dispatcher
 usr/share/content-hub/icons
-usr/share/content-hub-clipboard
+usr/share/content-hub/tools/clipboard

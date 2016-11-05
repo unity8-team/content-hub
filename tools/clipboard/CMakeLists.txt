@@ -15,7 +15,7 @@
 # Authored by: Arthur Mello <arthur.mello@canonical.com>
 
 set(CLIPBOARD_APP content-hub-clipboard)
-set(CLIPBOARD_APP_DIR ${CMAKE_INSTALL_DATADIR}/${CLIPBOARD_APP})
+set(CLIPBOARD_APP_DIR ${CMAKE_INSTALL_DATADIR}/content-hub/tools/clipboard)
 set(PLUGIN_BASE ${CMAKE_INSTALL_LIBDIR}/${CLIPBOARD_APP})
 
 configure_file(config.h.in ${CMAKE_CURRENT_BINARY_DIR}/config.h @ONLY)

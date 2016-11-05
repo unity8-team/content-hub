@@ -30,9 +30,9 @@ inline bool isRunningInstalled() {
 inline QString clipboardAppDirectory() {
     static QString clipboardPath("tools/clipboard/");
     if (!SNAP_ENV.isEmpty()) {
-        return SNAP_ENV + "@CMAKE_INSTALL_PREFIX@/@CLIPBOARD_APP_DIR@/" + clipboardPath;
+        return SNAP_ENV + "@CMAKE_INSTALL_PREFIX@/@CLIPBOARD_APP_DIR@/";
     } else if (isRunningInstalled()) {
-        return QString("@CMAKE_INSTALL_PREFIX@/@CLIPBOARD_APP_DIR@/") +clipboardPath;
+        return QString("@CMAKE_INSTALL_PREFIX@/@CLIPBOARD_APP_DIR@/");
     } else {
         return QString("@CMAKE_SOURCE_DIR@") + clipboardPath;
     }

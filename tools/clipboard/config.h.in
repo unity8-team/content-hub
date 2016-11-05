@@ -48,5 +48,9 @@ inline QString clipboardAppImportDirectory() {
 
 inline QString sourceQml() {
     static QString qmlFile("clipboard-app.qml");
-    return QDir::currentPath() + "/" + qmlFile;
+    if (isRunningInstalled()) {
+        return qmlFile;
+    } else {
+        return QDir::currentPath() + "/" + qmlFile;
+    }
 }

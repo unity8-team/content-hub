@@ -218,7 +218,14 @@ void PasteDataModel::populateModel()
     qDebug() << "[DEBUG] PasteDataProvider (begin)";
     QStringList pasteData = m_provider->allPasteIds(surfaceId);
     for (int i = 0; i < pasteData.size(); ++i) {
-        qDebug() << pasteData.at(i);
+        int id = pasteData.at(i).toInt();
+        QMimeData *pasteMimeData = m_provider->pasteById(surfaceId, id);
+        qDebug() << id;
+        qDebug() << "HAS TEXT" << pasteMimeData->hasText(); 
+        qDebug() << "TEXT" << pasteMimeData->text(); 
+        qDebug() << "HAS URLS" << pasteMimeData->hasUrls(); 
+        qDebug() << "URLS" << pasteMimeData->urls(); 
+        qDebug() << "HAS IMAGE" << pasteMimeData->hasImage(); 
     }
     qDebug() << "[DEBUG] PasteDataProvider (end)";
 

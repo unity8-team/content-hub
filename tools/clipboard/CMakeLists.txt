@@ -24,6 +24,7 @@ include_directories(
   ${CMAKE_CURRENT_BINARY_DIR}
   ${CMAKE_SOURCE_DIR}/src/com/ubuntu/content
   ${CMAKE_BINARY_DIR}/src/com/ubuntu/content
+  ${UBUNTU_LAUNCH_INCLUDE_DIRS}
 )
 
 set(clipboard_app_HDRS
@@ -52,6 +53,7 @@ set_target_properties(${CLIPBOARD_APP}
 
 target_link_libraries(${CLIPBOARD_APP}
   content-hub
+  ${UBUNTU_LAUNCH_LDFLAGS}
 )
 
 file(GLOB QML_JS_FILES *.qml *.js)

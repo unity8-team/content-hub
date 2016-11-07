@@ -18,6 +18,7 @@
 #include "paste-data-provider.h"
 
 #include "debug.h"
+#include "utils.cpp"
 
 PasteDataProvider::PasteDataProvider(QObject* parent)
     : QObject(parent),
@@ -29,15 +30,21 @@ PasteDataProvider::~PasteDataProvider()
 {
 }
 
-QDBusPendingCall PasteDataProvider::requestAllPasteData()
+QDBusPendingCall PasteDataProvider::requestAllPasteData(const QString &surfaceId)
 {
     TRACE() << Q_FUNC_INFO;
-    return d->service->GetAllPasteData();
+    return d->service->GetAllPasteData(surfaceId);
 }
 
-QStringList PasteDataProvider::allPasteData()
+QDBusPendingCall PasteDataProvider::requestPasteById(const QString &surfaceId, int pasteId)
 {
-    QDBusPendingCall pendingCall = requestAllPasteData();
+    TRACE() << Q_FUNC_INFO;
+    return d->service->GetPasteData(surfaceId, QString::number(pasteId));
+}
+
+QStringList PasteDataProvider::allPasteData(const QString &surfaceId)
+{
+    QDBusPendingCall pendingCall = requestAllPasteData(surfaceId);
     auto reply = QDBusPendingReply<QStringList>(pendingCall);
     reply.waitForFinished();
 
@@ -45,4 +52,17 @@ QStringList PasteDataProvider::allPasteData()
         return QStringList();
 
     return qdbus_cast<QStringList>(reply.value());
+}
+
+QMimeData* PasteDataProvider::pasteById(const QString &surfaceId, int pasteId)
+{
+    QDBusPendingCall pendingCall = requestPasteById(surfaceId, pasteId);
+    auto reply = QDBusPendingReply<QStringList>(pendingCall);
+    reply.waitForFinished();
+
+    if (reply.isError())
+        return nullptr;
+
+    QByteArray serializedMimeData = qdbus_cast<QByteArray>(reply.value());
+    return deserializeMimeData(serializedMimeData);
 }

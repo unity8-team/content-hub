@@ -55,10 +55,12 @@ public:
         QString pasteData;
     };
 
-    QStringList allPasteData();
+    QStringList allPasteData(const QString &surfaceId);
+    QMimeData* pasteById(const QString &surfaceId, int pasteId);
 
 private:
-    QDBusPendingCall requestAllPasteData();
+    QDBusPendingCall requestAllPasteData(const QString &surfaceId);
+    QDBusPendingCall requestPasteById(const QString &surfaceId, int pasteId);
 
     PasteDataProviderPrivate* d;
 };

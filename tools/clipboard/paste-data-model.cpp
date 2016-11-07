@@ -214,8 +214,9 @@ void PasteDataModel::removeEntryByIndex(int index)
 
 void PasteDataModel::populateModel()
 {
+    QString surfaceId("some-bogus-fake-surface-id");
     qDebug() << "[DEBUG] PasteDataProvider (begin)";
-    QStringList pasteData = m_provider->allPasteData();
+    QStringList pasteData = m_provider->allPasteData(surfaceId);
     for (int i = 0; i < pasteData.size(); ++i) {
         qDebug() << pasteData.at(i);
     }

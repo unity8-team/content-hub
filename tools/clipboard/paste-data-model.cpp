@@ -216,7 +216,7 @@ void PasteDataModel::populateModel()
 {
     QString surfaceId("some-bogus-fake-surface-id");
     qDebug() << "[DEBUG] PasteDataProvider (begin)";
-    QStringList pasteData = m_provider->allPasteData(surfaceId);
+    QStringList pasteData = m_provider->allPasteIds(surfaceId);
     for (int i = 0; i < pasteData.size(); ++i) {
         qDebug() << pasteData.at(i);
     }

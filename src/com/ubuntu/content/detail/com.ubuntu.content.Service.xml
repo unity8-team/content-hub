@@ -52,7 +52,7 @@
       <arg name="pasteid" type="s" direction="in" />
       <arg name="mimeData" type="ay" direction="out" />
     </method>
-    <method name="GetAllPasteData">
+    <method name="GetAllPasteIds">
       <arg name="surfaceId" type="s" direction="in" />
       <arg name="pastes" type="as" direction="out" />
     </method>

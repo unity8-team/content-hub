@@ -383,14 +383,14 @@ QByteArray cucd::Service::GetPasteData(const QString& surfaceId, const QString& 
     return getPasteData(surfaceId, pasteId.toInt());
 }
 
-QStringList cucd::Service::GetAllPasteData(const QString& surfaceId)
+QStringList cucd::Service::GetAllPasteIds(const QString& surfaceId)
 {
     TRACE() << Q_FUNC_INFO;
 
     if (d->active_pastes.isEmpty())
         return QStringList();
 
-    return getAllPasteData(surfaceId);
+    return getAllPasteIds(surfaceId);
 }
 
 QByteArray cucd::Service::getPasteData(const QString &surfaceId, int pasteId)
@@ -408,19 +408,19 @@ QByteArray cucd::Service::getPasteData(const QString &surfaceId, int pasteId)
     return QByteArray();
 }
 
-QStringList cucd::Service::getAllPasteData(const QString &surfaceId)
+QStringList cucd::Service::getAllPasteIds(const QString &surfaceId)
 {
     if (!verifiedSurfaceIsFocused(surfaceId)) {
         qWarning().nospace() << "Surface isn't focused. Denying paste.";
         return QStringList();
     }
 
-    QStringList pastes;
+    QStringList ids;
     Q_FOREACH (cucd::Paste *p, d->active_pastes)
     {
-        pastes.append(QString::number(p->Id()));
+        ids.append(QString::number(p->Id()));
     }
-    return pastes;
+    return ids;
 }
 
 QDBusObjectPath cucd::Service::CreateTransfer(const QString& dest_id, const QString& src_id, int dir, const QString& type_id)

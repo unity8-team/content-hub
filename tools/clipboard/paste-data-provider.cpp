@@ -30,10 +30,10 @@ PasteDataProvider::~PasteDataProvider()
 {
 }
 
-QDBusPendingCall PasteDataProvider::requestAllPasteData(const QString &surfaceId)
+QDBusPendingCall PasteDataProvider::requestAllPasteIds(const QString &surfaceId)
 {
     TRACE() << Q_FUNC_INFO;
-    return d->service->GetAllPasteData(surfaceId);
+    return d->service->GetAllPasteIds(surfaceId);
 }
 
 QDBusPendingCall PasteDataProvider::requestPasteById(const QString &surfaceId, int pasteId)
@@ -42,9 +42,9 @@ QDBusPendingCall PasteDataProvider::requestPasteById(const QString &surfaceId, i
     return d->service->GetPasteData(surfaceId, QString::number(pasteId));
 }
 
-QStringList PasteDataProvider::allPasteData(const QString &surfaceId)
+QStringList PasteDataProvider::allPasteIds(const QString &surfaceId)
 {
-    QDBusPendingCall pendingCall = requestAllPasteData(surfaceId);
+    QDBusPendingCall pendingCall = requestAllPasteIds(surfaceId);
     auto reply = QDBusPendingReply<QStringList>(pendingCall);
     reply.waitForFinished();
 

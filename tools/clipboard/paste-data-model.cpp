@@ -215,52 +215,18 @@ void PasteDataModel::removeEntryByIndex(int index)
 void PasteDataModel::populateModel()
 {
     QString surfaceId("some-bogus-fake-surface-id");
-    qDebug() << "[DEBUG] PasteDataProvider (begin)";
     QStringList pasteData = m_provider->allPasteIds(surfaceId);
     for (int i = 0; i < pasteData.size(); ++i) {
         int id = pasteData.at(i).toInt();
         QMimeData *pasteMimeData = m_provider->pasteById(surfaceId, id);
-        qDebug() << id;
-        qDebug() << "HAS TEXT" << pasteMimeData->hasText(); 
-        qDebug() << "TEXT" << pasteMimeData->text(); 
-        qDebug() << "HAS URLS" << pasteMimeData->hasUrls(); 
-        qDebug() << "URLS" << pasteMimeData->urls(); 
-        qDebug() << "HAS IMAGE" << pasteMimeData->hasImage(); 
+        PasteDataEntry entry;
+
+        entry.pasteId = QString::number(id);
+        entry.source = "THE INTERNET";
+        entry.dataType = TextType;
+        entry.pasteData = pasteMimeData->text();
+        entry.itemSelected = false;
+        entry.itemDeleted = false;
+        addEntry(entry);
     }
-    qDebug() << "[DEBUG] PasteDataProvider (end)";
-
-    //Dummy entries
-    PasteDataEntry entry;
-
-    entry.pasteId = "01";
-    entry.source = "Messaging";
-    entry.dataType = TextType;
-    entry.pasteData = "Secrets lie deep within Jupiter";
-    entry.itemSelected = false;
-    entry.itemDeleted = false;
-    addEntry(entry);
-
-    entry.pasteId = "02";
-    entry.source = "Dekko";
-    entry.dataType = ImageType;
-    entry.pasteData = "ubuntu.png";
-    entry.itemSelected = false;
-    entry.itemDeleted = false;
-    addEntry(entry);
-
-    entry.pasteId = "03";
-    entry.source = "Dekko";
-    entry.dataType = ImageType;
-    entry.pasteData = "ubuntu.png";
-    entry.itemSelected = false;
-    entry.itemDeleted = false;
-    addEntry(entry);
-
-    entry.pasteId = "04";
-    entry.source = "Notes";
-    entry.dataType = TextType;
-    entry.pasteData = "Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy text ever since the 1500s, when an unknown printer took a galley of type and scrambled it to make a type specimen book. It has survived not only five centuries, but also the leap into electronic typesetting, remaining essentially unchanged. It was popularised in the 1960s with the release of Letraset sheets containing Lorem Ipsum passages, and more recently with desktop publishing software like Aldus PageMaker including versions of Lorem Ipsum.";
-    entry.itemSelected = false;
-    entry.itemDeleted = false;
-    addEntry(entry);
 }

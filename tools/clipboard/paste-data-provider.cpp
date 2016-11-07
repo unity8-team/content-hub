@@ -57,7 +57,7 @@ QStringList PasteDataProvider::allPasteIds(const QString &surfaceId)
 QMimeData* PasteDataProvider::pasteById(const QString &surfaceId, int pasteId)
 {
     QDBusPendingCall pendingCall = requestPasteById(surfaceId, pasteId);
-    auto reply = QDBusPendingReply<QStringList>(pendingCall);
+    auto reply = QDBusPendingReply<QByteArray>(pendingCall);
     reply.waitForFinished();
 
     if (reply.isError())

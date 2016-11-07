@@ -89,6 +89,7 @@ struct cucd::Service::Private : public QObject
     QSharedPointer<cucd::PeerRegistry> registry;
     QSet<cucd::Transfer*> active_transfers;
     QList<cucd::Paste*> active_pastes;
+    QMap<QString, const PromptSessionP*> active_sessions;
     QStringList pasteFormats;
     QSet<RegHandler*> handlers;
     QSharedPointer<cua::ApplicationManager> app_manager;
@@ -198,7 +199,19 @@ void cucd::Service::RequestPeerForTypeByAppId(const QString& type_id, const QStr
         NULL
     };
 
-    d->app_manager->invoke_application(PEER_PICKER_APP_ID.toStdString(), uris);
+    if (!d->active_sessions.keys().contains(app_id)) {
+        uint clientPid = d->connection.interface()->servicePid(this->message().service());
+        setupPromptSession(app_id, clientPid);
+    }
+
+    const PromptSessionP *session = d->active_sessions.value(app_id);
+    if (!session) {
+        TRACE() << Q_FUNC_INFO << "Invoking peer picker";
+        d->app_manager->invoke_application(PEER_PICKER_APP_ID.toStdString(), uris);
+    } else {
+        TRACE() << Q_FUNC_INFO << "Invoking application with session";
+        std::string instance_id = d->app_manager->invoke_application_with_session(PEER_PICKER_APP_ID.toStdString(), session, uris);
+    }
 }
 
 void cucd::Service::SelectPeerForAppId(const QString& app_id, const QString& peer_id)
@@ -443,7 +456,7 @@ QDBusObjectPath cucd::Service::CreateTransfer(const QString& dest_id, const QStr
     auto transfer = new cucd::Transfer(import_counter, src_id, dest_id, dir, type_id, this);
     if (dir == cuc::Transfer::Import) {
         uint clientPid = d->connection.interface()->servicePid(this->message().service());
-        setupPromptSession(transfer, clientPid);
+        setupPromptSession(dest_id, clientPid);
     }
     new TransferAdaptor(transfer);
     d->active_transfers.insert(transfer);
@@ -469,9 +482,12 @@ QDBusObjectPath cucd::Service::CreateTransfer(const QString& dest_id, const QStr
     return QDBusObjectPath{source};
 }
 
-void cucd::Service::setupPromptSession(cucd::Transfer* t, uint clientPid)
+void cucd::Service::setupPromptSession(QString app_id, uint clientPid)
 {
     TRACE() << Q_FUNC_INFO << "PID:" << clientPid;
+    if (d->active_sessions.keys().contains(app_id))
+        return;
+
     if (!m_mirHelper) {
         TRACE() << "No MirHelper, creating one";
         m_mirHelper = MirHelper::instance();
@@ -480,11 +496,11 @@ void cucd::Service::setupPromptSession(cucd::Transfer* t, uint clientPid)
     if (!session) return;
 
     QString mirSocket = session->requestSocket();
-    t->SetPromptSession(session);
     TRACE() << Q_FUNC_INFO << "mirSocket:" << mirSocket;
 
     QObject::connect(session.data(), SIGNAL(finished()),
                      this, SLOT(onPromptFinished(session)));
+    d->active_sessions[app_id] = &session;
 }
 
 void cucd::Service::onPromptFinished(PromptSessionP session)
@@ -520,13 +536,20 @@ void cucd::Service::handle_imports(int state)
             }
         }
 
-        if (!transfer->PromptSession() || transfer->WasSourceStartedByContentHub()) {
+        if (!d->active_sessions.keys().contains(transfer->source())) {
+            uint clientPid = d->connection.interface()->servicePid(this->message().service());
+            setupPromptSession(transfer->source(), clientPid);
+        }
+
+        const PromptSessionP *session = d->active_sessions.value(transfer->source());
+        if (!session || transfer->WasSourceStartedByContentHub()) {
             TRACE() << Q_FUNC_INFO << "Invoking application";
             gchar ** uris = NULL;
             d->app_manager->invoke_application(transfer->source().toStdString(), uris);
         } else {
             TRACE() << Q_FUNC_INFO << "Invoking application with session";
-            std::string instance_id = d->app_manager->invoke_application_with_session(transfer->source().toStdString(), transfer->PromptSession());
+            gchar ** uris = NULL;
+            std::string instance_id = d->app_manager->invoke_application_with_session(transfer->source().toStdString(), session, uris);
             transfer->SetInstanceId(QString::fromStdString(instance_id));
         }
     }

@@ -46,7 +46,7 @@ class ApplicationManager
      * \param app_id ID for the application (for example "gallery-app" - used for the desktop)
      * \param session
      */
-    virtual std::string invoke_application_with_session(const std::string &app_id, const PromptSessionP &session) = 0;
+    virtual std::string invoke_application_with_session(const std::string &app_id, const PromptSessionP *session, gchar ** uris) = 0;
 
     /*!
      * \brief stop_application_with_helper stops an application started by the content-hub helper

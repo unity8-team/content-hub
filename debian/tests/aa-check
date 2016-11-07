@@ -10,6 +10,9 @@ eval `dbus-launch`
 trap "kill $DBUS_SESSION_BUS_PID $XVFB_PID" 0 TERM QUIT INT
 export DBUS_SESSION_BUS_ADDRESS
 export XAUTHORITY=/dev/null
+export CONTENT_HUB_TESTING=1
+
+content-hub-service &2>/dev/null
 
 oktests="content-hub-test-ok"
 badtests="content-hub-test-bad"

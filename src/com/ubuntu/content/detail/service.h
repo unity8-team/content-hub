@@ -25,9 +25,11 @@
 #include <QtDBus/QDBusMessage>
 #include <QtDBus/QDBusServiceWatcher>
 #include <QtDBus/QDBusContext>
+#include <QDBusUnixFileDescriptor>
 
 #include <com/ubuntu/applicationmanager/application_manager.h>
 #include "handler.h"
+#include "mir-helper.h"
 #include "transfer.h"
 
 namespace com
@@ -72,6 +74,8 @@ class Service : public QObject, protected QDBusContext
     void DownloadManagerError(QString);
     bool HasPending(const QString&);
     QDBusVariant PeerForId(const QString&);
+    void RequestPeerForTypeByAppId(const QString&, const QString&, const QString&);
+    void SelectPeerForAppId(const QString&, const QString&);
 
   private:
     QByteArray getPasteData(const QString &surfaceId, int pasteId);
@@ -81,18 +85,21 @@ class Service : public QObject, protected QDBusContext
     struct RegHandler;
     QDBusServiceWatcher* m_watcher;
     QScopedPointer<Private> d;
+    MirHelper* m_mirHelper = 0;
 
   Q_SIGNALS:
     void PasteFormatsChanged(const QStringList &formats);
     void PasteboardChanged();
+    void PeerSelected(const QString &app_id, const QString &peer_id);
 
   private Q_SLOTS:
     void handle_imports(int);
     void handle_exports(int);
     void handler_unregistered(const QString&);
     QDBusObjectPath CreateTransfer(const QString&, const QString&, int, const QString&);
+    void setupPromptSession(QString, uint);
     void download_notify(com::ubuntu::content::detail::Transfer*);
-
+    void onPromptFinished(PromptSessionP session);
 };
 }
 }

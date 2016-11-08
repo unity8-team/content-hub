@@ -14,5 +14,34 @@
 #
 # Authored by: Thomas Voss <thomas.voss@canonical.com>
 
-add_subdirectory(com)
-add_subdirectory(helper)
+set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++11 -g -fPIE ${GCOV_FLAGS}")
+
+include_directories(
+  ${CMAKE_CURRENT_BINARY_DIR}
+  ${UBUNTU_LAUNCH_INCLUDE_DIRS}
+  ${GIO_INCLUDE_DIRS}
+  ${GLIB_INCLUDE_DIRS}
+  ${CLICK_INCLUDE_DIRS}
+  ${MIRCLIENT_INCLUDE_DIRS}
+)
+
+add_executable(
+  exec-tool
+
+  exec-tool.c
+)
+
+target_link_libraries(
+  exec-tool
+ 
+  ${UBUNTU_LAUNCH_LDFLAGS}
+  ${CLICK_LDFLAGS}
+  ${GLIB_LDFLAGS}
+  ${GIO_LDFLAGS}
+  ${MIRCLIENT_LDFLAGS}
+)
+
+install(
+  PROGRAMS "${CMAKE_CURRENT_BINARY_DIR}/exec-tool"
+  DESTINATION "${CMAKE_INSTALL_FULL_LIBEXECDIR}/ubuntu-app-launch/content-hub"
+)

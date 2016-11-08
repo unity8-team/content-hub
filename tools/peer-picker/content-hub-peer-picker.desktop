@@ -1,0 +1,12 @@
+[Desktop Entry]
+Name=Content Hub Peer Picker
+Comment=Content Hub Peer Picker
+Exec=content-hub-peer-picker %U
+Icon=
+Terminal=false
+Type=Application
+OnlyShowIn=Old
+X-Ubuntu-Touch=true
+X-Ubuntu-Single-Instance=false
+X-Ubuntu-Splash-Show-Header=true
+X-Ubuntu-Splash-Title=Choose from

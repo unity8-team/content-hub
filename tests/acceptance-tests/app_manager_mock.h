@@ -37,7 +37,7 @@ struct MockedAppManager : public cua::ApplicationManager
     }
 
     MOCK_METHOD2(invoke_application, bool(const std::string &, gchar ** uris));
-    MOCK_METHOD3(invoke_application_with_session, std::string(const std::string &, const PromptSessionP *, gchar ** uris));
+    MOCK_METHOD3(invoke_application_with_session, std::string(const std::string &, PromptSessionP, gchar ** uris));
     MOCK_METHOD2(stop_application_with_helper, bool(const std::string &, const std::string &));
     MOCK_METHOD1(stop_application, bool(const std::string &));
     MOCK_METHOD1(is_application_started, bool(const std::string &));

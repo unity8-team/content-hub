@@ -62,6 +62,7 @@ class Service : public QObject, protected QDBusContext
     QDBusObjectPath CreateExportToPeer(const QString&, const QString&, const QString&);
     QDBusObjectPath CreateShareToPeer(const QString&, const QString&, const QString&);
     bool CreatePaste(const QString&, const QString&, const QByteArray&, const QStringList&);
+    bool RemovePaste(const QString& surfaceId, const QString& pasteId);
     QByteArray GetLatestPasteData(const QString& surfaceId);
     QByteArray GetPasteData(const QString& surfaceId, const QString& pasteId);
     QStringList GetAllPasteIds(const QString& surfaceId);

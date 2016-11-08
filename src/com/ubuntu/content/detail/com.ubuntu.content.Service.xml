@@ -36,6 +36,11 @@
       <arg name="type_id" type="s" direction="in" />
       <arg name="transfer_object" type="o" direction="out" />
     </method>
+    <method name="RemovePaste">
+      <arg name="surfaceId" type="s" direction="in" />
+      <arg name="pasteid" type="s" direction="in" />
+      <arg name="success" type="b" direction="out" />
+    </method>
     <method name="CreatePaste">
       <arg name="app_id" type="s" direction="in" />
       <arg name="surfaceId" type="s" direction="in" />

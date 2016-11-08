@@ -92,6 +92,7 @@ private:
     void addEntry(PasteDataEntry& entry);
 
     PasteDataProvider* m_provider;
+    QString m_surfaceId;
     int m_entriesSelected;
     bool m_anyEntrySelected;
     bool m_allEntriesSelected;

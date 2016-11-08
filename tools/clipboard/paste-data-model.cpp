@@ -25,6 +25,7 @@
 PasteDataModel::PasteDataModel(QObject* parent)
     : QAbstractListModel(parent),
     m_provider(new PasteDataProvider()),
+    m_surfaceId("some-bogus-fake-surface-id"),
     m_entriesSelected(0),
     m_anyEntrySelected(false),
     m_allEntriesSelected(false)
@@ -206,6 +207,12 @@ void PasteDataModel::addEntry(PasteDataEntry& entry)
 
 void PasteDataModel::removeEntryByIndex(int index)
 {
+    if (index < 0 || index >= m_entries.size())
+        return;
+
+    if (!m_provider->removePaste(m_surfaceId, m_entries[index].pasteId.toInt())) 
+        return;
+
     beginRemoveRows(QModelIndex(), index, index);
     m_entries.removeAt(index);
     endRemoveRows();
@@ -214,11 +221,10 @@ void PasteDataModel::removeEntryByIndex(int index)
 
 void PasteDataModel::populateModel()
 {
-    QString surfaceId("some-bogus-fake-surface-id");
-    QStringList pasteData = m_provider->allPasteIds(surfaceId);
+    QStringList pasteData = m_provider->allPasteIds(m_surfaceId);
     for (int i = 0; i < pasteData.size(); ++i) {
         int id = pasteData.at(i).toInt();
-        QMimeData *pasteMimeData = m_provider->pasteById(surfaceId, id);
+        QMimeData *pasteMimeData = m_provider->pasteById(m_surfaceId, id);
         PasteDataEntry entry;
 
         entry.pasteId = QString::number(id);

@@ -363,6 +363,49 @@ bool cucd::Service::CreatePaste(const QString& app_id, const QString& surfaceId,
     return true;
 }
 
+bool cucd::Service::RemovePaste(const QString& surfaceId, const QString& pasteId)
+{
+    TRACE() << Q_FUNC_INFO << pasteId;
+
+    if (!verifiedSurfaceIsFocused(surfaceId))
+        return false;
+
+    int id = pasteId.toInt();
+    QByteArray pasteData = getPasteData(surfaceId, id);
+    if (pasteData.isNull())
+        return false;
+
+    QStringList types = deserializeMimeData(pasteData)->formats();
+
+    for (int i = d->active_pastes.size() - 1; i >= 0; i--) {
+        if (d->active_pastes.at(i)->Id() == id)
+            d->active_pastes.removeAt(i);
+        else {
+            QByteArray byteArray = d->active_pastes.at(i)->MimeData();
+            Q_FOREACH (QString f, deserializeMimeData(byteArray)->formats()) {
+                if (types.contains(f))
+                    types.removeAll(f);
+            }
+        }
+    }
+
+    Q_EMIT(PasteboardChanged());
+
+    bool pendingPasteFormatsChangedSignal = false;
+    Q_FOREACH (QString t, types) {
+        TRACE() << Q_FUNC_INFO << "Type: " << t;
+        if (d->pasteFormats.contains(t)) {
+            d->pasteFormats.removeAll(t);
+            pendingPasteFormatsChangedSignal = true;
+        }
+    }
+    if (pendingPasteFormatsChangedSignal) {
+        Q_EMIT(PasteFormatsChanged(d->pasteFormats));
+    }
+
+    return true;
+}
+
 QByteArray cucd::Service::GetLatestPasteData(const QString& surfaceId)
 {
     TRACE() << Q_FUNC_INFO;

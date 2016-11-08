@@ -222,7 +222,7 @@ void PasteDataModel::removeEntryByIndex(int index)
 void PasteDataModel::populateModel()
 {
     QStringList pasteData = m_provider->allPasteIds(m_surfaceId);
-    for (int i = 0; i < pasteData.size(); ++i) {
+    for (int i = pasteData.size() - 1; i >= 0; i--) {
         PasteDataEntry entry;
 
         int id = pasteData.at(i).toInt();

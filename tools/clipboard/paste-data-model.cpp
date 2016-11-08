@@ -223,14 +223,16 @@ void PasteDataModel::populateModel()
 {
     QStringList pasteData = m_provider->allPasteIds(m_surfaceId);
     for (int i = 0; i < pasteData.size(); ++i) {
-        int id = pasteData.at(i).toInt();
-        QMimeData *pasteMimeData = m_provider->pasteById(m_surfaceId, id);
         PasteDataEntry entry;
 
+        int id = pasteData.at(i).toInt();
         entry.pasteId = QString::number(id);
-        entry.source = "THE INTERNET";
+        entry.source = m_provider->pasteSourceById(m_surfaceId, id);
+
+        QMimeData *pasteMimeData = m_provider->pasteDataById(m_surfaceId, id);
         entry.dataType = TextType;
         entry.pasteData = pasteMimeData->text();
+
         entry.itemSelected = false;
         entry.itemDeleted = false;
         addEntry(entry);

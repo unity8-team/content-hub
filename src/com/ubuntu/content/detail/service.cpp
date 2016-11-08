@@ -406,6 +406,16 @@ bool cucd::Service::RemovePaste(const QString& surfaceId, const QString& pasteId
     return true;
 }
 
+QString cucd::Service::GetPasteSource(const QString& surfaceId, const QString& pasteId)
+{
+    TRACE() << Q_FUNC_INFO << pasteId;
+
+    if (d->active_pastes.isEmpty())
+        return QString();
+
+    return getPasteSource(surfaceId, pasteId.toInt());
+}
+
 QByteArray cucd::Service::GetLatestPasteData(const QString& surfaceId)
 {
     TRACE() << Q_FUNC_INFO;
@@ -434,6 +444,21 @@ QStringList cucd::Service::GetAllPasteIds(const QString& surfaceId)
         return QStringList();
 
     return getAllPasteIds(surfaceId);
+}
+
+QString cucd::Service::getPasteSource(const QString &surfaceId, int pasteId)
+{
+    if (!verifiedSurfaceIsFocused(surfaceId)) {
+        qWarning().nospace() << "Surface isn't focused. Denying paste.";
+        return QString();
+    }
+
+    Q_FOREACH (cucd::Paste *p, d->active_pastes)
+    {
+        if (p->Id() == pasteId)
+            return p->source();
+    }
+    return QString();
 }
 
 QByteArray cucd::Service::getPasteData(const QString &surfaceId, int pasteId)

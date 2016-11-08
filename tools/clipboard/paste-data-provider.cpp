@@ -36,10 +36,16 @@ QDBusPendingCall PasteDataProvider::requestAllPasteIds(const QString &surfaceId)
     return d->service->GetAllPasteIds(surfaceId);
 }
 
-QDBusPendingCall PasteDataProvider::requestPasteById(const QString &surfaceId, int pasteId)
+QDBusPendingCall PasteDataProvider::requestPasteDataById(const QString &surfaceId, int pasteId)
 {
     TRACE() << Q_FUNC_INFO;
     return d->service->GetPasteData(surfaceId, QString::number(pasteId));
+}
+
+QDBusPendingCall PasteDataProvider::requestPasteSourceById(const QString &surfaceId, int pasteId)
+{
+    TRACE() << Q_FUNC_INFO;
+    return d->service->GetPasteSource(surfaceId, QString::number(pasteId));
 }
 
 QDBusPendingCall PasteDataProvider::requestRemovePaste(const QString &surfaceId, int pasteId)
@@ -60,9 +66,9 @@ QStringList PasteDataProvider::allPasteIds(const QString &surfaceId)
     return qdbus_cast<QStringList>(reply.value());
 }
 
-QMimeData* PasteDataProvider::pasteById(const QString &surfaceId, int pasteId)
+QMimeData* PasteDataProvider::pasteDataById(const QString &surfaceId, int pasteId)
 {
-    QDBusPendingCall pendingCall = requestPasteById(surfaceId, pasteId);
+    QDBusPendingCall pendingCall = requestPasteDataById(surfaceId, pasteId);
     auto reply = QDBusPendingReply<QByteArray>(pendingCall);
     reply.waitForFinished();
 
@@ -71,6 +77,18 @@ QMimeData* PasteDataProvider::pasteById(const QString &surfaceId, int pasteId)
 
     QByteArray serializedMimeData = qdbus_cast<QByteArray>(reply.value());
     return deserializeMimeData(serializedMimeData);
+}
+
+QString PasteDataProvider::pasteSourceById(const QString &surfaceId, int pasteId)
+{
+    QDBusPendingCall pendingCall = requestPasteSourceById(surfaceId, pasteId);
+    auto reply = QDBusPendingReply<QString>(pendingCall);
+    reply.waitForFinished();
+
+    if (reply.isError())
+        return QString();
+
+    return qdbus_cast<QString>(reply.value());
 }
 
 bool PasteDataProvider::removePaste(const QString &surfaceId, int pasteId)

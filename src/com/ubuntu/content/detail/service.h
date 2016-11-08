@@ -63,6 +63,7 @@ class Service : public QObject, protected QDBusContext
     QDBusObjectPath CreateShareToPeer(const QString&, const QString&, const QString&);
     bool CreatePaste(const QString&, const QString&, const QByteArray&, const QStringList&);
     bool RemovePaste(const QString& surfaceId, const QString& pasteId);
+    QString GetPasteSource(const QString& surfaceId, const QString& pasteId);
     QByteArray GetLatestPasteData(const QString& surfaceId);
     QByteArray GetPasteData(const QString& surfaceId, const QString& pasteId);
     QStringList GetAllPasteIds(const QString& surfaceId);
@@ -76,6 +77,7 @@ class Service : public QObject, protected QDBusContext
     QDBusVariant PeerForId(const QString&);
 
   private:
+    QString getPasteSource(const QString &surfaceId, int pasteId);
     QByteArray getPasteData(const QString &surfaceId, int pasteId);
     QStringList getAllPasteIds(const QString &surfaceId);
     bool should_cancel(int);

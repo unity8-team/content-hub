@@ -17,6 +17,7 @@
  */
 
 #include <string.h>
+#include <gio/gio.h>
 
 #include "glib/content-hub-glib.h"
 

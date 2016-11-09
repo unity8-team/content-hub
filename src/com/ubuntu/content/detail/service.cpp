@@ -89,7 +89,7 @@ struct cucd::Service::Private : public QObject
     QSharedPointer<cucd::PeerRegistry> registry;
     QSet<cucd::Transfer*> active_transfers;
     QList<cucd::Paste*> active_pastes;
-    QMap<QString, const PromptSessionP*> active_sessions;
+    QMap<QString, PromptSessionP> active_sessions;
     QStringList pasteFormats;
     QSet<RegHandler*> handlers;
     QSharedPointer<cua::ApplicationManager> app_manager;
@@ -204,7 +204,7 @@ void cucd::Service::RequestPeerForTypeByAppId(const QString& type_id, const QStr
         setupPromptSession(app_id, clientPid);
     }
 
-    const PromptSessionP *session = d->active_sessions.value(app_id);
+    PromptSessionP session = d->active_sessions.value(app_id);
     if (!session) {
         TRACE() << Q_FUNC_INFO << "Invoking peer picker";
         d->app_manager->invoke_application(PEER_PICKER_APP_ID.toStdString(), uris);
@@ -500,7 +500,7 @@ void cucd::Service::setupPromptSession(QString app_id, uint clientPid)
 
     QObject::connect(session.data(), SIGNAL(finished()),
                      this, SLOT(onPromptFinished(session)));
-    d->active_sessions[app_id] = &session;
+    d->active_sessions[app_id] = session;
 }
 
 void cucd::Service::onPromptFinished(PromptSessionP session)
@@ -541,7 +541,7 @@ void cucd::Service::handle_imports(int state)
             setupPromptSession(transfer->source(), clientPid);
         }
 
-        const PromptSessionP *session = d->active_sessions.value(transfer->source());
+        PromptSessionP session = d->active_sessions.value(transfer->source());
         if (!session || transfer->WasSourceStartedByContentHub()) {
             TRACE() << Q_FUNC_INFO << "Invoking application";
             gchar ** uris = NULL;

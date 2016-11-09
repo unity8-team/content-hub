@@ -26,16 +26,11 @@
 #include "paste-data-model.h"
 #include "paste-data-filter-model.h"
 
-static QObject* PasteDataModel_singleton_factory(QQmlEngine* engine, QJSEngine* scriptEngine) {
-    Q_UNUSED(engine);
-    Q_UNUSED(scriptEngine);
-    return new PasteDataModel();
-}
-
 ClipboardApplication::ClipboardApplication(int &argc, char **argv)
     : QGuiApplication(argc, argv),
     m_view(0)
 {
+    connect(this, SIGNAL(applicationStateChanged(Qt::ApplicationState)), SIGNAL(applicationActiveChanged()));
 }
 
 ClipboardApplication::~ClipboardApplication()
@@ -45,7 +40,7 @@ ClipboardApplication::~ClipboardApplication()
 bool ClipboardApplication::setup()
 {
     const char* uri = "clipboardapp.private";
-    qmlRegisterSingletonType<PasteDataModel>(uri, 0, 1, "PasteDataModel", PasteDataModel_singleton_factory);
+    qmlRegisterType<PasteDataModel>(uri, 0, 1, "PasteDataModel");
     qmlRegisterType<PasteDataFilterModel>(uri, 0, 1, "PasteDataFilterModel");
 
     m_view = new QQuickView();
@@ -58,4 +53,9 @@ bool ClipboardApplication::setup()
     m_view->show();
 
     return true;
+}
+
+bool ClipboardApplication::applicationActive()
+{
+    return QGuiApplication::applicationState() == Qt::ApplicationActive;
 }

@@ -25,11 +25,16 @@
 class ClipboardApplication : public QGuiApplication
 {
     Q_OBJECT
+    Q_PROPERTY(bool applicationActive READ applicationActive NOTIFY applicationActiveChanged)
 
 public:
     ClipboardApplication(int &argc, char **argv);
     virtual ~ClipboardApplication();
     bool setup();
+    bool applicationActive();
+
+Q_SIGNALS:
+    void applicationActiveChanged();
 
 private:
     QQuickView *m_view;

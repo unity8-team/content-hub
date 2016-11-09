@@ -24,212 +24,239 @@ MainView {
     width: units.gu(48)
     height: units.gu(60)
 
-    PasteDataFilterModel {
-        id: pasteDataFilterModel
-        sourceModel: PasteDataModel
+    Connections {
+        target: application
+        onApplicationActiveChanged: {
+            if (application.applicationActive) {
+                mainPageLoader.loadMainPage()
+            }
+        }
     }
 
     PageStack {
         id: pageStack
-        Component.onCompleted: push(mainPage)
     }
 
-    Page {
-        id: mainPage
+    Loader {
+        id: mainPageLoader
+        active: false
 
-        property bool editMode: false
-
-        visible: false
-
-        header: PageHeader {
-            id: pageHeader
-
-            property alias leadingAnchors: leadingBar.anchors
-            property alias leadingDelegate: leadingBar.delegate
-            property alias leadingActions: leadingBar.actions
-            property alias trailingAnchors: trailingBar.anchors
-            property alias trailingDelegate: trailingBar.delegate
-            property alias trailingActions: trailingBar.actions
-
-            leadingActionBar {
-                id: leadingBar 
-            }
-
-            trailingActionBar {
-                id: trailingBar 
+        function loadMainPage() {
+            if (!mainPageLoader.active) {
+                mainPageLoader.active = true    
             }
         }
 
-        states: [
-            State {
-                id: defaultState
-                name: "default"
-                when: !mainPage.editMode
-                
-                property list<QtObject> leadingActions: [
-                    Action {
-                        iconName: "close"
-                        text: i18n.tr("Close")
-                        onTriggered: Qt.quit()
-                    }
-                ]
+        onStatusChanged: {
+            if (mainPageLoader.status == Loader.Ready) {
+                pageStack.push(mainPageLoader.item)
+            }
+        }
 
-                property list<QtObject> trailingActions: [
-                    Action {
-                        iconName: "edit"
-                        text: i18n.tr("Edit")
-                        onTriggered: mainPage.editMode = true
-                    }
-                ]
-
-                PropertyChanges {
-                    target: pageHeader
-                    title: i18n.tr("Clipboard")
-                    leadingActions: defaultState.leadingActions
-                    trailingActions: defaultState.trailingActions
-                }
-            },
-
-            State {
-                id: editState
-                name: "edit"
-                when: mainPage.editMode
-
-                property bool entriesEdited: false
-
-                property Component delegate: Component {
-                    AbstractButton {
-                        id: button
-
-                        width: label.width + units.gu(4)
-                        height: parent.height
-
-                        action: modelData
-
-                        Rectangle {
-                            color: UbuntuColors.slate
-                            opacity: 0.1
-                            anchors.fill: parent
-                            visible: button.pressed
-                        }
-
-                        Label {
-                            anchors.centerIn: parent
-                            id: label
-                            text: action.text
-                            font.weight: action.iconName === "tick" ? Font.Normal : Font.Light
-                        }
-                    }
-                }
-                
-                property list<QtObject> leadingActions: [
-                    Action {
-                        text: i18n.tr("Cancel")
-                        iconName: "close"
-                        onTriggered: {
-                            PasteDataModel.cancelEntriesDeleted()
-                            mainPage.editMode = false
-                            editState.entriesEdited = false
-                        }
-                    }
-                ]
-
-                property list<QtObject> trailingActions: [
-                    Action {
-                        text: i18n.tr("Save")
-                        iconName: "tick"
-                        enabled: editState.entriesEdited
-                        onTriggered: {
-                            PasteDataModel.saveEntriesDeleted()
-                            mainPage.editMode = false
-                            editState.entriesEdited = false
-                        }
-                    }
-                ]
-                
-                property Toolbar extensionToolbar: Toolbar {
-                    anchors {
-                        left: parent ? parent.left : undefined
-                        right: parent ? parent.right : undefined
-                        bottom: parent ? parent.bottom : undefined
-                    }
-
-                    leadingActionBar.actions: Action {
-                        iconName: "delete"
-                        text: i18n.tr("Delete")
-                        enabled: PasteDataModel.anyEntrySelected
-                        onTriggered: {
-                            editState.entriesEdited = true
-                            PasteDataModel.setSelectedEntriesDeleted()
-                        }
-                    }
-
-                    trailingActionBar.actions: Action {
-                        iconName: PasteDataModel.allEntriesSelected ? "select-none" : "select"
-                        text: i18n.tr("Select All")
-                        onTriggered: PasteDataModel.setAllEntriesSelected(!PasteDataModel.allEntriesSelected)
-                    }
-                }
-
-                PropertyChanges {
-                    target: pageHeader
-                    leadingAnchors.leftMargin: 0
-                    leadingDelegate: editState.delegate
-                    leadingActions: editState.leadingActions
-                    trailingAnchors.rightMargin: 0
-                    trailingDelegate: editState.delegate
-                    trailingActions: editState.trailingActions
-                    extension: editState.extensionToolbar
+        sourceComponent: Page {
+            id: mainPage
+    
+            property bool editMode: false
+    
+            visible: false
+    
+            PasteDataFilterModel {
+                id: pasteDataFilterModel
+                sourceModel: PasteDataModel {
+                    id: pasteDataModel
                 }
             }
-        ]
-
-        ListView {
-            id: clipboardListView
-            anchors {
-                top: pageHeader.bottom
-                bottom: parent.bottom
+    
+            header: PageHeader {
+                id: pageHeader
+    
+                property alias leadingAnchors: leadingBar.anchors
+                property alias leadingDelegate: leadingBar.delegate
+                property alias leadingActions: leadingBar.actions
+                property alias trailingAnchors: trailingBar.anchors
+                property alias trailingDelegate: trailingBar.delegate
+                property alias trailingActions: trailingBar.actions
+    
+                leadingActionBar {
+                    id: leadingBar 
+                }
+    
+                trailingActionBar {
+                    id: trailingBar 
+                }
             }
-
-            width: parent.width
-
-            model: pasteDataFilterModel
-
-            delegate: ClipboardItemDelegate {
-                id: delegate
-                title: pasteData
-                summary: source
-                imageSource: dataType === PasteDataModel.ImageType ? pasteData : ""
-
-                Binding {
-                    target: delegate
-                    property: "selected"
-                    value: itemSelected
-                }
-                
-
-                Component.onCompleted: {
-                    selectMode = Qt.binding(function() { return mainPage.editMode })
-                }
-
-                onSelectedChanged: PasteDataModel.setEntrySelectedByIndex(index, selected)
-
-                onPressAndHold: {
-                    if (!mainPage.editMode) {
-                        mainPage.editMode = true
+    
+            states: [
+                State {
+                    id: defaultState
+                    name: "default"
+                    when: !mainPage.editMode
+                    
+                    property list<QtObject> leadingActions: [
+                        Action {
+                            iconName: "close"
+                            text: i18n.tr("Close")
+                            onTriggered: Qt.quit()
+                        }
+                    ]
+    
+                    property list<QtObject> trailingActions: [
+                        Action {
+                            iconName: "edit"
+                            text: i18n.tr("Edit")
+                            onTriggered: mainPage.editMode = true
+                        }
+                    ]
+    
+                    PropertyChanges {
+                        target: pageHeader
+                        title: i18n.tr("Clipboard")
+                        leadingActions: defaultState.leadingActions
+                        trailingActions: defaultState.trailingActions
+                    }
+                },
+    
+                State {
+                    id: editState
+                    name: "edit"
+                    when: mainPage.editMode
+    
+                    property bool entriesEdited: false
+    
+                    property Component delegate: Component {
+                        AbstractButton {
+                            id: button
+    
+                            width: label.width + units.gu(4)
+                            height: parent.height
+    
+                            action: modelData
+    
+                            Rectangle {
+                                color: UbuntuColors.slate
+                                opacity: 0.1
+                                anchors.fill: parent
+                                visible: button.pressed
+                            }
+    
+                            Label {
+                                anchors.centerIn: parent
+                                id: label
+                                text: action.text
+                                font.weight: action.iconName === "tick" ? Font.Normal : Font.Light
+                            }
+                        }
+                    }
+                    
+                    property list<QtObject> leadingActions: [
+                        Action {
+                            text: i18n.tr("Cancel")
+                            iconName: "close"
+                            onTriggered: {
+                                pasteDataModel.cancelEntriesDeleted()
+                                mainPage.editMode = false
+                                editState.entriesEdited = false
+                            }
+                        }
+                    ]
+    
+                    property list<QtObject> trailingActions: [
+                        Action {
+                            text: i18n.tr("Save")
+                            iconName: "tick"
+                            enabled: editState.entriesEdited
+                            onTriggered: {
+                                pasteDataModel.saveEntriesDeleted()
+                                mainPage.editMode = false
+                                editState.entriesEdited = false
+                            }
+                        }
+                    ]
+                    
+                    property Toolbar extensionToolbar: Toolbar {
+                        anchors {
+                            left: parent ? parent.left : undefined
+                            right: parent ? parent.right : undefined
+                            bottom: parent ? parent.bottom : undefined
+                        }
+    
+                        leadingActionBar.actions: Action {
+                            iconName: "delete"
+                            text: i18n.tr("Delete")
+                            enabled: pasteDataModel.anyEntrySelected
+                            onTriggered: {
+                                editState.entriesEdited = true
+                                pasteDataModel.setSelectedEntriesDeleted()
+                            }
+                        }
+    
+                        trailingActionBar.actions: Action {
+                            iconName: pasteDataModel.allEntriesSelected ? "select-none" : "select"
+                            text: i18n.tr("Select All")
+                            onTriggered: pasteDataModel.setAllEntriesSelected(!pasteDataModel.allEntriesSelected)
+                        }
+                    }
+    
+                    PropertyChanges {
+                        target: pageHeader
+                        leadingAnchors.leftMargin: 0
+                        leadingDelegate: editState.delegate
+                        leadingActions: editState.leadingActions
+                        trailingAnchors.rightMargin: 0
+                        trailingDelegate: editState.delegate
+                        trailingActions: editState.trailingActions
+                        extension: editState.extensionToolbar
                     }
                 }
-                onClicked: {
-                    if (!selectMode) {
-                        PasteDataModel.pasteEntryByIndex(index)
-                    } 
+            ]
+    
+            ListView {
+                id: clipboardListView
+                anchors {
+                    top: pageHeader.bottom
+                    bottom: parent.bottom
                 }
-                onDeleteClicked: PasteDataModel.removeEntryByIndex(index)
-                onPreviewClicked: {
-                    if (dataType === PasteDataModel.ImageType) {
-                        previewImageLoader.loadPreview(index, pasteData)
-                    } else {
-                        previewTextLoader.loadPreview(index, pasteData)
+    
+                width: parent.width
+    
+                model: pasteDataFilterModel
+    
+                delegate: ClipboardItemDelegate {
+                    id: delegate
+                    title: pasteData
+                    summary: source
+                    imageSource: dataType === pasteDataModel.ImageType ? pasteData : ""
+    
+                    Binding {
+                        target: delegate
+                        property: "selected"
+                        value: itemSelected
+                    }
+                    
+    
+                    Component.onCompleted: {
+                        selectMode = Qt.binding(function() { return mainPage.editMode })
+                    }
+    
+                    onSelectedChanged: pasteDataModel.setEntrySelectedByIndex(index, selected)
+    
+                    onPressAndHold: {
+                        if (!mainPage.editMode) {
+                            mainPage.editMode = true
+                        }
+                    }
+                    onClicked: {
+                        if (!selectMode) {
+                            pasteDataModel.pasteEntryByIndex(index)
+                        } 
+                    }
+                    onDeleteClicked: pasteDataModel.removeEntryByIndex(index)
+                    onPreviewClicked: {
+                        if (dataType === pasteDataModel.ImageType) {
+                            previewImageLoader.loadPreview(index, pasteData)
+                        } else {
+                            previewTextLoader.loadPreview(index, pasteData)
+                        }
                     }
                 }
             }
@@ -257,7 +284,7 @@ MainView {
         sourceComponent: PreviewTextPage {
             visible: false
             text: previewTextLoader.textPreview
-            onPasteClicked: PasteDataModel.pasteEntryByIndex(previewTextLoader.index)
+            onPasteClicked: pasteDataModel.pasteEntryByIndex(previewTextLoader.index)
         }
 
         onStatusChanged: {
@@ -288,7 +315,7 @@ MainView {
         sourceComponent: PreviewImagePage {
             visible: false
             imageSource: previewImageLoader.imagePreview
-            onPasteClicked: PasteDataModel.pasteEntryByIndex(previewImageLoader.index)
+            onPasteClicked: pasteDataModel.pasteEntryByIndex(previewImageLoader.index)
         }
 
         onStatusChanged: {

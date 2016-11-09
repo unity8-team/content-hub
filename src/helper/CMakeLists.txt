@@ -25,6 +25,8 @@ include_directories(
   ${MIRCLIENT_INCLUDE_DIRS}
 )
 
+add_definitions( -DSYSTEM_DIRECTORY="${CMAKE_INSTALL_FULL_DATADIR}/applications" )
+
 add_executable(
   exec-tool
 

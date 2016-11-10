@@ -21,19 +21,6 @@
 
 #include "glib/content-hub-glib.h"
 
-#ifndef g_assert_cmpmem
-#define g_assert_cmpmem(m1, l1, m2, l2) G_STMT_START {\
-                                             gconstpointer __m1 = m1, __m2 = m2; \
-                                             int __l1 = l1, __l2 = l2; \
-                                             if (__l1 != __l2) \
-                                               g_assertion_message_cmpnum (G_LOG_DOMAIN, __FILE__, __LINE__, G_STRFUNC, \
-                                                                           #l1 " (len(" #m1 ")) == " #l2 " (len(" #m2 "))", __l1, "==", __l2, 'i'); \
-                                             else if (memcmp (__m1, __m2, __l1) != 0) \
-                                               g_assertion_message (G_LOG_DOMAIN, __FILE__, __LINE__, G_STRFUNC, \
-                                                                    "assertion failed (" #m1 " == " #m2 ")"); \
-                                        } G_STMT_END
-#endif /* g_assert_cmpmem */
-
 static const gchar *SERVICE_NAME = "com.ubuntu.content.dbus.Service";
 static const gchar *SERVICE_PATH = "/";
 static const gchar *APPLICATION_ID = "com.ubuntu.content.glib_test";
@@ -63,7 +50,7 @@ static void
 pasteboard_changed_cb (ContentHubService *service,
                        gpointer           user_data)
 {
-  GMainLoop *main_loop = user_data;
+  GMainLoop *main_loop = (GMainLoop *) user_data;
 
   pasteboard_changed = TRUE;
 
@@ -73,7 +60,7 @@ pasteboard_changed_cb (ContentHubService *service,
 static gboolean
 timed_out_cb (gpointer user_data)
 {
-  GMainLoop *main_loop = user_data;
+  GMainLoop *main_loop = (GMainLoop *) user_data;
 
   g_main_loop_quit (main_loop);
 
@@ -151,7 +138,7 @@ get_paste (ContentHubService *service)
   data = g_variant_get_fixed_array (variant, &size, sizeof (guchar));
 
   g_assert_cmpint (size, ==, N_PASTE_DATA);
-  g_assert_cmpmem (data, size, PASTE_DATA, N_PASTE_DATA);
+  g_assert_cmpint (memcmp (data, PASTE_DATA, N_PASTE_DATA), ==, 0);
 }
 
 int

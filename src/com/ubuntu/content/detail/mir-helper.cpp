@@ -111,7 +111,7 @@ void PromptSession::release()
     Q_D(PromptSession);
     if (d->m_mirSession)
         mir_prompt_session_release_sync(d->m_mirSession);
-        d->m_mirSession = NULL;
+    d->m_mirSession = NULL;
 }
 
 QString PromptSession::requestSocket()

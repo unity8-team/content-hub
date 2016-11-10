@@ -90,6 +90,7 @@ struct cucd::Service::Private : public QObject
     QSet<cucd::Transfer*> active_transfers;
     QList<cucd::Paste*> active_pastes;
     QMap<QString, PromptSessionP> active_sessions;
+    QMap<QString, std::string> peer_picker_instances;
     QStringList pasteFormats;
     QSet<RegHandler*> handlers;
     QSharedPointer<cua::ApplicationManager> app_manager;
@@ -211,6 +212,7 @@ void cucd::Service::RequestPeerForTypeByAppId(const QString& type_id, const QStr
     } else {
         TRACE() << Q_FUNC_INFO << "Invoking application with session";
         std::string instance_id = d->app_manager->invoke_application_with_session(PEER_PICKER_APP_ID.toStdString(), session, uris);
+        d->peer_picker_instances[app_id] = instance_id;
     }
 }
 
@@ -218,6 +220,17 @@ void cucd::Service::SelectPeerForAppId(const QString& app_id, const QString& pee
 {
     TRACE() << Q_FUNC_INFO << app_id << peer_id;
     // FIXME: lock this down to only all the peer picker APP_ID to call this
+    if (d->peer_picker_instances.contains(app_id)) {
+        if (d->active_sessions.keys().contains(app_id)) {
+                PromptSessionP pSession = d->active_sessions.value(app_id);
+                PromptSession* session = pSession.data();
+                if (session)
+                    session->release();
+        }
+        std::string instance_id = d->peer_picker_instances.value(app_id);
+        d->app_manager->stop_application_with_helper(PEER_PICKER_APP_ID.toStdString(), instance_id);
+        d->peer_picker_instances.remove(app_id);
+    }
     Q_EMIT(PeerSelected(app_id, peer_id));
 }
 
@@ -536,12 +549,12 @@ void cucd::Service::handle_imports(int state)
             }
         }
 
-        if (!d->active_sessions.keys().contains(transfer->source())) {
+        if (!d->active_sessions.keys().contains(transfer->destination())) {
             uint clientPid = d->connection.interface()->servicePid(this->message().service());
             setupPromptSession(transfer->source(), clientPid);
         }
 
-        PromptSessionP session = d->active_sessions.value(transfer->source());
+        PromptSessionP session = d->active_sessions.value(transfer->destination());
         if (!session || transfer->WasSourceStartedByContentHub()) {
             TRACE() << Q_FUNC_INFO << "Invoking application";
             gchar ** uris = NULL;

@@ -14,6 +14,7 @@ LDFLAGS:=$(shell dpkg-buildflags --get LDFLAGS)
 
 override_dh_auto_install:
 	dh_auto_install
+	dh_apparmor -pcontent-hub --profile-name=content-hub-peer-picker
 	dh_apparmor -pcontent-hub-testability --profile-name=content-hub-testability
 	dh_apparmor -pcontent-hub --profile-name=content-hub-trust-prompt
 

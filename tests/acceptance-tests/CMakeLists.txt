@@ -82,7 +82,7 @@ add_executable(
 
 add_executable(
   glib_test
-  glib_test.c
+  glib_test.cpp
 )
 
 qt5_use_modules(app_hub_communication_default_source Core Gui DBus Test)

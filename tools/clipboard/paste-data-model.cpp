@@ -17,8 +17,8 @@
 
 #include "paste-data-model.h"
 
-#include <QTimer>
 #include <QDebug>
+#include <QTimer>
 
 #include "paste-data-provider.h"
 

@@ -19,8 +19,12 @@
 #include "clipboardapplication.h"
 
 #include <QGuiApplication>
+#include <QDebug>
 #include <QtQml/QQmlContext>
 #include <QtQml/QQmlEngine>
+
+#include <qpa/qplatformnativeinterface.h>
+#include <mir_toolkit/mir_surface.h>
 
 #include "config.h"
 #include "paste-data-model.h"
@@ -30,7 +34,7 @@ ClipboardApplication::ClipboardApplication(int &argc, char **argv)
     : QGuiApplication(argc, argv),
     m_view(0)
 {
-    connect(this, SIGNAL(applicationStateChanged(Qt::ApplicationState)), SIGNAL(applicationActiveChanged()));
+    connect(this, SIGNAL(applicationStateChanged(Qt::ApplicationState)), SLOT(onApplicationStateChanged(Qt::ApplicationState)));
 }
 
 ClipboardApplication::~ClipboardApplication()
@@ -58,4 +62,21 @@ bool ClipboardApplication::setup()
 bool ClipboardApplication::applicationActive()
 {
     return QGuiApplication::applicationState() == Qt::ApplicationActive;
+}
+
+void ClipboardApplication::onApplicationStateChanged(Qt::ApplicationState state)
+{
+    if (state == Qt::ApplicationActive) {
+        QWindow *focusWindow = QGuiApplication::focusWindow();
+        if (focusWindow) { 
+            //auto mirSurface = static_cast<MirSurface*>(platformNativeInterface()->nativeResourceForWindow("mirsurface", focusWindow));
+            qDebug() << platformNativeInterface()->nativeResourceForWindow("mirsurface", focusWindow);
+
+        }
+        //MirPersistentId* mirPermaId = mir_surface_request_persistent_id_sync(mirSurface);
+        //qDebug() << mir_persistent_id_as_string(mirPermaId);
+        //mir_persistent_id_release(mirPermaId);
+    }
+
+    Q_EMIT(applicationActiveChanged());
 }

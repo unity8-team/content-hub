@@ -36,6 +36,9 @@ public:
 Q_SIGNALS:
     void applicationActiveChanged();
 
+protected Q_SLOTS:
+    void onApplicationStateChanged(Qt::ApplicationState state);
+
 private:
     QQuickView *m_view;
 };

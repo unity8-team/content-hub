@@ -46,7 +46,7 @@ MainView {
 
         onPeerSelected: {
             ContentHub.selectPeerForAppId(requesterId, peer.appId)
-            Qt.quit()
+            //Qt.quit()
         }
 
         onCancelPressed: {

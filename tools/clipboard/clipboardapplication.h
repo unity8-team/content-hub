@@ -26,20 +26,26 @@ class ClipboardApplication : public QGuiApplication
 {
     Q_OBJECT
     Q_PROPERTY(bool applicationActive READ applicationActive NOTIFY applicationActiveChanged)
+    Q_PROPERTY(QString surfaceId READ surfaceId NOTIFY surfaceIdChanged)
 
 public:
     ClipboardApplication(int &argc, char **argv);
     virtual ~ClipboardApplication();
     bool setup();
     bool applicationActive();
+    const QString& surfaceId() const;
 
 Q_SIGNALS:
     void applicationActiveChanged();
+    void surfaceIdChanged();
 
 protected Q_SLOTS:
     void onApplicationStateChanged(Qt::ApplicationState state);
 
 private:
+    QString requestSurfaceId();
+
+    QString m_surfaceId;
     QQuickView *m_view;
 };
 

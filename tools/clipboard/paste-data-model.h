@@ -28,6 +28,7 @@ class PasteDataModel : public QAbstractListModel
     Q_OBJECT
 
     Q_PROPERTY(int count READ rowCount NOTIFY rowCountChanged)
+    Q_PROPERTY(QString surfaceId READ surfaceId WRITE setSurfaceId NOTIFY surfaceIdChanged)
     Q_PROPERTY(bool anyEntrySelected READ anyEntrySelected NOTIFY anyEntrySelectedChanged)
     Q_PROPERTY(bool allEntriesSelected READ allEntriesSelected NOTIFY allEntriesSelectedChanged)
 
@@ -57,6 +58,8 @@ public:
     int rowCount(const QModelIndex& parent=QModelIndex()) const;
     QVariant data(const QModelIndex& index, int role) const;
 
+    QString surfaceId() const; 
+    void setSurfaceId(QString surfaceId); 
     bool anyEntrySelected() const;
     bool allEntriesSelected() const;
 
@@ -85,6 +88,7 @@ protected Q_SLOTS:
 
 Q_SIGNALS:
     void rowCountChanged();
+    void surfaceIdChanged();
     void anyEntrySelectedChanged();
     void allEntriesSelectedChanged();
 

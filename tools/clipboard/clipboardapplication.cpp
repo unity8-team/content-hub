@@ -27,11 +27,13 @@
 #include <mir_toolkit/mir_surface.h>
 
 #include "config.h"
+#include "debug.h"
 #include "paste-data-model.h"
 #include "paste-data-filter-model.h"
 
 ClipboardApplication::ClipboardApplication(int &argc, char **argv)
     : QGuiApplication(argc, argv),
+    m_surfaceId(),
     m_view(0)
 {
     connect(this, SIGNAL(applicationStateChanged(Qt::ApplicationState)), SLOT(onApplicationStateChanged(Qt::ApplicationState)));
@@ -64,19 +66,36 @@ bool ClipboardApplication::applicationActive()
     return QGuiApplication::applicationState() == Qt::ApplicationActive;
 }
 
+const QString& ClipboardApplication::surfaceId() const
+{
+    return m_surfaceId;
+}
+
 void ClipboardApplication::onApplicationStateChanged(Qt::ApplicationState state)
 {
-    if (state == Qt::ApplicationActive) {
-        QWindow *focusWindow = QGuiApplication::focusWindow();
-        if (focusWindow) { 
-            //auto mirSurface = static_cast<MirSurface*>(platformNativeInterface()->nativeResourceForWindow("mirsurface", focusWindow));
-            qDebug() << platformNativeInterface()->nativeResourceForWindow("mirsurface", focusWindow);
-
-        }
-        //MirPersistentId* mirPermaId = mir_surface_request_persistent_id_sync(mirSurface);
-        //qDebug() << mir_persistent_id_as_string(mirPermaId);
-        //mir_persistent_id_release(mirPermaId);
+    if (m_surfaceId.isEmpty() && state == Qt::ApplicationActive) {
+        m_surfaceId = requestSurfaceId();
+        if (m_surfaceId.isEmpty())
+            TRACE() << Q_FUNC_INFO << "Unable to request MIR surfaceId. Clipboard will not be able to get any data from content-hub";
+        else
+            Q_EMIT(surfaceIdChanged());
     }
-
     Q_EMIT(applicationActiveChanged());
+}
+
+QString ClipboardApplication::requestSurfaceId()
+{
+    QWindow *focusWindow = QGuiApplication::focusWindow();
+    if (!focusWindow)
+        return QString();
+
+    auto mirSurface = static_cast<MirSurface*>(platformNativeInterface()->nativeResourceForWindow("mirsurface", focusWindow));
+    if (!mirSurface)
+        return QString();
+
+    MirPersistentId* mirPermaId = mir_surface_request_persistent_id_sync(mirSurface);
+    QString surfaceId(mir_persistent_id_as_string(mirPermaId));
+    mir_persistent_id_release(mirPermaId);
+
+    return surfaceId;
 }

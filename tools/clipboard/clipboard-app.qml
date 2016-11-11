@@ -43,7 +43,7 @@ MainView {
 
         function loadMainPage() {
             if (!mainPageLoader.active) {
-                mainPageLoader.active = true    
+                mainPageLoader.active = true
             }
         }
 
@@ -55,37 +55,38 @@ MainView {
 
         sourceComponent: Page {
             id: mainPage
-    
+
             property bool editMode: false
-    
+
             visible: false
-    
+
             PasteDataFilterModel {
                 id: pasteDataFilterModel
                 sourceModel: PasteDataModel {
                     id: pasteDataModel
+                    surfaceId: application.surfaceId
                 }
             }
-    
+
             header: PageHeader {
                 id: pageHeader
-    
+
                 property alias leadingAnchors: leadingBar.anchors
                 property alias leadingDelegate: leadingBar.delegate
                 property alias leadingActions: leadingBar.actions
                 property alias trailingAnchors: trailingBar.anchors
                 property alias trailingDelegate: trailingBar.delegate
                 property alias trailingActions: trailingBar.actions
-    
+
                 leadingActionBar {
                     id: leadingBar 
                 }
-    
+
                 trailingActionBar {
                     id: trailingBar 
                 }
             }
-    
+
             states: [
                 State {
                     id: defaultState
@@ -99,7 +100,7 @@ MainView {
                             onTriggered: Qt.quit()
                         }
                     ]
-    
+
                     property list<QtObject> trailingActions: [
                         Action {
                             iconName: "edit"
@@ -107,7 +108,7 @@ MainView {
                             onTriggered: mainPage.editMode = true
                         }
                     ]
-    
+
                     PropertyChanges {
                         target: pageHeader
                         title: i18n.tr("Clipboard")
@@ -115,30 +116,30 @@ MainView {
                         trailingActions: defaultState.trailingActions
                     }
                 },
-    
+
                 State {
                     id: editState
                     name: "edit"
                     when: mainPage.editMode
-    
+
                     property bool entriesEdited: false
-    
+
                     property Component delegate: Component {
                         AbstractButton {
                             id: button
-    
+
                             width: label.width + units.gu(4)
                             height: parent.height
-    
+
                             action: modelData
-    
+
                             Rectangle {
                                 color: UbuntuColors.slate
                                 opacity: 0.1
                                 anchors.fill: parent
                                 visible: button.pressed
                             }
-    
+
                             Label {
                                 anchors.centerIn: parent
                                 id: label
@@ -147,7 +148,7 @@ MainView {
                             }
                         }
                     }
-                    
+
                     property list<QtObject> leadingActions: [
                         Action {
                             text: i18n.tr("Cancel")
@@ -159,7 +160,7 @@ MainView {
                             }
                         }
                     ]
-    
+
                     property list<QtObject> trailingActions: [
                         Action {
                             text: i18n.tr("Save")
@@ -172,14 +173,14 @@ MainView {
                             }
                         }
                     ]
-                    
+
                     property Toolbar extensionToolbar: Toolbar {
                         anchors {
                             left: parent ? parent.left : undefined
                             right: parent ? parent.right : undefined
                             bottom: parent ? parent.bottom : undefined
                         }
-    
+
                         leadingActionBar.actions: Action {
                             iconName: "delete"
                             text: i18n.tr("Delete")
@@ -189,14 +190,14 @@ MainView {
                                 pasteDataModel.setSelectedEntriesDeleted()
                             }
                         }
-    
+
                         trailingActionBar.actions: Action {
                             iconName: pasteDataModel.allEntriesSelected ? "select-none" : "select"
                             text: i18n.tr("Select All")
                             onTriggered: pasteDataModel.setAllEntriesSelected(!pasteDataModel.allEntriesSelected)
                         }
                     }
-    
+
                     PropertyChanges {
                         target: pageHeader
                         leadingAnchors.leftMargin: 0
@@ -209,37 +210,36 @@ MainView {
                     }
                 }
             ]
-    
+
             ListView {
                 id: clipboardListView
                 anchors {
                     top: pageHeader.bottom
                     bottom: parent.bottom
                 }
-    
+
                 width: parent.width
-    
+
                 model: pasteDataFilterModel
-    
+
                 delegate: ClipboardItemDelegate {
                     id: delegate
                     title: pasteData
                     summary: source
                     imageSource: dataType === pasteDataModel.ImageType ? pasteData : ""
-    
+
                     Binding {
                         target: delegate
                         property: "selected"
                         value: itemSelected
                     }
-                    
-    
+
                     Component.onCompleted: {
                         selectMode = Qt.binding(function() { return mainPage.editMode })
                     }
-    
+
                     onSelectedChanged: pasteDataModel.setEntrySelectedByIndex(index, selected)
-    
+
                     onPressAndHold: {
                         if (!mainPage.editMode) {
                             mainPage.editMode = true
@@ -273,7 +273,7 @@ MainView {
             previewTextLoader.index = index
             previewTextLoader.textPreview = text
             if (!previewTextLoader.active) {
-                previewTextLoader.active = true    
+                previewTextLoader.active = true
             } else if (previewTextLoader.status == Loader.Ready) {
                 pageStack.push(previewTextLoader.item)
             }
@@ -304,7 +304,7 @@ MainView {
             previewImageLoader.index = index
             previewImageLoader.imagePreview = url
             if (!previewImageLoader.active) {
-                previewImageLoader.active = true    
+                previewImageLoader.active = true
             } else if (previewImageLoader.status == Loader.Ready) {
                 pageStack.push(previewImageLoader.item)
             }

@@ -25,7 +25,7 @@
 PasteDataModel::PasteDataModel(QObject* parent)
     : QAbstractListModel(parent),
     m_provider(new PasteDataProvider()),
-    m_surfaceId("some-bogus-fake-surface-id"),
+    m_surfaceId(),
     m_entriesSelected(0),
     m_anyEntrySelected(false),
     m_allEntriesSelected(false)
@@ -80,6 +80,19 @@ QVariant PasteDataModel::data(const QModelIndex& index, int role) const
         return entry.itemDeleted;
     default:
         return QVariant();
+    }
+}
+
+QString PasteDataModel::surfaceId() const
+{
+    return m_surfaceId;
+}
+
+void PasteDataModel::setSurfaceId(QString surfaceId)
+{
+    if (m_surfaceId != surfaceId) {
+        m_surfaceId = surfaceId;
+        Q_EMIT(surfaceIdChanged());
     }
 }
 

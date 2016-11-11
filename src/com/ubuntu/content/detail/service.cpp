@@ -857,7 +857,6 @@ QStringList cucd::Service::PasteFormats()
 
 bool cucd::Service::verifiedSurfaceIsFocused(const QString &surfaceId)
 {
-    return true;
     /* Only verify focus when not running under testing */
     if (!qgetenv("CONTENT_HUB_TESTING").isNull())
         return true;

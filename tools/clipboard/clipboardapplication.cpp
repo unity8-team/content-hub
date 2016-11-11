@@ -61,11 +61,6 @@ bool ClipboardApplication::setup()
     return true;
 }
 
-bool ClipboardApplication::applicationActive()
-{
-    return QGuiApplication::applicationState() == Qt::ApplicationActive;
-}
-
 const QString& ClipboardApplication::surfaceId() const
 {
     return m_surfaceId;
@@ -75,12 +70,12 @@ void ClipboardApplication::onApplicationStateChanged(Qt::ApplicationState state)
 {
     if (m_surfaceId.isEmpty() && state == Qt::ApplicationActive) {
         m_surfaceId = requestSurfaceId();
-        if (m_surfaceId.isEmpty())
+        if (m_surfaceId.isEmpty()) {
             TRACE() << Q_FUNC_INFO << "Unable to request MIR surfaceId. Clipboard will not be able to get any data from content-hub";
-        else
+        } else {
             Q_EMIT(surfaceIdChanged());
+        }
     }
-    Q_EMIT(applicationActiveChanged());
 }
 
 QString ClipboardApplication::requestSurfaceId()

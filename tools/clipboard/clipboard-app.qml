@@ -26,11 +26,7 @@ MainView {
 
     Connections {
         target: application
-        onApplicationActiveChanged: {
-            if (application.applicationActive) {
-                mainPageLoader.loadMainPage()
-            }
-        }
+        onSurfaceIdChanged: mainPageLoader.loadMainPage()
     }
 
     PageStack {

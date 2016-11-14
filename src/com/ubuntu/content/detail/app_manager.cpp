@@ -54,9 +54,7 @@ std::string cucd::AppManager::invoke_application_with_session(const std::string 
  */
 bool cucd::AppManager::stop_application_with_helper(const std::string &app_id, const std::string &instance_id)
 {
-    TRACE() << Q_FUNC_INFO << "APP_ID:" << app_id.c_str();
-    TRACE() << Q_FUNC_INFO << "INSTANCE_ID:" << instance_id.c_str();
-
+    TRACE() << Q_FUNC_INFO << "APP_ID:" << app_id.c_str() << "INSTANCE_ID:" << instance_id.c_str();
     gboolean ok = ubuntu_app_launch_stop_multiple_helper("content-hub",
                                                          app_id.c_str(),
                                                          instance_id.c_str());

@@ -76,6 +76,7 @@ class Service : public QObject, protected QDBusContext
     QDBusVariant PeerForId(const QString&);
     void RequestPeerForTypeByAppId(const QString&, const QString&, const QString&);
     void SelectPeerForAppId(const QString&, const QString&);
+    void onPromptFinished();
 
   private:
     QByteArray getPasteData(const QString &surfaceId, int pasteId);
@@ -99,7 +100,6 @@ class Service : public QObject, protected QDBusContext
     QDBusObjectPath CreateTransfer(const QString&, const QString&, int, const QString&);
     void setupPromptSession(QString, uint);
     void download_notify(com::ubuntu::content::detail::Transfer*);
-    void onPromptFinished(PromptSessionP session);
 };
 }
 }

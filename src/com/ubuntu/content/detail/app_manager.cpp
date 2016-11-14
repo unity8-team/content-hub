@@ -38,8 +38,11 @@ bool cucd::AppManager::invoke_application(const std::string &app_id, gchar ** ur
 std::string cucd::AppManager::invoke_application_with_session(const std::string &app_id, PromptSessionP session, gchar ** uris)
 {
     TRACE() << Q_FUNC_INFO << "APP_ID:" << app_id.c_str();
+    auto psession = session.data()->get();
+    if (psession == NULL)
+        return "";
     auto instance_c = ubuntu_app_launch_start_session_helper("content-hub",
-                                                             session.data()->get(),
+                                                             psession,
                                                              app_id.c_str(),
                                                              (const gchar * const *)uris);
     std::string instid = std::string(instance_c);

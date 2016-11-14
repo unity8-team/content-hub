@@ -525,7 +525,6 @@ void cucd::Service::setupPromptSession(QString app_id, uint clientPid)
 void cucd::Service::onPromptFinished()
 {
     TRACE() << Q_FUNC_INFO;
-    //Q_UNUSED(session);
     PromptSession *session = static_cast<PromptSession*>(sender());
 
     Q_FOREACH(QString key, d->active_sessions.keys()) {
@@ -589,19 +588,10 @@ void cucd::Service::handle_imports(int state)
     if (state == cuc::Transfer::charged)
     {
         TRACE() << Q_FUNC_INFO << "Charged";
-        if (transfer->WasSourceStartedByContentHub()) {
-            if (d->active_sessions.keys().contains(transfer->destination())) {
-                PromptSessionP pSession = d->active_sessions.value(transfer->destination());
-                PromptSession* session = pSession.data();
-                d->app_manager->stop_application_with_helper(transfer->source().toStdString(), transfer->InstanceId().toStdString());
-                //if (session)
-                //    session->release();
-                //qWarning() << "Removing session for" << transfer->destination();
-                //d->active_sessions.remove(transfer->destination());
-                qWarning() << "Active sessions: " << d->active_sessions.keys();
-            } else {
-                d->app_manager->stop_application(transfer->source().toStdString());
-            }
+        if (!transfer->InstanceId().isEmpty()) {
+            d->app_manager->stop_application_with_helper(transfer->source().toStdString(), transfer->InstanceId().toStdString());
+        } else {
+            d->app_manager->stop_application(transfer->source().toStdString());
         }
 
         gchar ** uris = NULL;
@@ -658,11 +648,7 @@ void cucd::Service::handle_imports(int state)
                 }
             }
             if (shouldStop) {
-                if (d->active_sessions.keys().contains(transfer->destination())) {
-                    PromptSessionP pSession = d->active_sessions.value(transfer->destination());
-                    PromptSession* session = pSession.data();
-                    if (session)
-                        session->release();
+                if (!transfer->InstanceId().isEmpty()) {
                     d->app_manager->stop_application_with_helper(transfer->source().toStdString(), transfer->InstanceId().toStdString());
                 } else {
                     d->app_manager->stop_application(transfer->source().toStdString());

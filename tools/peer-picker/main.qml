@@ -50,7 +50,8 @@ MainView {
         }
 
         onCancelPressed: {
-            Qt.quit()
+            ContentHub.selectPeerForAppIdCancelled(requesterId)
+            //Qt.quit()
         }
     }
 }

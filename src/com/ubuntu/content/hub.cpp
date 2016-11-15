@@ -92,6 +92,9 @@ cuc::Hub::Hub(QObject* parent) : QObject(parent), d{new cuc::Hub::Private{this}}
     QObject::connect(d->service, SIGNAL(PeerSelected(const QString&, const QString&)),
             this,
             SLOT(onPeerSelected(const QString&, const QString&)));
+    QObject::connect(d->service, SIGNAL(PeerSelectionCancelled(const QString&)),
+            this,
+            SLOT(onPeerSelectionCancelled(const QString&)));
 }
 
 cuc::Hub::~Hub()
@@ -114,6 +117,12 @@ void cuc::Hub::selectPeerForAppId(QString app_id, QString peer_id)
 {
     TRACE() << Q_FUNC_INFO << app_id << peer_id;
     d->service->SelectPeerForAppId(app_id, peer_id);
+}
+
+void cuc::Hub::selectPeerForAppIdCancelled(QString app_id)
+{
+    TRACE() << Q_FUNC_INFO << app_id;
+    d->service->SelectPeerForAppIdCancelled(app_id);
 }
 
 void cuc::Hub::requestPasteFormats()
@@ -146,6 +155,14 @@ void cuc::Hub::onPeerSelected(const QString &id, const QString &peer_id)
     TRACE() << Q_FUNC_INFO << id << peer_id;
     if (id == app_id())
         Q_EMIT(peerSelected(peer_id));
+}
+
+
+void cuc::Hub::onPeerSelectionCancelled(const QString &id)
+{
+    TRACE() << Q_FUNC_INFO << id;
+    if (id == app_id())
+        Q_EMIT(peerSelectionCancelled());
 }
 
 bool cuc::Hub::eventFilter(QObject *obj, QEvent *event)

@@ -76,6 +76,7 @@ class Service : public QObject, protected QDBusContext
     QDBusVariant PeerForId(const QString&);
     void RequestPeerForTypeByAppId(const QString&, const QString&, const QString&);
     void SelectPeerForAppId(const QString&, const QString&);
+    void SelectPeerForAppIdCancelled(const QString&);
     void onPromptFinished();
 
   private:
@@ -92,6 +93,7 @@ class Service : public QObject, protected QDBusContext
     void PasteFormatsChanged(const QStringList &formats);
     void PasteboardChanged();
     void PeerSelected(const QString &app_id, const QString &peer_id);
+    void PeerSelectionCancelled(const QString &app_id);
 
   private Q_SLOTS:
     void handle_imports(int);

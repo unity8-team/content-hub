@@ -84,9 +84,15 @@
       <arg name="app_id" type="s" direction="in" />
       <arg name="peer_id" type="s" direction="in" />
     </method>
+    <method name="SelectPeerForAppIdCancelled">
+      <arg name="app_id" type="s" direction="in" />
+    </method>
     <signal name="PeerSelected">
       <arg name="app_id" type="s" />
       <arg name="peer_id" type="s" />
+    </signal>
+    <signal name="PeerSelectionCancelled">
+      <arg name="app_id" type="s" />
     </signal>
  </interface>
 </node>

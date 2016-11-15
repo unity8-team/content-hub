@@ -38,7 +38,7 @@ MainView {
                     control: Button {
                         text: i18n.tr("Select source")
                         onClicked: {
-                            pageStack.push(picker);
+                            ContentHub.requestPeerForType(ContentType.Pictures, ContentHandler.Source);
                         }
                     }
                 }
@@ -104,10 +104,6 @@ MainView {
         Page {
             id: picker
             visible: false
-
-            Component.onCompleted: {
-                ContentHub.requestPeerForType(ContentType.Pictures, ContentHandler.Source);
-            }
 
             Connections {
                 target: ContentHub

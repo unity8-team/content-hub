@@ -72,6 +72,7 @@ class Hub : public QObject
     Q_INVOKABLE virtual Peer peer_for_app_id(QString app_id);
     Q_INVOKABLE virtual void requestPeerForType(Type type, QString handler_id);
     Q_INVOKABLE virtual void selectPeerForAppId(QString app_id, QString peer_id);
+    Q_INVOKABLE virtual void selectPeerForAppIdCancelled(QString app_id);
 
     ///
     // Copy & Paste
@@ -93,10 +94,12 @@ class Hub : public QObject
     void pasteFormatsChanged();
     void pasteboardChanged();
     void peerSelected(QString);
+    void peerSelectionCancelled();
 
   private Q_SLOTS:
     void onPasteFormatsChanged(const QStringList &);
     void onPeerSelected(const QString &, const QString &);
+    void onPeerSelectionCancelled(const QString &);
   protected:
     Hub(QObject* = nullptr);
 

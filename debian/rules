@@ -2,6 +2,7 @@
 # -*- makefile -*-
 
 export DPKG_GENSYMBOLS_CHECK_LEVEL=4
+export CONTENT_HUB_TESTING=1
 export DEB_BUILD_MAINT_OPTIONS=hardening=+all
 
 CPPFLAGS:=$(shell dpkg-buildflags --get CPPFLAGS)
@@ -11,6 +12,9 @@ LDFLAGS:=$(shell dpkg-buildflags --get LDFLAGS)
 
 %:
 	dh $@ --with click,translations --fail-missing -- -B build
+
+override_dh_auto_test:
+	make -C build/tests/acceptance-tests test
 
 override_dh_auto_install:
 	dh_auto_install

@@ -236,9 +236,13 @@ QMap<QString, QString> info_for_app_id(QString id)
     if (app_id.empty()) {
         qWarning() << Q_FUNC_INFO << "Invalid APP_ID:" << id;
     } else {
-        auto app = ual::Application::create(app_id, reg);
-        map["name"] = QString::fromStdString(app.get()->info()->name());
-        map["iconPath"] = QString::fromStdString(app.get()->info()->iconPath());
+        try {
+            auto app = ual::Application::create(app_id, reg);
+            map["name"] = QString::fromStdString(app.get()->info()->name());
+            map["iconPath"] = QString::fromStdString(app.get()->info()->iconPath());
+        } catch (...) {
+            qWarning() << Q_FUNC_INFO << "Failed to create Application for" << id;
+        }
     }
     return map;
 }

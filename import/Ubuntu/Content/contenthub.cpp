@@ -136,6 +136,9 @@ ContentHub::ContentHub(QObject *parent)
     connect(m_hub, SIGNAL(peerSelected(QString)),
         this,
         SLOT(onPeerSelected(QString)));
+    connect(m_hub, SIGNAL(peerSelectionCancelled()),
+        this,
+        SLOT(onPeerSelectionCancelled()));
 }
 
 void ContentHub::selectPeerForAppId(QString app_id, QString peer_id)
@@ -144,12 +147,24 @@ void ContentHub::selectPeerForAppId(QString app_id, QString peer_id)
     m_hub->selectPeerForAppId(app_id, peer_id);
 }
 
+void ContentHub::selectPeerForAppIdCancelled(QString app_id)
+{
+    TRACE() << Q_FUNC_INFO << app_id;
+    m_hub->selectPeerForAppIdCancelled(app_id);
+}
+
 void ContentHub::onPeerSelected(QString peer_id)
 {
     TRACE() << Q_FUNC_INFO << peer_id;
     ContentPeer peer;
     peer.setAppId(peer_id);
     Q_EMIT(peerSelected(&peer));
+}
+
+void ContentHub::onPeerSelectionCancelled()
+{
+    TRACE() << Q_FUNC_INFO;
+    Q_EMIT(peerSelectionCancelled());
 }
 
 ContentHub *ContentHub::instance()

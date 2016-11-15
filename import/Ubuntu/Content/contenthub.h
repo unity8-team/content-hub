@@ -62,6 +62,7 @@ public:
 
     Q_INVOKABLE void requestPeerForType(int, int);
     Q_INVOKABLE void selectPeerForAppId(QString, QString);
+    Q_INVOKABLE void selectPeerForAppIdCancelled(QString);
 
 Q_SIGNALS:
     void importRequested(ContentTransfer *transfer);
@@ -70,6 +71,7 @@ Q_SIGNALS:
 
     void finishedImportsChanged();
     void peerSelected(ContentPeer* peer);
+    void peerSelectionCancelled();
 
 private Q_SLOTS:
     void handleImport(com::ubuntu::content::Transfer* transfer);
@@ -77,6 +79,7 @@ private Q_SLOTS:
     void handleShare(com::ubuntu::content::Transfer* transfer);
     void updateState();
     void onPeerSelected(QString);
+    void onPeerSelectionCancelled();
 
 private:
     QString setupPromptSession();

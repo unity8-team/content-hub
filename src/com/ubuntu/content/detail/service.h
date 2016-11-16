@@ -87,7 +87,6 @@ class Service : public QObject, protected QDBusContext
     struct RegHandler;
     QDBusServiceWatcher* m_watcher;
     QScopedPointer<Private> d;
-    MirHelper* m_mirHelper = 0;
 
   Q_SIGNALS:
     void PasteFormatsChanged(const QStringList &formats);

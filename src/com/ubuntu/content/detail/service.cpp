@@ -89,7 +89,6 @@ struct cucd::Service::Private : public QObject
     QSharedPointer<cucd::PeerRegistry> registry;
     QSet<cucd::Transfer*> active_transfers;
     QList<cucd::Paste*> active_pastes;
-    QMap<QString, PromptSessionP> inactive_sessions;
     QMap<QString, PromptSessionP> active_sessions;
     QMap<QString, std::string> peer_picker_instances;
     QStringList pasteFormats;
@@ -244,12 +243,14 @@ void cucd::Service::SelectPeerForAppIdCancelled(const QString& app_id)
         std::string instance_id = d->peer_picker_instances.value(app_id);
         d->app_manager->stop_application_with_helper(PEER_PICKER_APP_ID.toStdString(), instance_id);
         d->peer_picker_instances.remove(app_id);
+        /*
         if (d->active_sessions.keys().contains(app_id)) {
                 PromptSessionP pSession = d->active_sessions.value(app_id);
                 PromptSession* session = pSession.data();
                 if (session)
                     session->release();
         }
+        */
     }
     Q_EMIT(PeerSelectionCancelled(app_id));
 }
@@ -522,12 +523,7 @@ void cucd::Service::setupPromptSession(QString app_id, uint clientPid)
     if (d->active_sessions.keys().contains(app_id))
         return;
 
-    if (!m_mirHelper) {
-        TRACE() << "No MirHelper, creating one";
-        qWarning() << "No MirHelper, creating one";
-        m_mirHelper = MirHelper::instance();
-    }
-    PromptSessionP session = m_mirHelper->createPromptSession(clientPid);
+    PromptSessionP session = MirHelper::instance()->createPromptSession(clientPid);
     if (!session) return;
 
     QString mirSocket = session->requestSocket();
@@ -548,8 +544,8 @@ void cucd::Service::onPromptFinished()
         PromptSessionP pSession = d->active_sessions.value(key);
         if (session == pSession.data()) {
             qWarning() << "Removing session for" << key;
-            d->inactive_sessions[key] = d->active_sessions.value(key);
             d->active_sessions.remove(key);
+            pSession->deleteLater();
         }
     }
 }

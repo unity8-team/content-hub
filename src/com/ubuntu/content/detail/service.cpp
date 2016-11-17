@@ -989,6 +989,17 @@ QStringList cucd::Service::PasteFormats()
     return d->pasteFormats;
 }
 
+void cucd::Service::RequestPaste()
+{
+    TRACE() << Q_FUNC_INFO;
+    if (d->app_manager->is_application_started(CLIPBOARD_APP_ID.toStdString()))
+        d->app_manager->stop_application(CLIPBOARD_APP_ID.toStdString());
+    gchar * uris[] = { NULL };
+
+    TRACE() << Q_FUNC_INFO << "Invoking clipboard";
+    d->app_manager->invoke_application(CLIPBOARD_APP_ID.toStdString(), uris);
+}
+
 bool cucd::Service::verifiedSurfaceIsFocused(const QString &surfaceId)
 {
     /* Only verify focus when not running under testing */

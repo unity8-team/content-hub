@@ -139,6 +139,12 @@ ContentHub::ContentHub(QObject *parent)
     connect(m_hub, SIGNAL(peerSelectionCancelled()),
         this,
         SLOT(onPeerSelectionCancelled()));
+    connect(m_hub, SIGNAL(pasteSelected(QString)),
+        this,
+        SLOT(onPasteSelected(QString)));
+    connect(m_hub, SIGNAL(pasteSelectionCancelled()),
+        this,
+        SLOT(onPasteSelectionCancelled()));
 }
 
 void ContentHub::selectPeerForAppId(QString app_id, QString peer_id)
@@ -165,6 +171,18 @@ void ContentHub::onPeerSelectionCancelled()
 {
     TRACE() << Q_FUNC_INFO;
     Q_EMIT(peerSelectionCancelled());
+}
+
+void ContentHub::onPasteSelected(QString paste_id)
+{
+    TRACE() << Q_FUNC_INFO << paste_id;
+    Q_EMIT(pasteSelected(paste_id));
+}
+
+void ContentHub::onPasteSelectionCancelled()
+{
+    TRACE() << Q_FUNC_INFO;
+    Q_EMIT(pasteSelectionCancelled());
 }
 
 ContentHub *ContentHub::instance()
@@ -368,6 +386,17 @@ void ContentHub::requestPeerForType(int contentType, int handler)
 }
 
 /*!
+ * \brief ContentHub::requestPaste raises the list of copied data
+ * pasteSelected is emitted when a paste is selected in the list
+ * \a type
+ */
+void ContentHub::requestPaste()
+{
+    TRACE() << Q_FUNC_INFO;
+    m_hub->requestPaste();
+}
+
+/*!
  * \qmlsignal ContentHub::importRequested(ContentTransfer transfer)
  *
  * The signal is triggered when an import is requested.
@@ -391,3 +420,8 @@ void ContentHub::requestPeerForType(int contentType, int handler)
  * The signal is emitted when the user selects a peer.
  */
 
+/*!
+ * \qmlsignal ContentHub::pasteSelected(QString paste_id)
+ *
+ * The signal is emitted when the user selects a paste.
+ */

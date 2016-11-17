@@ -21,6 +21,7 @@ import Ubuntu.Components 1.3
 import clipboardapp.private 0.1
 
 MainView {
+    applicationName: "content-hub-clipboard"
     width: units.gu(48)
     height: units.gu(60)
 

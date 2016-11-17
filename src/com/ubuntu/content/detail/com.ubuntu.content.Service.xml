@@ -94,6 +94,8 @@
       <arg name="handler_id" type="s" direction="in" />
       <arg name="app_id" type="s" direction="in" />
     </method>
+    <method name="RequestPaste">
+    </method>
     <method name="SelectPeerForAppId">
       <arg name="app_id" type="s" direction="in" />
       <arg name="peer_id" type="s" direction="in" />

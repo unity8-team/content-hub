@@ -23,10 +23,11 @@ add_executable(
   content-hub-peer-picker
 
   main.cpp
+  peer-picker.cpp
   ${RESOURCES}
 )
 
-qt5_use_modules(content-hub-peer-picker Core Gui Quick Qml)
+qt5_use_modules(content-hub-peer-picker Core Gui Quick Qml Widgets)
 
 set_target_properties(
   content-hub-peer-picker

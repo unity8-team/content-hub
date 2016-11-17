@@ -14,10 +14,26 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#include "peer-picker.h"
+#ifndef PEER_PICKER_H
+#define PEER_PICKER_H
 
-int main(int argc, char *argv[])
+#include <QApplication>
+#include <QQmlContext>
+#include <QQuickView>
+
+class PeerPicker : public QApplication
 {
-    PeerPicker app(argc, argv);
-    return app.exec();
-}
+    Q_OBJECT
+
+public:
+    explicit PeerPicker(int& argc, char** argv);
+    virtual ~PeerPicker();
+
+    int exec();
+
+
+private:
+    QQuickView *m_view;
+};
+
+#endif // PEER_PICKER_H

@@ -17,6 +17,7 @@
  */
 
 #include "debug.h"
+#include "mir-helper.h"
 #include "transfer.h"
 #include "utils.cpp"
 
@@ -61,6 +62,8 @@ struct cucd::Transfer::Private
     bool should_be_started_by_content_hub;
     QString download_id;
     const QString content_type;
+    QString instance_id = "";
+    PromptSessionP promptSession;
 };
 
 cucd::Transfer::Transfer(const int id,
@@ -388,12 +391,14 @@ QString cucd::Transfer::import_path()
 /* sets, if the source app is freshly started by the content hub */
 void cucd::Transfer::SetSourceStartedByContentHub(bool started)
 {
+    TRACE() << Q_FUNC_INFO << started;
     d->source_started_by_content_hub = started;
 }
 
 /* returns if the source app was started by the content hub */
 bool com::ubuntu::content::detail::Transfer::WasSourceStartedByContentHub() const
 {
+    TRACE() << Q_FUNC_INFO << d->source_started_by_content_hub;;
     return d->source_started_by_content_hub;
 }
 
@@ -413,4 +418,36 @@ QString cucd::Transfer::ContentType()
 {
     TRACE() << __PRETTY_FUNCTION__;
     return d->content_type;
+}
+
+QString cucd::Transfer::InstanceId()
+{
+    TRACE() << Q_FUNC_INFO << d->instance_id;
+    return d->instance_id;
+}
+
+void cucd::Transfer::SetInstanceId(QString instance_id)
+{
+    TRACE() << Q_FUNC_INFO << instance_id;
+
+    if (d->instance_id == instance_id)
+        return;
+
+    d->instance_id = instance_id;
+}
+
+PromptSessionP cucd::Transfer::PromptSession()
+{
+    TRACE() << Q_FUNC_INFO;
+    return d->promptSession;
+}
+
+void cucd::Transfer::SetPromptSession(PromptSessionP promptSession)
+{
+    TRACE() << Q_FUNC_INFO;
+
+    if (d->promptSession == promptSession)
+        return;
+
+    d->promptSession = promptSession;
 }

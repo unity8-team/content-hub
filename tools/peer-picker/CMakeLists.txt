@@ -16,45 +16,30 @@
 
 include_directories(
   ${CMAKE_CURRENT_BINARY_DIR}
-  ${CMAKE_SOURCE_DIR}/src/com/ubuntu/content
-  ${UBUNTU_LAUNCH_INCLUDE_DIRS}
-  ${MIRCLIENT_INCLUDE_DIRS}
 )
 
+qt5_add_resources(RESOURCES qml.qrc)
 add_executable(
-  content-hub-send
+  content-hub-peer-picker
 
-  exporter.cpp
-  autoexporter.cpp
-  ${CMAKE_SOURCE_DIR}/src/com/ubuntu/content/debug.cpp
+  main.cpp
+  ${RESOURCES}
 )
 
-qt5_use_modules(content-hub-send Core Gui DBus)
+qt5_use_modules(content-hub-peer-picker Core Gui Quick Qml)
 
 set_target_properties(
-  content-hub-send
+  content-hub-peer-picker
   PROPERTIES
   AUTOMOC TRUE
 )
 
-target_link_libraries(
-  content-hub-send
- 
-  content-hub 
-  ${UBUNTU_LAUNCH_LDFLAGS}
-)
-
 install(
-  TARGETS content-hub-send
+  TARGETS content-hub-peer-picker
   RUNTIME DESTINATION ${CMAKE_INSTALL_BINDIR}
 )
 
 install(
-  FILES content-hub-send.desktop
+  FILES content-hub-peer-picker.desktop
   DESTINATION ${CMAKE_INSTALL_DATADIR}/applications
-)
-
-install(
-    FILES content-hub-send.url-dispatcher
-    DESTINATION share/url-dispatcher/urls
 )

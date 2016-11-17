@@ -1,4 +1,4 @@
-# Copyright © 2015 Canonical Ltd.
+# Copyright © 2013 Canonical Ltd.
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License version 3 as
@@ -12,49 +12,38 @@
 # You should have received a copy of the GNU General Public License
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #
-# Authored by: Ken VanDine <ken.vandine@canonical.com>
+# Authored by: Thomas Voss <thomas.voss@canonical.com>
+
+set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++11 -g -fPIE ${GCOV_FLAGS}")
 
 include_directories(
   ${CMAKE_CURRENT_BINARY_DIR}
-  ${CMAKE_SOURCE_DIR}/src/com/ubuntu/content
   ${UBUNTU_LAUNCH_INCLUDE_DIRS}
+  ${GIO_INCLUDE_DIRS}
+  ${GLIB_INCLUDE_DIRS}
+  ${CLICK_INCLUDE_DIRS}
   ${MIRCLIENT_INCLUDE_DIRS}
 )
 
+add_definitions( -DSYSTEM_DIRECTORY="${CMAKE_INSTALL_FULL_DATADIR}/applications" )
+
 add_executable(
-  content-hub-send
+  exec-tool
 
-  exporter.cpp
-  autoexporter.cpp
-  ${CMAKE_SOURCE_DIR}/src/com/ubuntu/content/debug.cpp
-)
-
-qt5_use_modules(content-hub-send Core Gui DBus)
-
-set_target_properties(
-  content-hub-send
-  PROPERTIES
-  AUTOMOC TRUE
+  exec-tool.c
 )
 
 target_link_libraries(
-  content-hub-send
+  exec-tool
  
-  content-hub 
   ${UBUNTU_LAUNCH_LDFLAGS}
+  ${CLICK_LDFLAGS}
+  ${GLIB_LDFLAGS}
+  ${GIO_LDFLAGS}
+  ${MIRCLIENT_LDFLAGS}
 )
 
 install(
-  TARGETS content-hub-send
-  RUNTIME DESTINATION ${CMAKE_INSTALL_BINDIR}
-)
-
-install(
-  FILES content-hub-send.desktop
-  DESTINATION ${CMAKE_INSTALL_DATADIR}/applications
-)
-
-install(
-    FILES content-hub-send.url-dispatcher
-    DESTINATION share/url-dispatcher/urls
+  PROGRAMS "${CMAKE_CURRENT_BINARY_DIR}/exec-tool"
+  DESTINATION "${CMAKE_INSTALL_FULL_LIBEXECDIR}/ubuntu-app-launch/content-hub"
 )

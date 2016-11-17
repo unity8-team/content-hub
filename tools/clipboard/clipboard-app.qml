@@ -18,6 +18,7 @@
 
 import QtQuick 2.4
 import Ubuntu.Components 1.3
+import Ubuntu.Content 1.3
 import clipboardapp.private 0.1
 
 MainView {
@@ -94,7 +95,10 @@ MainView {
                         Action {
                             iconName: "close"
                             text: i18n.tr("Close")
-                            onTriggered: Qt.quit()
+                            onTriggered: {
+                                ContentHub.selectPasteCancelled()
+                                Qt.quit()
+                            }
                         }
                     ]
 
@@ -244,6 +248,7 @@ MainView {
                     }
                     onClicked: {
                         if (!selectMode) {
+                            ContentHub.selectPaste(index)
                             pasteDataModel.pasteEntryByIndex(index)
                         } 
                     }

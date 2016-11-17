@@ -1000,6 +1000,18 @@ void cucd::Service::RequestPaste()
     d->app_manager->invoke_application(CLIPBOARD_APP_ID.toStdString(), uris);
 }
 
+void cucd::Service::SelectPaste(const QString& paste_id)
+{
+    TRACE() << Q_FUNC_INFO << paste_id;
+    Q_EMIT(PasteSelected(paste_id));
+}
+
+void cucd::Service::SelectPasteCancelled()
+{
+    TRACE() << Q_FUNC_INFO;
+    Q_EMIT(PasteSelectionCancelled());
+}
+
 bool cucd::Service::verifiedSurfaceIsFocused(const QString &surfaceId)
 {
     /* Only verify focus when not running under testing */

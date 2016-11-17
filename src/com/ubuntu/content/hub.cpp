@@ -119,6 +119,18 @@ void cuc::Hub::requestPaste()
     d->service->RequestPaste();
 }
 
+void cuc::Hub::selectPaste(QString paste_id)
+{
+    TRACE() << Q_FUNC_INFO << paste_id;
+    d->service->SelectPaste(paste_id);
+}
+
+void cuc::Hub::selectPasteCancelled()
+{
+    TRACE() << Q_FUNC_INFO;
+    d->service->SelectPasteCancelled();
+}
+
 void cuc::Hub::selectPeerForAppId(QString app_id, QString peer_id)
 {
     TRACE() << Q_FUNC_INFO << app_id << peer_id;

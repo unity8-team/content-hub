@@ -173,6 +173,18 @@ void ContentHub::onPeerSelectionCancelled()
     Q_EMIT(peerSelectionCancelled());
 }
 
+void ContentHub::selectPaste(QString paste_id)
+{
+    TRACE() << Q_FUNC_INFO << paste_id;
+    m_hub->selectPaste(paste_id);
+}
+
+void ContentHub::selectPasteCancelled()
+{
+    TRACE() << Q_FUNC_INFO;
+    m_hub->selectPasteCancelled();
+}
+
 void ContentHub::onPasteSelected(QString paste_id)
 {
     TRACE() << Q_FUNC_INFO << paste_id;

@@ -96,6 +96,16 @@
     </method>
     <method name="RequestPaste">
     </method>
+    <method name="SelectPaste">
+      <arg name="paste_id" type="s" direction="in" />
+    </method>
+    <method name="SelectPasteCancelled">
+    </method>
+    <signal name="PasteSelected">
+      <arg name="paste_id" type="s" />
+    </signal>
+    <signal name="PasteSelectionCancelled">
+    </signal>
     <method name="SelectPeerForAppId">
       <arg name="app_id" type="s" direction="in" />
       <arg name="peer_id" type="s" direction="in" />

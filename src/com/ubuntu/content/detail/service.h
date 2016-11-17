@@ -71,7 +71,9 @@ class Service : public QObject, protected QDBusContext
     QStringList GetAllPasteIds(const QString& surfaceId);
     QStringList PasteFormats();
     void RequestPaste();
-
+    void SelectPaste(const QString&);
+    void SelectPasteCancelled();
+ 
     void RegisterImportExportHandler(const QString&, const QDBusObjectPath& handler);
     void HandlerActive(const QString&);
     void Quit();
@@ -99,6 +101,8 @@ class Service : public QObject, protected QDBusContext
     void PasteboardChanged();
     void PeerSelected(const QString &app_id, const QString &peer_id);
     void PeerSelectionCancelled(const QString &app_id);
+    void PasteSelected(const QString &paste_id);
+    void PasteSelectionCancelled();
 
   private Q_SLOTS:
     void handle_imports(int);

@@ -201,15 +201,6 @@ void PasteDataModel::setEntryDeletedByIndex(int index, bool deleted)
     }
 }
 
-void PasteDataModel::pasteEntryByIndex(int index)
-{
-    if (index < 0 || index >= m_entries.size()) {
-        return;
-    }
-
-    qDebug() << "[TODO] Paste Required (pasteId):" << m_entries[index].pasteId;
-}
-
 void PasteDataModel::addEntry(PasteDataEntry& entry)
 {
     beginInsertRows(QModelIndex(), rowCount(), rowCount());

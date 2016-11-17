@@ -69,7 +69,6 @@ public:
     Q_INVOKABLE void cancelEntriesDeleted();
     Q_INVOKABLE void setSelectedEntriesDeleted();
     Q_INVOKABLE void setEntryDeletedByIndex(int index, bool deleted);
-    Q_INVOKABLE void pasteEntryByIndex(int index);
     Q_INVOKABLE void removeEntryByIndex(int index);
 
 protected:

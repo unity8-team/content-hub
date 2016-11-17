@@ -249,7 +249,7 @@ MainView {
                     onClicked: {
                         if (!selectMode) {
                             ContentHub.selectPaste(index)
-                            pasteDataModel.pasteEntryByIndex(index)
+                            Qt.quit()
                         } 
                     }
                     onDeleteClicked: pasteDataModel.removeEntryByIndex(index)
@@ -286,7 +286,7 @@ MainView {
         sourceComponent: PreviewTextPage {
             visible: false
             text: previewTextLoader.textPreview
-            onPasteClicked: pasteDataModel.pasteEntryByIndex(previewTextLoader.index)
+            onPasteClicked: ContentHub.selectPaste(previewTextLoader.index)
         }
 
         onStatusChanged: {
@@ -317,7 +317,7 @@ MainView {
         sourceComponent: PreviewImagePage {
             visible: false
             imageSource: previewImageLoader.imagePreview
-            onPasteClicked: pasteDataModel.pasteEntryByIndex(previewImageLoader.index)
+            onPasteClicked: ContentHub.selectPaste(previewImageLoader.index)
         }
 
         onStatusChanged: {

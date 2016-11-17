@@ -43,6 +43,8 @@ PeerPicker::PeerPicker(int& argc, char** argv)
     }
 
     // Set context properties needed by the picker
+
+    m_view->setResizeMode(QQuickView::SizeRootObjectToView);
     m_view->rootContext()->setContextProperty("requesterId", requesterId);
     m_view->rootContext()->setContextProperty("wellKnownType", contentType);
     m_view->rootContext()->setContextProperty("handlerType", handlerType);

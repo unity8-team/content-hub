@@ -15,9 +15,26 @@
  */
 
 #include "peer-picker.h"
+#include <signal.h>
+#include <unistd.h>
+
+void catchUnixSignals(const std::vector<int>& quitSignals,
+                      const std::vector<int>& ignoreSignals = std::vector<int>()) {
+
+    auto handler = [](int sig) ->void {
+        QApplication::quit();
+    };
+
+    for ( int sig : ignoreSignals )
+        signal(sig, SIG_IGN);
+
+    for ( int sig : quitSignals )
+        signal(sig, handler);
+}
 
 int main(int argc, char *argv[])
 {
     PeerPicker app(argc, argv);
+    catchUnixSignals({SIGQUIT, SIGINT, SIGTERM});
     return app.exec();
 }

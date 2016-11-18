@@ -4,11 +4,12 @@ import Ubuntu.Content 1.3
 
 MainView {
     id: mainView
-    width: units.gu(50)
-    height: units.gu(75)
+    height: units.gu(71)
+    width: units.gu(40)
     applicationName: "content-hub-peer-picker"
 
     PeerPicker {
+        anchors.fill: parent
         showTitle: true
         // Type of handler: Source, Destination, or Share
         //handler: ContentHandler.Source

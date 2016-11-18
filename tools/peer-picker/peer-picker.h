@@ -14,27 +14,26 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#include "peer-picker.h"
-#include <signal.h>
-#include <unistd.h>
+#ifndef PEER_PICKER_H
+#define PEER_PICKER_H
 
-void catchUnixSignals(const std::vector<int>& quitSignals,
-                      const std::vector<int>& ignoreSignals = std::vector<int>()) {
+#include <QApplication>
+#include <QQmlContext>
+#include <QQuickView>
 
-    auto handler = [](int sig) ->void {
-        QApplication::quit();
-    };
-
-    for ( int sig : ignoreSignals )
-        signal(sig, SIG_IGN);
-
-    for ( int sig : quitSignals )
-        signal(sig, handler);
-}
-
-int main(int argc, char *argv[])
+class PeerPicker : public QApplication
 {
-    PeerPicker app(argc, argv);
-    catchUnixSignals({SIGQUIT, SIGINT, SIGTERM});
-    return app.exec();
-}
+    Q_OBJECT
+
+public:
+    explicit PeerPicker(int& argc, char** argv);
+    virtual ~PeerPicker();
+
+    int exec();
+
+
+private:
+    QQuickView *m_view;
+};
+
+#endif // PEER_PICKER_H

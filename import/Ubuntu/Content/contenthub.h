@@ -76,7 +76,7 @@ Q_SIGNALS:
     void finishedImportsChanged();
     void peerSelected(ContentPeer* peer);
     void peerSelectionCancelled();
-    void pasteSelected(QString paste_id);
+    void pasteSelected(QString paste);
     void pasteSelectionCancelled();
 
 private Q_SLOTS:

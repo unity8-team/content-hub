@@ -125,10 +125,10 @@ void cuc::Hub::requestPaste()
     d->service->RequestPaste();
 }
 
-void cuc::Hub::selectPaste(QString paste_id)
+void cuc::Hub::selectPaste(QString paste)
 {
-    TRACE() << Q_FUNC_INFO << paste_id;
-    d->service->SelectPaste(paste_id);
+    TRACE() << Q_FUNC_INFO << paste;
+    d->service->SelectPaste(paste);
 }
 
 void cuc::Hub::selectPasteCancelled()
@@ -189,10 +189,10 @@ void cuc::Hub::onPeerSelectionCancelled(const QString &id)
         Q_EMIT(peerSelectionCancelled());
 }
 
-void cuc::Hub::onPasteSelected(const QString &paste_id)
+void cuc::Hub::onPasteSelected(const QString &paste)
 {
-    TRACE() << Q_FUNC_INFO << paste_id;
-    Q_EMIT(pasteSelected(paste_id));
+    TRACE() << Q_FUNC_INFO << paste;
+    Q_EMIT(pasteSelected(paste));
 }
 
 void cuc::Hub::onPasteSelectionCancelled()

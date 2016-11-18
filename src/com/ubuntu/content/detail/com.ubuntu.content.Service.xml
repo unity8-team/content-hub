@@ -97,12 +97,12 @@
     <method name="RequestPaste">
     </method>
     <method name="SelectPaste">
-      <arg name="paste_id" type="s" direction="in" />
+      <arg name="paste" type="s" direction="in" />
     </method>
     <method name="SelectPasteCancelled">
     </method>
     <signal name="PasteSelected">
-      <arg name="paste_id" type="s" />
+      <arg name="paste" type="s" />
     </signal>
     <signal name="PasteSelectionCancelled">
     </signal>

@@ -173,10 +173,10 @@ void ContentHub::onPeerSelectionCancelled()
     Q_EMIT(peerSelectionCancelled());
 }
 
-void ContentHub::selectPaste(QString paste_id)
+void ContentHub::selectPaste(QString paste)
 {
-    TRACE() << Q_FUNC_INFO << paste_id;
-    m_hub->selectPaste(paste_id);
+    TRACE() << Q_FUNC_INFO << paste;
+    m_hub->selectPaste(paste);
 }
 
 void ContentHub::selectPasteCancelled()
@@ -185,10 +185,10 @@ void ContentHub::selectPasteCancelled()
     m_hub->selectPasteCancelled();
 }
 
-void ContentHub::onPasteSelected(QString paste_id)
+void ContentHub::onPasteSelected(QString paste)
 {
-    TRACE() << Q_FUNC_INFO << paste_id;
-    Q_EMIT(pasteSelected(paste_id));
+    TRACE() << Q_FUNC_INFO << paste;
+    Q_EMIT(pasteSelected(paste));
 }
 
 void ContentHub::onPasteSelectionCancelled()
@@ -433,7 +433,7 @@ void ContentHub::requestPaste()
  */
 
 /*!
- * \qmlsignal ContentHub::pasteSelected(QString paste_id)
+ * \qmlsignal ContentHub::pasteSelected(QString paste)
  *
  * The signal is emitted when the user selects a paste.
  */

@@ -248,7 +248,7 @@ MainView {
                     }
                     onClicked: {
                         if (!selectMode) {
-                            ContentHub.selectPaste(index)
+                            ContentHub.selectPaste(pasteData)
                             Qt.quit()
                         } 
                     }
@@ -286,7 +286,7 @@ MainView {
         sourceComponent: PreviewTextPage {
             visible: false
             text: previewTextLoader.textPreview
-            onPasteClicked: ContentHub.selectPaste(previewTextLoader.index)
+            onPasteClicked: ContentHub.selectPaste(previewTextLoader.textPreview)
         }
 
         onStatusChanged: {
@@ -317,7 +317,7 @@ MainView {
         sourceComponent: PreviewImagePage {
             visible: false
             imageSource: previewImageLoader.imagePreview
-            onPasteClicked: ContentHub.selectPaste(previewImageLoader.index)
+            onPasteClicked: ContentHub.selectPaste(previewImageLoader.imagePreview)
         }
 
         onStatusChanged: {

@@ -63,7 +63,6 @@ struct cucd::Transfer::Private
     QString download_id;
     const QString content_type;
     QString instance_id = "";
-    PromptSessionP promptSession;
 };
 
 cucd::Transfer::Transfer(const int id,
@@ -434,20 +433,4 @@ void cucd::Transfer::SetInstanceId(QString instance_id)
         return;
 
     d->instance_id = instance_id;
-}
-
-PromptSessionP cucd::Transfer::PromptSession()
-{
-    TRACE() << Q_FUNC_INFO;
-    return d->promptSession;
-}
-
-void cucd::Transfer::SetPromptSession(PromptSessionP promptSession)
-{
-    TRACE() << Q_FUNC_INFO;
-
-    if (d->promptSession == promptSession)
-        return;
-
-    d->promptSession = promptSession;
 }

@@ -80,6 +80,12 @@ add_executable(
   ${MOCS}
 )
 
+add_executable(
+  glib_test
+  glib_test.cpp
+  ${MOCS}
+)
+
 qt5_use_modules(app_hub_communication_default_source Core Gui DBus Test)
 qt5_use_modules(app_hub_communication_known_sources Core Gui DBus Test)
 qt5_use_modules(app_hub_communication_stores Core Gui DBus Test)
@@ -89,6 +95,7 @@ qt5_use_modules(app_hub_communication_handler Core Gui DBus Test)
 qt5_use_modules(test_utils Core Test)
 qt5_use_modules(test_hook Core Gui DBus Test)
 qt5_use_modules(mimedata_test Core Test)
+qt5_use_modules(glib_test Core Gui DBus Test)
 
 target_link_libraries(app_hub_communication_stores content-hub gmock gtest gtest_main)
 target_link_libraries(app_hub_communication_default_source content-hub gmock gtest gtest_main)
@@ -100,6 +107,7 @@ target_link_libraries(app_hub_communication_handler content-hub gmock gtest gtes
 target_link_libraries(test_utils content-hub gmock gtest gtest_main)
 target_link_libraries(test_types content-hub gmock gtest gtest_main)
 target_link_libraries(test_hook content-hub gmock gtest gtest_main ${GSETTINGS_LDFLAGS})
+target_link_libraries(glib_test content-hub-glib content-hub gmock gtest gtest_main)
 target_link_libraries(mimedata_test content-hub gmock gtest gtest_main)
 
 add_test(NAME app_hub_communication_default_source COMMAND dbus-test-runner --task ${CMAKE_CURRENT_BINARY_DIR}/app_hub_communication_default_source)
@@ -111,6 +119,7 @@ add_test(NAME app_hub_communication_handler COMMAND dbus-test-runner --task ${CM
 add_test(NAME test_utils COMMAND dbus-test-runner --task ${CMAKE_CURRENT_BINARY_DIR}/test_utils)
 add_test(NAME test_types COMMAND dbus-test-runner --task ${CMAKE_CURRENT_BINARY_DIR}/test_types)
 add_test(NAME test_hook COMMAND dbus-test-runner --task ${CMAKE_CURRENT_BINARY_DIR}/test_hook)
+add_test(NAME glib_test COMMAND dbus-test-runner --task ${CMAKE_CURRENT_BINARY_DIR}/glib_test)
 add_test(NAME mimedata_test COMMAND mimedata_test)
 
 SET_TESTS_PROPERTIES(app_hub_communication_stores
@@ -132,6 +141,8 @@ SET_TESTS_PROPERTIES(test_types
 SET_TESTS_PROPERTIES(test_hook
     PROPERTIES ENVIRONMENT "CONTENT_HUB_TESTING=1")
 SET_TESTS_PROPERTIES(mimedata_test
+    PROPERTIES ENVIRONMENT "CONTENT_HUB_TESTING=1")
+SET_TESTS_PROPERTIES(glib_test
     PROPERTIES ENVIRONMENT "CONTENT_HUB_TESTING=1")
 
 set_target_properties(

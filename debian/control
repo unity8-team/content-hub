@@ -59,6 +59,20 @@ Description: content sharing/picking library
  securely and efficiently exchange content.
  This package includes the content sharing libraries.
 
+Package: libcontent-hub-glib0
+Section: libs
+Architecture: any
+Multi-Arch: same
+Pre-Depends: ${misc:Pre-Depends},
+Depends: ${misc:Depends},
+         ${shlibs:Depends},
+Suggests: content-hub
+Description: content sharing/picking library - GLib bindings
+ Content sharing/picking infrastructure and service, designed to allow apps to
+ securely and efficiently exchange content.
+ .
+ This package includes GLib bindings of the content sharing libraries.
+
 Package: libcontent-hub-dev
 Section: libdevel
 Architecture: any
@@ -67,6 +81,15 @@ Depends: libcontent-hub0 (= ${binary:Version}),
          ${misc:Depends},
 Description: content sharing development files
  All the development headers and libraries for the content hub
+
+Package: libcontent-hub-glib-dev
+Section: libdevel
+Architecture: any
+Multi-Arch: same
+Depends: libcontent-hub-glib0 (= ${binary:Version}),
+         ${misc:Depends},
+Description: content sharing development files - GLib bindings
+ GLib bindings of the development headers and libraries for the content hub
 
 Package: qtdeclarative5-ubuntu-content1
 Section: libs

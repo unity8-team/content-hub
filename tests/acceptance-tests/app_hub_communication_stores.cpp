@@ -91,20 +91,20 @@ TEST(Hub, stores_are_reported_correctly_to_clients)
 
         QSharedPointer<cucd::PeerRegistry> registry{new MockedPeerRegistry{}};
         auto app_manager = QSharedPointer<cua::ApplicationManager>(new MockedAppManager());
-        auto implementation = new cucd::Service(connection, registry, app_manager, &app);
-        new ServiceAdaptor(implementation);
+        cucd::Service implementation(connection, registry, app_manager, &app);
+        new ServiceAdaptor(std::addressof(implementation));
 
-        ASSERT_TRUE(connection.registerService(service_name));
-        ASSERT_TRUE(connection.registerObject("/", implementation));
+        connection.registerService(service_name);
+        connection.registerObject("/", std::addressof(implementation));
+
+        QObject::connect(&app, &QCoreApplication::aboutToQuit, [&](){
+            connection.unregisterObject("/");
+            connection.unregisterService(service_name);
+        });
 
         sync.signal_ready();
 
         app.exec();
-
-        connection.unregisterObject("/");
-        connection.unregisterService(service_name);
-
-        delete implementation;
     };
 
     auto child = [&sync]()

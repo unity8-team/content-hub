@@ -107,8 +107,8 @@ target_link_libraries(app_hub_communication_handler content-hub gmock gtest gtes
 target_link_libraries(test_utils content-hub gmock gtest gtest_main)
 target_link_libraries(test_types content-hub gmock gtest gtest_main)
 target_link_libraries(test_hook content-hub gmock gtest gtest_main ${GSETTINGS_LDFLAGS})
-target_link_libraries(mimedata_test content-hub gmock gtest gtest_main)
 target_link_libraries(glib_test content-hub-glib content-hub gmock gtest gtest_main)
+target_link_libraries(mimedata_test content-hub gmock gtest gtest_main)
 
 add_test(NAME app_hub_communication_default_source COMMAND dbus-test-runner --task ${CMAKE_CURRENT_BINARY_DIR}/app_hub_communication_default_source)
 add_test(NAME app_hub_communication_known_sources COMMAND dbus-test-runner --task ${CMAKE_CURRENT_BINARY_DIR}/app_hub_communication_known_sources)

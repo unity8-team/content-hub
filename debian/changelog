@@ -1,3 +1,10 @@
+content-hub (0.2+17.04.20161107-0ubuntu1) zesty; urgency=medium
+
+  * Skip the UAL lookup when run under autopkgtests to prevent an abort
+    from UAL
+
+ -- Ken VanDine <ken.vandine@canonical.com>  Mon, 07 Nov 2016 15:02:18 +0000
+
 content-hub (0.2+17.04.20161026-0ubuntu1) zesty; urgency=medium
 
   * Use UAL to get iconPath instead of parsing the desktop file

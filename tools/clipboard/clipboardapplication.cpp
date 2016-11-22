@@ -19,14 +19,12 @@
 #include "clipboardapplication.h"
 
 #include <QGuiApplication>
-#include <QDebug>
 #include <QtQml/QQmlContext>
 #include <QtQml/QQmlEngine>
 
 #include <qpa/qplatformnativeinterface.h>
 #include <mir_toolkit/mir_surface.h>
 
-#include "config.h"
 #include "debug.h"
 #include "paste-data-model.h"
 #include "paste-data-filter-model.h"
@@ -34,31 +32,40 @@
 ClipboardApplication::ClipboardApplication(int &argc, char **argv)
     : QGuiApplication(argc, argv),
     m_surfaceId(),
-    m_view(0)
+    m_view(new QQuickView())
 {
     connect(this, SIGNAL(applicationStateChanged(Qt::ApplicationState)), SLOT(onApplicationStateChanged(Qt::ApplicationState)));
-}
 
-ClipboardApplication::~ClipboardApplication()
-{
-}
+    bool fullScreen = false;
+    QStringList args = arguments();
+    if (args.contains("--fullscreen")) {
+        args.removeAll("--fullscreen");
+        fullScreen = true;
+    }
 
-bool ClipboardApplication::setup()
-{
     const char* uri = "clipboardapp.private";
     qmlRegisterType<PasteDataModel>(uri, 0, 1, "PasteDataModel");
     qmlRegisterType<PasteDataFilterModel>(uri, 0, 1, "PasteDataFilterModel");
 
-    m_view = new QQuickView();
     QObject::connect(m_view->engine(), SIGNAL(quit()), SLOT(quit()));
     m_view->setResizeMode(QQuickView::SizeRootObjectToView);
     m_view->rootContext()->setContextProperty("application", this);
-    m_view->engine()->setBaseUrl(QUrl::fromLocalFile(clipboardAppDirectory()));
-    m_view->engine()->addImportPath(clipboardAppImportDirectory());
-    m_view->setSource(QUrl::fromLocalFile(sourceQml()));
-    m_view->show();
+    m_view->setSource(QUrl(QStringLiteral("qrc:/main.qml")));
+    if (fullScreen) {
+        m_view->showFullScreen();
+    } else {
+        m_view->show();
+    }
+}
 
-    return true;
+ClipboardApplication::~ClipboardApplication()
+{
+    delete m_view;
+}
+
+int ClipboardApplication::exec()
+{
+    return QGuiApplication::exec();
 }
 
 const QString& ClipboardApplication::surfaceId() const

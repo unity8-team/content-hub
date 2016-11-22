@@ -30,7 +30,9 @@ class ClipboardApplication : public QGuiApplication
 public:
     ClipboardApplication(int &argc, char **argv);
     virtual ~ClipboardApplication();
-    bool setup();
+
+    int exec();
+
     const QString& surfaceId() const;
 
 Q_SIGNALS:

@@ -15,10 +15,6 @@
 # Authored by: Arthur Mello <arthur.mello@canonical.com>
 
 set(CLIPBOARD_APP content-hub-clipboard)
-set(CLIPBOARD_APP_DIR ${CMAKE_INSTALL_DATADIR}/content-hub/tools/clipboard)
-set(PLUGIN_BASE ${CMAKE_INSTALL_LIBDIR}/${CLIPBOARD_APP})
-
-configure_file(config.h.in ${CMAKE_CURRENT_BINARY_DIR}/config.h @ONLY)
 
 include_directories(
   ${CMAKE_CURRENT_BINARY_DIR}
@@ -40,11 +36,14 @@ set(clipboard_app_SRCS
     clipboardapplication.cpp
     main.cpp)
 
+qt5_add_resources(RESOURCES qml.qrc)
+
 add_executable(${CLIPBOARD_APP}
     ${clipboard_app_SRCS}
+    ${RESOURCES}
 )
 
-qt5_use_modules(${CLIPBOARD_APP} Core Gui DBus Qml Quick)
+qt5_use_modules(${CLIPBOARD_APP} Core Gui Quick Qml DBus)
 find_package(Qt5Core 5.4 REQUIRED)
 include_directories(
     ${Qt5Gui_PRIVATE_INCLUDE_DIRS}
@@ -59,12 +58,6 @@ target_link_libraries(${CLIPBOARD_APP}
   content-hub
   ${UBUNTU_LAUNCH_LDFLAGS}
 )
-
-file(GLOB QML_JS_FILES *.qml *.js)
-
-install(FILES ${QML_JS_FILES}
-    DESTINATION ${CLIPBOARD_APP_DIR}
-    )
 
 install(
   TARGETS ${CLIPBOARD_APP}

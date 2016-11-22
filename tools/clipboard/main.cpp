@@ -18,17 +18,29 @@
 
 #include <QGuiApplication>
 
+#include <signal.h>
+#include <unistd.h>
+
 #include "clipboardapplication.h"
-#include "config.h"
+
+void catchUnixSignals(const std::vector<int>& quitSignals,
+                      const std::vector<int>& ignoreSignals = std::vector<int>()) {
+
+    auto handler = [](int sig) ->void {
+         QGuiApplication::quit();
+    };
+
+    for ( int sig : ignoreSignals )
+        signal(sig, SIG_IGN);
+
+    for ( int sig : quitSignals )
+        signal(sig, handler);
+}
 
 int main(int argc, char** argv)
 {
     QGuiApplication::setApplicationName("com.ubuntu.content-hub.clipboard");
     ClipboardApplication app(argc, argv);
-
-    if (!app.setup()) {
-        return 0;
-    }
-
+    catchUnixSignals({SIGQUIT, SIGINT, SIGTERM});
     return app.exec();
 }

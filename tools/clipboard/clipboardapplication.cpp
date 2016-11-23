@@ -18,6 +18,8 @@
 
 #include "clipboardapplication.h"
 
+#include <iostream>
+
 #include <QGuiApplication>
 #include <QtQml/QQmlContext>
 #include <QtQml/QQmlEngine>
@@ -37,10 +39,19 @@ ClipboardApplication::ClipboardApplication(int &argc, char **argv)
     connect(this, SIGNAL(applicationStateChanged(Qt::ApplicationState)), SLOT(onApplicationStateChanged(Qt::ApplicationState)));
 
     bool fullScreen = false;
+    QString requesterId;
+
     QStringList args = arguments();
     if (args.contains("--fullscreen")) {
         args.removeAll("--fullscreen");
         fullScreen = true;
+    }
+
+    if (args.count() < 2) {
+        std::cout << "Usage: content-hub-peer-clipboard app_id\n";
+        QGuiApplication::exit(1);
+    } else {
+        requesterId = args.at(1);
     }
 
     const char* uri = "clipboardapp.private";
@@ -50,6 +61,7 @@ ClipboardApplication::ClipboardApplication(int &argc, char **argv)
     QObject::connect(m_view->engine(), SIGNAL(quit()), SLOT(quit()));
     m_view->setResizeMode(QQuickView::SizeRootObjectToView);
     m_view->rootContext()->setContextProperty("application", this);
+    m_view->rootContext()->setContextProperty("requesterId", requesterId);
     m_view->setSource(QUrl(QStringLiteral("qrc:/main.qml")));
     if (fullScreen) {
         m_view->showFullScreen();

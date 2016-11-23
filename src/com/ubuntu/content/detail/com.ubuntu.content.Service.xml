@@ -94,12 +94,15 @@
       <arg name="handler_id" type="s" direction="in" />
       <arg name="app_id" type="s" direction="in" />
     </method>
-    <method name="RequestPaste">
+    <method name="RequestPasteByAppId">
+      <arg name="app_id" type="s" direction="in" />
     </method>
-    <method name="SelectPaste">
+    <method name="SelectPasteForAppId">
+      <arg name="app_id" type="s" direction="in" />
       <arg name="paste" type="s" direction="in" />
     </method>
-    <method name="SelectPasteCancelled">
+    <method name="SelectPasteForAppIdCancelled">
+      <arg name="app_id" type="s" direction="in" />
     </method>
     <signal name="PasteSelected">
       <arg name="paste" type="s" />

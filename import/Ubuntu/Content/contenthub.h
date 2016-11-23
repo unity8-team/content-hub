@@ -65,8 +65,8 @@ public:
     Q_INVOKABLE void selectPeerForAppIdCancelled(QString);
 
     Q_INVOKABLE void requestPaste();
-    Q_INVOKABLE void selectPaste(QString);
-    Q_INVOKABLE void selectPasteCancelled();
+    Q_INVOKABLE void selectPasteForAppId(QString, QString);
+    Q_INVOKABLE void selectPasteForAppIdCancelled(QString);
 
 Q_SIGNALS:
     void importRequested(ContentTransfer *transfer);

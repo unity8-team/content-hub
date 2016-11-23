@@ -70,9 +70,9 @@ class Service : public QObject, protected QDBusContext
     QByteArray GetPasteData(const QString& surfaceId, const QString& pasteId);
     QStringList GetAllPasteIds(const QString& surfaceId);
     QStringList PasteFormats();
-    void RequestPaste();
-    void SelectPaste(const QString&);
-    void SelectPasteCancelled();
+    void RequestPasteByAppId(const QString&);
+    void SelectPasteForAppId(const QString&, const QString&);
+    void SelectPasteForAppIdCancelled(const QString&);
  
     void RegisterImportExportHandler(const QString&, const QDBusObjectPath& handler);
     void HandlerActive(const QString&);

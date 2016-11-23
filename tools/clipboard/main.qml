@@ -96,7 +96,7 @@ MainView {
                             iconName: "close"
                             text: i18n.tr("Close")
                             onTriggered: {
-                                ContentHub.selectPasteCancelled()
+                                ContentHub.selectPasteForAppIdCancelled(requesterId)
                                 Qt.quit()
                             }
                         }
@@ -248,7 +248,7 @@ MainView {
                     }
                     onClicked: {
                         if (!selectMode) {
-                            ContentHub.selectPaste(pasteData)
+                            ContentHub.selectPasteForAppId(requesterId, pasteData)
                             Qt.quit()
                         } 
                     }
@@ -286,7 +286,7 @@ MainView {
         sourceComponent: PreviewTextPage {
             visible: false
             text: previewTextLoader.textPreview
-            onPasteClicked: ContentHub.selectPaste(previewTextLoader.textPreview)
+            onPasteClicked: ContentHub.selectPasteForAppId(requesterId,previewTextLoader.textPreview)
         }
 
         onStatusChanged: {
@@ -317,7 +317,7 @@ MainView {
         sourceComponent: PreviewImagePage {
             visible: false
             imageSource: previewImageLoader.imagePreview
-            onPasteClicked: ContentHub.selectPaste(previewImageLoader.imagePreview)
+            onPasteClicked: ContentHub.selectPasteForAppId(requesterId, previewImageLoader.imagePreview)
         }
 
         onStatusChanged: {

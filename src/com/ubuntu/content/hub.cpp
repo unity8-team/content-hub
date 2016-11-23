@@ -122,19 +122,19 @@ void cuc::Hub::requestPeerForType(cuc::Type type, QString handler_id)
 void cuc::Hub::requestPaste()
 {
     TRACE() << Q_FUNC_INFO;
-    d->service->RequestPaste();
+    d->service->RequestPasteByAppId(app_id());
 }
 
-void cuc::Hub::selectPaste(QString paste)
+void cuc::Hub::selectPasteForAppId(QString app_id, QString paste)
 {
-    TRACE() << Q_FUNC_INFO << paste;
-    d->service->SelectPaste(paste);
+    TRACE() << Q_FUNC_INFO << app_id << paste;
+    d->service->SelectPasteForAppId(app_id, paste);
 }
 
-void cuc::Hub::selectPasteCancelled()
+void cuc::Hub::selectPasteForAppIdCancelled(QString app_id)
 {
-    TRACE() << Q_FUNC_INFO;
-    d->service->SelectPasteCancelled();
+    TRACE() << Q_FUNC_INFO << app_id;
+    d->service->SelectPasteForAppIdCancelled(app_id);
 }
 
 void cuc::Hub::selectPeerForAppId(QString app_id, QString peer_id)

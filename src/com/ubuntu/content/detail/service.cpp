@@ -90,6 +90,7 @@ struct cucd::Service::Private : public QObject
     QSet<cucd::Transfer*> active_transfers;
     QList<cucd::Paste*> active_pastes;
     QMap<QString, PromptSessionP> active_sessions;
+    QMap<QString, std::string> clipboard_instances;
     QMap<QString, std::string> peer_picker_instances;
     QStringList pasteFormats;
     QSet<RegHandler*> handlers;
@@ -989,26 +990,72 @@ QStringList cucd::Service::PasteFormats()
     return d->pasteFormats;
 }
 
-void cucd::Service::RequestPaste()
+void cucd::Service::RequestPasteByAppId(const QString& app_id)
 {
-    TRACE() << Q_FUNC_INFO;
-    if (d->app_manager->is_application_started(CLIPBOARD_APP_ID.toStdString()))
-        d->app_manager->stop_application(CLIPBOARD_APP_ID.toStdString());
-    gchar * uris[] = { NULL };
+    TRACE() << Q_FUNC_INFO << app_id;
 
-    TRACE() << Q_FUNC_INFO << "Invoking clipboard";
-    d->app_manager->invoke_application(CLIPBOARD_APP_ID.toStdString(), uris);
+    if (d->app_manager->is_application_started(CLIPBOARD_APP_ID.toStdString()))
+        d->app_manager->stop_application(PEER_PICKER_APP_ID.toStdString());
+
+    gchar * uris[] = {
+        g_strdup(app_id.toStdString().c_str()),
+        NULL
+    };
+
+    if (!d->active_sessions.keys().contains(app_id)) {
+        uint clientPid = d->connection.interface()->servicePid(this->message().service());
+        setupPromptSession(app_id, clientPid);
+    }
+
+    PromptSessionP session = d->active_sessions.value(app_id);
+    if (!session) {
+        TRACE() << Q_FUNC_INFO << "Invoking Clipboard";
+        d->app_manager->invoke_application(CLIPBOARD_APP_ID.toStdString(), uris);
+    } else {
+        TRACE() << Q_FUNC_INFO << "Invoking Clipboard with session";
+        std::string instance_id = d->app_manager->invoke_application_with_session(CLIPBOARD_APP_ID.toStdString(), session, uris);
+        d->clipboard_instances[app_id] = instance_id;
+    }
 }
 
-void cucd::Service::SelectPaste(const QString& paste)
+void cucd::Service::SelectPasteForAppId(const QString& app_id, const QString& paste)
 {
-    TRACE() << Q_FUNC_INFO << paste;
+    TRACE() << Q_FUNC_INFO << app_id << paste;
+    // FIXME: lock this down to only all the peer picker APP_ID to call this
+    if (d->peer_picker_instances.contains(app_id)) {
+        /*
+        if (d->active_sessions.keys().contains(app_id)) {
+                PromptSessionP pSession = d->active_sessions.value(app_id);
+                PromptSession* session = pSession.data();
+                if (session)
+                    session->release();
+        }
+        */
+        std::string instance_id = d->clipboard_instances.value(app_id);
+        d->app_manager->stop_application_with_helper(CLIPBOARD_APP_ID.toStdString(), instance_id);
+        d->clipboard_instances.remove(app_id);
+    }
+
     Q_EMIT(PasteSelected(paste));
 }
 
-void cucd::Service::SelectPasteCancelled()
+void cucd::Service::SelectPasteForAppIdCancelled(const QString& app_id)
 {
-    TRACE() << Q_FUNC_INFO;
+    TRACE() << Q_FUNC_INFO << app_id;
+    if (d->clipboard_instances.contains(app_id)) {
+        std::string instance_id = d->clipboard_instances.value(app_id);
+        d->app_manager->stop_application_with_helper(CLIPBOARD_APP_ID.toStdString(), instance_id);
+        d->peer_picker_instances.remove(app_id);
+        /*
+        if (d->active_sessions.keys().contains(app_id)) {
+                PromptSessionP pSession = d->active_sessions.value(app_id);
+                PromptSession* session = pSession.data();
+                if (session)
+                    session->release();
+        }
+        */
+    }
+
     Q_EMIT(PasteSelectionCancelled());
 }
 

@@ -995,7 +995,7 @@ void cucd::Service::RequestPasteByAppId(const QString& app_id)
     TRACE() << Q_FUNC_INFO << app_id;
 
     if (d->app_manager->is_application_started(CLIPBOARD_APP_ID.toStdString()))
-        d->app_manager->stop_application(PEER_PICKER_APP_ID.toStdString());
+        d->app_manager->stop_application(CLIPBOARD_APP_ID.toStdString());
 
     gchar * uris[] = {
         g_strdup(app_id.toStdString().c_str()),

@@ -38,7 +38,7 @@ Page {
         ]
     }
 
-    Label {
+    TextArea {
         id: textPreview
 
         anchors {
@@ -50,6 +50,8 @@ Page {
         }
 
         wrapMode: Text.WordWrap
-        elide: Text.ElideRight
+        cursorVisible: false
+        readOnly: true
+        selectByMouse: false
     }
 }

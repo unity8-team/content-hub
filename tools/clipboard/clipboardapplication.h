@@ -19,10 +19,10 @@
 #ifndef CLIPBOARDAPPLICATION_H
 #define CLIPBOARDAPPLICATION_H
 
-#include <QGuiApplication>
+#include <QApplication>
 #include <QQuickView>
 
-class ClipboardApplication : public QGuiApplication
+class ClipboardApplication : public QApplication
 {
     Q_OBJECT
     Q_PROPERTY(QString surfaceId READ surfaceId NOTIFY surfaceIdChanged)

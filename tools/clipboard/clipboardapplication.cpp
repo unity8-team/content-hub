@@ -32,7 +32,7 @@
 #include "paste-data-filter-model.h"
 
 ClipboardApplication::ClipboardApplication(int &argc, char **argv)
-    : QGuiApplication(argc, argv),
+    : QApplication(argc, argv),
     m_surfaceId(),
     m_view(new QQuickView())
 {
@@ -49,7 +49,7 @@ ClipboardApplication::ClipboardApplication(int &argc, char **argv)
 
     if (args.count() < 2) {
         std::cout << "Usage: content-hub-peer-clipboard app_id\n";
-        QGuiApplication::exit(1);
+        QApplication::exit(1);
     } else {
         requesterId = args.at(1);
     }
@@ -77,7 +77,7 @@ ClipboardApplication::~ClipboardApplication()
 
 int ClipboardApplication::exec()
 {
-    return QGuiApplication::exec();
+    return QApplication::exec();
 }
 
 const QString& ClipboardApplication::surfaceId() const

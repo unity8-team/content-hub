@@ -16,8 +16,6 @@
  * Authored by: Arthur Mello <arthur.mello@canonical.com>
  */
 
-#include <QGuiApplication>
-
 #include <signal.h>
 #include <unistd.h>
 
@@ -39,7 +37,6 @@ void catchUnixSignals(const std::vector<int>& quitSignals,
 
 int main(int argc, char** argv)
 {
-    QGuiApplication::setApplicationName("com.ubuntu.content-hub.clipboard");
     ClipboardApplication app(argc, argv);
     catchUnixSignals({SIGQUIT, SIGINT, SIGTERM});
     return app.exec();

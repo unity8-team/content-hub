@@ -43,7 +43,7 @@ add_executable(${CLIPBOARD_APP}
     ${RESOURCES}
 )
 
-qt5_use_modules(${CLIPBOARD_APP} Core Gui Quick Qml DBus)
+qt5_use_modules(${CLIPBOARD_APP} Core Gui Quick Qml Widgets DBus)
 find_package(Qt5Core 5.4 REQUIRED)
 include_directories(
     ${Qt5Gui_PRIVATE_INCLUDE_DIRS}

@@ -101,8 +101,8 @@ class Service : public QObject, protected QDBusContext
     void PasteboardChanged();
     void PeerSelected(const QString &app_id, const QString &peer_id);
     void PeerSelectionCancelled(const QString &app_id);
-    void PasteSelected(const QString &paste);
-    void PasteSelectionCancelled();
+    void PasteSelected(const QString &app_id, const QString &paste);
+    void PasteSelectionCancelled(const QString &app_id);
 
   private Q_SLOTS:
     void handle_imports(int);

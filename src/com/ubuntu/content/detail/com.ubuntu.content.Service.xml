@@ -105,9 +105,11 @@
       <arg name="app_id" type="s" direction="in" />
     </method>
     <signal name="PasteSelected">
+      <arg name="app_id" type="s" />
       <arg name="paste" type="s" />
     </signal>
     <signal name="PasteSelectionCancelled">
+      <arg name="app_id" type="s" />
     </signal>
     <method name="SelectPeerForAppId">
       <arg name="app_id" type="s" direction="in" />

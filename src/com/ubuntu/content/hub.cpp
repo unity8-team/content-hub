@@ -95,12 +95,12 @@ cuc::Hub::Hub(QObject* parent) : QObject(parent), d{new cuc::Hub::Private{this}}
     QObject::connect(d->service, SIGNAL(PeerSelectionCancelled(const QString&)),
             this,
             SLOT(onPeerSelectionCancelled(const QString&)));
-    QObject::connect(d->service, SIGNAL(PasteSelected(const QString&)),
+    QObject::connect(d->service, SIGNAL(PasteSelected(const QString&, const QString&)),
             this,
-            SLOT(onPasteSelected(const QString&)));
-    QObject::connect(d->service, SIGNAL(PasteSelectionCancelled()),
+            SLOT(onPasteSelected(const QString&, const QString&)));
+    QObject::connect(d->service, SIGNAL(PasteSelectionCancelled(const QString&)),
             this,
-            SLOT(onPasteSelectionCancelled()));
+            SLOT(onPasteSelectionCancelled(const QString&)));
 }
 
 cuc::Hub::~Hub()
@@ -189,16 +189,18 @@ void cuc::Hub::onPeerSelectionCancelled(const QString &id)
         Q_EMIT(peerSelectionCancelled());
 }
 
-void cuc::Hub::onPasteSelected(const QString &paste)
+void cuc::Hub::onPasteSelected(const QString &id, const QString &paste)
 {
-    TRACE() << Q_FUNC_INFO << paste;
-    Q_EMIT(pasteSelected(paste));
+    TRACE() << Q_FUNC_INFO << id << paste;
+    if (id == app_id())
+        Q_EMIT(pasteSelected(paste));
 }
 
-void cuc::Hub::onPasteSelectionCancelled()
+void cuc::Hub::onPasteSelectionCancelled(const QString &id)
 {
-    TRACE() << Q_FUNC_INFO;
-    Q_EMIT(pasteSelectionCancelled());
+    TRACE() << Q_FUNC_INFO << id;
+    if (id == app_id())
+        Q_EMIT(pasteSelectionCancelled());
 }
 
 bool cuc::Hub::eventFilter(QObject *obj, QEvent *event)

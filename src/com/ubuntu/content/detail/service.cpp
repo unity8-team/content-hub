@@ -1036,7 +1036,7 @@ void cucd::Service::SelectPasteForAppId(const QString& app_id, const QString& pa
         d->clipboard_instances.remove(app_id);
     }
 
-    Q_EMIT(PasteSelected(paste));
+    Q_EMIT(PasteSelected(app_id, paste));
 }
 
 void cucd::Service::SelectPasteForAppIdCancelled(const QString& app_id)
@@ -1056,7 +1056,7 @@ void cucd::Service::SelectPasteForAppIdCancelled(const QString& app_id)
         */
     }
 
-    Q_EMIT(PasteSelectionCancelled());
+    Q_EMIT(PasteSelectionCancelled(app_id));
 }
 
 bool cucd::Service::verifiedSurfaceIsFocused(const QString &surfaceId)

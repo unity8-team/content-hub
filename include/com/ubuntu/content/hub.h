@@ -105,8 +105,8 @@ class Hub : public QObject
     void onPasteFormatsChanged(const QStringList &);
     void onPeerSelected(const QString &, const QString &);
     void onPeerSelectionCancelled(const QString &);
-    void onPasteSelected(const QString &);
-    void onPasteSelectionCancelled();
+    void onPasteSelected(const QString &, const QString &);
+    void onPasteSelectionCancelled(const QString &);
   protected:
     Hub(QObject* = nullptr);
 

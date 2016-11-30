@@ -91,8 +91,13 @@ Q_SIGNALS:
     void anyEntrySelectedChanged();
     void allEntriesSelectedChanged();
 
+private Q_SLOTS:
+    void onPasteboardChanged();
+
 private:
+    void addEntryByPasteId(const QString& pasteId);
     void addEntry(PasteDataEntry& entry);
+    void removeEntry(int index);
 
     PasteDataProvider* m_provider;
     QString m_surfaceId;

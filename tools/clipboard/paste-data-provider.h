@@ -60,6 +60,9 @@ public:
     QString pasteSourceById(const QString &surfaceId, int pasteId);
     bool removePaste(const QString &surfaceId, int pasteId);
 
+Q_SIGNALS:
+    void pasteboardChanged();
+
 private:
     QDBusPendingCall requestAllPasteIds(const QString &surfaceId);
     QDBusPendingCall requestPasteDataById(const QString &surfaceId, int pasteId);

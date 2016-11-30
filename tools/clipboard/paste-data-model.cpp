@@ -32,6 +32,8 @@ PasteDataModel::PasteDataModel(QObject* parent)
 {
     // This way populateModel can be override during tests
     QTimer::singleShot(0, this, SLOT(populateModel()));
+
+    connect(m_provider, SIGNAL(PasteboardChanged()), this, SLOT(onPasteboardChanged()));
 }
 
 PasteDataModel::~PasteDataModel()
@@ -201,11 +203,36 @@ void PasteDataModel::setEntryDeletedByIndex(int index, bool deleted)
     }
 }
 
+void PasteDataModel::addEntryByPasteId(const QString& pasteId)
+{
+    PasteDataEntry entry;
+
+    int id = pasteId.toInt();
+    entry.pasteId = QString::number(id);
+    entry.source = m_provider->pasteSourceById(m_surfaceId, id);
+
+    QMimeData *pasteMimeData = m_provider->pasteDataById(m_surfaceId, id);
+    entry.dataType = TextType;
+    entry.pasteData = pasteMimeData->text();
+
+    entry.itemSelected = false;
+    entry.itemDeleted = false;
+    addEntry(entry);
+}
+
 void PasteDataModel::addEntry(PasteDataEntry& entry)
 {
     beginInsertRows(QModelIndex(), rowCount(), rowCount());
     m_entries << entry;
     endInsertRows();
+    Q_EMIT rowCountChanged();
+}
+
+void PasteDataModel::removeEntry(int index)
+{
+    beginRemoveRows(QModelIndex(), index, index);
+    m_entries.removeAt(index);
+    endRemoveRows();
     Q_EMIT rowCountChanged();
 }
 
@@ -217,28 +244,29 @@ void PasteDataModel::removeEntryByIndex(int index)
     if (!m_provider->removePaste(m_surfaceId, m_entries[index].pasteId.toInt())) 
         return;
 
-    beginRemoveRows(QModelIndex(), index, index);
-    m_entries.removeAt(index);
-    endRemoveRows();
-    Q_EMIT rowCountChanged();
+    removeEntry(index);
 }
 
 void PasteDataModel::populateModel()
 {
     QStringList pasteData = m_provider->allPasteIds(m_surfaceId);
     for (int i = pasteData.size() - 1; i >= 0; i--) {
-        PasteDataEntry entry;
+        addEntryByPasteId(pasteData.at(i));
+    }
+}
 
-        int id = pasteData.at(i).toInt();
-        entry.pasteId = QString::number(id);
-        entry.source = m_provider->pasteSourceById(m_surfaceId, id);
+void PasteDataModel::onPasteboardChanged()
+{
+    QStringList pasteData = m_provider->allPasteIds(m_surfaceId);
 
-        QMimeData *pasteMimeData = m_provider->pasteDataById(m_surfaceId, id);
-        entry.dataType = TextType;
-        entry.pasteData = pasteMimeData->text();
+    for (int i = m_entries.size() - 1; i >= 0; i--) {
+        if (pasteData.removeAll(m_entries[i].pasteId) == 0) {
+            // Paste id was removed from current pasteboard
+            removeEntry(i);
+        }
+    }
 
-        entry.itemSelected = false;
-        entry.itemDeleted = false;
-        addEntry(entry);
+    for (int i = pasteData.size() - 1; i >= 0; i--) {
+        addEntryByPasteId(pasteData.at(i));
     }
 }

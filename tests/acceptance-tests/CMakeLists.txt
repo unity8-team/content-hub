@@ -27,6 +27,7 @@ set(TESTS
   test_utils
   test_types
   mimedata_test
+  glib_test
 )
 
 set(TEST_LIBS
@@ -86,6 +87,8 @@ set_target_properties(
 )
 
 file(COPY good.json bad.json source_all.json DESTINATION .)
+
+target_link_libraries(glib_test content-hub-glib)
 
 add_custom_command(
   OUTPUT transfer_files

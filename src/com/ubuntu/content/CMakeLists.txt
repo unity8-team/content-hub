@@ -28,6 +28,8 @@ include_directories(
   ${UBUNTU_DOWNLOAD_MANAGER_INCLUDE_DIRS}
   ${NOTIFY_INCLUDE_DIRS}
   ${APPARMOR_INCLUDE_DIRS}
+  ${GLIB_INCLUDE_DIRS}
+  ${GIO_INCLUDE_DIRS}
 )
 
 qt5_add_dbus_interface(
@@ -120,8 +122,66 @@ target_link_libraries(content-hub
     ${APPARMOR_LDFLAGS}
 )
 
+find_program(
+  GDBUS_CODEGEN
+  gdbus-codegen
+)
+
+set(
+  DBUS_XML
+  ${CMAKE_CURRENT_SOURCE_DIR}/detail/com.ubuntu.content.Handler.xml
+  ${CMAKE_CURRENT_SOURCE_DIR}/detail/com.ubuntu.content.Paste.xml
+  ${CMAKE_CURRENT_SOURCE_DIR}/detail/com.ubuntu.content.Service.xml
+  ${CMAKE_CURRENT_SOURCE_DIR}/detail/com.ubuntu.content.Transfer.xml
+)
+
+set(
+  DBUS_ANNOTATIONS
+  --annotate com.ubuntu.content.dbus.Paste.Charge\(\)[mimeData] org.gtk.GDBus.C.ForceGVariant true
+  --annotate com.ubuntu.content.dbus.Paste.MimeData\(\)[mimeData] org.gtk.GDBus.C.ForceGVariant true
+  --annotate com.ubuntu.content.dbus.Service.CreatePaste\(\)[mimeData] org.gtk.GDBus.C.ForceGVariant true
+  --annotate com.ubuntu.content.dbus.Service.GetLatestPasteData\(\)[mimeData] org.gtk.GDBus.C.ForceGVariant true
+  --annotate com.ubuntu.content.dbus.Service.GetPasteData\(\)[mimeData] org.gtk.GDBus.C.ForceGVariant true
+)
+
+add_custom_command(
+  OUTPUT glib/content-hub-glib.h glib/content-hub-glib.c
+  COMMAND ${CMAKE_COMMAND} -E make_directory glib
+  COMMAND ${GDBUS_CODEGEN}
+          --interface-prefix com.ubuntu.content.dbus
+          --generate-c-code glib/content-hub-glib
+          --c-namespace ContentHub
+          ${DBUS_ANNOTATIONS}
+          ${DBUS_XML}
+  DEPENDS ${DBUS_XML}
+  VERBATIM
+)
+
+add_library(
+  content-hub-glib SHARED
+  glib/content-hub-glib.h
+  glib/content-hub-glib.c
+)
+
+target_link_libraries(
+  content-hub-glib
+  ${GIO_LIBRARIES}
+)
+
+set_target_properties(
+  content-hub-glib
+  PROPERTIES
+  VERSION ${CONTENT_HUB_VERSION_MAJOR}.${CONTENT_HUB_VERSION_MINOR}.${CONTENT_HUB_VERSION_PATCH}
+  SOVERSION ${CONTENT_HUB_VERSION_MAJOR}
+)
+
 install(
-  TARGETS content-hub
+  FILES ${CMAKE_CURRENT_BINARY_DIR}/glib/content-hub-glib.h
+  DESTINATION ${CMAKE_INSTALL_INCLUDEDIR}/com/ubuntu/content/glib
+)
+
+install(
+  TARGETS content-hub content-hub-glib
   LIBRARY DESTINATION ${CMAKE_INSTALL_LIBDIR}
   ARCHIVE DESTINATION ${CMAKE_INSTALL_LIBDIR}
 )

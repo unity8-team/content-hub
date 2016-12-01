@@ -86,9 +86,9 @@ set_target_properties(
   AUTOMOC TRUE
 )
 
-target_link_libraries(glib_test content-hub-glib)
-
 file(COPY good.json bad.json source_all.json DESTINATION .)
+
+target_link_libraries(glib_test content-hub-glib)
 
 add_custom_command(
   OUTPUT transfer_files

@@ -93,8 +93,6 @@ Q_SIGNALS:
     void AddItemsFromDir(QDir dir);
     QString InstanceId();
     void SetInstanceId(QString id);
-    PromptSessionP PromptSession();
-    void SetPromptSession(PromptSessionP promptSession);
 
   private:
     struct Private;

@@ -614,6 +614,10 @@ void cucd::Service::setupPromptSession(QString app_id, uint clientPid)
 {
     TRACE() << Q_FUNC_INFO << "APP_ID:" << app_id << "PID:" << clientPid;
     qWarning() << Q_FUNC_INFO << "APP_ID:" << app_id << "PID:" << clientPid << "SESSIONS:" << d->active_sessions.keys();
+
+    if (!qgetenv("CONTENT_HUB_TESTING").isNull())
+        return;
+
     if (d->active_sessions.keys().contains(app_id))
         return;
 

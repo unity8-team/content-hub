@@ -1,3 +1,11 @@
+content-hub (0.2+17.04.20161128-0ubuntu1) zesty; urgency=medium
+
+  * Fix build failure on zesty due to googletest 1.8. Also refactored
+    tests/acceptance-tests/CMakeLists.txt to make adding tests less
+    cumbersome. (LP: #1644062)
+
+ -- Ken VanDine <ken.vandine@canonical.com>  Mon, 28 Nov 2016 17:39:58 +0000
+
 content-hub (0.2+17.04.20161107-0ubuntu1) zesty; urgency=medium
 
   * Skip the UAL lookup when run under autopkgtests to prevent an abort

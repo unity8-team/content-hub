@@ -1,3 +1,10 @@
+content-hub (0.2+17.04.20161201.1-0ubuntu1) zesty; urgency=medium
+
+  [ William Hua ]
+  * Add GLib bindings (LP: #1624437) (LP: #1624437)
+
+ -- Ken VanDine <ken.vandine@canonical.com>  Thu, 01 Dec 2016 18:22:34 +0000
+
 content-hub (0.2+17.04.20161128-0ubuntu1) zesty; urgency=medium
 
   * Fix build failure on zesty due to googletest 1.8. Also refactored

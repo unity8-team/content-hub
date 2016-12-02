@@ -1,3 +1,9 @@
+content-hub (0.2+17.04.20161202-0ubuntu1) zesty; urgency=medium
+
+  * Added systemd unit file for dbus activation
+
+ -- Ken VanDine <ken.vandine@canonical.com>  Fri, 02 Dec 2016 15:13:20 +0000
+
 content-hub (0.2+17.04.20161128-0ubuntu1) zesty; urgency=medium
 
   * Fix build failure on zesty due to googletest 1.8. Also refactored

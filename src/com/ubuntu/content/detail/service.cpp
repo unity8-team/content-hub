@@ -1065,6 +1065,9 @@ void cucd::Service::SelectPasteForAppIdCancelled(const QString& app_id)
 
 bool cucd::Service::verifiedSurfaceIsFocused(const QString &surfaceId)
 {
+    // FIXME: Clipboard App is not able to retrieve surfaceId on Xenial right now
+    return true;
+
     /* Only verify focus when not running under testing */
     if (!qgetenv("CONTENT_HUB_TESTING").isNull())
         return true;

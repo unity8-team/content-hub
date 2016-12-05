@@ -527,12 +527,24 @@ void cucd::Service::setupPromptSession(QString app_id, uint clientPid)
     if (d->active_sessions.keys().contains(app_id))
         return;
 
+    /* FIXME: Until bug #1647409 is fixed, we need to release any existing 
+     * prompt sessions before starting a new one
+     */
+    Q_FOREACH(QString key, d->active_sessions.keys()) {
+        PromptSessionP pSession = d->active_sessions.value(key);
+        if (pSession.data()) {
+            qWarning() << "Removing session for" << key;
+            d->active_sessions.remove(key);
+            pSession->deleteLater();
+        }
+    }
+    /* End hack to work around bug #1647409 */
+
     PromptSessionP session = MirHelper::instance()->createPromptSession(clientPid);
     if (!session) return;
 
     QString mirSocket = session->requestSocket();
     TRACE() << Q_FUNC_INFO << "mirSocket:" << mirSocket;
-    qWarning() << Q_FUNC_INFO << "mirSocket:" << mirSocket;
 
     QObject::connect(session.data(), SIGNAL(finished()),
                      this, SLOT(onPromptFinished()));

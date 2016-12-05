@@ -22,6 +22,7 @@ import Ubuntu.Content 1.3
 import clipboardapp.private 0.1
 
 MainView {
+    id: mainView
     applicationName: "content-hub-clipboard"
     width: units.gu(48)
     height: units.gu(60)
@@ -36,14 +37,18 @@ MainView {
 
         property bool editMode: false
 
-        visible: false
+        Loader {
+            id: pasteDataModelLoader
+            active: application.surfaceId != ""
+
+            sourceComponent: PasteDataModel {
+                surfaceId: application.surfaceId
+            }
+        }
 
         PasteDataFilterModel {
             id: pasteDataFilterModel
-            sourceModel: PasteDataModel {
-                id: pasteDataModel
-                surfaceId: application.surfaceId
-            }
+            sourceModel: pasteDataModelLoader.status == Loader.Ready ? pasteDataModelLoader.item : null
         }
 
         header: PageHeader {
@@ -56,13 +61,8 @@ MainView {
             property alias trailingDelegate: trailingBar.delegate
             property alias trailingActions: trailingBar.actions
 
-            leadingActionBar {
-                id: leadingBar 
-            }
-
-            trailingActionBar {
-                id: trailingBar 
-            }
+            leadingActionBar { id: leadingBar }
+            trailingActionBar { id: trailingBar }
         }
 
         states: [
@@ -136,7 +136,10 @@ MainView {
                         text: i18n.tr("Cancel")
                         iconName: "close"
                         onTriggered: {
-                            pasteDataModel.cancelEntriesDeleted()
+                            if (pasteDataModelLoader.status != Loader.Ready) {
+                                return
+                            }
+                            pasteDataModelLoader.item.cancelEntriesDeleted()
                             mainPage.editMode = false
                             editState.entriesEdited = false
                         }
@@ -149,7 +152,10 @@ MainView {
                         iconName: "tick"
                         enabled: editState.entriesEdited
                         onTriggered: {
-                            pasteDataModel.saveEntriesDeleted()
+                            if (pasteDataModelLoader.status != Loader.Ready) {
+                                return
+                            }
+                            pasteDataModelLoader.item.saveEntriesDeleted()
                             mainPage.editMode = false
                             editState.entriesEdited = false
                         }
@@ -166,17 +172,34 @@ MainView {
                     leadingActionBar.actions: Action {
                         iconName: "delete"
                         text: i18n.tr("Delete")
-                        enabled: pasteDataModel.anyEntrySelected
+                        enabled: pasteDataModelLoader.status == Loader.Ready ? pasteDataModelLoader.item.anyEntrySelected : false
                         onTriggered: {
+                            if (pasteDataModelLoader.status != Loader.Ready) {
+                                return
+                            }
+ 
                             editState.entriesEdited = true
-                            pasteDataModel.setSelectedEntriesDeleted()
+                            pasteDataModelLoader.item.setSelectedEntriesDeleted()
                         }
                     }
 
                     trailingActionBar.actions: Action {
-                        iconName: pasteDataModel.allEntriesSelected ? "select-none" : "select"
+                        iconName: {
+                            if (pasteDataModelLoader.status == Loader.Ready) {
+                                if (pasteDataModelLoader.item.allEntriesSelected) {
+                                    return "select-none"
+                                }
+                            }
+                            return "select"
+                        }
                         text: i18n.tr("Select All")
-                        onTriggered: pasteDataModel.setAllEntriesSelected(!pasteDataModel.allEntriesSelected)
+                        onTriggered: {
+                            if (pasteDataModelLoader.status != Loader.Ready) {
+                                return
+                            }
+ 
+                            pasteDataModelLoader.item.setAllEntriesSelected(!pasteDataModelLoader.item.allEntriesSelected)
+                        }
                     }
                 }
 
@@ -208,7 +231,14 @@ MainView {
                 id: delegate
                 title: pasteData
                 summary: source
-                imageSource: dataType === pasteDataModel.ImageType ? pasteData : ""
+                imageSource: {
+                    if (pasteDataModelLoader.status == Loader.Ready) {
+                        if (dataType === pasteDataModelLoader.item.ImageType) {
+                            return pasteData
+                        }
+                    }
+                    return ""
+                }
 
                 Binding {
                     target: delegate
@@ -220,8 +250,13 @@ MainView {
                     selectMode = Qt.binding(function() { return mainPage.editMode })
                 }
 
-                onSelectedChanged: pasteDataModel.setEntrySelectedByIndex(index, selected)
+                onSelectedChanged: {
+                    if (pasteDataModelLoader.status != Loader.Ready) {
+                        return
+                    }
 
+                    pasteDataModelLoader.item.setEntrySelectedByIndex(index, selected)
+                }
                 onPressAndHold: {
                     if (!mainPage.editMode) {
                         mainPage.editMode = true
@@ -233,9 +268,19 @@ MainView {
                         Qt.quit()
                     } 
                 }
-                onDeleteClicked: pasteDataModel.removeEntryByIndex(index)
+                onDeleteClicked: {
+                    if (pasteDataModelLoader.status != Loader.Ready) {
+                        return
+                    }
+
+                    pasteDataModelLoader.item.removeEntryByIndex(index)
+                }
                 onPreviewClicked: {
-                    if (dataType === pasteDataModel.ImageType) {
+                    if (pasteDataModelLoader.status != Loader.Ready) {
+                        return
+                    }
+
+                    if (dataType === pasteDataModelLoader.item.ImageType) {
                         previewImageLoader.loadPreview(index, pasteData)
                     } else {
                         previewTextLoader.loadPreview(index, pasteData)
@@ -266,7 +311,10 @@ MainView {
         sourceComponent: PreviewTextPage {
             visible: false
             text: previewTextLoader.textPreview
-            onPasteClicked: ContentHub.selectPasteForAppId(requesterId,previewTextLoader.textPreview)
+            onPasteClicked: {
+                ContentHub.selectPasteForAppId(requesterId, previewTextLoader.textPreview)
+                Qt.quit()
+            }
         }
 
         onStatusChanged: {
@@ -297,7 +345,10 @@ MainView {
         sourceComponent: PreviewImagePage {
             visible: false
             imageSource: previewImageLoader.imagePreview
-            onPasteClicked: ContentHub.selectPasteForAppId(requesterId, previewImageLoader.imagePreview)
+            onPasteClicked: {
+                ContentHub.selectPasteForAppId(requesterId, previewImageLoader.imagePreview)
+                Qt.quick()
+            }
         }
 
         onStatusChanged: {

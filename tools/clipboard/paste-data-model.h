@@ -95,8 +95,8 @@ private Q_SLOTS:
     void onPasteboardChanged();
 
 private:
-    void addEntryByPasteId(const QString& pasteId);
-    void addEntry(PasteDataEntry& entry);
+    void addEntryByPasteId(const QString& pasteId, bool prepend);
+    void addEntry(PasteDataEntry& entry, bool prepend);
     void removeEntry(int index);
 
     PasteDataProvider* m_provider;

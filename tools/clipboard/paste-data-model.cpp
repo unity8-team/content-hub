@@ -203,7 +203,7 @@ void PasteDataModel::setEntryDeletedByIndex(int index, bool deleted)
     }
 }
 
-void PasteDataModel::addEntryByPasteId(const QString& pasteId)
+void PasteDataModel::addEntryByPasteId(const QString& pasteId, bool prepend)
 {
     PasteDataEntry entry;
 
@@ -217,13 +217,22 @@ void PasteDataModel::addEntryByPasteId(const QString& pasteId)
 
     entry.itemSelected = false;
     entry.itemDeleted = false;
-    addEntry(entry);
+    addEntry(entry, prepend);
 }
 
-void PasteDataModel::addEntry(PasteDataEntry& entry)
+void PasteDataModel::addEntry(PasteDataEntry& entry, bool prepend)
 {
-    beginInsertRows(QModelIndex(), rowCount(), rowCount());
-    m_entries << entry;
+    if (prepend) {
+        beginInsertRows(QModelIndex(), 0, 0);
+    } else {
+        beginInsertRows(QModelIndex(), rowCount(), rowCount());
+    }
+
+    if (prepend) {
+        m_entries.prepend(entry);
+    } else {
+        m_entries << entry;
+    }
     endInsertRows();
     Q_EMIT rowCountChanged();
 }
@@ -251,7 +260,7 @@ void PasteDataModel::populateModel()
 {
     QStringList pasteData = m_provider->allPasteIds(m_surfaceId);
     for (int i = pasteData.size() - 1; i >= 0; i--) {
-        addEntryByPasteId(pasteData.at(i));
+        addEntryByPasteId(pasteData.at(i), false);
     }
 }
 
@@ -267,6 +276,6 @@ void PasteDataModel::onPasteboardChanged()
     }
 
     for (int i = pasteData.size() - 1; i >= 0; i--) {
-        addEntryByPasteId(pasteData.at(i));
+        addEntryByPasteId(pasteData.at(i), true);
     }
 }

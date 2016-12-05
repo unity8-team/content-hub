@@ -20,7 +20,6 @@
 
 #include <iostream>
 
-#include <QGuiApplication>
 #include <QtQml/QQmlContext>
 #include <QtQml/QQmlEngine>
 
@@ -68,6 +67,7 @@ ClipboardApplication::ClipboardApplication(int &argc, char **argv)
     } else {
         m_view->show();
     }
+    m_view->requestActivate();
 }
 
 ClipboardApplication::~ClipboardApplication()
@@ -99,11 +99,7 @@ void ClipboardApplication::onApplicationStateChanged(Qt::ApplicationState state)
 
 QString ClipboardApplication::requestSurfaceId()
 {
-    QWindow *focusWindow = QGuiApplication::focusWindow();
-    if (!focusWindow)
-        return QString();
-
-    auto mirSurface = static_cast<MirSurface*>(platformNativeInterface()->nativeResourceForWindow("mirsurface", focusWindow));
+    auto mirSurface = static_cast<MirSurface*>(platformNativeInterface()->nativeResourceForWindow("mirsurface", m_view));
     if (!mirSurface)
         return QString();
 

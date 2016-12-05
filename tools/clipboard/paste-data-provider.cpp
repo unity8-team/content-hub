@@ -24,7 +24,7 @@ PasteDataProvider::PasteDataProvider(QObject* parent)
     : QObject(parent),
     d{new PasteDataProviderPrivate{this}}
 {
-    connect(d->service, SIGNAL(PasteboardChanged()), this, SIGNAL(pasteboardChanged()));
+    connect(d->service, SIGNAL(PasteboardChanged()), this, SIGNAL(PasteboardChanged()));
 }
 
 PasteDataProvider::~PasteDataProvider()

@@ -26,6 +26,7 @@ class ClipboardApplication : public QApplication
 {
     Q_OBJECT
     Q_PROPERTY(QString surfaceId READ surfaceId NOTIFY surfaceIdChanged)
+    Q_PROPERTY(int appState READ appState NOTIFY appStateChanged)
 
 public:
     ClipboardApplication(int &argc, char **argv);
@@ -34,9 +35,11 @@ public:
     int exec();
 
     const QString& surfaceId() const;
+    int appState() const;
 
 Q_SIGNALS:
     void surfaceIdChanged();
+    void appStateChanged();
 
 protected Q_SLOTS:
     void onApplicationStateChanged(Qt::ApplicationState state);

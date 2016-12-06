@@ -37,18 +37,21 @@ MainView {
 
         property bool editMode: false
 
-        Loader {
-            id: pasteDataModelLoader
-            active: application.surfaceId != ""
+        Binding {
+            target: PasteDataModel
+            property: "surfaceId"
+            value: application.surfaceId
+        }
 
-            sourceComponent: PasteDataModel {
-                surfaceId: application.surfaceId
-            }
+        Binding {
+            target: PasteDataModel
+            property: "appState"
+            value: application.appState
         }
 
         PasteDataFilterModel {
             id: pasteDataFilterModel
-            sourceModel: pasteDataModelLoader.status == Loader.Ready ? pasteDataModelLoader.item : null
+            sourceModel: PasteDataModel
         }
 
         header: PageHeader {
@@ -136,10 +139,7 @@ MainView {
                         text: i18n.tr("Cancel")
                         iconName: "close"
                         onTriggered: {
-                            if (pasteDataModelLoader.status != Loader.Ready) {
-                                return
-                            }
-                            pasteDataModelLoader.item.cancelEntriesDeleted()
+                            PasteDataModel.cancelEntriesDeleted()
                             mainPage.editMode = false
                             editState.entriesEdited = false
                         }
@@ -152,10 +152,7 @@ MainView {
                         iconName: "tick"
                         enabled: editState.entriesEdited
                         onTriggered: {
-                            if (pasteDataModelLoader.status != Loader.Ready) {
-                                return
-                            }
-                            pasteDataModelLoader.item.saveEntriesDeleted()
+                            PasteDataModel.saveEntriesDeleted()
                             mainPage.editMode = false
                             editState.entriesEdited = false
                         }
@@ -172,34 +169,17 @@ MainView {
                     leadingActionBar.actions: Action {
                         iconName: "delete"
                         text: i18n.tr("Delete")
-                        enabled: pasteDataModelLoader.status == Loader.Ready ? pasteDataModelLoader.item.anyEntrySelected : false
+                        enabled: PasteDataModel.anyEntrySelected
                         onTriggered: {
-                            if (pasteDataModelLoader.status != Loader.Ready) {
-                                return
-                            }
- 
                             editState.entriesEdited = true
-                            pasteDataModelLoader.item.setSelectedEntriesDeleted()
+                            PasteDataModel.setSelectedEntriesDeleted()
                         }
                     }
 
                     trailingActionBar.actions: Action {
-                        iconName: {
-                            if (pasteDataModelLoader.status == Loader.Ready) {
-                                if (pasteDataModelLoader.item.allEntriesSelected) {
-                                    return "select-none"
-                                }
-                            }
-                            return "select"
-                        }
+                        iconName: PasteDataModel.allEntriesSelected ? "select-none" : "select"
                         text: i18n.tr("Select All")
-                        onTriggered: {
-                            if (pasteDataModelLoader.status != Loader.Ready) {
-                                return
-                            }
- 
-                            pasteDataModelLoader.item.setAllEntriesSelected(!pasteDataModelLoader.item.allEntriesSelected)
-                        }
+                        onTriggered: PasteDataModel.setAllEntriesSelected(!PasteDataModel.allEntriesSelected)
                     }
                 }
 
@@ -231,14 +211,7 @@ MainView {
                 id: delegate
                 title: pasteData
                 summary: source
-                imageSource: {
-                    if (pasteDataModelLoader.status == Loader.Ready) {
-                        if (dataType === pasteDataModelLoader.item.ImageType) {
-                            return pasteData
-                        }
-                    }
-                    return ""
-                }
+                imageSource: dataType === PasteDataModel.ImageType ? pasteData : ""
 
                 Binding {
                     target: delegate
@@ -251,11 +224,7 @@ MainView {
                 }
 
                 onSelectedChanged: {
-                    if (pasteDataModelLoader.status != Loader.Ready) {
-                        return
-                    }
-
-                    pasteDataModelLoader.item.setEntrySelectedByIndex(index, selected)
+                    PasteDataModel.setEntrySelectedByIndex(index, selected)
                 }
                 onPressAndHold: {
                     if (!mainPage.editMode) {
@@ -269,18 +238,10 @@ MainView {
                     } 
                 }
                 onDeleteClicked: {
-                    if (pasteDataModelLoader.status != Loader.Ready) {
-                        return
-                    }
-
-                    pasteDataModelLoader.item.removeEntryByIndex(index)
+                    PasteDataModel.removeEntryByIndex(index)
                 }
                 onPreviewClicked: {
-                    if (pasteDataModelLoader.status != Loader.Ready) {
-                        return
-                    }
-
-                    if (dataType === pasteDataModelLoader.item.ImageType) {
+                    if (dataType === PasteDataModel.ImageType) {
                         previewImageLoader.loadPreview(index, pasteData)
                     } else {
                         previewTextLoader.loadPreview(index, pasteData)

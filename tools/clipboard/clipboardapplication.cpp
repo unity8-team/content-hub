@@ -30,6 +30,15 @@
 #include "paste-data-model.h"
 #include "paste-data-filter-model.h"
 
+#define MAKE_SINGLETON_FACTORY(type) \
+    static QObject* type##_singleton_factory(QQmlEngine* engine, QJSEngine* scriptEngine) { \
+        Q_UNUSED(engine); \
+        Q_UNUSED(scriptEngine); \
+        return new type(); \
+    }
+
+MAKE_SINGLETON_FACTORY(PasteDataModel);
+
 ClipboardApplication::ClipboardApplication(int &argc, char **argv)
     : QApplication(argc, argv),
     m_surfaceId(),
@@ -54,7 +63,7 @@ ClipboardApplication::ClipboardApplication(int &argc, char **argv)
     }
 
     const char* uri = "clipboardapp.private";
-    qmlRegisterType<PasteDataModel>(uri, 0, 1, "PasteDataModel");
+    qmlRegisterSingletonType<PasteDataModel>(uri, 0, 1, "PasteDataModel", PasteDataModel_singleton_factory);
     qmlRegisterType<PasteDataFilterModel>(uri, 0, 1, "PasteDataFilterModel");
 
     QObject::connect(m_view->engine(), SIGNAL(quit()), SLOT(quit()));
@@ -85,8 +94,15 @@ const QString& ClipboardApplication::surfaceId() const
     return m_surfaceId;
 }
 
+int ClipboardApplication::appState() const
+{
+    return applicationState();
+}
+
 void ClipboardApplication::onApplicationStateChanged(Qt::ApplicationState state)
 {
+    Q_EMIT(appStateChanged());
+
     if (m_surfaceId.isEmpty() && state == Qt::ApplicationActive) {
         m_surfaceId = requestSurfaceId();
         if (m_surfaceId.isEmpty()) {

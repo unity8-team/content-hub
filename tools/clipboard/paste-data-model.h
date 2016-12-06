@@ -29,6 +29,7 @@ class PasteDataModel : public QAbstractListModel
 
     Q_PROPERTY(int count READ rowCount NOTIFY rowCountChanged)
     Q_PROPERTY(QString surfaceId READ surfaceId WRITE setSurfaceId NOTIFY surfaceIdChanged)
+    Q_PROPERTY(int appState READ appState WRITE setAppState NOTIFY appStateChanged)
     Q_PROPERTY(bool anyEntrySelected READ anyEntrySelected NOTIFY anyEntrySelectedChanged)
     Q_PROPERTY(bool allEntriesSelected READ allEntriesSelected NOTIFY allEntriesSelectedChanged)
 
@@ -60,6 +61,10 @@ public:
 
     QString surfaceId() const; 
     void setSurfaceId(QString surfaceId); 
+
+    int appState() const; 
+    void setAppState(int state); 
+
     bool anyEntrySelected() const;
     bool allEntriesSelected() const;
 
@@ -82,12 +87,11 @@ protected:
     };
     QList<PasteDataEntry> m_entries;
 
-protected Q_SLOTS:
-    virtual void populateModel();
 
 Q_SIGNALS:
     void rowCountChanged();
     void surfaceIdChanged();
+    void appStateChanged();
     void anyEntrySelectedChanged();
     void allEntriesSelectedChanged();
 
@@ -95,15 +99,18 @@ private Q_SLOTS:
     void onPasteboardChanged();
 
 private:
-    void addEntryByPasteId(const QString& pasteId, bool prepend);
-    void addEntry(PasteDataEntry& entry, bool prepend);
+    void updateModel();
+    void addEntryByPasteId(const QString& pasteId);
+    void addEntry(PasteDataEntry& entry);
     void removeEntry(int index);
 
     PasteDataProvider* m_provider;
     QString m_surfaceId;
+    int m_appState;
     int m_entriesSelected;
     bool m_anyEntrySelected;
     bool m_allEntriesSelected;
+    bool m_shouldUpdateModel;
 };
 
 #endif // PASTEDATAMODEL_H

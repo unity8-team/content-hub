@@ -26,13 +26,12 @@ PasteDataModel::PasteDataModel(QObject* parent)
     : QAbstractListModel(parent),
     m_provider(new PasteDataProvider()),
     m_surfaceId(),
+    m_appState(-1),
     m_entriesSelected(0),
     m_anyEntrySelected(false),
-    m_allEntriesSelected(false)
+    m_allEntriesSelected(false),
+    m_shouldUpdateModel(true)
 {
-    // This way populateModel can be override during tests
-    QTimer::singleShot(0, this, SLOT(populateModel()));
-
     connect(m_provider, SIGNAL(PasteboardChanged()), this, SLOT(onPasteboardChanged()));
 }
 
@@ -95,6 +94,31 @@ void PasteDataModel::setSurfaceId(QString surfaceId)
     if (m_surfaceId != surfaceId) {
         m_surfaceId = surfaceId;
         Q_EMIT(surfaceIdChanged());
+
+        if (!m_surfaceId.isEmpty()) {
+            if (m_shouldUpdateModel && m_appState == Qt::ApplicationActive) {
+                updateModel();
+            }
+        }
+    }
+}
+
+int PasteDataModel::appState() const
+{
+    return m_appState;
+}
+
+void PasteDataModel::setAppState(int state)
+{
+    if (m_appState != state) {
+        m_appState = state;
+        Q_EMIT(appStateChanged());
+
+        if (m_appState == Qt::ApplicationActive) {
+            if (m_shouldUpdateModel && !m_surfaceId.isEmpty()) {
+                updateModel();
+            }
+        }
     }
 }
 
@@ -203,7 +227,7 @@ void PasteDataModel::setEntryDeletedByIndex(int index, bool deleted)
     }
 }
 
-void PasteDataModel::addEntryByPasteId(const QString& pasteId, bool prepend)
+void PasteDataModel::addEntryByPasteId(const QString& pasteId)
 {
     PasteDataEntry entry;
 
@@ -217,22 +241,13 @@ void PasteDataModel::addEntryByPasteId(const QString& pasteId, bool prepend)
 
     entry.itemSelected = false;
     entry.itemDeleted = false;
-    addEntry(entry, prepend);
+    addEntry(entry);
 }
 
-void PasteDataModel::addEntry(PasteDataEntry& entry, bool prepend)
+void PasteDataModel::addEntry(PasteDataEntry& entry)
 {
-    if (prepend) {
-        beginInsertRows(QModelIndex(), 0, 0);
-    } else {
-        beginInsertRows(QModelIndex(), rowCount(), rowCount());
-    }
-
-    if (prepend) {
-        m_entries.prepend(entry);
-    } else {
-        m_entries << entry;
-    }
+    beginInsertRows(QModelIndex(), 0, 0);
+    m_entries.prepend(entry);
     endInsertRows();
     Q_EMIT rowCountChanged();
 }
@@ -256,15 +271,12 @@ void PasteDataModel::removeEntryByIndex(int index)
     removeEntry(index);
 }
 
-void PasteDataModel::populateModel()
+void PasteDataModel::onPasteboardChanged()
 {
-    QStringList pasteData = m_provider->allPasteIds(m_surfaceId);
-    for (int i = pasteData.size() - 1; i >= 0; i--) {
-        addEntryByPasteId(pasteData.at(i), false);
-    }
+    m_shouldUpdateModel = true;
 }
 
-void PasteDataModel::onPasteboardChanged()
+void PasteDataModel::updateModel()
 {
     QStringList pasteData = m_provider->allPasteIds(m_surfaceId);
 
@@ -276,6 +288,8 @@ void PasteDataModel::onPasteboardChanged()
     }
 
     for (int i = pasteData.size() - 1; i >= 0; i--) {
-        addEntryByPasteId(pasteData.at(i), true);
+        addEntryByPasteId(pasteData.at(i));
     }
+
+    m_shouldUpdateModel = false;
 }

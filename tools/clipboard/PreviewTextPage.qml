@@ -49,9 +49,15 @@ Page {
             margins: units.gu(2)
         }
 
+        textFormat: TextEdit.AutoText
         wrapMode: Text.WordWrap
         cursorVisible: false
         readOnly: true
         selectByMouse: false
+    }
+
+    Scrollbar {
+        flickableItem: textPreview
+        align: Qt.AlignTrailing
     }
 }

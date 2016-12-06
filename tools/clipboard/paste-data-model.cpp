@@ -236,8 +236,13 @@ void PasteDataModel::addEntryByPasteId(const QString& pasteId)
     entry.source = m_provider->pasteSourceById(m_surfaceId, id);
 
     QMimeData *pasteMimeData = m_provider->pasteDataById(m_surfaceId, id);
-    entry.dataType = TextType;
-    entry.pasteData = pasteMimeData->text();
+    if (pasteMimeData->hasHtml()) {
+        entry.dataType = TextType;
+        entry.pasteData = pasteMimeData->html();
+    } else {
+        entry.dataType = TextType;
+        entry.pasteData = pasteMimeData->text();
+    }
 
     entry.itemSelected = false;
     entry.itemDeleted = false;

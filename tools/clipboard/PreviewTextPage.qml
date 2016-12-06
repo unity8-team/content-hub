@@ -40,11 +40,6 @@ Page {
 
     Flickable {
         id: flickable
-        anchors.fill: parent
-
-        TextArea.flickable: TextArea {
-            id: textPreview
-
             anchors {
                 top: pageHeader.bottom
                 bottom: parent.bottom
@@ -53,16 +48,18 @@ Page {
                 margins: units.gu(2)
             }
 
+
+
+        TextArea {
+            id: textPreview
+
+            anchors.fill: parent
+
             textFormat: TextEdit.AutoText
             wrapMode: Text.WordWrap
             cursorVisible: false
             readOnly: true
             selectByMouse: false
         }
-    }
-
-    Scrollbar {
-        flickableItem: flickable
-        align: Qt.AlignTrailing
     }
 }

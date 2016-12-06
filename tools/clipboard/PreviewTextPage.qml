@@ -38,26 +38,31 @@ Page {
         ]
     }
 
-    TextArea {
-        id: textPreview
+    Flickable {
+        id: flickable
+        anchors.fill: parent
 
-        anchors {
-            top: pageHeader.bottom
-            bottom: parent.bottom
-            left: parent.left
-            right: parent.right
-            margins: units.gu(2)
+        TextArea.flickable: TextArea {
+            id: textPreview
+
+            anchors {
+                top: pageHeader.bottom
+                bottom: parent.bottom
+                left: parent.left
+                right: parent.right
+                margins: units.gu(2)
+            }
+
+            textFormat: TextEdit.AutoText
+            wrapMode: Text.WordWrap
+            cursorVisible: false
+            readOnly: true
+            selectByMouse: false
         }
-
-        textFormat: TextEdit.AutoText
-        wrapMode: Text.WordWrap
-        cursorVisible: false
-        readOnly: true
-        selectByMouse: false
     }
 
     Scrollbar {
-        flickableItem: textPreview
+        flickableItem: flickable
         align: Qt.AlignTrailing
     }
 }

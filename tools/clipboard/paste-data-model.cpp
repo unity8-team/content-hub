@@ -287,7 +287,7 @@ void PasteDataModel::updateModel()
         }
     }
 
-    for (int i = 0; i < pasteData.size(); ; ++i) {
+    for (int i = 0; i < pasteData.size(); ++i) {
         addEntryByPasteId(pasteData.at(i));
     }
 

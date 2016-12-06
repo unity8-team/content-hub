@@ -536,6 +536,19 @@ void cucd::Service::setupPromptSession(QString app_id, uint clientPid)
             qWarning() << "Removing session for" << key;
             d->active_sessions.remove(key);
             pSession->deleteLater();
+
+            /* When releasing the prompt session, we need to abort
+             * transfers in process
+             */
+            Q_FOREACH (cucd::Transfer *t, d->active_transfers) {
+                if (t->destination() == key) {
+                    qWarning() << Q_FUNC_INFO << "Found active transfer for session:" << key;
+                    if (should_cancel(t->State())) {
+                        qWarning() << Q_FUNC_INFO << "Aborting active transfer:" << t->Id();
+                        t->Abort();
+                    }
+                }
+            }
         }
     }
     /* End hack to work around bug #1647409 */

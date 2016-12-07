@@ -81,7 +81,6 @@ ClipboardApplication::ClipboardApplication(int &argc, char **argv)
 
 ClipboardApplication::~ClipboardApplication()
 {
-    m_view->deleteLater();
 }
 
 int ClipboardApplication::exec()

@@ -205,14 +205,14 @@ void cucd::Service::RequestPeerForTypeByAppId(const QString& type_id, const QStr
         setupPromptSession(app_id, clientPid);
     }
 
-    PromptSessionP session = d->active_sessions.value(app_id);
-    if (!session) {
-        TRACE() << Q_FUNC_INFO << "Invoking peer picker";
-        d->app_manager->invoke_application(PEER_PICKER_APP_ID.toStdString(), uris);
-    } else {
+    if (d->active_sessions.keys().contains(app_id)) {
         TRACE() << Q_FUNC_INFO << "Invoking application with session";
+        PromptSessionP session = d->active_sessions.value(app_id);
         std::string instance_id = d->app_manager->invoke_application_with_session(PEER_PICKER_APP_ID.toStdString(), session, uris);
         d->peer_picker_instances[app_id] = instance_id;
+    } else {
+        TRACE() << Q_FUNC_INFO << "Invoking peer picker";
+        d->app_manager->invoke_application(PEER_PICKER_APP_ID.toStdString(), uris);
     }
 }
 
@@ -488,7 +488,7 @@ QDBusObjectPath cucd::Service::CreateTransfer(const QString& dest_id, const QStr
     }
 
     auto transfer = new cucd::Transfer(import_counter, src_id, dest_id, dir, type_id, this);
-    if (dir == cuc::Transfer::Import) {
+    if (dir == cuc::Transfer::Import && !qgetenv("CONTENT_HUB_TESTING").isNull()) {
         uint clientPid = d->connection.interface()->servicePid(this->message().service());
         setupPromptSession(dest_id, clientPid);
     }
@@ -608,22 +608,24 @@ void cucd::Service::handle_imports(int state)
             }
         }
 
-        if (!d->active_sessions.keys().contains(transfer->destination())) {
-            uint clientPid = d->connection.interface()->servicePid(this->message().service());
-            setupPromptSession(transfer->destination(), clientPid);
+        if (qgetenv("CONTENT_HUB_TESTING").isNull()) {
+            if (!d->active_sessions.keys().contains(transfer->destination())) {
+                uint clientPid = d->connection.interface()->servicePid(this->message().service());
+                setupPromptSession(transfer->destination(), clientPid);
+            }
         }
 
         qWarning() << "DEST:" << transfer->destination() << "KEYS:" << d->active_sessions.keys();
-        PromptSessionP session = d->active_sessions.value(transfer->destination());
-        if (!session) {
-            TRACE() << Q_FUNC_INFO << "Invoking application";
-            gchar ** uris = NULL;
-            d->app_manager->invoke_application(transfer->source().toStdString(), uris);
-        } else {
+        if (d->active_sessions.keys().contains(transfer->destination())) {
             TRACE() << Q_FUNC_INFO << "Invoking application with session";
+            PromptSessionP session = d->active_sessions.value(transfer->destination());
             gchar ** uris = NULL;
             std::string instance_id = d->app_manager->invoke_application_with_session(transfer->source().toStdString(), session, uris);
             transfer->SetInstanceId(QString::fromStdString(instance_id));
+        } else {
+            TRACE() << Q_FUNC_INFO << "Invoking application";
+            gchar ** uris = NULL;
+            d->app_manager->invoke_application(transfer->source().toStdString(), uris);
         }
     }
 

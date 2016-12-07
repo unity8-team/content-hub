@@ -48,5 +48,7 @@ Page {
             right: parent.right
             margins: units.gu(2)
         }
+
+        fillMode: Image.PreserveAspectFit
     }
 }

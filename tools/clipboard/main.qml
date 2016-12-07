@@ -211,7 +211,7 @@ MainView {
                 id: delegate
                 title: textData
                 summary: source
-                imageSource: dataType === PasteDataModel.ImageType ? "image://pastedImage/yellow" : ""
+                imageSource: dataType === PasteDataModel.ImageType ? imageData : ""
 
                 Binding {
                     target: delegate

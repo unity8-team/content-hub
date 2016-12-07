@@ -246,8 +246,19 @@ void PasteDataModel::addEntryByPasteId(const QString& pasteId)
     if (pasteMimeData->hasImage()) {
         entry.dataType = ImageType;
         entry.pasteData = pasteMimeData->html();
-        entry.textData = "";
-        entry.imageData = "";
+
+        QRegularExpression srcRe("src=\"([^\"]*)\"");
+        QRegularExpressionMatch srcMatch = srcRe.match(entry.pasteData);
+        if (srcMatch.hasMatch()) {
+            entry.imageData = srcMatch.captured(1);
+        }
+
+        QRegularExpression altRe("alt=\"([^\"]*)\"");
+        QRegularExpressionMatch altMatch = altRe.match(entry.pasteData);
+        if (altMatch.hasMatch()) {
+           entry.textData = altMatch.captured(1);
+        }
+
     } else if (pasteMimeData->hasHtml()) {
         entry.dataType = TextType;
         entry.pasteData = pasteMimeData->html();

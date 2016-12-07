@@ -18,6 +18,7 @@
 #include "paste-data-model.h"
 
 #include <QDebug>
+#include <QImage>
 #include <QTimer>
 
 #include "paste-data-provider.h"
@@ -236,7 +237,12 @@ void PasteDataModel::addEntryByPasteId(const QString& pasteId)
     entry.source = m_provider->pasteSourceById(m_surfaceId, id);
 
     QMimeData *pasteMimeData = m_provider->pasteDataById(m_surfaceId, id);
-    if (pasteMimeData->hasHtml()) {
+    if (pasteMimeData->hasImage()) {
+        entry.dataType = ImageType;
+
+        QImage image = qvariant_cast<QImage>(pasteMimeData->imageData());
+        entry.pasteData = image.text();
+    } else if (pasteMimeData->hasHtml()) {
         entry.dataType = TextType;
         entry.pasteData = pasteMimeData->html();
     } else {

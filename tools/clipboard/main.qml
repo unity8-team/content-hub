@@ -211,7 +211,7 @@ MainView {
                 id: delegate
                 title: pasteData
                 summary: source
-                imageSource: dataType === PasteDataModel.ImageType ? pasteData : ""
+                imageSource: dataType === PasteDataModel.ImageType ? "/usr/share/icons/suru/actions/scalable/ok.svg" : ""
 
                 Binding {
                     target: delegate

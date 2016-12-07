@@ -219,7 +219,7 @@ void cucd::Service::RequestPeerForTypeByAppId(const QString& type_id, const QStr
 void cucd::Service::SelectPeerForAppId(const QString& app_id, const QString& peer_id)
 {
     TRACE() << Q_FUNC_INFO << app_id << peer_id;
-    // FIXME: lock this down to only all the peer picker APP_ID to call this
+    // FIXME: lock this down to only allow the peer picker APP_ID to call this
     if (d->peer_picker_instances.contains(app_id)) {
         std::string instance_id = d->peer_picker_instances.value(app_id);
         d->app_manager->stop_application_with_helper(PEER_PICKER_APP_ID.toStdString(), instance_id);
@@ -235,14 +235,6 @@ void cucd::Service::SelectPeerForAppIdCancelled(const QString& app_id)
         std::string instance_id = d->peer_picker_instances.value(app_id);
         d->app_manager->stop_application_with_helper(PEER_PICKER_APP_ID.toStdString(), instance_id);
         d->peer_picker_instances.remove(app_id);
-        /*
-        if (d->active_sessions.keys().contains(app_id)) {
-                PromptSessionP pSession = d->active_sessions.value(app_id);
-                PromptSession* session = pSession.data();
-                if (session)
-                    session->release();
-        }
-        */
     }
     Q_EMIT(PeerSelectionCancelled(app_id));
 }

@@ -38,20 +38,22 @@ MainView {
         property bool editMode: false
 
         Binding {
-            target: PasteDataModel
+            target: pasteDataModel
             property: "surfaceId"
             value: application.surfaceId
         }
 
         Binding {
-            target: PasteDataModel
+            target: pasteDataModel
             property: "appState"
             value: application.appState
         }
 
         PasteDataFilterModel {
             id: pasteDataFilterModel
-            sourceModel: PasteDataModel
+            sourceModel: PasteDataModel {
+                id: pasteDataModel
+            }
         }
 
         header: PageHeader {
@@ -139,7 +141,7 @@ MainView {
                         text: i18n.tr("Cancel")
                         iconName: "close"
                         onTriggered: {
-                            PasteDataModel.cancelEntriesDeleted()
+                            pasteDataModel.cancelEntriesDeleted()
                             mainPage.editMode = false
                             editState.entriesEdited = false
                         }
@@ -152,7 +154,7 @@ MainView {
                         iconName: "tick"
                         enabled: editState.entriesEdited
                         onTriggered: {
-                            PasteDataModel.saveEntriesDeleted()
+                            pasteDataModel.saveEntriesDeleted()
                             mainPage.editMode = false
                             editState.entriesEdited = false
                         }
@@ -169,17 +171,17 @@ MainView {
                     leadingActionBar.actions: Action {
                         iconName: "delete"
                         text: i18n.tr("Delete")
-                        enabled: PasteDataModel.anyEntrySelected
+                        enabled: pasteDataModel.anyEntrySelected
                         onTriggered: {
                             editState.entriesEdited = true
-                            PasteDataModel.setSelectedEntriesDeleted()
+                            pasteDataModel.setSelectedEntriesDeleted()
                         }
                     }
 
                     trailingActionBar.actions: Action {
-                        iconName: PasteDataModel.allEntriesSelected ? "select-none" : "select"
+                        iconName: pasteDataModel.allEntriesSelected ? "select-none" : "select"
                         text: i18n.tr("Select All")
-                        onTriggered: PasteDataModel.setAllEntriesSelected(!PasteDataModel.allEntriesSelected)
+                        onTriggered: pasteDataModel.setAllEntriesSelected(!pasteDataModel.allEntriesSelected)
                     }
                 }
 
@@ -224,7 +226,7 @@ MainView {
                 }
 
                 onSelectedChanged: {
-                    PasteDataModel.setEntrySelectedByIndex(index, selected)
+                    pasteDataModel.setEntrySelectedByIndex(index, selected)
                 }
                 onPressAndHold: {
                     if (!mainPage.editMode) {
@@ -238,88 +240,48 @@ MainView {
                     } 
                 }
                 onDeleteClicked: {
-                    PasteDataModel.removeEntryByIndex(index)
+                    pasteDataModel.removeEntryByIndex(index)
                 }
                 onPreviewClicked: {
                     if (dataType === PasteDataModel.ImageType) {
-                        previewImageLoader.loadPreview(index, pasteData, imageData)
+                        previewImagePage.pasteData = pasteData
+                        previewImagePage.imageSource = imageData
+                        pageStack.push(previewImagePage)
                     } else {
-                        previewTextLoader.loadPreview(index, pasteData, textData)
+                        previewTextPage.pasteData = pasteData
+                        previewTextPage.text = textData
+                        pageStack.push(previewTextPage)
                     }
                 }
             }
         }
     }
 
-    Loader {
-        id: previewTextLoader
+    PreviewTextPage {
+        id: previewTextPage
 
-        property int index: -1
-        property string pasteData: ""
-        property string textPreview: ""
+        property string pasteData
 
-        function loadPreview(index, data, text) {
-            previewTextLoader.index = index
-            previewTextLoader.pasteData = data
-            previewTextLoader.textPreview = text
-            if (!previewTextLoader.active) {
-                previewTextLoader.active = true
-            } else if (previewTextLoader.status == Loader.Ready) {
-                pageStack.push(previewTextLoader.item)
-            }
-        }
+        visible: false
 
-        active: false
-
-        sourceComponent: PreviewTextPage {
-            visible: false
-            text: previewTextLoader.textPreview
-            onPasteClicked: {
-                ContentHub.selectPasteForAppId(requesterId, previewTextLoader.pasteData)
-                Qt.quit()
-            }
-        }
-
-        onStatusChanged: {
-            if (previewTextLoader.status == Loader.Ready) {
-                pageStack.push(previewTextLoader.item)
-            }
+        onPasteClicked: {
+            pageStack.pop()
+            ContentHub.selectPasteForAppId(requesterId, pasteData)
+            Qt.quit()
         }
     }
 
-    Loader {
-        id: previewImageLoader
+    PreviewImagePage {
+        id: previewImagePage
 
-        property int index: -1
-        property string pasteData: ""
-        property url imagePreview: ""
+        property string pasteData
 
-        function loadPreview(index, data, url) {
-            previewImageLoader.index = index
-            previewImageLoader.pasteData = data
-            previewImageLoader.imagePreview = url
-            if (!previewImageLoader.active) {
-                previewImageLoader.active = true
-            } else if (previewImageLoader.status == Loader.Ready) {
-                pageStack.push(previewImageLoader.item)
-            }
-        }
+        visible: false
 
-        active: false
-
-        sourceComponent: PreviewImagePage {
-            visible: false
-            imageSource: previewImageLoader.imagePreview
-            onPasteClicked: {
-                ContentHub.selectPasteForAppId(requesterId, previewImageLoader.pasteData)
-                Qt.quit()
-            }
-        }
-
-        onStatusChanged: {
-            if (previewImageLoader.status == Loader.Ready) {
-                pageStack.push(previewImageLoader.item)
-            }
+        onPasteClicked: {
+            pageStack.pop()
+            ContentHub.selectPasteForAppId(requesterId, pasteData)
+            Qt.quit()
         }
     }
 }

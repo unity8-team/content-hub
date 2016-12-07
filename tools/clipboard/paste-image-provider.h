@@ -21,6 +21,8 @@
 
 #include <QQuickImageProvider>
 
+class PasteDataProvider;
+
 class PasteImageProvider : public QQuickImageProvider
 {
 
@@ -28,7 +30,10 @@ public:
     PasteImageProvider();
     ~PasteImageProvider();
 
-    QPixmap requestPixmap(const QString &id, QSize *size, const QSize &requestedSize);
+    QImage requestImage(const QString &id, QSize *size, const QSize &requestedSize);
+
+private:
+    PasteDataProvider* m_provider;
 };
 
 #endif // PASTEIMAGEPROVIDER_H

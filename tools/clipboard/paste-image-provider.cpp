@@ -17,8 +17,14 @@
 
 #include "paste-image-provider.h"
 
+#include <QDebug>
+#include <QMimeData>
+
+#include "paste-data-provider.h"
+
 PasteImageProvider::PasteImageProvider()
-    : QQuickImageProvider(QQuickImageProvider::Pixmap)
+    : QQuickImageProvider(QQuickImageProvider::Pixmap),
+    m_provider(new PasteDataProvider())
 {
 }
 
@@ -26,16 +32,19 @@ PasteImageProvider::~PasteImageProvider()
 {
 }
 
-QPixmap PasteImageProvider::requestPixmap(const QString &id, QSize *size, const QSize &requestedSize)
+QImage PasteImageProvider::requestImage(const QString &id, QSize *size, const QSize &requestedSize)
 {
-    int width = 100;
-    int height = 50;
+    qDebug() << "IMAGE PROVIDER" << id;
+    QString surfaceId = "foobar";
+    QMimeData *mimeData = m_provider->pasteDataById(surfaceId, id.toInt());
+    if (!mimeData || !mimeData->hasImage()) {
+        return QImage();
+    }
 
-    if (size)
-        *size = QSize(width, height);
-    QPixmap pixmap(requestedSize.width() > 0 ? requestedSize.width() : width,
-                   requestedSize.height() > 0 ? requestedSize.height() : height);
-    pixmap.fill(QColor(id).rgba());
+    QImage image = qvariant_cast<QImage>(mimeData->imageData());
+    if (requestedSize.width() > 0 && requestedSize.height() > 0) {
+        return image.scaled(requestedSize.width(), requestedSize.height(), Qt::IgnoreAspectRatio);
+    }
 
-    return pixmap;
+    return image;
 }

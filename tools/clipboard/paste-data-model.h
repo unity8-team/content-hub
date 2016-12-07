@@ -45,6 +45,8 @@ public:
         Source,
         DataType,
         PasteData,
+        TextData,
+        ImageData,
         ItemSelected,
         ItemDeleted
     };
@@ -82,6 +84,8 @@ protected:
         QString source;
         PasteDataType dataType;
         QString pasteData;
+        QString textData;
+        QString imageData;
         bool itemSelected;
         bool itemDeleted;
     };

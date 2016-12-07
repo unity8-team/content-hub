@@ -48,6 +48,8 @@ QHash<int, QByteArray> PasteDataModel::roleNames() const
         roles[Source] = "source";
         roles[DataType] = "dataType";
         roles[PasteData] = "pasteData";
+        roles[TextData] = "textData";
+        roles[ImageData] = "imageData";
         roles[ItemSelected] = "itemSelected";
         roles[ItemDeleted] = "itemDeleted";
     }
@@ -76,6 +78,10 @@ QVariant PasteDataModel::data(const QModelIndex& index, int role) const
         return entry.dataType;
     case PasteData:
         return entry.pasteData;
+    case TextData:
+        return entry.textData;
+    case ImageData:
+        return entry.imageData;
     case ItemSelected:
         return entry.itemSelected;
     case ItemDeleted:
@@ -239,15 +245,17 @@ void PasteDataModel::addEntryByPasteId(const QString& pasteId)
     QMimeData *pasteMimeData = m_provider->pasteDataById(m_surfaceId, id);
     if (pasteMimeData->hasImage()) {
         entry.dataType = ImageType;
-
-        QImage image = qvariant_cast<QImage>(pasteMimeData->imageData());
-        entry.pasteData = image.text();
+        entry.pasteData = pasteMimeData->html();
+        entry.textData = "";
+        entry.imageData = "";
     } else if (pasteMimeData->hasHtml()) {
         entry.dataType = TextType;
         entry.pasteData = pasteMimeData->html();
+        entry.textData = pasteMimeData->html();
     } else {
         entry.dataType = TextType;
         entry.pasteData = pasteMimeData->text();
+        entry.textData = pasteMimeData->text();
     }
 
     entry.itemSelected = false;
@@ -289,17 +297,17 @@ void PasteDataModel::onPasteboardChanged()
 
 void PasteDataModel::updateModel()
 {
-    QStringList pasteData = m_provider->allPasteIds(m_surfaceId);
+    QStringList dataList = m_provider->allPasteIds(m_surfaceId);
 
     for (int i = m_entries.size() - 1; i >= 0; i--) {
-        if (pasteData.removeAll(m_entries[i].pasteId) == 0) {
+        if (dataList.removeAll(m_entries[i].pasteId) == 0) {
             // Paste id was removed from current pasteboard
             removeEntry(i);
         }
     }
 
-    for (int i = 0; i < pasteData.size(); ++i) {
-        addEntryByPasteId(pasteData.at(i));
+    for (int i = 0; i < dataList.size(); ++i) {
+        addEntryByPasteId(dataList.at(i));
     }
 
     m_shouldUpdateModel = false;

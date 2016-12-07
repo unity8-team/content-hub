@@ -209,7 +209,7 @@ MainView {
 
             delegate: ClipboardItemDelegate {
                 id: delegate
-                title: pasteData
+                title: textData
                 summary: source
                 imageSource: dataType === PasteDataModel.ImageType ? "image://pastedImage/yellow" : ""
 
@@ -242,9 +242,9 @@ MainView {
                 }
                 onPreviewClicked: {
                     if (dataType === PasteDataModel.ImageType) {
-                        previewImageLoader.loadPreview(index, pasteData)
+                        previewImageLoader.loadPreview(index, pasteData, imageData)
                     } else {
-                        previewTextLoader.loadPreview(index, pasteData)
+                        previewTextLoader.loadPreview(index, pasteData, textData)
                     }
                 }
             }
@@ -255,10 +255,12 @@ MainView {
         id: previewTextLoader
 
         property int index: -1
+        property string pasteData: ""
         property string textPreview: ""
 
-        function loadPreview(index, text) {
+        function loadPreview(index, data, text) {
             previewTextLoader.index = index
+            previewTextLoader.pasteData = data
             previewTextLoader.textPreview = text
             if (!previewTextLoader.active) {
                 previewTextLoader.active = true
@@ -273,7 +275,7 @@ MainView {
             visible: false
             text: previewTextLoader.textPreview
             onPasteClicked: {
-                ContentHub.selectPasteForAppId(requesterId, previewTextLoader.textPreview)
+                ContentHub.selectPasteForAppId(requesterId, previewTextLoader.pasteData)
                 Qt.quit()
             }
         }
@@ -289,10 +291,12 @@ MainView {
         id: previewImageLoader
 
         property int index: -1
+        property string pasteData: ""
         property url imagePreview: ""
 
-        function loadPreview(index, url) {
+        function loadPreview(index, data, url) {
             previewImageLoader.index = index
+            previewImageLoader.pasteData = data
             previewImageLoader.imagePreview = url
             if (!previewImageLoader.active) {
                 previewImageLoader.active = true
@@ -307,7 +311,7 @@ MainView {
             visible: false
             imageSource: previewImageLoader.imagePreview
             onPasteClicked: {
-                ContentHub.selectPasteForAppId(requesterId, previewImageLoader.imagePreview)
+                ContentHub.selectPasteForAppId(requesterId, previewImageLoader.pasteData)
                 Qt.quick()
             }
         }

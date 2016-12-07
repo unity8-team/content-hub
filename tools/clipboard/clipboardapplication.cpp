@@ -81,6 +81,7 @@ ClipboardApplication::ClipboardApplication(int &argc, char **argv)
 
 ClipboardApplication::~ClipboardApplication()
 {
+    delete m_view;
 }
 
 int ClipboardApplication::exec()

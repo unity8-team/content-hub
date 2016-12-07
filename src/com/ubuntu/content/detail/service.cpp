@@ -396,7 +396,6 @@ bool cucd::Service::CreatePaste(const QString& app_id, const QString& surfaceId,
     static size_t import_counter{0}; import_counter++;
 
     pid_t pid = d->connection.interface()->servicePid(this->message().service());
-    qWarning() << Q_FUNC_INFO << "PID: " << pid;
     QString effective_app_id;
     if (app_id_matches(app_id, pid)) {
         effective_app_id = app_id;
@@ -518,8 +517,7 @@ QDBusObjectPath cucd::Service::CreateTransfer(const QString& dest_id, const QStr
 
 void cucd::Service::setupPromptSession(QString app_id, uint clientPid)
 {
-    TRACE() << Q_FUNC_INFO << "APP_ID:" << app_id << "PID:" << clientPid;
-    qWarning() << Q_FUNC_INFO << "APP_ID:" << app_id << "PID:" << clientPid << "SESSIONS:" << d->active_sessions.keys();
+    TRACE() << Q_FUNC_INFO << "APP_ID:" << app_id << "PID:" << clientPid << "SESSIONS:" << d->active_sessions.keys();
 
     if (!qgetenv("CONTENT_HUB_TESTING").isNull())
         return;
@@ -533,7 +531,7 @@ void cucd::Service::setupPromptSession(QString app_id, uint clientPid)
     Q_FOREACH(QString key, d->active_sessions.keys()) {
         PromptSessionP pSession = d->active_sessions.value(key);
         if (pSession.data()) {
-            qWarning() << "Removing session for" << key;
+            TRACE() << "Removing session for" << key;
             d->active_sessions.remove(key);
             pSession->deleteLater();
 
@@ -542,9 +540,9 @@ void cucd::Service::setupPromptSession(QString app_id, uint clientPid)
              */
             Q_FOREACH (cucd::Transfer *t, d->active_transfers) {
                 if (t->destination() == key) {
-                    qWarning() << Q_FUNC_INFO << "Found active transfer for session:" << key;
+                    TRACE() << Q_FUNC_INFO << "Found active transfer for session:" << key;
                     if (should_cancel(t->State())) {
-                        qWarning() << Q_FUNC_INFO << "Aborting active transfer:" << t->Id();
+                        TRACE() << Q_FUNC_INFO << "Aborting active transfer:" << t->Id();
                         t->Abort();
                     }
                 }
@@ -572,7 +570,7 @@ void cucd::Service::onPromptFinished()
     Q_FOREACH(QString key, d->active_sessions.keys()) {
         PromptSessionP pSession = d->active_sessions.value(key);
         if (session == pSession.data()) {
-            qWarning() << "Removing session for" << key;
+            TRACE() << "Removing session for" << key;
             d->active_sessions.remove(key);
             pSession->deleteLater();
         }
@@ -588,12 +586,10 @@ void cucd::Service::handle_imports(int state)
     if (state == cuc::Transfer::initiated)
     {
         TRACE() << Q_FUNC_INFO << "initiated";
-        qWarning() << "WasSourceStartedByContentHub:" << transfer->WasSourceStartedByContentHub();
         if (d->app_manager->is_application_started(transfer->source().toStdString()))
             transfer->SetSourceStartedByContentHub(false);
         else
             transfer->SetSourceStartedByContentHub(true);
-        qWarning() << "WasSourceStartedByContentHub:" << transfer->WasSourceStartedByContentHub();
 
         Q_FOREACH (RegHandler *r, d->handlers)
         {
@@ -615,7 +611,6 @@ void cucd::Service::handle_imports(int state)
             }
         }
 
-        qWarning() << "DEST:" << transfer->destination() << "KEYS:" << d->active_sessions.keys();
         if (d->active_sessions.keys().contains(transfer->destination())) {
             TRACE() << Q_FUNC_INFO << "Invoking application with session";
             PromptSessionP session = d->active_sessions.value(transfer->destination());

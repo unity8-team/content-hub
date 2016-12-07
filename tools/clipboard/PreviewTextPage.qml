@@ -40,15 +40,13 @@ Page {
 
     Flickable {
         id: flickable
-            anchors {
-                top: pageHeader.bottom
-                bottom: parent.bottom
-                left: parent.left
-                right: parent.right
-                margins: units.gu(2)
-            }
-
-
+        anchors {
+            top: pageHeader.bottom
+            bottom: parent.bottom
+            left: parent.left
+            right: parent.right
+            margins: units.gu(2)
+        }
 
         TextArea {
             id: textPreview

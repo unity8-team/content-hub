@@ -312,7 +312,7 @@ MainView {
             imageSource: previewImageLoader.imagePreview
             onPasteClicked: {
                 ContentHub.selectPasteForAppId(requesterId, previewImageLoader.pasteData)
-                Qt.quick()
+                Qt.quit()
             }
         }
 

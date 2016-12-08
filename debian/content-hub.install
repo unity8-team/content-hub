@@ -14,6 +14,5 @@ usr/share/applications/content-hub-clipboard.desktop
 usr/share/applications/content-hub-peer-picker.desktop
 usr/share/url-dispatcher/urls/content-hub-send.url-dispatcher
 usr/share/content-hub/icons
-debian/apparmor/content-hub-trust-prompt etc/apparmor.d
 debian/apparmor/content-hub-clipboard etc/apparmor.d
 debian/apparmor/content-hub-peer-picker etc/apparmor.d

@@ -118,8 +118,14 @@ set(prefix ${CMAKE_INSTALL_PREFIX})
 set(exec_prefix ${prefix}/bin)
 set(libdir ${prefix}/${CMAKE_INSTALL_LIBDIR})
 set(pkg-name "libcontent-hub")
+set(glib-pkg-name "libcontent-hub-glib")
 configure_file(libcontent-hub.pc.in libcontent-hub.pc @ONLY)
-install(FILES ${CMAKE_CURRENT_BINARY_DIR}/libcontent-hub.pc DESTINATION ${CMAKE_INSTALL_LIBDIR}/pkgconfig)
+configure_file(libcontent-hub-glib.pc.in libcontent-hub-glib.pc @ONLY)
+install(FILES
+  ${CMAKE_CURRENT_BINARY_DIR}/libcontent-hub.pc
+  ${CMAKE_CURRENT_BINARY_DIR}/libcontent-hub-glib.pc
+  DESTINATION ${CMAKE_INSTALL_LIBDIR}/pkgconfig
+)
 
 # There's no nice way to format this. Thanks CMake.
 add_test(LGPL-required

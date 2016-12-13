@@ -99,14 +99,15 @@
     </method>
     <method name="SelectPasteForAppId">
       <arg name="app_id" type="s" direction="in" />
-      <arg name="paste" type="s" direction="in" />
+      <arg name="surface_id" type="s" direction="in" />
+      <arg name="paste_id" type="s" direction="in" />
     </method>
     <method name="SelectPasteForAppIdCancelled">
       <arg name="app_id" type="s" direction="in" />
     </method>
     <signal name="PasteSelected">
       <arg name="app_id" type="s" />
-      <arg name="paste" type="s" />
+      <arg name="mimedata" type="ay" />
     </signal>
     <signal name="PasteSelectionCancelled">
       <arg name="app_id" type="s" />

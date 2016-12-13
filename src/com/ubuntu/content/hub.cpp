@@ -125,10 +125,10 @@ void cuc::Hub::requestPaste()
     d->service->RequestPasteByAppId(app_id());
 }
 
-void cuc::Hub::selectPasteForAppId(QString app_id, QString paste)
+void cuc::Hub::selectPasteForAppId(QString app_id, QString surface_id, QString paste_id)
 {
-    TRACE() << Q_FUNC_INFO << app_id << paste;
-    d->service->SelectPasteForAppId(app_id, paste);
+    TRACE() << Q_FUNC_INFO << app_id << surface_id << paste_id;
+    d->service->SelectPasteForAppId(app_id, surface_id, paste_id);
 }
 
 void cuc::Hub::selectPasteForAppIdCancelled(QString app_id)

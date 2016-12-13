@@ -74,7 +74,7 @@ class Hub : public QObject
     Q_INVOKABLE virtual void selectPeerForAppId(QString app_id, QString peer_id);
     Q_INVOKABLE virtual void selectPeerForAppIdCancelled(QString app_id);
     Q_INVOKABLE virtual void requestPaste();
-    Q_INVOKABLE virtual void selectPasteForAppId(QString app_id, QString paste);
+    Q_INVOKABLE virtual void selectPasteForAppId(QString app_id, QString surface_id, QString paste_id);
     Q_INVOKABLE virtual void selectPasteForAppIdCancelled(QString app_id);
  
     ///

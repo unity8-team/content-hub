@@ -235,7 +235,7 @@ MainView {
                 }
                 onClicked: {
                     if (!selectMode) {
-                        ContentHub.selectPasteForAppId(requesterId, pasteData)
+                        ContentHub.selectPasteForAppId(requesterId, application.surfaceId, index)
                         Qt.quit()
                     } 
                 }
@@ -244,10 +244,12 @@ MainView {
                 }
                 onPreviewClicked: {
                     if (dataType === PasteDataModel.ImageType) {
+                        previewTextPage.pasteId = index
                         previewImagePage.pasteData = pasteData
                         previewImagePage.imageSource = imageData
                         pageStack.push(previewImagePage)
                     } else {
+                        previewTextPage.pasteId = index
                         previewTextPage.pasteData = pasteData
                         previewTextPage.text = textData
                         pageStack.push(previewTextPage)
@@ -260,13 +262,14 @@ MainView {
     PreviewTextPage {
         id: previewTextPage
 
+        property int pasteId
         property string pasteData
 
         visible: false
 
         onPasteClicked: {
             pageStack.pop()
-            ContentHub.selectPasteForAppId(requesterId, pasteData)
+            ContentHub.selectPasteForAppId(requesterId, application.surfaceId, pasteId)
             Qt.quit()
         }
     }
@@ -274,13 +277,14 @@ MainView {
     PreviewImagePage {
         id: previewImagePage
 
+        property int pasteId
         property string pasteData
 
         visible: false
 
         onPasteClicked: {
             pageStack.pop()
-            ContentHub.selectPasteForAppId(requesterId, pasteData)
+            ContentHub.selectPasteForAppId(requesterId, application.surfaceId, pasteId)
             Qt.quit()
         }
     }

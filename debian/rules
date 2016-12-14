@@ -27,6 +27,7 @@ testskip_architectures := powerpc ppc64el s390x
 
 override_dh_auto_test:
 ifneq ($(DEB_HOST_ARCH),$(findstring $(DEB_HOST_ARCH), $(testskip_architectures)))
+	rm -rf build/tests/qml-tests
 	dh_auto_test
 endif
 	

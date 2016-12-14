@@ -5,11 +5,6 @@ export DPKG_GENSYMBOLS_CHECK_LEVEL=4
 export CONTENT_HUB_TESTING=1
 export DEB_BUILD_MAINT_OPTIONS=hardening=+all
 
-DEB_HOST_ARCH := $(shell dpkg-architecture -qDEB_HOST_ARCH)
-# Skip tests on the archs they are known to be flaky with current configuration
-testskip_architectures := powerpc ppc64el s390x
-
-
 CPPFLAGS:=$(shell dpkg-buildflags --get CPPFLAGS)
 CFLAGS:=$(shell dpkg-buildflags --get CFLAGS) $(CPPFLAGS)
 CXXFLAGS:=$(shell dpkg-buildflags --get CXXFLAGS) $(CPPFLAGS)
@@ -26,9 +21,13 @@ override_dh_auto_install:
 	dh_apparmor -pcontent-hub --profile-name=content-hub-peer-picker
 	dh_apparmor -pcontent-hub-testability --profile-name=content-hub-testability
 
+DEB_HOST_ARCH := $(shell dpkg-architecture -qDEB_HOST_ARCH)
+# Skip tests on the archs they are known to be flaky with current configuration
+testskip_architectures := powerpc ppc64el s390x
+
 override_dh_auto_test:
 ifneq ($(DEB_HOST_ARCH),$(findstring $(DEB_HOST_ARCH), $(testskip_architectures)))
-	make -C build/tests/acceptance-tests test
+	dh_auto_test
 endif
 	
 override_dh_translations:

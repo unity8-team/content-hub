@@ -201,8 +201,10 @@ void cucd::Service::RequestPeerForTypeByAppId(const QString& type_id, const QStr
     };
 
     if (!d->active_sessions.keys().contains(app_id)) {
-        uint clientPid = d->connection.interface()->servicePid(this->message().service());
-        setupPromptSession(app_id, clientPid);
+        if (!QDBusConnection::sender().baseService().isEmpty()) {
+            uint clientPid = d->connection.interface()->servicePid(this->message().service());
+            setupPromptSession(app_id, clientPid);
+        }
     }
 
     if (d->active_sessions.keys().contains(app_id)) {
@@ -593,8 +595,10 @@ void cucd::Service::handle_imports(int state)
 
         if (qgetenv("CONTENT_HUB_TESTING").isNull()) {
             if (!d->active_sessions.keys().contains(transfer->destination()) && transfer->WasSourceStartedByContentHub()) {
-                uint clientPid = d->connection.interface()->servicePid(this->message().service());
-                setupPromptSession(transfer->destination(), clientPid);
+                if (!QDBusConnection::sender().baseService().isEmpty()) {
+                    uint clientPid = d->connection.interface()->servicePid(this->message().service());
+                    setupPromptSession(transfer->destination(), clientPid);
+                }
             }
         }
 

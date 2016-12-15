@@ -235,7 +235,7 @@ MainView {
                 }
                 onClicked: {
                     if (!selectMode) {
-                        ContentHub.selectPasteForAppId(requesterId, application.surfaceId, index)
+                        ContentHub.selectPasteForAppId(requesterId, application.surfaceId, pasteId)
                         Qt.quit()
                     } 
                 }
@@ -244,12 +244,12 @@ MainView {
                 }
                 onPreviewClicked: {
                     if (dataType === PasteDataModel.ImageType) {
-                        previewTextPage.pasteId = index
+                        previewTextPage.pasteId = pasteId 
                         previewImagePage.pasteData = pasteData
                         previewImagePage.imageSource = imageData
                         pageStack.push(previewImagePage)
                     } else {
-                        previewTextPage.pasteId = index
+                        previewTextPage.pasteId = pasteId
                         previewTextPage.pasteData = pasteData
                         previewTextPage.text = textData
                         pageStack.push(previewTextPage)

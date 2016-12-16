@@ -262,7 +262,7 @@ void PasteDataModel::addEntryByPasteId(const QString& pasteId)
     } else if (pasteMimeData->hasHtml()) {
         entry.dataType = TextType;
         entry.pasteData = pasteMimeData->html();
-        entry.textData = pasteMimeData->html();
+        entry.textData = pasteMimeData->text();
     } else {
         entry.dataType = TextType;
         entry.pasteData = pasteMimeData->text();

@@ -53,7 +53,7 @@ Page {
 
             anchors.fill: parent
 
-            textFormat: TextEdit.AutoText
+            textFormat: TextEdit.PlainText
             wrapMode: Text.WordWrap
             cursorVisible: false
             readOnly: true

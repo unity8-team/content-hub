@@ -62,6 +62,7 @@ ListItem {
             }
             return ""
         }
+        title.textFormat: Text.PlainText
         summary.text: clipboardItem.summary
 
         UbuntuShape {

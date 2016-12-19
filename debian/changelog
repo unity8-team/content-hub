@@ -1,3 +1,10 @@
+content-hub (0.3+17.04.20161201.1-0ubuntu1) UNRELEASED; urgency=medium
+
+  * New upstream version to reflect addition of the out of process
+    peer picker
+
+ -- Ken VanDine <ken.vandine@canonical.com>  Thu, 08 Dec 2016 09:38:30 -0500
+
 content-hub (0.2+17.04.20161201.1-0ubuntu1) zesty; urgency=medium
 
   [ William Hua ]

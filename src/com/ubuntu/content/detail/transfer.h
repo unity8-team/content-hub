@@ -18,6 +18,7 @@
 #ifndef TRANSFER_H_
 #define TRANSFER_H_
 
+#include "mir-helper.h"
 #include <QDir>
 #include <QObject>
 #include <QStringList>
@@ -90,6 +91,8 @@ Q_SIGNALS:
     void DownloadError(Ubuntu::DownloadManager::Error* error);
     QString ContentType();
     void AddItemsFromDir(QDir dir);
+    QString InstanceId();
+    void SetInstanceId(QString id);
 
   private:
     struct Private;

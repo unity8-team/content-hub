@@ -18,7 +18,18 @@ override_dh_auto_test:
 
 override_dh_auto_install:
 	dh_auto_install
+	dh_apparmor -pcontent-hub --profile-name=content-hub-peer-picker
 	dh_apparmor -pcontent-hub-testability --profile-name=content-hub-testability
 
+DEB_HOST_ARCH := $(shell dpkg-architecture -qDEB_HOST_ARCH)
+# Skip tests on the archs they are known to be flaky with current configuration
+testskip_architectures := powerpc ppc64el s390x
+
+override_dh_auto_test:
+ifneq ($(DEB_HOST_ARCH),$(findstring $(DEB_HOST_ARCH), $(testskip_architectures)))
+	rm -rf build/tests/qml-tests
+	dh_auto_test
+endif
+	
 override_dh_translations:
 	make -C po content-hub.pot

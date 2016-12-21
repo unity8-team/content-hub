@@ -76,7 +76,7 @@ Q_SIGNALS:
     void finishedImportsChanged();
     void peerSelected(ContentPeer* peer);
     void peerSelectionCancelled();
-    void pasteSelected(QString paste);
+    void pasteSelected(QByteArray paste);
     void pasteSelectionCancelled();
 
 private Q_SLOTS:
@@ -86,7 +86,7 @@ private Q_SLOTS:
     void updateState();
     void onPeerSelected(QString);
     void onPeerSelectionCancelled();
-    void onPasteSelected(QString);
+    void onPasteSelected(QByteArray);
     void onPasteSelectionCancelled();
 
 private:

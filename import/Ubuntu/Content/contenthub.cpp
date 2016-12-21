@@ -139,9 +139,9 @@ ContentHub::ContentHub(QObject *parent)
     connect(m_hub, SIGNAL(peerSelectionCancelled()),
         this,
         SLOT(onPeerSelectionCancelled()));
-    connect(m_hub, SIGNAL(pasteSelected(QString)),
+    connect(m_hub, SIGNAL(pasteSelected(QByteArray)),
         this,
-        SLOT(onPasteSelected(QString)));
+        SLOT(onPasteSelected(QByteArray)));
     connect(m_hub, SIGNAL(pasteSelectionCancelled()),
         this,
         SLOT(onPasteSelectionCancelled()));
@@ -185,7 +185,7 @@ void ContentHub::selectPasteForAppIdCancelled(QString app_id)
     m_hub->selectPasteForAppIdCancelled(app_id);
 }
 
-void ContentHub::onPasteSelected(QString paste)
+void ContentHub::onPasteSelected(QByteArray paste)
 {
     TRACE() << Q_FUNC_INFO << paste;
     Q_EMIT(pasteSelected(paste));

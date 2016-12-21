@@ -189,7 +189,7 @@ void cuc::Hub::onPeerSelectionCancelled(const QString &id)
         Q_EMIT(peerSelectionCancelled());
 }
 
-void cuc::Hub::onPasteSelected(const QString &id, QByteArray &paste)
+void cuc::Hub::onPasteSelected(const QString &id, QByteArray paste)
 {
     TRACE() << Q_FUNC_INFO << id << paste;
     if (id == app_id())

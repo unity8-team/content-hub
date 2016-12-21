@@ -98,14 +98,14 @@ class Hub : public QObject
     void pasteboardChanged();
     void peerSelected(QString);
     void peerSelectionCancelled();
-    void pasteSelected(QString);
+    void pasteSelected(QByteArray);
     void pasteSelectionCancelled();
 
   private Q_SLOTS:
     void onPasteFormatsChanged(const QStringList &);
     void onPeerSelected(const QString &, const QString &);
     void onPeerSelectionCancelled(const QString &);
-    void onPasteSelected(const QString &, const QString &);
+    void onPasteSelected(const QString &, QByteArray &);
     void onPasteSelectionCancelled(const QString &);
   protected:
     Hub(QObject* = nullptr);

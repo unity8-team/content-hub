@@ -202,8 +202,10 @@ void cucd::Service::RequestPeerForTypeByAppId(const QString& type_id, const QStr
     };
 
     if (!d->active_sessions.keys().contains(app_id)) {
-        uint clientPid = d->connection.interface()->servicePid(this->message().service());
-        setupPromptSession(app_id, clientPid);
+        if (!QDBusConnection::sender().baseService().isEmpty()) {
+            uint clientPid = d->connection.interface()->servicePid(this->message().service());
+            setupPromptSession(app_id, clientPid);
+        }
     }
 
     if (d->active_sessions.keys().contains(app_id)) {
@@ -686,13 +688,15 @@ void cucd::Service::handle_imports(int state)
         }
 
         if (qgetenv("CONTENT_HUB_TESTING").isNull()) {
-            if (!d->active_sessions.keys().contains(transfer->destination())) {
-                uint clientPid = d->connection.interface()->servicePid(this->message().service());
-                setupPromptSession(transfer->destination(), clientPid);
+            if (!d->active_sessions.keys().contains(transfer->destination()) && transfer->WasSourceStartedByContentHub()) {
+                if (!QDBusConnection::sender().baseService().isEmpty()) {
+                    uint clientPid = d->connection.interface()->servicePid(this->message().service());
+                    setupPromptSession(transfer->destination(), clientPid);
+                }
             }
         }
 
-        if (d->active_sessions.keys().contains(transfer->destination())) {
+        if (d->active_sessions.keys().contains(transfer->destination()) && transfer->WasSourceStartedByContentHub()) {
             TRACE() << Q_FUNC_INFO << "Invoking application with session";
             PromptSessionP session = d->active_sessions.value(transfer->destination());
             gchar ** uris = NULL;
@@ -710,7 +714,7 @@ void cucd::Service::handle_imports(int state)
         TRACE() << Q_FUNC_INFO << "Charged";
         if (!transfer->InstanceId().isEmpty()) {
             d->app_manager->stop_application_with_helper(transfer->source().toStdString(), transfer->InstanceId().toStdString());
-        } else {
+        } else if (transfer->WasSourceStartedByContentHub()) {
             d->app_manager->stop_application(transfer->source().toStdString());
         }
 
@@ -1044,7 +1048,6 @@ QStringList cucd::Service::PasteFormats()
 void cucd::Service::RequestPasteByAppId(const QString& app_id)
 {
     TRACE() << Q_FUNC_INFO << app_id;
-
     if (d->app_manager->is_application_started(CLIPBOARD_APP_ID.toStdString()))
         d->app_manager->stop_application(CLIPBOARD_APP_ID.toStdString());
 
@@ -1054,8 +1057,10 @@ void cucd::Service::RequestPasteByAppId(const QString& app_id)
     };
 
     if (!d->active_sessions.keys().contains(app_id)) {
-        uint clientPid = d->connection.interface()->servicePid(this->message().service());
-        setupPromptSession(app_id, clientPid);
+        if (!QDBusConnection::sender().baseService().isEmpty()) {
+            uint clientPid = d->connection.interface()->servicePid(this->message().service());
+            setupPromptSession(app_id, clientPid);
+        }
     }
 
     if (d->active_sessions.keys().contains(app_id)) {

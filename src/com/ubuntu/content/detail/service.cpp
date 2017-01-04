@@ -834,8 +834,13 @@ void cucd::Service::handle_exports(int state)
                     TRACE() << "Here! 0-1";
 
                     if (!d->active_sessions.keys().contains(transfer->destination())) {
-                        uint clientPid = d->connection.interface()->servicePid(this->message().service());
-                        setupPromptSession(transfer->destination(), clientPid);
+                        if (!QDBusConnection::sender().baseService().isEmpty()) {
+                            TRACE() << "Entered guard!";
+                            uint clientPid = d->connection.interface()->servicePid(this->message().service());
+                            setupPromptSession(transfer->destination(), clientPid);
+                        } else {
+                            TRACE() << "Skipped guard!";
+                        }
                     }
 
                     TRACE() << "Here! 0-4";

@@ -825,8 +825,41 @@ void cucd::Service::handle_exports(int state)
             uris = (gchar **)urls;
         }
 
-        if (transfer->ShouldBeStartedByContentHub())
-            d->app_manager->invoke_application(transfer->destination().toStdString(), uris);
+        if (transfer->ShouldBeStartedByContentHub()) {
+            // Special case for printing
+            if (transfer->destination() == PRINTING_APP_ID) {
+                TRACE() << Q_FUNC_INFO << "Using ubuntu-printing-app special case";
+
+                if (qgetenv("CONTENT_HUB_TESTING").isNull()) {
+                    TRACE() << "Here! 0-1";
+
+                    if (!d->active_sessions.keys().contains(transfer->destination())) {
+                        uint clientPid = d->connection.interface()->servicePid(this->message().service());
+                        setupPromptSession(transfer->destination(), clientPid);
+                    }
+
+                    TRACE() << "Here! 0-4";
+                }
+
+                TRACE() << "Here! 1";
+
+                if (d->active_sessions.keys().contains(transfer->destination())) {
+                    TRACE() << Q_FUNC_INFO << "Invoking application with session";
+                    PromptSessionP session = d->active_sessions.value(transfer->destination());
+                    gchar ** uris = NULL;
+                    std::string instance_id = d->app_manager->invoke_application_with_session(transfer->destination().toStdString(), session, uris);
+                    transfer->SetInstanceId(QString::fromStdString(instance_id));
+                } else {
+                    TRACE() << Q_FUNC_INFO << "Invoking application";
+                    gchar ** uris = NULL;
+                    d->app_manager->invoke_application(transfer->destination().toStdString(), uris);
+                }
+
+                TRACE() << "Here! 2";
+            } else {
+                d->app_manager->invoke_application(transfer->destination().toStdString(), uris);
+            }
+        }
 
         Q_FOREACH (RegHandler *r, d->handlers)
         {

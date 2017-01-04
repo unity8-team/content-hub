@@ -38,7 +38,7 @@ MainView {
                     control: Button {
                         text: i18n.tr("Select source")
                         onClicked: {
-                            ContentHub.requestPeerForType(ContentType.Pictures, ContentHandler.Source);
+                            pageStack.push(picker);
                         }
                     }
                 }
@@ -105,11 +105,21 @@ MainView {
             id: picker
             visible: false
 
-            Connections {
-                target: ContentHub
+            ContentPeerPicker {
+                visible: parent.visible
+
+                // Type of handler: Source, Destination, or Share
+                handler: ContentHandler.Source
+                // well know content type
+                contentType: ContentType.Pictures
+
                 onPeerSelected: {
-                    console.debug("onPeerSelected: " + peer);
                     root.activeTransfer = peer.request();
+                    pageStack.pop();
+                }
+
+                onCancelPressed: {
+                    pageStack.pop();
                 }
             }
         }

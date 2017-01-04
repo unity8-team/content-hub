@@ -352,7 +352,7 @@ void cucd::Service::DownloadManagerError(QString errorMessage)
 
 QDBusObjectPath cucd::Service::CreateExportToPeer(const QString& peer_id, const QString& app_id, const QString& type_id)
 {
-    TRACE() << Q_FUNC_INFO;
+    TRACE() << Q_FUNC_INFO << "APP_ID:" << app_id << "SERVICE:" << this->message().service();
     QString src_id = app_id;
     if (src_id.isEmpty())
     {
@@ -570,9 +570,12 @@ QDBusObjectPath cucd::Service::CreateTransfer(const QString& dest_id, const QStr
     }
 
     auto transfer = new cucd::Transfer(import_counter, src_id, dest_id, dir, type_id, this);
-    if (dir == cuc::Transfer::Import && qgetenv("CONTENT_HUB_TESTING").isNull()) {
+    if ((dir == cuc::Transfer::Import || (dir == cuc::Transfer::Export && dest_id == PRINTING_APP_ID)) && qgetenv("CONTENT_HUB_TESTING").isNull()) {
+        TRACE() << Q_FUNC_INFO << "Creating promptSession" << dest_id;
         uint clientPid = d->connection.interface()->servicePid(this->message().service());
         setupPromptSession(dest_id, clientPid);
+    } else {
+        TRACE() << Q_FUNC_INFO << "Skipping promptSession" << dest_id;
     }
     new TransferAdaptor(transfer);
     d->active_transfers.insert(transfer);
@@ -1048,6 +1051,7 @@ QStringList cucd::Service::PasteFormats()
 void cucd::Service::RequestPasteByAppId(const QString& app_id)
 {
     TRACE() << Q_FUNC_INFO << app_id;
+
     if (d->app_manager->is_application_started(CLIPBOARD_APP_ID.toStdString()))
         d->app_manager->stop_application(CLIPBOARD_APP_ID.toStdString());
 

@@ -35,6 +35,7 @@ public:
     Q_INVOKABLE void handle_import(cuc::Transfer*);
     Q_INVOKABLE void handle_export(cuc::Transfer*);    
     Q_INVOKABLE void handle_share(cuc::Transfer*);
+    Q_INVOKABLE void onPeerSelected(QString);
 };
 
 #endif // EXAMPLEIMPORTER_H

@@ -36,12 +36,22 @@
       <arg name="type_id" type="s" direction="in" />
       <arg name="transfer_object" type="o" direction="out" />
     </method>
+    <method name="RemovePaste">
+      <arg name="surfaceId" type="s" direction="in" />
+      <arg name="pasteid" type="s" direction="in" />
+      <arg name="success" type="b" direction="out" />
+    </method>
     <method name="CreatePaste">
       <arg name="app_id" type="s" direction="in" />
       <arg name="surfaceId" type="s" direction="in" />
       <arg name="mimeData" type="ay" direction="in" />
       <arg name="types" type="as" direction="in" />
       <arg name="success" type="b" direction="out" />
+    </method>
+    <method name="GetPasteSource">
+      <arg name="surfaceId" type="s" direction="in" />
+      <arg name="pasteid" type="s" direction="in" />
+      <arg name="source" type="s" direction="out" />
     </method>
     <method name="GetLatestPasteData">
       <arg name="surfaceId" type="s" direction="in" />
@@ -51,6 +61,10 @@
       <arg name="surfaceId" type="s" direction="in" />
       <arg name="pasteid" type="s" direction="in" />
       <arg name="mimeData" type="ay" direction="out" />
+    </method>
+    <method name="GetAllPasteIds">
+      <arg name="surfaceId" type="s" direction="in" />
+      <arg name="pastes" type="as" direction="out" />
     </method>
     <method name="RegisterImportExportHandler">
       <arg name="peer_id" type="s" direction="in" />
@@ -74,6 +88,43 @@
       <arg name="formats" type="as" />
     </signal>
     <signal name="PasteboardChanged">
+    </signal>
+    <method name="RequestPeerForTypeByAppId">
+      <arg name="type_id" type="s" direction="in" />
+      <arg name="handler_id" type="s" direction="in" />
+      <arg name="app_id" type="s" direction="in" />
+    </method>
+    <method name="RequestPasteByAppId">
+      <arg name="app_id" type="s" direction="in" />
+    </method>
+    <method name="SelectPasteForAppId">
+      <arg name="app_id" type="s" direction="in" />
+      <arg name="surface_id" type="s" direction="in" />
+      <arg name="paste_id" type="s" direction="in" />
+    </method>
+    <method name="SelectPasteForAppIdCancelled">
+      <arg name="app_id" type="s" direction="in" />
+    </method>
+    <signal name="PasteSelected">
+      <arg name="app_id" type="s" />
+      <arg name="mimedata" type="ay" />
+    </signal>
+    <signal name="PasteSelectionCancelled">
+      <arg name="app_id" type="s" />
+    </signal>
+    <method name="SelectPeerForAppId">
+      <arg name="app_id" type="s" direction="in" />
+      <arg name="peer_id" type="s" direction="in" />
+    </method>
+    <method name="SelectPeerForAppIdCancelled">
+      <arg name="app_id" type="s" direction="in" />
+    </method>
+    <signal name="PeerSelected">
+      <arg name="app_id" type="s" />
+      <arg name="peer_id" type="s" />
+    </signal>
+    <signal name="PeerSelectionCancelled">
+      <arg name="app_id" type="s" />
     </signal>
  </interface>
 </node>

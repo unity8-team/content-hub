@@ -20,10 +20,13 @@
 #define COMMON_H
 
 #include <QLatin1String>
+#include <QString>
 
 const QLatin1String HUB_SERVICE_NAME = QLatin1String("com.ubuntu.content.dbus.Service");
 const QLatin1String HUB_SERVICE_PATH = QLatin1String("/");
 const QLatin1String HANDLER_NAME_TEMPLATE = QLatin1String("com.ubuntu.content.handler.%1");
 const QLatin1String HANDLER_BASE_PATH = QLatin1String("/com/ubuntu/content/handler");
+const QString CLIPBOARD_APP_ID = QLatin1String("content-hub-clipboard");
+const QString PEER_PICKER_APP_ID = QLatin1String("content-hub-peer-picker");
 
 #endif // COMMON_H

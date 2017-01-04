@@ -15,3 +15,4 @@
 # Authored by: Thomas Voss <thomas.voss@canonical.com>
 
 add_subdirectory(com)
+add_subdirectory(helper)

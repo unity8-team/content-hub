@@ -13,3 +13,16 @@ profile "content-hub-test-bad" {
     #include <abstractions/dbus-session>
     audit deny /etc/issue r,
 }
+
+# Mostly unconfined. Don't allow capability or any mount rules. Also ensure that
+# exec inherits from this profile
+profile content-hub-testability (attach_disconnected) {
+  network,
+  / rwkl,
+  /** rwlkm,
+  /** pix,
+  dbus,
+  signal,
+  ptrace,
+  unix,
+}

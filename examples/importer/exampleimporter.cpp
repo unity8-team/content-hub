@@ -23,6 +23,14 @@ ExampleImporter::ExampleImporter()
 {
     auto hub = cuc::Hub::Client::instance();
     hub->register_import_export_handler(this);
+    QObject::connect(hub, SIGNAL(peerSelected(QString)),
+        this,
+        SLOT(onPeerSelected(QString)));
+}
+
+void ExampleImporter::onPeerSelected(QString peer_id)
+{
+    qDebug() << Q_FUNC_INFO << peer_id;
 }
 
 void ExampleImporter::handle_import(cuc::Transfer *transfer)

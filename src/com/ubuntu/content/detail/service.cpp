@@ -571,11 +571,8 @@ QDBusObjectPath cucd::Service::CreateTransfer(const QString& dest_id, const QStr
 
     auto transfer = new cucd::Transfer(import_counter, src_id, dest_id, dir, type_id, this);
     if ((dir == cuc::Transfer::Import || (dir == cuc::Transfer::Export && dest_id == PRINTING_APP_ID)) && qgetenv("CONTENT_HUB_TESTING").isNull()) {
-        TRACE() << Q_FUNC_INFO << "Creating promptSession" << dest_id;
         uint clientPid = d->connection.interface()->servicePid(this->message().service());
         setupPromptSession(dest_id, clientPid);
-    } else {
-        TRACE() << Q_FUNC_INFO << "Skipping promptSession" << dest_id;
     }
     new TransferAdaptor(transfer);
     d->active_transfers.insert(transfer);
@@ -838,22 +835,13 @@ void cucd::Service::handle_exports(int state)
                 TRACE() << Q_FUNC_INFO << "Using ubuntu-printing-app special case";
 
                 if (qgetenv("CONTENT_HUB_TESTING").isNull()) {
-                    TRACE() << "Here! 0-1";
-
                     if (!d->active_sessions.keys().contains(transfer->destination())) {
                         if (!QDBusConnection::sender().baseService().isEmpty()) {
-                            TRACE() << "Entered guard!";
                             uint clientPid = d->connection.interface()->servicePid(this->message().service());
                             setupPromptSession(transfer->destination(), clientPid);
-                        } else {
-                            TRACE() << "Skipped guard!";
                         }
                     }
-
-                    TRACE() << "Here! 0-4";
                 }
-
-                TRACE() << "Here! 1";
 
                 if (d->active_sessions.keys().contains(transfer->destination())) {
                     TRACE() << Q_FUNC_INFO << "Invoking application with session";
@@ -866,8 +854,6 @@ void cucd::Service::handle_exports(int state)
                     gchar ** uris = NULL;
                     d->app_manager->invoke_application(transfer->destination().toStdString(), uris);
                 }
-
-                TRACE() << "Here! 2";
             } else {
                 d->app_manager->invoke_application(transfer->destination().toStdString(), uris);
             }
@@ -911,7 +897,11 @@ void cucd::Service::handle_exports(int state)
                 }
             }
             if (shouldStop) {
-                d->app_manager->stop_application(transfer->destination().toStdString());
+                if (!transfer->InstanceId().isEmpty()) {
+                    d->app_manager->stop_application_with_helper(transfer->destination().toStdString(), transfer->InstanceId().toStdString());
+                } else {
+                    d->app_manager->stop_application(transfer->destination().toStdString());
+                }
             }
         }
         gchar ** uris = NULL;

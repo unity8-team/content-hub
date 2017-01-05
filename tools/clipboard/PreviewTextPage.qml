@@ -18,11 +18,13 @@
 
 import QtQuick 2.4
 import Ubuntu.Components 1.3
+import Ubuntu.Web 0.2
+import com.canonical.Oxide 1.15
 
 Page {
     id: previewTextPage
 
-    property alias text: textPreview.text
+    property string pasteData
 
     signal pasteClicked()
 
@@ -38,26 +40,18 @@ Page {
         ]
     }
 
-    Flickable {
-        id: flickable
+    onPasteDataChanged: webView.loadHtml(previewTextPage.pasteData)
+
+    WebView {
+        id: webView
+        onNavigationRequested: request.action = NavigationRequest.ActionReject
+
         anchors {
             top: pageHeader.bottom
             bottom: parent.bottom
             left: parent.left
             right: parent.right
             margins: units.gu(2)
-        }
-
-        TextArea {
-            id: textPreview
-
-            anchors.fill: parent
-
-            textFormat: TextEdit.PlainText
-            wrapMode: Text.WordWrap
-            cursorVisible: false
-            readOnly: true
-            selectByMouse: false
         }
     }
 }

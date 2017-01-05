@@ -1041,7 +1041,6 @@ QStringList cucd::Service::PasteFormats()
 void cucd::Service::RequestPasteByAppId(const QString& app_id)
 {
     TRACE() << Q_FUNC_INFO << app_id;
-
     if (d->app_manager->is_application_started(CLIPBOARD_APP_ID.toStdString()))
         d->app_manager->stop_application(CLIPBOARD_APP_ID.toStdString());
 

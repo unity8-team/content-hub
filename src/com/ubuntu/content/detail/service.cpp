@@ -570,10 +570,14 @@ QDBusObjectPath cucd::Service::CreateTransfer(const QString& dest_id, const QStr
     }
 
     auto transfer = new cucd::Transfer(import_counter, src_id, dest_id, dir, type_id, this);
-    if ((dir == cuc::Transfer::Import || (dir == cuc::Transfer::Export && dest_id == PRINTING_APP_ID)) && qgetenv("CONTENT_HUB_TESTING").isNull()) {
+    if (dir == cuc::Transfer::Import && qgetenv("CONTENT_HUB_TESTING").isNull()) {
         uint clientPid = d->connection.interface()->servicePid(this->message().service());
         TRACE() << Q_FUNC_INFO << "Making setupPromptSession:" << dest_id << clientPid;
         setupPromptSession(dest_id, clientPid);
+    } else if (dir == cuc::Transfer::Export && dest_id == PRINTING_APP_ID && qgetenv("CONTENT_HUB_TESTING").isNull()) {
+        uint clientPid = d->connection.interface()->servicePid(this->message().service());
+        TRACE() << Q_FUNC_INFO << "Making setupPromptSession:" << src_id << clientPid;
+        setupPromptSession(src_id, clientPid);
     }
     new TransferAdaptor(transfer);
     d->active_transfers.insert(transfer);
@@ -838,17 +842,17 @@ void cucd::Service::handle_exports(int state)
                 TRACE() << Q_FUNC_INFO << "Using ubuntu-printing-app special case";
 
                 if (qgetenv("CONTENT_HUB_TESTING").isNull()) {
-                    if (!d->active_sessions.keys().contains(transfer->destination())) {
+                    if (!d->active_sessions.keys().contains(transfer->source())) {
                         if (!QDBusConnection::sender().baseService().isEmpty()) {
                             uint clientPid = d->connection.interface()->servicePid(this->message().service());
-                            setupPromptSession(transfer->destination(), clientPid);
+                            setupPromptSession(transfer->source(), clientPid);
                         }
                     }
                 }
 
-                if (d->active_sessions.keys().contains(transfer->destination())) {
+                if (d->active_sessions.keys().contains(transfer->source())) {
                     TRACE() << Q_FUNC_INFO << "Invoking application with session";
-                    PromptSessionP session = d->active_sessions.value(transfer->destination());
+                    PromptSessionP session = d->active_sessions.value(transfer->source());
                     gchar ** uris = NULL;
                     std::string instance_id = d->app_manager->invoke_application_with_session(transfer->destination().toStdString(), session, uris);
                     transfer->SetInstanceId(QString::fromStdString(instance_id));

@@ -572,6 +572,7 @@ QDBusObjectPath cucd::Service::CreateTransfer(const QString& dest_id, const QStr
     auto transfer = new cucd::Transfer(import_counter, src_id, dest_id, dir, type_id, this);
     if ((dir == cuc::Transfer::Import || (dir == cuc::Transfer::Export && dest_id == PRINTING_APP_ID)) && qgetenv("CONTENT_HUB_TESTING").isNull()) {
         uint clientPid = d->connection.interface()->servicePid(this->message().service());
+        TRACE() << Q_FUNC_INFO << "Making setupPromptSession:" << dest_id << clientPid;
         setupPromptSession(dest_id, clientPid);
     }
     new TransferAdaptor(transfer);
@@ -605,8 +606,10 @@ void cucd::Service::setupPromptSession(QString app_id, uint clientPid)
     if (!qgetenv("CONTENT_HUB_TESTING").isNull())
         return;
 
-    if (d->active_sessions.keys().contains(app_id))
+    if (d->active_sessions.keys().contains(app_id)) {
+        TRACE() << Q_FUNC_INFO << "Skipping as dest_id is already an active session";
         return;
+    }
 
     /* FIXME: Until bug #1647409 is fixed, we need to release any existing 
      * prompt sessions before starting a new one

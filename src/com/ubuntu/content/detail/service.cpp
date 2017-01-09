@@ -1025,6 +1025,11 @@ void cucd::Service::RegisterImportExportHandler(const QString& peer_id, const QD
             }
         }
     }
+
+    // Deconstruct r as we haven't added to store when printing
+    if (peer_id == PRINTING_APP_ID) {
+        delete r;
+    }
 }
 
 void cucd::Service::HandlerActive(const QString& peer_id)

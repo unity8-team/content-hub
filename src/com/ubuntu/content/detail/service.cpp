@@ -814,10 +814,13 @@ void cucd::Service::handle_exports(int state)
     if (state == cuc::Transfer::charged)
     {
         TRACE() << Q_FUNC_INFO << "Charged";
-        if (d->app_manager->is_application_started(transfer->destination().toStdString()))
+        // For printing we always generate a new app
+        if (d->app_manager->is_application_started(transfer->destination().toStdString()) && transfer->destination() != PRINTING_APP_ID)
             transfer->SetSourceStartedByContentHub(false);
         else
             transfer->SetSourceStartedByContentHub(true);
+
+        TRACE() << "Started" << transfer->ShouldBeStartedByContentHub();
 
         gchar ** uris = NULL;
         if (d->registry->peer_is_legacy(transfer->destination())) {
@@ -862,22 +865,31 @@ void cucd::Service::handle_exports(int state)
                     d->app_manager->invoke_application(transfer->destination().toStdString(), uris);
                 }
             } else {
+                TRACE() << "Just invoking app";
                 d->app_manager->invoke_application(transfer->destination().toStdString(), uris);
             }
         }
 
-        Q_FOREACH (RegHandler *r, d->handlers)
-        {
-            TRACE() << "Handler: " << r->service << "Transfer: " << transfer->destination();
-            if (r->id == transfer->destination())
+        TRACE() << "NumHandlers:" << d->handlers.count();
+
+        if (transfer->destination() != PRINTING_APP_ID) {
+            Q_FOREACH (RegHandler *r, d->handlers)
             {
-                TRACE() << "Found handler for charged transfer" << r->id;
-                if (transfer->Direction() == cuc::Transfer::Share && r->handler->isValid())
-                    r->handler->HandleShare(QDBusObjectPath{transfer->import_path()});
-                else if (r->handler->isValid())
-                    r->handler->HandleImport(QDBusObjectPath{transfer->import_path()});
+                TRACE() << "Handler: " << r->service << "Transfer: " << transfer->destination();
+                if (r->id == transfer->destination())
+                {
+                    TRACE() << "Found handler for charged transfer" << r->id;
+                    if (transfer->Direction() == cuc::Transfer::Share && r->handler->isValid())
+                        r->handler->HandleShare(QDBusObjectPath{transfer->import_path()});
+                    else if (r->handler->isValid())
+                        r->handler->HandleImport(QDBusObjectPath{transfer->import_path()});
+                }
             }
+        } else {
+            TRACE() << "Skipping handlers as this is for ubuntu-printing-app";
         }
+
+        TRACE() << "end of charged!";
     }
 
     if (state == cuc::Transfer::aborted)
@@ -954,6 +966,8 @@ void cucd::Service::RegisterImportExportHandler(const QString& peer_id, const QD
 
     if (!exists)
     {
+        TRACE() << Q_FUNC_INFO << "ImportExport Handler does not exist, creating one";
+
         r = new RegHandler{peer_id,
             this->message().service(),
             new cuc::dbus::Handler(
@@ -961,8 +975,14 @@ void cucd::Service::RegisterImportExportHandler(const QString& peer_id, const QD
                     handler.path(),
                     QDBusConnection::sessionBus(),
                     0)};
-        d->handlers.insert(r);
-        m_watcher->addWatchedService(r->service);
+
+        // Skip adding to handlers for ubuntu-printing-app so we can have multiple instances
+        if (peer_id != PRINTING_APP_ID) {
+            d->handlers.insert(r);
+            m_watcher->addWatchedService(r->service);
+        }
+    } else {
+        TRACE() << Q_FUNC_INFO << "ImportExport Handler exists, skipping";
     }
 
     TRACE() << Q_FUNC_INFO << r->id;

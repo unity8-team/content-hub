@@ -31,8 +31,6 @@ namespace {
 
 cuc::Type mime_to_wellknown_type (const char * type)
 {
-    TRACE() << Q_FUNC_INFO << "TYPE:" << type;
-
     if (QString(type).contains("document"))
         return cuc::Type::Known::documents();
     else if (g_str_has_prefix (type, "x-scheme-handler/http"))

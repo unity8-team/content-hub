@@ -1,0 +1,7 @@
+[Unit]
+Description=Content Hub Service
+
+[Service]
+Type=dbus
+BusName=com.ubuntu.content.dbus.Service
+ExecStart=/usr/bin/content-hub-service

@@ -1,3 +1,4 @@
 [D-BUS Service]
 Name=com.ubuntu.content.dbus.Service
 Exec=/usr/bin/content-hub-service
+SystemdService=content-hub.service

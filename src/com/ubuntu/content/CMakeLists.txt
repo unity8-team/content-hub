@@ -27,6 +27,7 @@ include_directories(
   ${LIBERTINE_INCLUDE_DIRS}
   ${UBUNTU_DOWNLOAD_MANAGER_INCLUDE_DIRS}
   ${NOTIFY_INCLUDE_DIRS}
+  ${MIRCLIENT_INCLUDE_DIRS}
   ${APPARMOR_INCLUDE_DIRS}
   ${GLIB_INCLUDE_DIRS}
   ${GIO_INCLUDE_DIRS}
@@ -89,6 +90,7 @@ add_library(
   detail/transfer.cpp
   detail/handler.cpp
   detail/i18n.cpp
+  detail/mir-helper.cpp
 
   ${CONTENT_HUB_MOCS}
   ${CONTENT_SERVICE_STUB}
@@ -119,6 +121,7 @@ target_link_libraries(content-hub
     ${NIH_DBUS_LIBRARIES}
     ${UBUNTU_DOWNLOAD_MANAGER_LIBRARIES}
     ${NOTIFY_LIBRARIES}
+    ${MIRCLIENT_LIBRARIES}
     ${APPARMOR_LDFLAGS}
 )
 

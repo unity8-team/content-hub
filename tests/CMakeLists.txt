@@ -26,6 +26,7 @@ include_directories (
   ${CMAKE_BINARY_DIR}/src/com/ubuntu/content
   ${GMOCK_INCLUDE_DIR}
   ${GTEST_INCLUDE_DIR}
+  ${MIRCLIENT_INCLUDE_DIR}
 )
 
 add_subdirectory(acceptance-tests)

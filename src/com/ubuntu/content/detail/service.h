@@ -25,9 +25,11 @@
 #include <QtDBus/QDBusMessage>
 #include <QtDBus/QDBusServiceWatcher>
 #include <QtDBus/QDBusContext>
+#include <QDBusUnixFileDescriptor>
 
 #include <com/ubuntu/applicationmanager/application_manager.h>
 #include "handler.h"
+#include "mir-helper.h"
 #include "transfer.h"
 
 namespace com
@@ -62,19 +64,31 @@ class Service : public QObject, protected QDBusContext
     QDBusObjectPath CreateExportToPeer(const QString&, const QString&, const QString&);
     QDBusObjectPath CreateShareToPeer(const QString&, const QString&, const QString&);
     bool CreatePaste(const QString&, const QString&, const QByteArray&, const QStringList&);
+    bool RemovePaste(const QString& surfaceId, const QString& pasteId);
+    QString GetPasteSource(const QString& surfaceId, const QString& pasteId);
     QByteArray GetLatestPasteData(const QString& surfaceId);
     QByteArray GetPasteData(const QString& surfaceId, const QString& pasteId);
+    QStringList GetAllPasteIds(const QString& surfaceId);
     QStringList PasteFormats();
-
+    void RequestPasteByAppId(const QString&);
+    void SelectPasteForAppId(const QString&, const QString&, const QString&);
+    void SelectPasteForAppIdCancelled(const QString&);
+ 
     void RegisterImportExportHandler(const QString&, const QDBusObjectPath& handler);
     void HandlerActive(const QString&);
     void Quit();
     void DownloadManagerError(QString);
     bool HasPending(const QString&);
     QDBusVariant PeerForId(const QString&);
+    void RequestPeerForTypeByAppId(const QString&, const QString&, const QString&);
+    void SelectPeerForAppId(const QString&, const QString&);
+    void SelectPeerForAppIdCancelled(const QString&);
+    void onPromptFinished();
 
   private:
+    QString getPasteSource(const QString &surfaceId, int pasteId);
     QByteArray getPasteData(const QString &surfaceId, int pasteId);
+    QStringList getAllPasteIds(const QString &surfaceId);
     bool should_cancel(int);
     bool verifiedSurfaceIsFocused(const QString &surfaceId);
     struct Private;
@@ -85,14 +99,18 @@ class Service : public QObject, protected QDBusContext
   Q_SIGNALS:
     void PasteFormatsChanged(const QStringList &formats);
     void PasteboardChanged();
+    void PeerSelected(const QString &app_id, const QString &peer_id);
+    void PeerSelectionCancelled(const QString &app_id);
+    void PasteSelected(const QString &app_id, QByteArray mimedata);
+    void PasteSelectionCancelled(const QString &app_id);
 
   private Q_SLOTS:
     void handle_imports(int);
     void handle_exports(int);
     void handler_unregistered(const QString&);
     QDBusObjectPath CreateTransfer(const QString&, const QString&, int, const QString&);
+    void setupPromptSession(QString, uint);
     void download_notify(com::ubuntu::content::detail::Transfer*);
-
 };
 }
 }

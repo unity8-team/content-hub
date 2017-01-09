@@ -17,6 +17,14 @@
 project(test CXX C)
 qt5_wrap_cpp(MOCS test_harness.h)
 
+include_directories(
+  ${CMAKE_SOURCE_DIR}/src
+  ${CMAKE_SOURCE_DIR}/src/com/ubuntu/content
+  ${GSETTINGS_INCLUDE_DIRS}
+  ${UBUNTU_LAUNCH_INCLUDE_DIRS}
+  ${MIRCLIENT_INCLUDE_DIRS}
+)
+
 set(TESTS
   app_hub_communication_default_source
   app_hub_communication_known_sources

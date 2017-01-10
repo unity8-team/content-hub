@@ -244,29 +244,32 @@ void PasteDataModel::addEntryByPasteId(const QString& pasteId)
 
     QMimeData *pasteMimeData = m_provider->pasteDataById(m_surfaceId, id);
     if (pasteMimeData->hasImage()) {
-        entry.dataType = ImageType;
-        entry.pasteData = pasteMimeData->html();
+        if (pasteMimeData->imageData().toByteArray().isEmpty()) {
+            // Images copied from webborwser-app do not have imageData but in fact an url
+            entry.dataType = ImageUrlType;
+            entry.pasteData = pasteMimeData->html();
 
-        QRegularExpression srcRe("src=\"([^\"]*)\"");
-        QRegularExpressionMatch srcMatch = srcRe.match(entry.pasteData);
-        if (srcMatch.hasMatch()) {
-            entry.imageData = srcMatch.captured(1);
+            QRegularExpression srcRe("src=\"([^\"]*)\"");
+            QRegularExpressionMatch srcMatch = srcRe.match(entry.pasteData);
+            if (srcMatch.hasMatch()) {
+                entry.imageData = srcMatch.captured(1);
+            }
+
+            QRegularExpression altRe("alt=\"([^\"]*)\"");
+            QRegularExpressionMatch altMatch = altRe.match(entry.pasteData);
+            if (altMatch.hasMatch()) {
+                entry.textData = altMatch.captured(1);
+            }
+        } else {
+            entry.dataType = ImageType;
         }
 
-        QRegularExpression altRe("alt=\"([^\"]*)\"");
-        QRegularExpressionMatch altMatch = altRe.match(entry.pasteData);
-        if (altMatch.hasMatch()) {
-           entry.textData = altMatch.captured(1);
-        }
-
-    } else if (pasteMimeData->hasHtml()) {
-        entry.dataType = TextType;
-        entry.pasteData = pasteMimeData->html();
-        entry.textData = pasteMimeData->text();
     } else {
         entry.dataType = TextType;
-        entry.pasteData = pasteMimeData->text();
         entry.textData = pasteMimeData->text();
+        if (pasteMimeData->hasHtml()) {
+            entry.pasteData = pasteMimeData->html();
+        }
     }
 
     entry.itemSelected = false;

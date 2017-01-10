@@ -29,6 +29,7 @@
 #include "debug.h"
 #include "paste-data-model.h"
 #include "paste-data-filter-model.h"
+#include "paste-image-provider.h"
 
 ClipboardApplication::ClipboardApplication(int &argc, char **argv)
     : QApplication(argc, argv),
@@ -59,6 +60,7 @@ ClipboardApplication::ClipboardApplication(int &argc, char **argv)
 
     QObject::connect(m_view->engine(), SIGNAL(quit()), SLOT(quit()));
     m_view->setResizeMode(QQuickView::SizeRootObjectToView);
+    m_view->engine()->addImageProvider(QLatin1String("pastedImage"), new PasteImageProvider);
     m_view->rootContext()->setContextProperty("application", this);
     m_view->rootContext()->setContextProperty("requesterId", requesterId);
     m_view->setSource(QUrl(QStringLiteral("qrc:/main.qml")));

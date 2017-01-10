@@ -53,7 +53,8 @@ public:
 
     enum PasteDataType {
         TextType,
-        ImageType
+        ImageType,
+        ImageUrlType
     };
 
     // reimplemented from QAbstractListModel

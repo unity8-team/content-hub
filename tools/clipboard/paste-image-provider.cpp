@@ -23,7 +23,7 @@
 #include "paste-data-provider.h"
 
 PasteImageProvider::PasteImageProvider()
-    : QQuickImageProvider(QQuickImageProvider::Pixmap),
+    : QQuickImageProvider(QQuickImageProvider::Image),
     m_provider(new PasteDataProvider())
 {
 }
@@ -34,14 +34,17 @@ PasteImageProvider::~PasteImageProvider()
 
 QImage PasteImageProvider::requestImage(const QString &id, QSize *size, const QSize &requestedSize)
 {
-    qDebug() << "IMAGE PROVIDER" << id;
-    QString surfaceId = "foobar";
-    QMimeData *mimeData = m_provider->pasteDataById(surfaceId, id.toInt());
+    QStringList ids = id.split("/");
+    if (ids.count() != 2) {
+        return QImage();
+    }
+    QString surfaceId = ids[0];
+    QMimeData *mimeData = m_provider->pasteDataById(surfaceId, ids[1].toInt());
     if (!mimeData || !mimeData->hasImage()) {
         return QImage();
     }
 
-    QImage image = qvariant_cast<QImage>(mimeData->imageData());
+    QImage image = QImage::fromData(mimeData->imageData().toByteArray());
     if (requestedSize.width() > 0 && requestedSize.height() > 0) {
         return image.scaled(requestedSize.width(), requestedSize.height(), Qt::IgnoreAspectRatio);
     }

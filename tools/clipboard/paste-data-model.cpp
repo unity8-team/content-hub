@@ -244,7 +244,7 @@ void PasteDataModel::addEntryByPasteId(const QString& pasteId)
 
     QMimeData *pasteMimeData = m_provider->pasteDataById(m_surfaceId, id);
     if (pasteMimeData->hasImage()) {
-        if (pasteMimeData->imageData().isNull()) {
+        if (pasteMimeData->imageData().toByteArray().isEmpty()) {
             // Images copied from webborwser-app do not have imageData but in fact an url
             entry.dataType = ImageUrlType;
             entry.pasteData = pasteMimeData->html();

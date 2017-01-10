@@ -211,9 +211,9 @@ MainView {
 
             delegate: ClipboardItemDelegate {
                 id: delegate
-                title: textData
+                title: dataType === PasteDataModel.ImageType ? i18n.tr("Image") : textData
                 summary: source
-                imageSource: dataType === PasteDataModel.ImageType ? imageData : ""
+                imageSource: dataType === PasteDataModel.ImageUrlType ? imageData : ""
 
                 Binding {
                     target: delegate
@@ -243,7 +243,7 @@ MainView {
                     pasteDataModel.removeEntryByIndex(index)
                 }
                 onPreviewClicked: {
-                    if (dataType === PasteDataModel.ImageType) {
+                    if (dataType === PasteDataModel.ImageUrlType) {
                         previewTextPage.pasteId = pasteId 
                         previewImagePage.pasteData = pasteData
                         previewImagePage.imageSource = imageData

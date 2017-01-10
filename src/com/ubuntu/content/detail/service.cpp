@@ -1019,10 +1019,8 @@ void cucd::Service::RequestPasteByAppId(const QString& app_id)
     };
 
     if (!d->active_sessions.keys().contains(app_id)) {
-        //FIXME if (!QDBusConnection::sender().baseService().isEmpty()) {
-            uint clientPid = d->connection.interface()->servicePid(this->message().service());
-            setupPromptSession(app_id, clientPid);
-        //}
+        uint clientPid = d->connection.interface()->servicePid(this->message().service());
+        setupPromptSession(app_id, clientPid);
     }
 
     if (d->active_sessions.keys().contains(app_id)) {

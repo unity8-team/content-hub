@@ -18,11 +18,14 @@
 
 import QtQuick 2.4
 import Ubuntu.Components 1.3
+import Ubuntu.Web 0.2
+import com.canonical.Oxide 1.15
 
 Page {
     id: previewTextPage
 
     property alias text: textPreview.text
+    property bool showAsPlainText: true
 
     signal pasteClicked()
 
@@ -34,8 +37,32 @@ Page {
                 iconName: "edit-paste"
                 text: i18n.tr("Paste")
                 onTriggered: previewTextPage.pasteClicked()
+            },
+            Action {
+                iconName: showAsPlainText ? "stock_website" : "stock_document"
+                text: showAsPlainText ? i18n.tr("Show as Rich Text") : i18n.tr("Show as Plain Text")
+                onTriggered: {
+                    showAsPlainText = !showAsPlainText
+                }
             }
         ]
+    }
+
+    onShowAsPlainTextChanged: webView.loadHtml(previewTextPage.pasteData)
+
+    WebView {
+        id: webView
+        anchors {
+            top: pageHeader.bottom
+            bottom: parent.bottom
+            left: parent.left
+            right: parent.right
+            margins: units.gu(2)
+        }
+
+        visible: !showAsPlainText
+
+        onNavigationRequested: request.action = NavigationRequest.ActionReject
     }
 
     Flickable {
@@ -47,6 +74,8 @@ Page {
             right: parent.right
             margins: units.gu(2)
         }
+
+        visible: showAsPlainText
 
         TextArea {
             id: textPreview

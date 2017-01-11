@@ -870,26 +870,18 @@ void cucd::Service::handle_exports(int state)
             }
         }
 
-        TRACE() << "NumHandlers:" << d->handlers.count();
-
-        if (transfer->destination() != PRINTING_APP_ID) {
-            Q_FOREACH (RegHandler *r, d->handlers)
+        Q_FOREACH (RegHandler *r, d->handlers)
+        {
+            TRACE() << "Handler: " << r->service << "Transfer: " << transfer->destination();
+            if (r->id == transfer->destination())
             {
-                TRACE() << "Handler: " << r->service << "Transfer: " << transfer->destination();
-                if (r->id == transfer->destination())
-                {
-                    TRACE() << "Found handler for charged transfer" << r->id;
-                    if (transfer->Direction() == cuc::Transfer::Share && r->handler->isValid())
-                        r->handler->HandleShare(QDBusObjectPath{transfer->import_path()});
-                    else if (r->handler->isValid())
-                        r->handler->HandleImport(QDBusObjectPath{transfer->import_path()});
-                }
+                TRACE() << "Found handler for charged transfer" << r->id;
+                if (transfer->Direction() == cuc::Transfer::Share && r->handler->isValid())
+                    r->handler->HandleShare(QDBusObjectPath{transfer->import_path()});
+                else if (r->handler->isValid())
+                    r->handler->HandleImport(QDBusObjectPath{transfer->import_path()});
             }
-        } else {
-            TRACE() << "Skipping handlers as this is for ubuntu-printing-app";
         }
-
-        TRACE() << "end of charged!";
     }
 
     if (state == cuc::Transfer::aborted)

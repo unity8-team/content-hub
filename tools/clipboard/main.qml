@@ -242,7 +242,7 @@ MainView {
                 }
                 onClicked: {
                     if (!selectMode) {
-                        ContentHub.selectPasteForAppId(requesterId, application.surfaceId, pasteId)
+                        ContentHub.selectPasteForAppId(requesterId, application.surfaceId, pasteId, false)
                         Qt.quit()
                     } 
                 }
@@ -279,7 +279,7 @@ MainView {
 
         onPasteClicked: {
             pageStack.pop()
-            ContentHub.selectPasteForAppId(requesterId, application.surfaceId, pasteId)
+            ContentHub.selectPasteForAppId(requesterId, application.surfaceId, pasteId, previewTextPage.showAsPlainText)
             Qt.quit()
         }
     }
@@ -293,7 +293,7 @@ MainView {
 
         onPasteClicked: {
             pageStack.pop()
-            ContentHub.selectPasteForAppId(requesterId, application.surfaceId, pasteId)
+            ContentHub.selectPasteForAppId(requesterId, application.surfaceId, pasteId, false)
             Qt.quit()
         }
     }

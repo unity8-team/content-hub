@@ -1034,7 +1034,7 @@ void cucd::Service::RequestPasteByAppId(const QString& app_id)
     }
 }
 
-void cucd::Service::SelectPasteForAppId(const QString& app_id, const QString& surface_id, const QString& paste_id)
+void cucd::Service::SelectPasteForAppId(const QString& app_id, const QString& surface_id, const QString& paste_id, bool pasteAsRichText)
 {
     TRACE() << Q_FUNC_INFO << app_id << surface_id << paste_id;
     // Lock this down to only allow the peer picker APP_ID to call this
@@ -1047,7 +1047,7 @@ void cucd::Service::SelectPasteForAppId(const QString& app_id, const QString& su
         d->clipboard_instances.remove(app_id);
     }
 
-    Q_EMIT(PasteSelected(app_id, getPasteData(surface_id, paste_id.toInt())));
+    Q_EMIT(PasteSelected(app_id, getPasteData(surface_id, paste_id.toInt()), pasteAsRichText));
 }
 
 void cucd::Service::SelectPasteForAppIdCancelled(const QString& app_id)

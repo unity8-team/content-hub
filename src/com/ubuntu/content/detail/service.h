@@ -71,7 +71,7 @@ class Service : public QObject, protected QDBusContext
     QStringList GetAllPasteIds(const QString& surfaceId);
     QStringList PasteFormats();
     void RequestPasteByAppId(const QString&);
-    void SelectPasteForAppId(const QString&, const QString&, const QString&);
+    void SelectPasteForAppId(const QString&, const QString&, const QString&, bool);
     void SelectPasteForAppIdCancelled(const QString&);
  
     void RegisterImportExportHandler(const QString&, const QDBusObjectPath& handler);
@@ -101,7 +101,7 @@ class Service : public QObject, protected QDBusContext
     void PasteboardChanged();
     void PeerSelected(const QString &app_id, const QString &peer_id);
     void PeerSelectionCancelled(const QString &app_id);
-    void PasteSelected(const QString &app_id, QByteArray mimedata);
+    void PasteSelected(const QString &app_id, QByteArray mimedata, bool pasteAsRichText);
     void PasteSelectionCancelled(const QString &app_id);
 
   private Q_SLOTS:

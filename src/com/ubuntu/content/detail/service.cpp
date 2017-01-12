@@ -820,8 +820,6 @@ void cucd::Service::handle_exports(int state)
         else
             transfer->SetSourceStartedByContentHub(true);
 
-        TRACE() << "Started" << transfer->ShouldBeStartedByContentHub();
-
         gchar ** uris = NULL;
         if (d->registry->peer_is_legacy(transfer->destination())) {
             TRACE() << Q_FUNC_INFO << "Destination is a legacy app, collecting";

@@ -259,6 +259,7 @@ MainView {
                         previewImagePage.imageSource = "image://pastedImage/" + application.surfaceId + "/" + pasteId
                         pageStack.push(previewImagePage)
                     } else {
+                        previewTextPage.showAsPlainText = true
                         previewTextPage.pasteId = pasteId
                         previewTextPage.richText = pasteData
                         previewTextPage.text = textData

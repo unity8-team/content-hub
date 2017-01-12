@@ -260,7 +260,7 @@ MainView {
                         pageStack.push(previewImagePage)
                     } else {
                         previewTextPage.pasteId = pasteId
-                        previewTextPage.pasteData = pasteData
+                        previewTextPage.richText = pasteData
                         previewTextPage.text = textData
                         pageStack.push(previewTextPage)
                     }
@@ -273,7 +273,6 @@ MainView {
         id: previewTextPage
 
         property int pasteId
-        property string pasteData
 
         visible: false
 

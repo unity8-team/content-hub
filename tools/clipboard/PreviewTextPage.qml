@@ -25,6 +25,7 @@ Page {
     id: previewTextPage
 
     property alias text: textPreview.text
+    property string richText
     property bool showAsPlainText: true
 
     signal pasteClicked()
@@ -40,15 +41,14 @@ Page {
             },
             Action {
                 iconName: showAsPlainText ? "stock_website" : "stock_document"
+                visible: previewTextPage.richText != ""
                 text: showAsPlainText ? i18n.tr("Show as Rich Text") : i18n.tr("Show as Plain Text")
-                onTriggered: {
-                    showAsPlainText = !showAsPlainText
-                }
+                onTriggered: showAsPlainText = !showAsPlainText
             }
         ]
     }
 
-    onShowAsPlainTextChanged: webView.loadHtml(previewTextPage.pasteData)
+    onShowAsPlainTextChanged: webView.loadHtml(previewTextPage.richText)
 
     WebView {
         id: webView

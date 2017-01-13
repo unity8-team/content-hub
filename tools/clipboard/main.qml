@@ -211,6 +211,7 @@ MainView {
 
             delegate: ClipboardItemDelegate {
                 id: delegate
+
                 title: dataType === PasteDataModel.ImageType ? i18n.tr("Image") : textData
                 summary: source
                 imageSource: {
@@ -221,6 +222,7 @@ MainView {
                     }
                     return ""
                 }
+                hasRichText: pasteData != ""
 
                 Binding {
                     target: delegate
@@ -242,31 +244,66 @@ MainView {
                 }
                 onClicked: {
                     if (!selectMode) {
-                        ContentHub.selectPasteForAppId(requesterId, application.surfaceId, pasteId, false)
+                        ContentHub.selectPasteForAppId(requesterId, application.surfaceId, pasteId, pasteOutput == PasteDataModel.RichText)
                         Qt.quit()
                     } 
                 }
                 onDeleteClicked: {
                     pasteDataModel.removeEntryByIndex(index)
                 }
+                onPasteOptionsClicked: {
+                    pasteOptionsPage.index = index
+                    pasteOptionsPage.pasteId = pasteId
+                    pasteOptionsPage.textData = textData
+                    pasteOptionsPage.pasteData = pasteData
+                    pasteOptionsPage.pasteOutputOption = pasteOutput
+                    pageStack.push(pasteOptionsPage)
+                }
                 onPreviewClicked: {
                     if (dataType === PasteDataModel.ImageUrlType) {
-                        previewTextPage.pasteId = pasteId 
+                        previewImagePage.outputOption = pasteOutput
+                        previewImagePage.pasteId = pasteId 
                         previewImagePage.imageSource = imageData
                         pageStack.push(previewImagePage)
                     } else if (dataType === PasteDataModel.ImageType) {
-                        previewTextPage.pasteId = pasteId 
+                        previewImagePage.outputOption = pasteOutput
+                        previewImagePage.pasteId = pasteId 
                         previewImagePage.imageSource = "image://pastedImage/" + application.surfaceId + "/" + pasteId
                         pageStack.push(previewImagePage)
                     } else {
-                        previewTextPage.showAsPlainText = true
+                        previewTextPage.outputOption = pasteOutput
                         previewTextPage.pasteId = pasteId
-                        previewTextPage.richText = pasteData
-                        previewTextPage.text = textData
+                        previewTextPage.text = pasteOutput == PasteDataModel.PlainText ? textData : pasteData
                         pageStack.push(previewTextPage)
                     }
                 }
             }
+        }
+    }
+
+    PasteOptionsPage {
+        id: pasteOptionsPage
+
+        property int index
+        property int pasteId
+        property string textData
+        property string pasteData
+
+        visible: false
+
+        onPasteOutputOptionChanged: pasteDataModel.setPasteOutputByIndex(index, pasteOutputOption)
+
+        onPreviewClicked: {
+            previewTextPage.outputOption = pasteOutputOption
+            previewTextPage.pasteId = pasteId
+            previewTextPage.text = pasteOutputOption == PasteDataModel.PlainText ? textData : pasteData
+            pageStack.push(previewTextPage)
+        }
+
+        onPasteClicked: {
+            pageStack.pop()
+            ContentHub.selectPasteForAppId(requesterId, application.surfaceId, pasteId, pasteOutputOption == PasteDataModel.RichText)
+            Qt.quit()
         }
     }
 
@@ -279,7 +316,7 @@ MainView {
 
         onPasteClicked: {
             pageStack.pop()
-            ContentHub.selectPasteForAppId(requesterId, application.surfaceId, pasteId, !previewTextPage.showAsPlainText)
+            ContentHub.selectPasteForAppId(requesterId, application.surfaceId, pasteId, outputOption == PasteDataModel.RichText)
             Qt.quit()
         }
     }
@@ -293,7 +330,7 @@ MainView {
 
         onPasteClicked: {
             pageStack.pop()
-            ContentHub.selectPasteForAppId(requesterId, application.surfaceId, pasteId, false)
+            ContentHub.selectPasteForAppId(requesterId, application.surfaceId, pasteId, outputOption == PasteDataModel.RichText)
             Qt.quit()
         }
     }

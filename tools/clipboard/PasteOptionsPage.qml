@@ -18,29 +18,37 @@
 
 import QtQuick 2.4
 import Ubuntu.Components 1.3
+import clipboardapp.private 0.1
 
 Page {
-    id: previewImagePage
+    id: pasteOptionsPage
 
-    property alias imageSource: imagePreview.source
-    property int outputOption
+    property int pasteOutputOption
 
+    signal previewClicked()
     signal pasteClicked()
 
     header: PageHeader {
         id: pageHeader
-        title: i18n.tr("Preview")
+        title: i18n.tr("Paste options")
         trailingActionBar.actions: [
             Action {
                 iconName: "edit-paste"
                 text: i18n.tr("Paste")
-                onTriggered: previewImagePage.pasteClicked()
+                onTriggered: pasteOptionsPage.pasteClicked()
+            },
+            Action {
+                iconName: "find"
+                text: i18n.tr("Preview")
+                onTriggered: pasteOptionsPage.previewClicked()
             }
         ]
     }
 
-    Image {
-        id: imagePreview
+    onPasteOutputOptionChanged: optionSelector.selectedIndex = pasteOutputOption == PasteDataModel.PlainText ? 0 : 1
+
+    OptionSelector {
+        id: optionSelector
 
         anchors {
             top: pageHeader.bottom
@@ -50,6 +58,18 @@ Page {
             margins: units.gu(2)
         }
 
-        fillMode: Image.PreserveAspectFit
+        selectedIndex: pasteOutputOption == PasteDataModel.PlainText ? 0 : 1
+
+        expanded: true
+        model: [i18n.tr("Plain Text"),
+                i18n.tr("Rich Text")]
+
+        onDelegateClicked: {
+             if (index == 0) {
+                 pasteOutputOption = PasteDataModel.PlainText
+             } else {
+                 pasteOutputOption = PasteDataModel.RichText
+             }
+        }
     }
 }

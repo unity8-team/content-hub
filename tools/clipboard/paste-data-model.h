@@ -35,6 +35,7 @@ class PasteDataModel : public QAbstractListModel
 
     Q_ENUMS(Roles)
     Q_ENUMS(PasteDataType)
+    Q_ENUMS(PasteOutputType)
 
 public:
     PasteDataModel(QObject* parent=0);
@@ -48,13 +49,19 @@ public:
         TextData,
         ImageData,
         ItemSelected,
-        ItemDeleted
+        ItemDeleted,
+        PasteOutput 
     };
 
     enum PasteDataType {
         TextType,
         ImageType,
         ImageUrlType
+    };
+
+    enum PasteOutputType {
+        PlainText,
+        RichText,
     };
 
     // reimplemented from QAbstractListModel
@@ -78,6 +85,7 @@ public:
     Q_INVOKABLE void setSelectedEntriesDeleted();
     Q_INVOKABLE void setEntryDeletedByIndex(int index, bool deleted);
     Q_INVOKABLE void removeEntryByIndex(int index);
+    Q_INVOKABLE void setPasteOutputByIndex(int index, PasteOutputType pasteOutput);
 
 protected:
     struct PasteDataEntry {
@@ -89,6 +97,8 @@ protected:
         QString imageData;
         bool itemSelected;
         bool itemDeleted;
+        bool pasteAsRichText;
+        PasteOutputType pasteOutput;
     };
     QList<PasteDataEntry> m_entries;
 

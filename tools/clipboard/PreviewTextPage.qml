@@ -20,13 +20,13 @@ import QtQuick 2.4
 import Ubuntu.Components 1.3
 import Ubuntu.Web 0.2
 import com.canonical.Oxide 1.15
+import clipboardapp.private 0.1
 
 Page {
     id: previewTextPage
 
     property alias text: textPreview.text
-    property string richText
-    property bool showAsPlainText: true
+    property int outputOption
 
     signal pasteClicked()
 
@@ -38,17 +38,15 @@ Page {
                 iconName: "edit-paste"
                 text: i18n.tr("Paste")
                 onTriggered: previewTextPage.pasteClicked()
-            },
-            Action {
-                iconName: showAsPlainText ? "stock_website" : "stock_document"
-                visible: previewTextPage.richText != ""
-                text: showAsPlainText ? i18n.tr("Show as Rich Text") : i18n.tr("Show as Plain Text")
-                onTriggered: showAsPlainText = !showAsPlainText
             }
         ]
     }
 
-    onShowAsPlainTextChanged: webView.loadHtml(previewTextPage.richText)
+    onTextChanged: {
+        if (outputOption == PasteDataModel.RichText) {
+            webView.loadHtml(previewTextPage.text)
+        }
+    }
 
     WebView {
         id: webView
@@ -60,7 +58,7 @@ Page {
             margins: units.gu(2)
         }
 
-        visible: !showAsPlainText
+        visible: outputOption == PasteDataModel.RichText
 
         onNavigationRequested: request.action = NavigationRequest.ActionReject
     }
@@ -75,7 +73,7 @@ Page {
             margins: units.gu(2)
         }
 
-        visible: showAsPlainText
+        visible: outputOption == PasteDataModel.PlainText
 
         TextArea {
             id: textPreview

@@ -52,6 +52,7 @@ QHash<int, QByteArray> PasteDataModel::roleNames() const
         roles[ImageData] = "imageData";
         roles[ItemSelected] = "itemSelected";
         roles[ItemDeleted] = "itemDeleted";
+        roles[PasteOutput] = "pasteOutput";
     }
     return roles;
 }
@@ -86,6 +87,8 @@ QVariant PasteDataModel::data(const QModelIndex& index, int role) const
         return entry.itemSelected;
     case ItemDeleted:
         return entry.itemDeleted;
+    case PasteOutput:
+        return entry.pasteOutput;
     default:
         return QVariant();
     }
@@ -274,6 +277,7 @@ void PasteDataModel::addEntryByPasteId(const QString& pasteId)
 
     entry.itemSelected = false;
     entry.itemDeleted = false;
+    entry.pasteOutput = PlainText;
     addEntry(entry);
 }
 
@@ -302,6 +306,22 @@ void PasteDataModel::removeEntryByIndex(int index)
         return;
 
     removeEntry(index);
+}
+
+void PasteDataModel::setPasteOutputByIndex(int index, PasteOutputType output)
+{
+    if (index < 0 || index >= m_entries.size()) {
+        return;
+    }
+
+    if (m_entries[index].pasteOutput != output) {
+        QVector<int> roles;
+        roles << PasteOutput;
+
+        m_entries[index].pasteOutput = output;
+
+        Q_EMIT dataChanged(this->index(index, 0), this->index(index, 0), roles);
+    }
 }
 
 void PasteDataModel::onPasteboardChanged()

@@ -279,7 +279,7 @@ MainView {
 
         onPasteClicked: {
             pageStack.pop()
-            ContentHub.selectPasteForAppId(requesterId, application.surfaceId, pasteId, previewTextPage.showAsPlainText)
+            ContentHub.selectPasteForAppId(requesterId, application.surfaceId, pasteId, !previewTextPage.showAsPlainText)
             Qt.quit()
         }
     }

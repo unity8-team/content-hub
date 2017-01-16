@@ -222,7 +222,7 @@ MainView {
                     }
                     return ""
                 }
-                hasRichText: dataType === PsteDataModel.TextType && pasteData != ""
+                hasRichText: dataType === PasteDataModel.TextType && pasteData != ""
 
                 Binding {
                     target: delegate

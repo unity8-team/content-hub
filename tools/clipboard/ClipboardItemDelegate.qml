@@ -29,6 +29,8 @@ ListItem {
     signal deleteClicked()
     signal previewClicked()
 
+    onTitleChanged: title = title.replace("\n", " ")
+
     height: clipboardItemLayout.height + (divider.visible ? divider.height : 0)
 
     leadingActions: ListItemActions {

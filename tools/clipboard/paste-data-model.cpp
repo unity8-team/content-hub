@@ -48,7 +48,7 @@ QHash<int, QByteArray> PasteDataModel::roleNames() const
         roles[TextData] = "textData";
         roles[HtmlData] = "htmlData";
         roles[ImageData] = "imageData";
-        roles[Selected] = "selected";
+        roles[EntrySelected] = "entrySelected";
         roles[Deleted] = "deleted";
         roles[OutputType] = "outputType";
     }
@@ -81,8 +81,8 @@ QVariant PasteDataModel::data(const QModelIndex& index, int role) const
         return entry.htmlData;
     case ImageData:
         return entry.imageData;
-    case Selected:
-        return entry.selected;
+    case EntrySelected:
+        return entry.entrySelected;
     case Deleted:
         return entry.deleted;
     case OutputType:
@@ -153,11 +153,11 @@ void PasteDataModel::selectByIndex(int index, bool selected)
         return;
     }
 
-    if (m_entries[index].selected != selected) {
+    if (m_entries[index].entrySelected != selected) {
         QVector<int> roles;
-        roles << Selected;
+        roles << EntrySelected;
 
-        m_entries[index].selected = selected;
+        m_entries[index].entrySelected = selected;
 
         Q_EMIT dataChanged(this->index(index, 0), this->index(index, 0), roles);
 
@@ -192,7 +192,7 @@ void PasteDataModel::markSelectedForDeletion()
 {
     QList<int> idxs;
     for (int i = 0; i < m_entries.size(); ++i) {
-        if (m_entries[i].selected) {
+        if (m_entries[i].entrySelected) {
             idxs << i;
             selectByIndex(i, false);
         }
@@ -308,7 +308,7 @@ void PasteDataModel::addToModelByPasteId(const QString& pasteId)
         }
     }
 
-    entry.selected = false;
+    entry.entrySelected = false;
     entry.deleted = false;
     entry.outputType = PlainText;
 

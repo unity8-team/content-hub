@@ -48,7 +48,7 @@ public:
         TextData,
         HtmlData,
         ImageData,
-        Selected,
+        EntrySelected,
         Deleted,
         OutputType 
     };
@@ -95,7 +95,7 @@ protected:
         QString textData;
         QString htmlData;
         QString imageData;
-        bool selected;
+        bool entrySelected;
         bool deleted;
         PasteOutputType outputType;
     };

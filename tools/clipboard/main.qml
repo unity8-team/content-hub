@@ -227,7 +227,7 @@ MainView {
                 Binding {
                     target: delegate
                     property: "selected"
-                    value: selected
+                    value: entrySelected
                 }
 
                 Component.onCompleted: {
@@ -244,7 +244,7 @@ MainView {
                 }
                 onClicked: {
                     if (!selectMode) {
-                        ContentHub.selectPasteForAppId(requesterId, application.surfaceId, pasteId, outputType == PasteDataModel.RichText)
+                        ContentHub.selectPasteForAppId(requesterId, application.surfaceId, id, outputType == PasteDataModel.RichText)
                         Qt.quit()
                     } 
                 }

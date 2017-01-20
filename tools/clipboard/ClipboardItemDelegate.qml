@@ -25,10 +25,8 @@ ListItem {
     property string title: ""
     property string summary: ""
     property url imageSource: ""
-    property bool hasRichText: false
 
     signal deleteClicked()
-    signal pasteOptionsClicked()
     signal previewClicked()
 
     height: clipboardItemLayout.height + (divider.visible ? divider.height : 0)
@@ -45,12 +43,6 @@ ListItem {
 
     trailingActions: ListItemActions {
         actions: [
-            Action {
-                iconName: "settings"
-                text: i18n.tr("Paste Option")
-                visible: clipboardItem.hasRichText
-                onTriggered: clipboardItem.pasteOptionsClicked()
-            },
             Action {
                 iconName: "find"
                 text: i18n.tr("Preview")

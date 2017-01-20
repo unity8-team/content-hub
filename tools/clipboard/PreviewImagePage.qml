@@ -23,7 +23,6 @@ Page {
     id: previewImagePage
 
     property alias imageSource: imagePreview.source
-    property int outputOption
 
     signal pasteClicked()
 

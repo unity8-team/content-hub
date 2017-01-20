@@ -222,7 +222,6 @@ MainView {
                     }
                     return ""
                 }
-                hasRichText: dataType === PasteDataModel.TextType && pasteData != ""
 
                 Binding {
                     target: delegate
@@ -251,29 +250,21 @@ MainView {
                 onDeleteClicked: {
                     pasteDataModel.removeEntryByIndex(index)
                 }
-                onPasteOptionsClicked: {
-                    pasteOptionsPage.index = index
-                    pasteOptionsPage.pasteId = pasteId
-                    pasteOptionsPage.textData = textData
-                    pasteOptionsPage.pasteData = pasteData
-                    pasteOptionsPage.pasteOutputOption = pasteOutput
-                    pageStack.push(pasteOptionsPage)
-                }
                 onPreviewClicked: {
                     if (dataType === PasteDataModel.ImageUrlType) {
-                        previewImagePage.outputOption = pasteOutput
                         previewImagePage.pasteId = pasteId 
                         previewImagePage.imageSource = imageData
                         pageStack.push(previewImagePage)
                     } else if (dataType === PasteDataModel.ImageType) {
-                        previewImagePage.outputOption = pasteOutput
                         previewImagePage.pasteId = pasteId 
                         previewImagePage.imageSource = "image://pastedImage/" + application.surfaceId + "/" + pasteId
                         pageStack.push(previewImagePage)
                     } else {
-                        previewTextPage.outputOption = pasteOutput
+                        previewTextPage.index = index
                         previewTextPage.pasteId = pasteId
-                        previewTextPage.text = pasteOutput == PasteDataModel.PlainText ? textData : pasteData
+                        previewTextPage.text = textData
+                        previewTextPage.richText = pasteData
+                        previewTextPage.outputOption = pasteOutput
                         pageStack.push(previewTextPage)
                     }
                 }
@@ -281,38 +272,15 @@ MainView {
         }
     }
 
-    PasteOptionsPage {
-        id: pasteOptionsPage
-
-        property int index
-        property int pasteId
-        property string textData
-        property string pasteData
-
-        visible: false
-
-        onPasteOutputOptionChanged: pasteDataModel.setPasteOutputByIndex(index, pasteOutputOption)
-
-        onPreviewClicked: {
-            previewTextPage.outputOption = pasteOutputOption
-            previewTextPage.pasteId = pasteId
-            previewTextPage.text = pasteOutputOption == PasteDataModel.PlainText ? textData : pasteData
-            pageStack.push(previewTextPage)
-        }
-
-        onPasteClicked: {
-            pageStack.pop()
-            ContentHub.selectPasteForAppId(requesterId, application.surfaceId, pasteId, pasteOutputOption == PasteDataModel.RichText)
-            Qt.quit()
-        }
-    }
-
     PreviewTextPage {
         id: previewTextPage
 
+        property int index
         property int pasteId
 
         visible: false
+
+        onOutputOptionChanged: pasteDataModel.setPasteOutputByIndex(index, outputOption)
 
         onPasteClicked: {
             pageStack.pop()
@@ -330,7 +298,7 @@ MainView {
 
         onPasteClicked: {
             pageStack.pop()
-            ContentHub.selectPasteForAppId(requesterId, application.surfaceId, pasteId, outputOption == PasteDataModel.RichText)
+            ContentHub.selectPasteForAppId(requesterId, application.surfaceId, pasteId, false)
             Qt.quit()
         }
     }

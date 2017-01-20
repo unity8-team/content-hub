@@ -2,7 +2,6 @@
     <qresource prefix="/">
         <file>main.qml</file>
         <file>ClipboardItemDelegate.qml</file>
-        <file>PasteOptionsPage.qml</file>
         <file>PreviewImagePage.qml</file>
         <file>PreviewTextPage.qml</file>
     </qresource>

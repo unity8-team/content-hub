@@ -51,7 +51,7 @@ int PasteDataFilterModel::count() const
 bool PasteDataFilterModel::filterAcceptsRow(int source_row, const QModelIndex& source_parent) const
 {
     QModelIndex index = sourceModel()->index(source_row, 0, source_parent);
-    return !sourceModel()->data(index, PasteDataModel::ItemDeleted).toBool();
+    return !sourceModel()->data(index, PasteDataModel::Deleted).toBool();
 }
 
 void PasteDataFilterModel::onModelChanged()

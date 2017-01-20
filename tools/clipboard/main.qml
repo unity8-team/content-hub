@@ -141,7 +141,7 @@ MainView {
                         text: i18n.tr("Cancel")
                         iconName: "close"
                         onTriggered: {
-                            pasteDataModel.cancelEntriesDeleted()
+                            pasteDataModel.cancelDeletion()
                             mainPage.editMode = false
                             editState.entriesEdited = false
                         }
@@ -154,7 +154,7 @@ MainView {
                         iconName: "tick"
                         enabled: editState.entriesEdited
                         onTriggered: {
-                            pasteDataModel.saveEntriesDeleted()
+                            pasteDataModel.deleteEntries()
                             mainPage.editMode = false
                             editState.entriesEdited = false
                         }
@@ -174,14 +174,14 @@ MainView {
                         enabled: pasteDataModel.anyEntrySelected
                         onTriggered: {
                             editState.entriesEdited = true
-                            pasteDataModel.setSelectedEntriesDeleted()
+                            pasteDataModel.markSelectedForDeletion()
                         }
                     }
 
                     trailingActionBar.actions: Action {
                         iconName: pasteDataModel.allEntriesSelected ? "select-none" : "select"
                         text: i18n.tr("Select All")
-                        onTriggered: pasteDataModel.setAllEntriesSelected(!pasteDataModel.allEntriesSelected)
+                        onTriggered: pasteDataModel.selectAll(!pasteDataModel.allEntriesSelected)
                     }
                 }
 
@@ -200,6 +200,7 @@ MainView {
 
         ListView {
             id: clipboardListView
+
             anchors {
                 top: pageHeader.bottom
                 bottom: parent.bottom
@@ -212,13 +213,13 @@ MainView {
             delegate: ClipboardItemDelegate {
                 id: delegate
 
-                title: dataType === PasteDataModel.ImageType ? i18n.tr("Image") : textData
+                title: dataType === PasteDataModel.Image ? i18n.tr("Image") : textData
                 summary: source
                 imageSource: {
-                    if (dataType === PasteDataModel.ImageUrlType) {
+                    if (dataType === PasteDataModel.ImageUrl) {
                         return imageData
-                    } else if (dataType === PasteDataModel.ImageType) {
-                        return "image://pastedImage/" + application.surfaceId + "/" + pasteId
+                    } else if (dataType === PasteDataModel.Image) {
+                        return "image://pastedImage/" + application.surfaceId + "/" + id
                     }
                     return ""
                 }
@@ -226,7 +227,7 @@ MainView {
                 Binding {
                     target: delegate
                     property: "selected"
-                    value: itemSelected
+                    value: selected
                 }
 
                 Component.onCompleted: {
@@ -234,7 +235,7 @@ MainView {
                 }
 
                 onSelectedChanged: {
-                    pasteDataModel.setEntrySelectedByIndex(index, selected)
+                    pasteDataModel.selectByIndex(index, selected)
                 }
                 onPressAndHold: {
                     if (!mainPage.editMode) {
@@ -243,28 +244,30 @@ MainView {
                 }
                 onClicked: {
                     if (!selectMode) {
-                        ContentHub.selectPasteForAppId(requesterId, application.surfaceId, pasteId, pasteOutput == PasteDataModel.RichText)
+                        ContentHub.selectPasteForAppId(requesterId, application.surfaceId, pasteId, outputType == PasteDataModel.RichText)
                         Qt.quit()
                     } 
                 }
                 onDeleteClicked: {
-                    pasteDataModel.removeEntryByIndex(index)
+                    pasteDataModel.deleteByIndex(index)
                 }
                 onPreviewClicked: {
-                    if (dataType === PasteDataModel.ImageUrlType) {
-                        previewImagePage.pasteId = pasteId 
+                    if (dataType === PasteDataModel.ImageUrl) {
+                        previewImagePage.pasteId = id 
                         previewImagePage.imageSource = imageData
                         pageStack.push(previewImagePage)
-                    } else if (dataType === PasteDataModel.ImageType) {
-                        previewImagePage.pasteId = pasteId 
-                        previewImagePage.imageSource = "image://pastedImage/" + application.surfaceId + "/" + pasteId
+
+                    } else if (dataType === PasteDataModel.Image) {
+                        previewImagePage.pasteId = id 
+                        previewImagePage.imageSource = "image://pastedImage/" + application.surfaceId + "/" + id
                         pageStack.push(previewImagePage)
+
                     } else {
                         previewTextPage.index = index
-                        previewTextPage.pasteId = pasteId
+                        previewTextPage.pasteId = id
                         previewTextPage.text = textData
-                        previewTextPage.richText = pasteData
-                        previewTextPage.outputOption = pasteOutput
+                        previewTextPage.richText = htmlData
+                        previewTextPage.outputOption = outputType
                         pageStack.push(previewTextPage)
                     }
                 }
@@ -280,7 +283,7 @@ MainView {
 
         visible: false
 
-        onOutputOptionChanged: pasteDataModel.setPasteOutputByIndex(index, outputOption)
+        onOutputOptionChanged: pasteDataModel.setOutputTypeByIndex(index, outputOption)
 
         onPasteClicked: {
             pageStack.pop()

@@ -37,7 +37,7 @@ void catchUnixSignals(const std::vector<int>& quitSignals,
 
 int main(int argc, char** argv)
 {
-    // Set this env to make Ubuntu WebView QML component pass AppArmor checks
+    // Set this to make Ubuntu WebView QML component pass AppArmor checks
     qputenv("OXIDE_NO_SANDBOX", "1");
     ClipboardApplication app(argc, argv);
     catchUnixSignals({SIGQUIT, SIGINT, SIGTERM});

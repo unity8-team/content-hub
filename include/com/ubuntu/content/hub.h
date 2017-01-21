@@ -76,6 +76,7 @@ class Hub : public QObject
     Q_INVOKABLE virtual void requestPaste();
     Q_INVOKABLE virtual void selectPasteForAppId(QString app_id, QString surface_id, QString paste_id, bool pasteAsRichText);
     Q_INVOKABLE virtual void selectPasteForAppIdCancelled(QString app_id);
+    Q_INVOKABLE virtual void setShouldPasteAsHtmlByPasteId(QString surface_id, QString paste_id, bool paste_as_html);
  
     ///
     // Copy & Paste

@@ -58,6 +58,7 @@ public:
     QStringList allPasteIds(const QString &surfaceId);
     QMimeData* pasteDataById(const QString &surfaceId, int pasteId);
     QString pasteSourceById(const QString &surfaceId, int pasteId);
+    bool shouldPasteAsHtmlById(const QString &surfaceId, int pasteId);
     bool removePaste(const QString &surfaceId, int pasteId);
 
 Q_SIGNALS:
@@ -67,6 +68,7 @@ private:
     QDBusPendingCall requestAllPasteIds(const QString &surfaceId);
     QDBusPendingCall requestPasteDataById(const QString &surfaceId, int pasteId);
     QDBusPendingCall requestPasteSourceById(const QString &surfaceId, int pasteId);
+    QDBusPendingCall requestShouldPasteAsHtmlById(const QString &surfaceId, int pasteId);
     QDBusPendingCall requestRemovePaste(const QString &surfaceId, int pasteId);
 
     PasteDataProviderPrivate* d;

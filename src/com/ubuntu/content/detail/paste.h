@@ -40,11 +40,16 @@ class Paste : public QObject, protected QDBusContext
     Q_PROPERTY(QString source READ source)
 
   public:
-    Paste(const int, const QString&, QObject* parent = nullptr);
+    Paste(const int, const QString&, bool, QObject* parent = nullptr);
     Paste(const Paste&) = delete;
     virtual ~Paste();
 
     Paste& operator=(const Paste&) = delete;
+
+    enum OutputFormat {
+        PlainTextOutput,
+        HtmlOutput
+    };
 
 Q_SIGNALS:
     void StateChanged(int State);
@@ -58,6 +63,8 @@ Q_SIGNALS:
     QString destination();
     void setDestination(QString&);
     QString path();
+    bool shouldPasteAsHtml();
+    void setShouldPasteAsHtml(bool);
 
   private:
     struct Private;

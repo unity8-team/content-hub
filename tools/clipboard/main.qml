@@ -283,7 +283,10 @@ MainView {
 
         visible: false
 
-        onOutputOptionChanged: pasteDataModel.setOutputTypeByIndex(index, outputOption)
+        onOutputOptionChanged: {
+            pasteDataModel.setOutputTypeByIndex(index, outputOption)
+            ContentHub.setShouldPasteAsHtmlByPasteId(application.surfaceId, pasteId, outputOption == PasteDataModel.RichText)
+        }
 
         onPasteClicked: {
             pageStack.pop()

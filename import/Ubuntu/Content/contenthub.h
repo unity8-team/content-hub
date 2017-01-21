@@ -67,6 +67,7 @@ public:
     Q_INVOKABLE void requestPaste();
     Q_INVOKABLE void selectPasteForAppId(QString, QString, QString, bool);
     Q_INVOKABLE void selectPasteForAppIdCancelled(QString);
+    Q_INVOKABLE void setShouldPasteAsHtmlByPasteId(QString surface_id, QString paste_id, bool paste_as_html);
 
 Q_SIGNALS:
     void importRequested(ContentTransfer *transfer);

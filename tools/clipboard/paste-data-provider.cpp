@@ -49,6 +49,12 @@ QDBusPendingCall PasteDataProvider::requestPasteSourceById(const QString &surfac
     return d->service->GetPasteSource(surfaceId, QString::number(pasteId));
 }
 
+QDBusPendingCall PasteDataProvider::requestShouldPasteAsHtmlById(const QString &surfaceId, int pasteId)
+{
+    TRACE() << Q_FUNC_INFO;
+    return d->service->GetShouldPasteAsHtmlByPasteId(surfaceId, QString::number(pasteId));
+}
+
 QDBusPendingCall PasteDataProvider::requestRemovePaste(const QString &surfaceId, int pasteId)
 {
     TRACE() << Q_FUNC_INFO;
@@ -90,6 +96,18 @@ QString PasteDataProvider::pasteSourceById(const QString &surfaceId, int pasteId
         return QString();
 
     return qdbus_cast<QString>(reply.value());
+}
+
+bool PasteDataProvider::shouldPasteAsHtmlById(const QString &surfaceId, int pasteId)
+{
+    QDBusPendingCall pendingCall = requestShouldPasteAsHtmlById(surfaceId, pasteId);
+    auto reply = QDBusPendingReply<bool>(pendingCall);
+    reply.waitForFinished();
+
+    if (reply.isError())
+        return false;
+
+    return qdbus_cast<bool>(reply.value());
 }
 
 bool PasteDataProvider::removePaste(const QString &surfaceId, int pasteId)

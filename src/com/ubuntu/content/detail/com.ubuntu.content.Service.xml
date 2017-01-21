@@ -114,6 +114,16 @@
     <signal name="PasteSelectionCancelled">
       <arg name="app_id" type="s" />
     </signal>
+    <method name="GetShouldPasteAsHtmlByPasteId">
+      <arg name="surface_id" type="s" direction="in" />
+      <arg name="paste_id" type="s" direction="in" />
+      <arg name="paste_as_html" type="b" direction="out" />
+    </method>
+    <method name="SetShouldPasteAsHtmlByPasteId">
+      <arg name="surface_id" type="s" direction="in" />
+      <arg name="paste_id" type="s" direction="in" />
+      <arg name="paste_as_html" type="b" direction="in" />
+    </method>
     <method name="SelectPeerForAppId">
       <arg name="app_id" type="s" direction="in" />
       <arg name="peer_id" type="s" direction="in" />

@@ -73,6 +73,8 @@ class Service : public QObject, protected QDBusContext
     void RequestPasteByAppId(const QString&);
     void SelectPasteForAppId(const QString&, const QString&, const QString&, bool);
     void SelectPasteForAppIdCancelled(const QString&);
+    bool GetShouldPasteAsHtmlByPasteId(const QString&, const QString&);
+    void SetShouldPasteAsHtmlByPasteId(const QString&, const QString&, bool);
  
     void RegisterImportExportHandler(const QString&, const QDBusObjectPath& handler);
     void HandlerActive(const QString&);
@@ -89,6 +91,8 @@ class Service : public QObject, protected QDBusContext
     QString getPasteSource(const QString &surfaceId, int pasteId);
     QByteArray getPasteData(const QString &surfaceId, int pasteId);
     QStringList getAllPasteIds(const QString &surfaceId);
+    bool getShouldPasteAsHtmlByPasteId(const QString& surfaceId, int pasteId);
+    void setShouldPasteAsHtmlByPasteId(const QString& surfaceId, int pasteId, bool pasteAsHtml);
     bool should_cancel(int);
     bool verifiedSurfaceIsFocused(const QString &surfaceId);
     struct Private;

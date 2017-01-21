@@ -185,6 +185,12 @@ void ContentHub::selectPasteForAppIdCancelled(QString app_id)
     m_hub->selectPasteForAppIdCancelled(app_id);
 }
 
+void ContentHub::setShouldPasteAsHtmlByPasteId(QString surface_id, QString paste_id, bool paste_as_html)
+{
+    TRACE() << Q_FUNC_INFO << surface_id << paste_id << paste_as_html;
+    m_hub->setShouldPasteAsHtmlByPasteId(surface_id, paste_id, paste_as_html);
+}
+
 void ContentHub::onPasteSelected(QByteArray paste, bool pasteAsRichText)
 {
     TRACE() << Q_FUNC_INFO << paste << pasteAsRichText;

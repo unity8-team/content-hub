@@ -394,7 +394,7 @@ bool cucd::Service::CreatePaste(const QString& app_id, const QString& surfaceId,
         effective_app_id = "?";
     }
 
-    auto paste = new cucd::Paste(import_counter, effective_app_id, false, this);
+    auto paste = new cucd::Paste(import_counter, effective_app_id, this);
     new PasteAdaptor(paste);
     d->active_pastes.append(paste);
 
@@ -548,35 +548,6 @@ QStringList cucd::Service::getAllPasteIds(const QString &surfaceId)
         ids.append(QString::number(p->Id()));
     }
     return ids;
-}
-
-bool cucd::Service::getShouldPasteAsHtmlByPasteId(const QString& surfaceId, int pasteId)
-{
-    if (!verifiedSurfaceIsFocused(surfaceId)) {
-        qWarning().nospace() << "Surface isn't focused. Denying paste.";
-        return false;
-    }
-
-    Q_FOREACH (cucd::Paste *p, d->active_pastes)
-    {
-        if (p->Id() == pasteId)
-            return p->shouldPasteAsHtml();
-    }
-    return false;
-}
-
-void cucd::Service::setShouldPasteAsHtmlByPasteId(const QString& surfaceId, int pasteId, bool pasteAsHtml)
-{
-    if (!verifiedSurfaceIsFocused(surfaceId)) {
-        qWarning().nospace() << "Surface isn't focused. Denying paste.";
-        return;
-    }
-
-    Q_FOREACH (cucd::Paste *p, d->active_pastes)
-    {
-        if (p->Id() == pasteId)
-            return p->setShouldPasteAsHtml(pasteAsHtml);
-    }
 }
 
 QDBusObjectPath cucd::Service::CreateTransfer(const QString& dest_id, const QString& src_id, int dir, const QString& type_id)
@@ -1089,26 +1060,6 @@ void cucd::Service::SelectPasteForAppIdCancelled(const QString& app_id)
     }
 
     Q_EMIT(PasteSelectionCancelled(app_id));
-}
-
-bool cucd::Service::GetShouldPasteAsHtmlByPasteId(const QString& surface_id, const QString& paste_id)
-{
-    TRACE() << Q_FUNC_INFO << paste_id;
-
-    if (d->active_pastes.isEmpty())
-        return false;
-
-    return getShouldPasteAsHtmlByPasteId(surface_id, paste_id.toInt());
-}
-
-void cucd::Service::SetShouldPasteAsHtmlByPasteId(const QString& surface_id, const QString& paste_id, bool paste_as_html)
-{
-    TRACE() << Q_FUNC_INFO << paste_id << paste_as_html;
-
-    if (d->active_pastes.isEmpty())
-        return;
-
-    return setShouldPasteAsHtmlByPasteId(surface_id, paste_id.toInt(), paste_as_html);
 }
 
 bool cucd::Service::verifiedSurfaceIsFocused(const QString &surfaceId)

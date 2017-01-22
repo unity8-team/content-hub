@@ -137,12 +137,6 @@ void cuc::Hub::selectPasteForAppIdCancelled(QString app_id)
     d->service->SelectPasteForAppIdCancelled(app_id);
 }
 
-void cuc::Hub::setShouldPasteAsHtmlByPasteId(QString surface_id, QString paste_id, bool paste_as_html)
-{
-    TRACE() << Q_FUNC_INFO << app_id << surface_id << paste_id << paste_as_html;
-    d->service->SetShouldPasteAsHtmlByPasteId(surface_id, paste_id, paste_as_html);
-}
-
 void cuc::Hub::selectPeerForAppId(QString app_id, QString peer_id)
 {
     TRACE() << Q_FUNC_INFO << app_id << peer_id;

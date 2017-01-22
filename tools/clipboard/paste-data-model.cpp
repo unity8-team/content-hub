@@ -310,12 +310,7 @@ void PasteDataModel::addToModelByPasteId(const QString& pasteId)
 
     entry.entrySelected = false;
     entry.deleted = false;
-
-    if (m_provider->shouldPasteAsHtmlById(m_surfaceId, id)) {
-        entry.outputType = RichText;
-    } else {
-        entry.outputType = PlainText;
-    }
+    entry.outputType = PlainText;
 
     addToModel(entry);
 }

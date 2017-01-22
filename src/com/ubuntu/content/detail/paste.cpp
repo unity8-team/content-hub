@@ -45,17 +45,14 @@ struct cucd::Paste::Private
     const QString source;
     QString destination;
     QByteArray mimeData;
-    int outputFormat;
 };
 
 cucd::Paste::Paste(const int id,
                          const QString& source,
-                         bool pasteAsHtml,
                          QObject* parent) :
     QObject(parent), d(new Private(id, source))
 {
     TRACE() << __PRETTY_FUNCTION__;
-    setShouldPasteAsHtml(pasteAsHtml);
 }
 
 cucd::Paste::~Paste()
@@ -132,20 +129,4 @@ QByteArray cucd::Paste::MimeData()
     }
 
     return d->mimeData;
-}
-
-bool cucd::Paste::shouldPasteAsHtml()
-{
-    TRACE() << __PRETTY_FUNCTION__;
-    return d->outputFormat == HtmlOutput;
-}
-
-void cucd::Paste::setShouldPasteAsHtml(bool pasteAsHtml)
-{
-    TRACE() << __PRETTY_FUNCTION__;
-    if (pasteAsHtml) {
-        d->outputFormat = HtmlOutput;
-    } else {
-        d->outputFormat = PlainTextOutput;
-    }
 }

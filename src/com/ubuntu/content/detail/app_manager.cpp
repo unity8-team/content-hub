@@ -19,13 +19,47 @@
 #include "mir-helper.h"
 
 #include <ubuntu-app-launch.h>
+#include <ubuntu-app-launch/appid.h>
+#include <ubuntu-app-launch/application.h>
+#include <ubuntu-app-launch/registry.h>
 
 namespace cucd = com::ubuntu::content::detail;
+namespace ual = ubuntu::app_launch;
 
 /*!
  * \reimp
  */
-bool cucd::AppManager::invoke_application(const std::string &app_id, gchar ** uris)
+std::shared_ptr<ual::Application::Instance> cucd::AppManager::invoke_application(const std::string &app_id, gchar ** uris)
+{
+    TRACE() << Q_FUNC_INFO << "APP_ID:" << app_id.c_str();
+    //std::shared_ptr<ual::Application> app = app_for_app_id(app_id);
+
+    //auto instance_c = ubuntu_app_launch_start_application(app_id.c_str(), (const gchar * const *)uris);
+    //std::string instid = std::string(instance_c);
+    //return instid;
+
+    try {
+        auto registry = ual::Registry::getDefault();
+        auto appId = ual::AppID::find(app_id);
+        auto app = ual::Application::create(appId, registry);
+
+        std::vector<ual::Application::URL> urivect;
+        for (auto i = 0; uris != nullptr && uris[i] != nullptr; i++)
+            urivect.emplace_back(ual::Application::URL::from_raw(uris[i]));
+
+        auto instance = app->launch(urivect);
+
+        return instance;
+    } catch (std::runtime_error &e) {
+        g_warning("Unable to start app '%s': %s", app_id, e.what());
+        return nullptr;
+    }
+}
+
+/*!
+ * \reimp
+ */
+bool cucd::AppManager::invoke_application_with_instance(const std::string &app_id, const std::string &instance_id, gchar ** uris)
 {
     TRACE() << Q_FUNC_INFO << "APP_ID:" << app_id.c_str();
     gboolean ok = ubuntu_app_launch_start_application(app_id.c_str(), (const gchar * const *)uris);

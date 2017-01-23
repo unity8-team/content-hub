@@ -27,9 +27,11 @@
 #include <com/ubuntu/content/transfer.h>
 #include <ubuntu/download_manager/download.h>
 #include <ubuntu/download_manager/manager.h>
+#include <ubuntu-app-launch/application.h>
 
 namespace cuc = com::ubuntu::content;
 namespace cucd = com::ubuntu::content::detail;
+namespace ual = ubuntu::app_launch;
 
 struct cucd::Transfer::Private
 {
@@ -63,6 +65,7 @@ struct cucd::Transfer::Private
     QString download_id;
     const QString content_type;
     QString instance_id = "";
+    std::shared_ptr<ual::Application::Instance> instance = nullptr;
 };
 
 cucd::Transfer::Transfer(const int id,
@@ -433,4 +436,20 @@ void cucd::Transfer::SetInstanceId(QString instance_id)
         return;
 
     d->instance_id = instance_id;
+}
+
+std::shared_ptr<ual::Application::Instance> cucd::Transfer::Instance()
+{
+    TRACE() << Q_FUNC_INFO;
+    return d->instance;
+}
+
+void cucd::Transfer::SetInstance(std::shared_ptr<ual::Application::Instance> instance)
+{
+    TRACE() << Q_FUNC_INFO;
+
+    if (d->instance == instance)
+        return;
+
+    d->instance = instance;
 }

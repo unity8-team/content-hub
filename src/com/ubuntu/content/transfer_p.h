@@ -23,9 +23,12 @@
 
 #include <com/ubuntu/content/item.h>
 #include <com/ubuntu/content/transfer.h>
+#include <ubuntu-app-launch/application.h>
 
 #include <QObject>
 #include <QVector>
+
+namespace ual = ubuntu::app_launch;
 
 namespace com
 {

@@ -25,6 +25,9 @@
 #include <QtDBus/QDBusMessage>
 #include <QtDBus/QDBusContext>
 #include <ubuntu/download_manager/error.h>
+#include <ubuntu-app-launch/application.h>
+
+namespace ual = ubuntu::app_launch;
 
 namespace com
 {
@@ -93,6 +96,8 @@ Q_SIGNALS:
     void AddItemsFromDir(QDir dir);
     QString InstanceId();
     void SetInstanceId(QString id);
+    std::shared_ptr<ual::Application::Instance> Instance();
+    void SetInstance(std::shared_ptr<ual::Application::Instance> instance);
 
   private:
     struct Private;

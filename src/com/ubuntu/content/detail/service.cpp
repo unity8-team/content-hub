@@ -611,17 +611,22 @@ void cucd::Service::handle_imports(int state)
         } else {
             TRACE() << Q_FUNC_INFO << "Invoking application";
             gchar ** uris = NULL;
-            d->app_manager->invoke_application(transfer->source().toStdString(), uris);
+            auto instance = d->app_manager->invoke_application(transfer->source().toStdString(), uris);
+            transfer->SetInstance(instance);
         }
     }
 
     if (state == cuc::Transfer::charged)
     {
         TRACE() << Q_FUNC_INFO << "Charged";
-        if (!transfer->InstanceId().isEmpty()) {
-            d->app_manager->stop_application_with_helper(transfer->source().toStdString(), transfer->InstanceId().toStdString());
-        } else if (transfer->WasSourceStartedByContentHub()) {
-            d->app_manager->stop_application(transfer->source().toStdString());
+        if (transfer->WasSourceStartedByContentHub()) {
+            if (transfer->Instance()) {
+                transfer->Instance()->stop();
+            } else if (!transfer->InstanceId().isEmpty()) {
+                d->app_manager->stop_application_with_helper(transfer->source().toStdString(), transfer->InstanceId().toStdString());
+            } else {
+                d->app_manager->stop_application(transfer->source().toStdString());
+            }
         }
 
         gchar ** uris = NULL;
@@ -640,8 +645,10 @@ void cucd::Service::handle_imports(int state)
             uris = (gchar **)urls;
         }
 
-        if (transfer->ShouldBeStartedByContentHub())
-            d->app_manager->invoke_application(transfer->destination().toStdString(), uris);
+        if (transfer->ShouldBeStartedByContentHub()) {
+            auto instance = d->app_manager->invoke_application(transfer->destination().toStdString(), uris);
+            transfer->SetInstance(instance);
+        }
 
         Q_FOREACH (RegHandler *r, d->handlers)
         {
@@ -678,7 +685,9 @@ void cucd::Service::handle_imports(int state)
                 }
             }
             if (shouldStop) {
-                if (!transfer->InstanceId().isEmpty()) {
+                if (transfer->Instance()) {
+                    transfer->Instance()->stop();
+                } else if (!transfer->InstanceId().isEmpty()) {
                     d->app_manager->stop_application_with_helper(transfer->source().toStdString(), transfer->InstanceId().toStdString());
                 } else {
                     d->app_manager->stop_application(transfer->source().toStdString());
@@ -735,8 +744,10 @@ void cucd::Service::handle_exports(int state)
             uris = (gchar **)urls;
         }
 
-        if (transfer->ShouldBeStartedByContentHub())
-            d->app_manager->invoke_application(transfer->destination().toStdString(), uris);
+        if (transfer->ShouldBeStartedByContentHub()) {
+            auto instance = d->app_manager->invoke_application(transfer->destination().toStdString(), uris);
+            transfer->SetInstance(instance);
+        }
 
         Q_FOREACH (RegHandler *r, d->handlers)
         {
@@ -776,7 +787,11 @@ void cucd::Service::handle_exports(int state)
                 }
             }
             if (shouldStop) {
-                d->app_manager->stop_application(transfer->destination().toStdString());
+                if (transfer->Instance()) {
+                    transfer->Instance()->stop();
+                } else {
+                    d->app_manager->stop_application(transfer->destination().toStdString());
+                }
             }
         }
         gchar ** uris = NULL;

@@ -475,26 +475,6 @@ QString cucd::Service::GetPasteSource(const QString& surfaceId, const QString& p
     return getPasteSource(surfaceId, pasteId.toInt());
 }
 
-bool cucd::Service::GetPasteOutputAsHtml(const QString& surfaceId, const QString& pasteId)
-{
-    TRACE() << Q_FUNC_INFO << pasteId;
-
-    if (d->active_pastes.isEmpty())
-        return false;
-
-    return getPasteOutputAsHtml(surfaceId, pasteId.toInt());
-}
-
-void cucd::Service::SetPasteOutputAsHtml(const QString& surfaceId, const QString& pasteId, bool outputAsHtml)
-{
-    TRACE() << Q_FUNC_INFO << pasteId << outputAsHtml;
-
-    if (d->active_pastes.isEmpty())
-        return;
-
-    setPasteOutputAsHtml(surfaceId, pasteId.toInt(), outputAsHtml);
-}
-
 QByteArray cucd::Service::GetLatestPasteData(const QString& surfaceId)
 {
     TRACE() << Q_FUNC_INFO;
@@ -538,37 +518,6 @@ QString cucd::Service::getPasteSource(const QString &surfaceId, int pasteId)
             return p->source();
     }
     return QString();
-}
-
-bool cucd::Service::getPasteOutputAsHtml(const QString &surfaceId, int pasteId)
-{
-    if (!verifiedSurfaceIsFocused(surfaceId)) {
-        qWarning().nospace() << "Surface isn't focused. Denying paste.";
-        return false;
-    }
-
-    Q_FOREACH (cucd::Paste *p, d->active_pastes)
-    {
-        if (p->Id() == pasteId)
-            return p->outputAsHtml();
-    }
-    return false;
-}
-
-void cucd::Service::setPasteOutputAsHtml(const QString& surfaceId, int pasteId, bool outputAsHtml)
-{
-    if (!verifiedSurfaceIsFocused(surfaceId)) {
-        qWarning().nospace() << "Surface isn't focused. Denying paste.";
-        return;
-    }
-
-    Q_FOREACH (cucd::Paste *p, d->active_pastes)
-    {
-        if (p->Id() == pasteId) {
-            p->setOutputAsHtml(outputAsHtml);
-            return;
-        }
-    }
 }
 
 QByteArray cucd::Service::getPasteData(const QString &surfaceId, int pasteId)

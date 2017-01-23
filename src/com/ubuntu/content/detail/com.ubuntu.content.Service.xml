@@ -53,16 +53,6 @@
       <arg name="pasteid" type="s" direction="in" />
       <arg name="source" type="s" direction="out" />
     </method>
-    <method name="GetPasteOutputAsHtml">
-      <arg name="surfaceId" type="s" direction="in" />
-      <arg name="pasteid" type="s" direction="in" />
-      <arg name="outputAsHtml" type="b" direction="out" />
-    </method>
-    <method name="SetPasteOutputAsHtml">
-      <arg name="surfaceId" type="s" direction="in" />
-      <arg name="pasteid" type="s" direction="in" />
-      <arg name="outputAsHtml" type="b" direction="in" />
-    </method>
     <method name="GetLatestPasteData">
       <arg name="surfaceId" type="s" direction="in" />
       <arg name="mimeData" type="ay" direction="out" />

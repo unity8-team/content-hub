@@ -260,7 +260,6 @@ void PasteDataModel::setOutputTypeByIndex(int index, PasteOutputType output)
 
         m_entries[index].outputType = output;
 
-        m_provider->setPasteOutputAsHtmlById(m_surfaceId, m_entries[index].id.toInt(), output == RichText);
         Q_EMIT dataChanged(this->index(index, 0), this->index(index, 0), roles);
     }
 }
@@ -311,12 +310,7 @@ void PasteDataModel::addToModelByPasteId(const QString& pasteId)
 
     entry.entrySelected = false;
     entry.deleted = false;
-
-    if (m_provider->pasteOutputAsHtmlById(m_surfaceId, id)) {
-        entry.outputType = RichText;
-    } else {
-        entry.outputType = PlainText;
-    }
+    entry.outputType = PlainText;
 
     addToModel(entry);
 }

@@ -58,6 +58,8 @@ Q_SIGNALS:
     QString destination();
     void setDestination(QString&);
     QString path();
+    bool outputAsHtml();
+    void setOutputAsHtml(bool);
 
   private:
     struct Private;

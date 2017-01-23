@@ -66,6 +66,8 @@ class Service : public QObject, protected QDBusContext
     bool CreatePaste(const QString&, const QString&, const QByteArray&, const QStringList&);
     bool RemovePaste(const QString& surfaceId, const QString& pasteId);
     QString GetPasteSource(const QString& surfaceId, const QString& pasteId);
+    bool GetPasteOutputAsHtml(const QString& surfaceId, const QString& pasteId);
+    void SetPasteOutputAsHtml(const QString& surfaceId, const QString& pasteId, bool outputAsHtml);
     QByteArray GetLatestPasteData(const QString& surfaceId);
     QByteArray GetPasteData(const QString& surfaceId, const QString& pasteId);
     QStringList GetAllPasteIds(const QString& surfaceId);
@@ -87,6 +89,8 @@ class Service : public QObject, protected QDBusContext
 
   private:
     QString getPasteSource(const QString &surfaceId, int pasteId);
+    bool getPasteOutputAsHtml(const QString &surfaceId, int pasteId);
+    void setPasteOutputAsHtml(const QString& surfaceId, int pasteId, bool outputAsHtml);
     QByteArray getPasteData(const QString &surfaceId, int pasteId);
     QStringList getAllPasteIds(const QString &surfaceId);
     bool should_cancel(int);

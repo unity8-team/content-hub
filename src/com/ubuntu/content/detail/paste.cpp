@@ -36,7 +36,8 @@ struct cucd::Paste::Private
             const QString& source):
         state(cuc::Paste::created),
             id(id),
-            source(source)
+            source(source),
+            outputAsHtml(false)
     {
     }
 
@@ -45,6 +46,7 @@ struct cucd::Paste::Private
     const QString source;
     QString destination;
     QByteArray mimeData;
+    bool outputAsHtml;
 };
 
 cucd::Paste::Paste(const int id,
@@ -98,6 +100,18 @@ QString cucd::Paste::path()
             .arg(sanitize_id(destination()))
             .arg(d->id);
     return path;
+}
+
+bool cucd::Paste::outputAsHtml()
+{
+    TRACE() << __PRETTY_FUNCTION__;
+    return d->outputAsHtml;
+}
+
+void cucd::Paste::setOutputAsHtml(bool output)
+{
+    TRACE() << __PRETTY_FUNCTION__;
+    d->outputAsHtml = output;
 }
 
 int cucd::Paste::State()

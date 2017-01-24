@@ -246,25 +246,6 @@ class Transfer::Private : public QObject
         return static_cast<QString>(reply.value());
     }
 
-    QString instanceId()
-    {
-        auto reply = remote_transfer->InstanceId();
-        reply.waitForFinished();
-
-        if (reply.isError())
-            return QString();
-
-        return static_cast<QString>(reply.value());
-    }
-
-    bool setInstanceId(QString instance_id)
-    {
-        auto reply = remote_transfer->SetInstanceId(instance_id);
-        reply.waitForFinished();
-
-        return not reply.isError();
-    }
-
     com::ubuntu::content::dbus::Transfer* remote_transfer;
 };
 }

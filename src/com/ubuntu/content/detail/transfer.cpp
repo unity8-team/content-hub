@@ -64,7 +64,6 @@ struct cucd::Transfer::Private
     bool should_be_started_by_content_hub;
     QString download_id;
     const QString content_type;
-    QString instance_id = "";
     std::shared_ptr<ual::Application::Instance> instance = nullptr;
 };
 
@@ -420,22 +419,6 @@ QString cucd::Transfer::ContentType()
 {
     TRACE() << __PRETTY_FUNCTION__;
     return d->content_type;
-}
-
-QString cucd::Transfer::InstanceId()
-{
-    TRACE() << Q_FUNC_INFO << d->instance_id;
-    return d->instance_id;
-}
-
-void cucd::Transfer::SetInstanceId(QString instance_id)
-{
-    TRACE() << Q_FUNC_INFO << instance_id;
-
-    if (d->instance_id == instance_id)
-        return;
-
-    d->instance_id = instance_id;
 }
 
 std::shared_ptr<ual::Application::Instance> cucd::Transfer::Instance()

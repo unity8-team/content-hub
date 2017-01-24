@@ -64,11 +64,5 @@
     <method name="destination">
       <arg name="destination" type="s" direction="out" />
     </method>
-    <method name="InstanceId">
-      <arg name="instance_id" type="s" direction="out" />
-    </method>
-    <method name="SetInstanceId">
-      <arg name="instance_id" type="s" direction="in" />
-    </method>
  </interface>
 </node>

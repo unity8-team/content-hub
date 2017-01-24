@@ -64,7 +64,8 @@ struct cucd::Transfer::Private
     bool should_be_started_by_content_hub;
     QString download_id;
     const QString content_type;
-    std::shared_ptr<ual::Application::Instance> instance = nullptr;
+    std::shared_ptr<ual::Application::Instance> source_instance = nullptr;
+    std::shared_ptr<ual::Application::Instance> destination_instance = nullptr;
 };
 
 cucd::Transfer::Transfer(const int id,
@@ -421,18 +422,34 @@ QString cucd::Transfer::ContentType()
     return d->content_type;
 }
 
-std::shared_ptr<ual::Application::Instance> cucd::Transfer::Instance()
+std::shared_ptr<ual::Application::Instance> cucd::Transfer::SourceInstance()
 {
     TRACE() << Q_FUNC_INFO;
-    return d->instance;
+    return d->source_instance;
 }
 
-void cucd::Transfer::SetInstance(std::shared_ptr<ual::Application::Instance> instance)
+void cucd::Transfer::SetSourceInstance(std::shared_ptr<ual::Application::Instance> instance)
 {
     TRACE() << Q_FUNC_INFO;
 
-    if (d->instance == instance)
+    if (d->source_instance == instance)
         return;
 
-    d->instance = instance;
+    d->source_instance = instance;
+}
+
+std::shared_ptr<ual::Application::Instance> cucd::Transfer::DestinationInstance()
+{
+    TRACE() << Q_FUNC_INFO;
+    return d->destination_instance;
+}
+
+void cucd::Transfer::SetDestinationInstance(std::shared_ptr<ual::Application::Instance> instance)
+{
+    TRACE() << Q_FUNC_INFO;
+
+    if (d->destination_instance == instance)
+        return;
+
+    d->destination_instance = instance;
 }

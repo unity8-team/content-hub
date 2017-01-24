@@ -94,8 +94,10 @@ Q_SIGNALS:
     void DownloadError(Ubuntu::DownloadManager::Error* error);
     QString ContentType();
     void AddItemsFromDir(QDir dir);
-    std::shared_ptr<ual::Application::Instance> Instance();
-    void SetInstance(std::shared_ptr<ual::Application::Instance> instance);
+    std::shared_ptr<ual::Application::Instance> SourceInstance();
+    void SetSourceInstance(std::shared_ptr<ual::Application::Instance> instance);
+    std::shared_ptr<ual::Application::Instance> DestinationInstance();
+    void SetDestinationInstance(std::shared_ptr<ual::Application::Instance> instance);
 
   private:
     struct Private;

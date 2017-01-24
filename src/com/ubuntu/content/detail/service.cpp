@@ -607,12 +607,12 @@ void cucd::Service::handle_imports(int state)
             PromptSessionP session = d->active_sessions.value(transfer->destination());
             gchar ** uris = NULL;
             auto instance = d->app_manager->invoke_application_with_session(transfer->source().toStdString(), session, uris);
-            transfer->SetInstance(instance);
+            transfer->SetSourceInstance(instance);
         } else {
             TRACE() << Q_FUNC_INFO << "Invoking application";
             gchar ** uris = NULL;
             auto instance = d->app_manager->invoke_application(transfer->source().toStdString(), uris);
-            transfer->SetInstance(instance);
+            transfer->SetSourceInstance(instance);
         }
     }
 
@@ -620,8 +620,8 @@ void cucd::Service::handle_imports(int state)
     {
         TRACE() << Q_FUNC_INFO << "Charged";
         if (transfer->WasSourceStartedByContentHub()) {
-            if (transfer->Instance()) {
-                transfer->Instance()->stop();
+            if (transfer->SourceInstance()) {
+                transfer->SourceInstance()->stop();
             }
         }
 
@@ -643,7 +643,7 @@ void cucd::Service::handle_imports(int state)
 
         if (transfer->ShouldBeStartedByContentHub()) {
             auto instance = d->app_manager->invoke_application(transfer->destination().toStdString(), uris);
-            transfer->SetInstance(instance);
+            transfer->SetDestinationInstance(instance);
         }
 
         Q_FOREACH (RegHandler *r, d->handlers)
@@ -681,8 +681,8 @@ void cucd::Service::handle_imports(int state)
                 }
             }
             if (shouldStop) {
-                if (transfer->Instance()) {
-                    transfer->Instance()->stop();
+                if (transfer->SourceInstance()) {
+                    transfer->SourceInstance()->stop();
                 }
             }
         }
@@ -738,7 +738,7 @@ void cucd::Service::handle_exports(int state)
 
         if (transfer->ShouldBeStartedByContentHub()) {
             auto instance = d->app_manager->invoke_application(transfer->destination().toStdString(), uris);
-            transfer->SetInstance(instance);
+            transfer->SetDestinationInstance(instance);
         }
 
         Q_FOREACH (RegHandler *r, d->handlers)
@@ -779,8 +779,8 @@ void cucd::Service::handle_exports(int state)
                 }
             }
             if (shouldStop) {
-                if (transfer->Instance()) {
-                    transfer->Instance()->stop();
+                if (transfer->DestinationInstance()) {
+                    transfer->DestinationInstance()->stop();
                 }
             }
         }

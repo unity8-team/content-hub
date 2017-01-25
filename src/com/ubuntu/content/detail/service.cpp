@@ -475,16 +475,28 @@ QDBusObjectPath cucd::Service::CreateTransfer(const QString& dest_id, const QStr
         }
     }
 
+    uint clientPid = 0;
+    if (qgetenv("CONTENT_HUB_TESTING").isNull())
+        clientPid = d->connection.interface()->servicePid(this->message().service());
     auto transfer = new cucd::Transfer(import_counter, src_id, dest_id, dir, type_id, this);
     if (dir == cuc::Transfer::Import && qgetenv("CONTENT_HUB_TESTING").isNull()) {
-        uint clientPid = d->connection.interface()->servicePid(this->message().service());
         setupPromptSession(dest_id, clientPid);
     }
+
     new TransferAdaptor(transfer);
     d->active_transfers.insert(transfer);
 
     auto destination = transfer->import_path();
     auto source = transfer->export_path();
+
+    if (dir == cuc::Transfer::Import && clientPid > 0) {
+        auto app = app_for_app_id(destination);
+        transfer->SetDestinationInstance(app->findInstance(clientPid));
+    } else if (clientPid > 0) {
+        auto app = app_for_app_id(source);
+        transfer->SetSourceInstance(app->findInstance(clientPid));
+    }
+
     if (not d->connection.registerObject(source, transfer))
         TRACE() << "Problem registering object for path: " << source;
     d->connection.registerObject(destination, transfer);

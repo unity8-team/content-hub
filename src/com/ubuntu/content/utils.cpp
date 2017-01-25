@@ -230,7 +230,7 @@ std::shared_ptr<ual::Application> app_for_app_id(QString id)
     std::shared_ptr<ual::Registry> reg = ual::Registry::getDefault();
     auto app_id = ual::AppID::find(id.toStdString());
     if (app_id.empty())
-        return false;
+        return nullptr;
     auto app = ual::Application::create(app_id, reg);
     return app;
 }

@@ -225,8 +225,13 @@ void cucd::Service::SelectPeerForAppId(const QString& app_id, const QString& pee
 
     if (d->peer_picker_instances.contains(app_id)) {
         auto instance = d->peer_picker_instances.value(app_id);
-        if (instance)
-            instance->stop();
+        if (instance) {
+            try {
+                instance->stop();
+            } catch (std::runtime_error &e) {
+                qWarning() << Q_FUNC_INFO << "Unable to stop app:" << e.what();
+            }
+        }
         d->peer_picker_instances.remove(app_id);
     }
     Q_EMIT(PeerSelected(app_id, peer_id));
@@ -237,8 +242,13 @@ void cucd::Service::SelectPeerForAppIdCancelled(const QString& app_id)
     TRACE() << Q_FUNC_INFO << app_id;
     if (d->peer_picker_instances.contains(app_id)) {
         auto instance = d->peer_picker_instances.value(app_id);
-        if (instance)
-            instance->stop();
+        if (instance) {
+            try {
+                instance->stop();
+            } catch (std::runtime_error &e) {
+                qWarning() << Q_FUNC_INFO << "Unable to stop app:" << e.what();
+            }
+        }
         d->peer_picker_instances.remove(app_id);
     }
     Q_EMIT(PeerSelectionCancelled(app_id));
@@ -476,10 +486,10 @@ QDBusObjectPath cucd::Service::CreateTransfer(const QString& dest_id, const QStr
     }
 
     uint clientPid = 0;
-    if (qgetenv("CONTENT_HUB_TESTING").isNull())
+    if (!QDBusConnection::sender().baseService().isEmpty())
         clientPid = d->connection.interface()->servicePid(this->message().service());
     auto transfer = new cucd::Transfer(import_counter, src_id, dest_id, dir, type_id, this);
-    if (dir == cuc::Transfer::Import && qgetenv("CONTENT_HUB_TESTING").isNull()) {
+    if (dir == cuc::Transfer::Import && qgetenv("CONTENT_HUB_TESTING").isNull() && clientPid > 0) {
         setupPromptSession(dest_id, clientPid);
     }
 
@@ -633,7 +643,11 @@ void cucd::Service::handle_imports(int state)
         TRACE() << Q_FUNC_INFO << "Charged";
         if (transfer->WasSourceStartedByContentHub()) {
             if (transfer->SourceInstance()) {
-                transfer->SourceInstance()->stop();
+                try {
+                    transfer->SourceInstance()->stop();
+                } catch (std::runtime_error &e) {
+                    qWarning() << Q_FUNC_INFO << "Unable to stop app:" << e.what();
+                }
             }
         }
 
@@ -694,7 +708,11 @@ void cucd::Service::handle_imports(int state)
             }
             if (shouldStop) {
                 if (transfer->SourceInstance()) {
-                    transfer->SourceInstance()->stop();
+                    try {
+                        transfer->SourceInstance()->stop();
+                    } catch (std::runtime_error &e) {
+                        qWarning() << Q_FUNC_INFO << "Unable to stop app:" << e.what();
+                    }
                 }
             }
         }
@@ -792,7 +810,11 @@ void cucd::Service::handle_exports(int state)
             }
             if (shouldStop) {
                 if (transfer->DestinationInstance()) {
-                    transfer->DestinationInstance()->stop();
+                    try {
+                        transfer->DestinationInstance()->stop();
+                    } catch (std::runtime_error &e) {
+                        qWarning() << Q_FUNC_INFO << "Unable to stop app:" << e.what();
+                    }
                 }
             }
         }

@@ -331,6 +331,15 @@ cuc::Transfer* cuc::Hub::create_import_from_peer_for_type(cuc::Peer peer, cuc::T
     cuc::Transfer *transfer = cuc::Transfer::Private::make_transfer(reply.value(), this);
     const cuc::Store *store = new cuc::Store{QStandardPaths::writableLocation(QStandardPaths::CacheLocation) + "/HubIncoming/" + QString::number(transfer->id()), this};
     transfer->setStore(store);
+
+    if (qgetenv("CONTENT_HUB_TESTING").isNull()) {
+        // Abort the transfer if the app id is not correct
+        if (info_for_app_id(peer.id()).value("valid", "false") == "false") {
+            TRACE() << Q_FUNC_INFO << "Aborting transfer as peer was not valid";
+            transfer->abort();
+        }
+    }
+
     return transfer;
 }
 
@@ -393,6 +402,15 @@ cuc::Transfer* cuc::Hub::create_share_to_peer_for_type(cuc::Peer peer, cuc::Type
     TRACE() << Q_FUNC_INFO << "STORE:" << store->uri();
     transfer->setStore(store);
     transfer->start();
+
+    if (qgetenv("CONTENT_HUB_TESTING").isNull()) {
+        // Abort the transfer if the app id is not correct
+        if (info_for_app_id(peer.id()).value("valid", "false") == "false") {
+            TRACE() << Q_FUNC_INFO << "Aborting transfer as peer was not valid";
+            transfer->abort();
+        }
+    }
+
     return transfer;
 }
 

@@ -100,6 +100,8 @@ class Hub : public QObject
     void onPasteFormatsChanged(const QStringList &);
     void onPeerSelected(const QString &, const QString &);
     void onPeerSelectionCancelled(const QString &);
+
+    bool isPeerValid(Peer peer);
   protected:
     Hub(QObject* = nullptr);
 

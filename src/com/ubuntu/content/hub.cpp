@@ -358,6 +358,15 @@ cuc::Transfer* cuc::Hub::create_export_to_peer_for_type(cuc::Peer peer, cuc::Typ
     TRACE() << Q_FUNC_INFO << "STORE:" << store->uri();
     transfer->setStore(store);
     transfer->start();
+
+    if (qgetenv("CONTENT_HUB_TESTING").isNull()) {
+        // Abort the transfer if the app id is not correct
+        if (info_for_app_id(peer.id()).value("valid", "false") == "false") {
+            TRACE() << Q_FUNC_INFO << "Aborting transfer as peer was not valid";
+            transfer->abort();
+        }
+    }
+
     return transfer;
 }
 

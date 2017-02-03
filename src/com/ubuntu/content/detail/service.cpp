@@ -503,19 +503,14 @@ QDBusObjectPath cucd::Service::CreateTransfer(const QString& dest_id, const QStr
     auto destination = transfer->import_path();
     auto source = transfer->export_path();
 
-    qWarning() << __FILE__ << __LINE__;
     if (dir == cuc::Transfer::Import && clientPid > 0) {
         auto app = app_for_app_id(dest_id);
-        qWarning() << __FILE__ << __LINE__;
         if (app) {
-            qWarning() << __FILE__ << __LINE__;
             transfer->SetDestinationInstance(app->findInstance(clientPid));
         }
     } else if (clientPid > 0) {
         auto app = app_for_app_id(src_id);
-        qWarning() << __FILE__ << __LINE__;
         if (app) {
-            qWarning() << __FILE__ << __LINE__;
             transfer->SetSourceInstance(app->findInstance(clientPid));
         }
     }
@@ -642,18 +637,14 @@ void cucd::Service::handle_imports(int state)
             PromptSessionP session = d->active_sessions.value(transfer->destination());
             gchar ** uris = NULL;
             auto instance = d->app_manager->invoke_application_with_session(transfer->source().toStdString(), session, uris);
-    	    qWarning() << __FILE__ << __LINE__;
             if (instance) {
-    		qWarning() << __FILE__ << __LINE__;
                 transfer->SetHelperInstance(instance);
             }
         } else {
             TRACE() << Q_FUNC_INFO << "Invoking application";
             gchar ** uris = NULL;
             auto instance = d->app_manager->invoke_application(transfer->source().toStdString(), uris);
-            qWarning() << __FILE__ << __LINE__;
             if (instance) {
-    		qWarning() << __FILE__ << __LINE__;
                 transfer->SetSourceInstance(instance);
             }
         }
@@ -700,9 +691,7 @@ void cucd::Service::handle_imports(int state)
 
         if (transfer->ShouldBeStartedByContentHub()) {
             auto instance = d->app_manager->invoke_application(transfer->destination().toStdString(), uris);
-            qWarning() << __FILE__ << __LINE__;
             if (instance) {
-                qWarning() << __FILE__ << __LINE__;
                 transfer->SetDestinationInstance(instance);
             }
         }
@@ -809,9 +798,7 @@ void cucd::Service::handle_exports(int state)
 
         if (transfer->ShouldBeStartedByContentHub()) {
             auto instance = d->app_manager->invoke_application(transfer->destination().toStdString(), uris);
-            qWarning() << __FILE__ << __LINE__;
             if (instance) {
-                qWarning() << __FILE__ << __LINE__;
                 transfer->SetDestinationInstance(instance);
             }
         }

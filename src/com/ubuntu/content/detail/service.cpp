@@ -227,6 +227,7 @@ void cucd::Service::SelectPeerForAppId(const QString& app_id, const QString& pee
         auto instance = d->peer_picker_instances.value(app_id);
         if (instance) {
             try {
+                TRACE() << Q_FUNC_INFO << "Stopping Peer Picker";
                 instance->stop();
             } catch (std::runtime_error &e) {
                 qWarning() << Q_FUNC_INFO << "Unable to stop app:" << e.what();
@@ -244,6 +245,7 @@ void cucd::Service::SelectPeerForAppIdCancelled(const QString& app_id)
         auto instance = d->peer_picker_instances.value(app_id);
         if (instance) {
             try {
+                TRACE() << Q_FUNC_INFO << "Stopping Peer Picker";
                 instance->stop();
             } catch (std::runtime_error &e) {
                 qWarning() << Q_FUNC_INFO << "Unable to stop app:" << e.what();
@@ -655,17 +657,15 @@ void cucd::Service::handle_imports(int state)
         TRACE() << Q_FUNC_INFO << "Charged";
         if (transfer->WasSourceStartedByContentHub()) {
             if (transfer->HelperInstance()) {
-                qWarning() << Q_FUNC_INFO << "Stopping Helper";
                 try {
-                    qWarning() << Q_FUNC_INFO << "Stopping";
+                    TRACE() << Q_FUNC_INFO << "Stopping Helper";
                     transfer->HelperInstance()->stop();
                 } catch (std::runtime_error &e) {
-                    qWarning() << Q_FUNC_INFO << "Unable to stop app:" << e.what();
+                    TRACE() << Q_FUNC_INFO << "Unable to stop app:" << e.what();
                 }
             } else if (transfer->SourceInstance()) {
-                qWarning() << Q_FUNC_INFO << "Stopping Source";
                 try {
-                    qWarning() << Q_FUNC_INFO << "Stopping";
+                    TRACE() << Q_FUNC_INFO << "Stopping Source App";
                     transfer->SourceInstance()->stop();
                 } catch (std::runtime_error &e) {
                     qWarning() << Q_FUNC_INFO << "Unable to stop app:" << e.what();
@@ -733,12 +733,14 @@ void cucd::Service::handle_imports(int state)
             if (shouldStop) {
                 if (transfer->HelperInstance()) {
                     try {
+                        TRACE() << Q_FUNC_INFO << "Stopping Helper";
                         transfer->HelperInstance()->stop();
                     } catch (std::runtime_error &e) {
                         qWarning() << Q_FUNC_INFO << "Unable to stop app:" << e.what();
                     }
                 } else if (transfer->SourceInstance()) {
                     try {
+                        TRACE() << Q_FUNC_INFO << "Stopping Source App";
                         transfer->SourceInstance()->stop();
                     } catch (std::runtime_error &e) {
                         qWarning() << Q_FUNC_INFO << "Unable to stop app:" << e.what();
@@ -843,6 +845,7 @@ void cucd::Service::handle_exports(int state)
             if (shouldStop) {
                 if (transfer->DestinationInstance()) {
                     try {
+                        TRACE() << Q_FUNC_INFO << "Stopping Destination App";
                         transfer->DestinationInstance()->stop();
                     } catch (std::runtime_error &e) {
                         qWarning() << Q_FUNC_INFO << "Unable to stop app:" << e.what();

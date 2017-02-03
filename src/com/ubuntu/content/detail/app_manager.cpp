@@ -50,7 +50,7 @@ std::shared_ptr<ual::Application::Instance> cucd::AppManager::invoke_application
         else
             return nullptr;
     } catch (std::runtime_error &e) {
-        g_warning("Unable to start app '%s': %s", app_id, e.what());
+        qWarning() << "Unable to start app" << app_id.c_str() << ":" <<  e.what();
         return nullptr;
     }
 }
@@ -82,7 +82,7 @@ std::shared_ptr<ual::Helper::Instance> cucd::AppManager::invoke_application_with
         else
             return nullptr;
     } catch (std::runtime_error &e) {
-        g_warning("Unable to start app '%s': %s", app_id, e.what());
+        qWarning() << "Unable to start app" << app_id.c_str() << ":" <<  e.what();
         return nullptr;
     }
 }

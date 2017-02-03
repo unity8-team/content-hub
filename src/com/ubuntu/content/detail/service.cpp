@@ -699,15 +699,11 @@ void cucd::Service::handle_imports(int state)
         }
 
         if (transfer->ShouldBeStartedByContentHub()) {
+            auto instance = d->app_manager->invoke_application(transfer->destination().toStdString(), uris);
             qWarning() << __FILE__ << __LINE__;
-            if (transfer->DestinationInstance()) {
+            if (instance) {
                 qWarning() << __FILE__ << __LINE__;
-                try {
-                    qWarning() << Q_FUNC_INFO << "Focusing";
-                    transfer->DestinationInstance()->focus();
-                } catch (std::runtime_error &e) {
-                    qWarning() << Q_FUNC_INFO << "Unable to focus app:" << e.what();
-                }
+                transfer->SetDestinationInstance(instance);
             }
         }
 

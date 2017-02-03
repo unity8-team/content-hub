@@ -35,7 +35,7 @@ struct MockedAppManager : public cua::ApplicationManager
     }
 
     MOCK_METHOD2(invoke_application, std::shared_ptr<ual::Application::Instance>(const std::string &, gchar ** uris));
-    MOCK_METHOD3(invoke_application_with_session, std::shared_ptr<ual::Application::Instance>(const std::string &, PromptSessionP, gchar ** uris));
+    MOCK_METHOD3(invoke_application_with_session, std::shared_ptr<ual::Helper::Instance>(const std::string &, PromptSessionP, gchar ** uris));
     MOCK_METHOD1(is_application_started, bool(const std::string &));
 };
 }

@@ -52,7 +52,7 @@ class ApplicationManager
      * \param app_id ID for the application (for example "gallery-app" - used for the desktop)
      * \param session
      */
-    virtual std::shared_ptr<ual::Application::Instance> invoke_application_with_session(const std::string &app_id, PromptSessionP session, gchar ** uris) = 0;
+    virtual std::shared_ptr<ual::Helper::Instance> invoke_application_with_session(const std::string &app_id, PromptSessionP session, gchar ** uris) = 0;
 
     /*!
      * \brief is_application_started returns true, if the application s already started by ubuntu

@@ -26,6 +26,7 @@
 #include <QtDBus/QDBusContext>
 #include <ubuntu/download_manager/error.h>
 #include <ubuntu-app-launch/application.h>
+#include <ubuntu-app-launch/helper.h>
 
 namespace ual = ubuntu::app_launch;
 
@@ -94,6 +95,8 @@ Q_SIGNALS:
     void DownloadError(Ubuntu::DownloadManager::Error* error);
     QString ContentType();
     void AddItemsFromDir(QDir dir);
+    std::shared_ptr<ual::Helper::Instance> HelperInstance();
+    void SetHelperInstance(std::shared_ptr<ual::Helper::Instance> instance);
     std::shared_ptr<ual::Application::Instance> SourceInstance();
     void SetSourceInstance(std::shared_ptr<ual::Application::Instance> instance);
     std::shared_ptr<ual::Application::Instance> DestinationInstance();

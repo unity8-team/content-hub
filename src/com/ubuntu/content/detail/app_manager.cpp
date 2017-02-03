@@ -58,7 +58,7 @@ std::shared_ptr<ual::Application::Instance> cucd::AppManager::invoke_application
 /*!
  * \reimp
  */
-std::shared_ptr<ual::Application::Instance> cucd::AppManager::invoke_application_with_session(const std::string &app_id, PromptSessionP session, gchar ** uris)
+std::shared_ptr<ual::Helper::Instance> cucd::AppManager::invoke_application_with_session(const std::string &app_id, PromptSessionP session, gchar ** uris)
 {
     TRACE() << Q_FUNC_INFO << "APP_ID:" << app_id.c_str();
     auto psession = session.data()->get();
@@ -76,9 +76,9 @@ std::shared_ptr<ual::Application::Instance> cucd::AppManager::invoke_application
 
         std::vector<ual::Application::URL> urls = {};
         auto instance = app->launch(psession, urivect);
-        
+
         if (instance)
-            return std::dynamic_pointer_cast<ual::Application::Instance>(instance);
+            return std::dynamic_pointer_cast<ual::Helper::Instance>(instance);
         else
             return nullptr;
     } catch (std::runtime_error &e) {

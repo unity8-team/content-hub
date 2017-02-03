@@ -90,7 +90,7 @@ struct cucd::Service::Private : public QObject
     QSet<cucd::Transfer*> active_transfers;
     QList<cucd::Paste*> active_pastes;
     QMap<QString, PromptSessionP> active_sessions;
-    QMap<QString, std::shared_ptr<ual::Application::Instance>> peer_picker_instances;
+    QMap<QString, std::shared_ptr<ual::Helper::Instance>> peer_picker_instances;
     QStringList pasteFormats;
     QSet<RegHandler*> handlers;
     QSharedPointer<cua::ApplicationManager> app_manager;
@@ -263,6 +263,7 @@ QDBusObjectPath cucd::Service::CreateImportFromPeer(const QString& peer_id, cons
         TRACE() << Q_FUNC_INFO << "APP_ID isnt' set, attempting to get it from AppArmor";
         dest_id = aa_profile(this->message().service());
     }
+
     return CreateTransfer(dest_id, peer_id, cuc::Transfer::Import, type_id);
 }
 
@@ -368,6 +369,7 @@ QDBusObjectPath cucd::Service::CreateExportToPeer(const QString& peer_id, const 
         TRACE() << Q_FUNC_INFO << "APP_ID isnt' set, attempting to get it from AppArmor";
         src_id = aa_profile(this->message().service());
     }
+
     return CreateTransfer(peer_id, src_id, cuc::Transfer::Export, type_id);
 }
 
@@ -380,6 +382,7 @@ QDBusObjectPath cucd::Service::CreateShareToPeer(const QString& peer_id, const Q
         TRACE() << Q_FUNC_INFO << "APP_ID isnt' set, attempting to get it from AppArmor";
         src_id = aa_profile(this->message().service());
     }
+
     return CreateTransfer(peer_id, src_id, cuc::Transfer::Share, type_id);
 }
 
@@ -486,8 +489,9 @@ QDBusObjectPath cucd::Service::CreateTransfer(const QString& dest_id, const QStr
     }
 
     uint clientPid = 0;
-    if (!QDBusConnection::sender().baseService().isEmpty())
+    if (qgetenv("CONTENT_HUB_TESTING").isNull())
         clientPid = d->connection.interface()->servicePid(this->message().service());
+
     auto transfer = new cucd::Transfer(import_counter, src_id, dest_id, dir, type_id, this);
     if (dir == cuc::Transfer::Import && qgetenv("CONTENT_HUB_TESTING").isNull() && clientPid > 0) {
         setupPromptSession(dest_id, clientPid);
@@ -499,12 +503,21 @@ QDBusObjectPath cucd::Service::CreateTransfer(const QString& dest_id, const QStr
     auto destination = transfer->import_path();
     auto source = transfer->export_path();
 
+    qWarning() << __FILE__ << __LINE__;
     if (dir == cuc::Transfer::Import && clientPid > 0) {
-        auto app = app_for_app_id(destination);
-        transfer->SetDestinationInstance(app->findInstance(clientPid));
+        auto app = app_for_app_id(dest_id);
+        qWarning() << __FILE__ << __LINE__;
+        if (app) {
+            qWarning() << __FILE__ << __LINE__;
+            transfer->SetDestinationInstance(app->findInstance(clientPid));
+        }
     } else if (clientPid > 0) {
-        auto app = app_for_app_id(source);
-        transfer->SetSourceInstance(app->findInstance(clientPid));
+        auto app = app_for_app_id(src_id);
+        qWarning() << __FILE__ << __LINE__;
+        if (app) {
+            qWarning() << __FILE__ << __LINE__;
+            transfer->SetSourceInstance(app->findInstance(clientPid));
+        }
     }
 
     if (not d->connection.registerObject(source, transfer))
@@ -629,12 +642,20 @@ void cucd::Service::handle_imports(int state)
             PromptSessionP session = d->active_sessions.value(transfer->destination());
             gchar ** uris = NULL;
             auto instance = d->app_manager->invoke_application_with_session(transfer->source().toStdString(), session, uris);
-            transfer->SetSourceInstance(instance);
+    	    qWarning() << __FILE__ << __LINE__;
+            if (instance) {
+    		qWarning() << __FILE__ << __LINE__;
+                transfer->SetHelperInstance(instance);
+            }
         } else {
             TRACE() << Q_FUNC_INFO << "Invoking application";
             gchar ** uris = NULL;
             auto instance = d->app_manager->invoke_application(transfer->source().toStdString(), uris);
-            transfer->SetSourceInstance(instance);
+            qWarning() << __FILE__ << __LINE__;
+            if (instance) {
+    		qWarning() << __FILE__ << __LINE__;
+                transfer->SetSourceInstance(instance);
+            }
         }
     }
 
@@ -642,8 +663,18 @@ void cucd::Service::handle_imports(int state)
     {
         TRACE() << Q_FUNC_INFO << "Charged";
         if (transfer->WasSourceStartedByContentHub()) {
-            if (transfer->SourceInstance()) {
+            if (transfer->HelperInstance()) {
+                qWarning() << Q_FUNC_INFO << "Stopping Helper";
                 try {
+                    qWarning() << Q_FUNC_INFO << "Stopping";
+                    transfer->HelperInstance()->stop();
+                } catch (std::runtime_error &e) {
+                    qWarning() << Q_FUNC_INFO << "Unable to stop app:" << e.what();
+                }
+            } else if (transfer->SourceInstance()) {
+                qWarning() << Q_FUNC_INFO << "Stopping Source";
+                try {
+                    qWarning() << Q_FUNC_INFO << "Stopping";
                     transfer->SourceInstance()->stop();
                 } catch (std::runtime_error &e) {
                     qWarning() << Q_FUNC_INFO << "Unable to stop app:" << e.what();
@@ -668,8 +699,16 @@ void cucd::Service::handle_imports(int state)
         }
 
         if (transfer->ShouldBeStartedByContentHub()) {
-            auto instance = d->app_manager->invoke_application(transfer->destination().toStdString(), uris);
-            transfer->SetDestinationInstance(instance);
+            qWarning() << __FILE__ << __LINE__;
+            if (transfer->DestinationInstance()) {
+                qWarning() << __FILE__ << __LINE__;
+                try {
+                    qWarning() << Q_FUNC_INFO << "Focusing";
+                    transfer->DestinationInstance()->focus();
+                } catch (std::runtime_error &e) {
+                    qWarning() << Q_FUNC_INFO << "Unable to focus app:" << e.what();
+                }
+            }
         }
 
         Q_FOREACH (RegHandler *r, d->handlers)
@@ -707,7 +746,13 @@ void cucd::Service::handle_imports(int state)
                 }
             }
             if (shouldStop) {
-                if (transfer->SourceInstance()) {
+                if (transfer->HelperInstance()) {
+                    try {
+                        transfer->HelperInstance()->stop();
+                    } catch (std::runtime_error &e) {
+                        qWarning() << Q_FUNC_INFO << "Unable to stop app:" << e.what();
+                    }
+                } else if (transfer->SourceInstance()) {
                     try {
                         transfer->SourceInstance()->stop();
                     } catch (std::runtime_error &e) {
@@ -768,7 +813,11 @@ void cucd::Service::handle_exports(int state)
 
         if (transfer->ShouldBeStartedByContentHub()) {
             auto instance = d->app_manager->invoke_application(transfer->destination().toStdString(), uris);
-            transfer->SetDestinationInstance(instance);
+            qWarning() << __FILE__ << __LINE__;
+            if (instance) {
+                qWarning() << __FILE__ << __LINE__;
+                transfer->SetDestinationInstance(instance);
+            }
         }
 
         Q_FOREACH (RegHandler *r, d->handlers)

@@ -36,7 +36,7 @@ class AppManager: public com::ubuntu::ApplicationManager::ApplicationManager
     AppManager& operator=(const AppManager&) = default;
 
     virtual std::shared_ptr<ual::Application::Instance> invoke_application(const std::string &app_id, gchar ** uris);
-    virtual std::shared_ptr<ual::Application::Instance> invoke_application_with_session(const std::string &app_id, PromptSessionP session, gchar ** uris);
+    virtual std::shared_ptr<ual::Helper::Instance> invoke_application_with_session(const std::string &app_id, PromptSessionP session, gchar ** uris);
     virtual bool is_application_started(const std::string &app_id);
 };
 

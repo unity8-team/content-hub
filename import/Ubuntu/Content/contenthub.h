@@ -65,7 +65,7 @@ public:
     Q_INVOKABLE void selectPeerForAppIdCancelled(QString);
 
     Q_INVOKABLE void requestPaste();
-    Q_INVOKABLE void selectPasteForAppId(QString, QString, QString);
+    Q_INVOKABLE void selectPasteForAppId(QString, QString, QString, bool);
     Q_INVOKABLE void selectPasteForAppIdCancelled(QString);
 
 Q_SIGNALS:
@@ -76,7 +76,7 @@ Q_SIGNALS:
     void finishedImportsChanged();
     void peerSelected(ContentPeer* peer);
     void peerSelectionCancelled();
-    void pasteSelected(QByteArray paste);
+    void pasteSelected(QByteArray paste, bool pasteAsRichText);
     void pasteSelectionCancelled();
 
 private Q_SLOTS:
@@ -86,7 +86,7 @@ private Q_SLOTS:
     void updateState();
     void onPeerSelected(QString);
     void onPeerSelectionCancelled();
-    void onPasteSelected(QByteArray);
+    void onPasteSelected(QByteArray, bool);
     void onPasteSelectionCancelled();
 
 private:

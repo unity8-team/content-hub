@@ -139,9 +139,9 @@ ContentHub::ContentHub(QObject *parent)
     connect(m_hub, SIGNAL(peerSelectionCancelled()),
         this,
         SLOT(onPeerSelectionCancelled()));
-    connect(m_hub, SIGNAL(pasteSelected(QByteArray)),
+    connect(m_hub, SIGNAL(pasteSelected(QByteArray, bool)),
         this,
-        SLOT(onPasteSelected(QByteArray)));
+        SLOT(onPasteSelected(QByteArray, bool)));
     connect(m_hub, SIGNAL(pasteSelectionCancelled()),
         this,
         SLOT(onPasteSelectionCancelled()));
@@ -173,10 +173,10 @@ void ContentHub::onPeerSelectionCancelled()
     Q_EMIT(peerSelectionCancelled());
 }
 
-void ContentHub::selectPasteForAppId(QString app_id, QString surface_id, QString paste_id)
+void ContentHub::selectPasteForAppId(QString app_id, QString surface_id, QString paste_id, bool pasteAsRichText)
 {
-    TRACE() << Q_FUNC_INFO << app_id << surface_id << paste_id;
-    m_hub->selectPasteForAppId(app_id, surface_id, paste_id);
+    TRACE() << Q_FUNC_INFO << app_id << surface_id << paste_id << pasteAsRichText;
+    m_hub->selectPasteForAppId(app_id, surface_id, paste_id, pasteAsRichText);
 }
 
 void ContentHub::selectPasteForAppIdCancelled(QString app_id)
@@ -185,10 +185,10 @@ void ContentHub::selectPasteForAppIdCancelled(QString app_id)
     m_hub->selectPasteForAppIdCancelled(app_id);
 }
 
-void ContentHub::onPasteSelected(QByteArray paste)
+void ContentHub::onPasteSelected(QByteArray paste, bool pasteAsRichText)
 {
-    TRACE() << Q_FUNC_INFO << paste;
-    Q_EMIT(pasteSelected(paste));
+    TRACE() << Q_FUNC_INFO << paste << pasteAsRichText;
+    Q_EMIT(pasteSelected(paste, pasteAsRichText));
 }
 
 void ContentHub::onPasteSelectionCancelled()

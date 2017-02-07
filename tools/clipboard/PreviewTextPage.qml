@@ -18,11 +18,29 @@
 
 import QtQuick 2.4
 import Ubuntu.Components 1.3
+import Ubuntu.Components.ListItems 1.3 as ListItem
+import Ubuntu.Web 0.2
+import com.canonical.Oxide 1.15
+import clipboardapp.private 0.1
 
 Page {
     id: previewTextPage
 
     property alias text: textPreview.text
+    property string richText: ""
+    property int outputOption
+
+    onRichTextChanged: {
+        if (outputOption == PasteDataModel.RichText) {
+            webView.loadHtml(previewTextPage.richText)
+        }
+    }
+
+    onOutputOptionChanged: {
+        if (outputOption == PasteDataModel.RichText) {
+            webView.loadHtml(previewTextPage.richText)
+        }
+    }
 
     signal pasteClicked()
 
@@ -38,15 +56,32 @@ Page {
         ]
     }
 
-    Flickable {
-        id: flickable
+    WebView {
+        id: webView
         anchors {
-            top: pageHeader.bottom
+            top: optionsLoader.bottom
             bottom: parent.bottom
             left: parent.left
             right: parent.right
             margins: units.gu(2)
         }
+
+        visible: outputOption == PasteDataModel.RichText
+
+        onNavigationRequested: request.action = NavigationRequest.ActionReject
+    }
+
+    Flickable {
+        id: flickable
+        anchors {
+            top: optionsLoader.bottom
+            bottom: parent.bottom
+            left: parent.left
+            right: parent.right
+            margins: units.gu(2)
+        }
+
+        visible: outputOption == PasteDataModel.PlainText
 
         TextArea {
             id: textPreview
@@ -58,6 +93,90 @@ Page {
             cursorVisible: false
             readOnly: true
             selectByMouse: false
+        }
+    }
+
+    Loader {
+        id: optionsLoader
+        anchors {
+            top: pageHeader.bottom
+            left: parent.left
+            right: parent.right
+        }
+
+        height: status == Loader.Ready ? item.height : 0
+
+        active: previewTextPage.active && previewTextPage.richText != ""
+        sourceComponent: optionsComp
+    }
+
+    Component {
+        id: optionsComp
+        Item {
+            anchors {
+                top: parent ? parent.top : undefined
+                left: parent ? parent.left : undefined
+                right: parent ? parent.right : undefined
+            }
+
+            height: optionsLabelItem.height + optionsDivider.height + units.gu(4)
+
+            Item {
+                id: optionsLabelItem
+
+                anchors {
+                    top: parent.top
+                    left: parent.left
+                    margins: units.gu(2)
+                }
+
+                width: optionsLabel.width
+                height: optionSelector.itemHeight
+        
+                Label {
+                    id: optionsLabel
+
+                    anchors.centerIn: parent
+                    text: i18n.tr("Paste options:")
+                }
+            }
+
+            ListItem.ThinDivider {
+                id: optionsDivider
+
+                anchors {
+                    top: optionsLabelItem.bottom
+                    topMargin: units.gu(2)
+                }
+
+                width: parent.width
+                height: units.gu(0.5)
+            }
+
+            OptionSelector {
+                id: optionSelector
+
+                Component.onCompleted: selectedIndex = outputOption == PasteDataModel.PlainText ? 0 : 1
+
+                anchors {
+                    top: parent.top
+                    left: optionsLabelItem.right
+                    right: parent.right
+                    margins: units.gu(2)
+                }
+
+                expanded: false
+                model: [ i18n.tr("Plain text"),
+                         i18n.tr("Rich text")]
+
+                onSelectedIndexChanged: {
+                    if (selectedIndex == 0) {
+                        outputOption = PasteDataModel.PlainText
+                    } else {
+                        outputOption = PasteDataModel.RichText
+                    }
+                }
+            }
         }
     }
 }

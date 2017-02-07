@@ -35,26 +35,33 @@ class PasteDataModel : public QAbstractListModel
 
     Q_ENUMS(Roles)
     Q_ENUMS(PasteDataType)
+    Q_ENUMS(PasteOutputType)
 
 public:
     PasteDataModel(QObject* parent=0);
     ~PasteDataModel();
 
     enum Roles {
-        PasteId = Qt::UserRole + 1,
+        Id = Qt::UserRole + 1,
         Source,
         DataType,
-        PasteData,
         TextData,
+        HtmlData,
         ImageData,
-        ItemSelected,
-        ItemDeleted
+        EntrySelected,
+        Deleted,
+        OutputType 
     };
 
     enum PasteDataType {
-        TextType,
-        ImageType,
-        ImageUrlType
+        Text,
+        Image,
+        ImageUrl
+    };
+
+    enum PasteOutputType {
+        PlainText,
+        RichText
     };
 
     // reimplemented from QAbstractListModel
@@ -71,26 +78,28 @@ public:
     bool anyEntrySelected() const;
     bool allEntriesSelected() const;
 
-    Q_INVOKABLE void setAllEntriesSelected(bool selected);
-    Q_INVOKABLE void setEntrySelectedByIndex(int index, bool selected);
-    Q_INVOKABLE void saveEntriesDeleted();
-    Q_INVOKABLE void cancelEntriesDeleted();
-    Q_INVOKABLE void setSelectedEntriesDeleted();
-    Q_INVOKABLE void setEntryDeletedByIndex(int index, bool deleted);
-    Q_INVOKABLE void removeEntryByIndex(int index);
+    Q_INVOKABLE void selectAll(bool selected);
+    Q_INVOKABLE void selectByIndex(int index, bool selected);
+    Q_INVOKABLE void markSelectedForDeletion();
+    Q_INVOKABLE void markForDeletionByIndex(int index, bool deleted);
+    Q_INVOKABLE void cancelDeletion();
+    Q_INVOKABLE void deleteEntries();
+    Q_INVOKABLE void deleteByIndex(int index);
+    Q_INVOKABLE void setOutputTypeByIndex(int index, PasteOutputType outputType);
 
 protected:
-    struct PasteDataEntry {
-        QString pasteId;
+    struct PasteEntry {
+        QString id;
         QString source;
         PasteDataType dataType;
-        QString pasteData;
         QString textData;
+        QString htmlData;
         QString imageData;
-        bool itemSelected;
-        bool itemDeleted;
+        bool entrySelected;
+        bool deleted;
+        PasteOutputType outputType;
     };
-    QList<PasteDataEntry> m_entries;
+    QList<PasteEntry> m_entries;
 
 
 Q_SIGNALS:
@@ -104,17 +113,15 @@ private Q_SLOTS:
     void onPasteboardChanged();
 
 private:
+    void addToModelByPasteId(const QString& pasteId);
+    void addToModel(PasteEntry& entry);
+    void removeFromModel(int index);
     void updateModel();
-    void addEntryByPasteId(const QString& pasteId);
-    void addEntry(PasteDataEntry& entry);
-    void removeEntry(int index);
 
     PasteDataProvider* m_provider;
     QString m_surfaceId;
     int m_appState;
-    int m_entriesSelected;
-    bool m_anyEntrySelected;
-    bool m_allEntriesSelected;
+    int m_selectedEntries;
     bool m_shouldUpdateModel;
 };
 

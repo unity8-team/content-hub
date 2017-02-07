@@ -24,7 +24,8 @@
 #include <QtQml/QQmlEngine>
 
 #include <qpa/qplatformnativeinterface.h>
-#include <mir_toolkit/mir_surface.h>
+#include <mir_toolkit/mir_window.h>
+#include <mir_toolkit/mir_persistent_id.h>
 
 #include "debug.h"
 #include "paste-data-model.h"
@@ -108,11 +109,11 @@ void ClipboardApplication::onApplicationStateChanged(Qt::ApplicationState state)
 
 QString ClipboardApplication::requestSurfaceId()
 {
-    auto mirSurface = static_cast<MirSurface*>(platformNativeInterface()->nativeResourceForWindow("mirsurface", m_view));
-    if (!mirSurface)
+    auto mirWindow = static_cast<MirWindow*>(platformNativeInterface()->nativeResourceForWindow("mirwindow", m_view));
+    if (!mirWindow)
         return QString();
 
-    MirPersistentId* mirPermaId = mir_surface_request_persistent_id_sync(mirSurface);
+    MirPersistentId* mirPermaId = mir_window_request_persistent_id_sync(mirWindow);
     QString surfaceId(mir_persistent_id_as_string(mirPermaId));
     mir_persistent_id_release(mirPermaId);
 

@@ -64,10 +64,16 @@ class Service : public QObject, protected QDBusContext
     QDBusObjectPath CreateExportToPeer(const QString&, const QString&, const QString&);
     QDBusObjectPath CreateShareToPeer(const QString&, const QString&, const QString&);
     bool CreatePaste(const QString&, const QString&, const QByteArray&, const QStringList&);
+    bool RemovePaste(const QString& surfaceId, const QString& pasteId);
+    QString GetPasteSource(const QString& surfaceId, const QString& pasteId);
     QByteArray GetLatestPasteData(const QString& surfaceId);
     QByteArray GetPasteData(const QString& surfaceId, const QString& pasteId);
+    QStringList GetAllPasteIds(const QString& surfaceId);
     QStringList PasteFormats();
-
+    void RequestPasteByAppId(const QString&);
+    void SelectPasteForAppId(const QString&, const QString&, const QString&);
+    void SelectPasteForAppIdCancelled(const QString&);
+ 
     void RegisterImportExportHandler(const QString&, const QDBusObjectPath& handler);
     void HandlerActive(const QString&);
     void Quit();
@@ -80,7 +86,9 @@ class Service : public QObject, protected QDBusContext
     void onPromptFinished();
 
   private:
+    QString getPasteSource(const QString &surfaceId, int pasteId);
     QByteArray getPasteData(const QString &surfaceId, int pasteId);
+    QStringList getAllPasteIds(const QString &surfaceId);
     bool should_cancel(int);
     bool verifiedSurfaceIsFocused(const QString &surfaceId);
     struct Private;
@@ -93,6 +101,8 @@ class Service : public QObject, protected QDBusContext
     void PasteboardChanged();
     void PeerSelected(const QString &app_id, const QString &peer_id);
     void PeerSelectionCancelled(const QString &app_id);
+    void PasteSelected(const QString &app_id, QByteArray mimedata);
+    void PasteSelectionCancelled(const QString &app_id);
 
   private Q_SLOTS:
     void handle_imports(int);

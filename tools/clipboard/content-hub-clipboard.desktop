@@ -1,0 +1,9 @@
+[Desktop Entry]
+Name=Content Hub Clipboard
+Comment=Content Hub Clipboard
+Exec=content-hub-clipboard %U
+Icon=
+Terminal=false
+Type=Application
+OnlyShowIn=Old
+X-Ubuntu-Touch=true

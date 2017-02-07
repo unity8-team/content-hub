@@ -97,6 +97,12 @@ cuc::Hub::Hub(QObject* parent) : QObject(parent), d{new cuc::Hub::Private{this}}
     QObject::connect(d->service, SIGNAL(PeerSelectionCancelled(const QString&)),
             this,
             SLOT(onPeerSelectionCancelled(const QString&)));
+    QObject::connect(d->service, SIGNAL(PasteSelected(const QString&, QByteArray)),
+            this,
+            SLOT(onPasteSelected(const QString&, QByteArray)));
+    QObject::connect(d->service, SIGNAL(PasteSelectionCancelled(const QString&)),
+            this,
+            SLOT(onPasteSelectionCancelled(const QString&)));
 }
 
 cuc::Hub::~Hub()
@@ -113,6 +119,24 @@ void cuc::Hub::requestPeerForType(cuc::Type type, QString handler_id)
 {
     TRACE() << Q_FUNC_INFO << type.id();
     d->service->RequestPeerForTypeByAppId(type.id(), handler_id, app_id());
+}
+
+void cuc::Hub::requestPaste()
+{
+    TRACE() << Q_FUNC_INFO;
+    d->service->RequestPasteByAppId(app_id());
+}
+
+void cuc::Hub::selectPasteForAppId(QString app_id, QString surface_id, QString paste_id)
+{
+    TRACE() << Q_FUNC_INFO << app_id << surface_id << paste_id;
+    d->service->SelectPasteForAppId(app_id, surface_id, paste_id);
+}
+
+void cuc::Hub::selectPasteForAppIdCancelled(QString app_id)
+{
+    TRACE() << Q_FUNC_INFO << app_id;
+    d->service->SelectPasteForAppIdCancelled(app_id);
 }
 
 void cuc::Hub::selectPeerForAppId(QString app_id, QString peer_id)
@@ -165,6 +189,20 @@ void cuc::Hub::onPeerSelectionCancelled(const QString &id)
     TRACE() << Q_FUNC_INFO << id;
     if (id == app_id())
         Q_EMIT(peerSelectionCancelled());
+}
+
+void cuc::Hub::onPasteSelected(const QString &id, QByteArray paste)
+{
+    TRACE() << Q_FUNC_INFO << id << paste;
+    if (id == app_id())
+        Q_EMIT(pasteSelected(paste));
+}
+
+void cuc::Hub::onPasteSelectionCancelled(const QString &id)
+{
+    TRACE() << Q_FUNC_INFO << id;
+    if (id == app_id())
+        Q_EMIT(pasteSelectionCancelled());
 }
 
 bool cuc::Hub::eventFilter(QObject *obj, QEvent *event)

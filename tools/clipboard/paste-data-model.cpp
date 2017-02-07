@@ -28,9 +28,7 @@ PasteDataModel::PasteDataModel(QObject* parent)
     m_provider(new PasteDataProvider()),
     m_surfaceId(),
     m_appState(-1),
-    m_entriesSelected(0),
-    m_anyEntrySelected(false),
-    m_allEntriesSelected(false),
+    m_selectedEntries(0),
     m_shouldUpdateModel(true)
 {
     connect(m_provider, SIGNAL(PasteboardChanged()), this, SLOT(onPasteboardChanged()));
@@ -44,14 +42,15 @@ QHash<int, QByteArray> PasteDataModel::roleNames() const
 {
     static QHash<int, QByteArray> roles;
     if (roles.isEmpty()) {
-        roles[PasteId] = "pasteId";
+        roles[Id] = "id";
         roles[Source] = "source";
         roles[DataType] = "dataType";
-        roles[PasteData] = "pasteData";
         roles[TextData] = "textData";
+        roles[HtmlData] = "htmlData";
         roles[ImageData] = "imageData";
-        roles[ItemSelected] = "itemSelected";
-        roles[ItemDeleted] = "itemDeleted";
+        roles[EntrySelected] = "entrySelected";
+        roles[Deleted] = "deleted";
+        roles[OutputType] = "outputType";
     }
     return roles;
 }
@@ -68,24 +67,26 @@ QVariant PasteDataModel::data(const QModelIndex& index, int role) const
         return QVariant();
     }
 
-    const PasteDataEntry& entry = m_entries.at(index.row());
+    const PasteEntry& entry = m_entries.at(index.row());
     switch (role) {
-    case PasteId:
-        return entry.pasteId;
+    case Id:
+        return entry.id;
     case Source:
         return entry.source;
     case DataType:
         return entry.dataType;
-    case PasteData:
-        return entry.pasteData;
     case TextData:
         return entry.textData;
+    case HtmlData:
+        return entry.htmlData;
     case ImageData:
         return entry.imageData;
-    case ItemSelected:
-        return entry.itemSelected;
-    case ItemDeleted:
-        return entry.itemDeleted;
+    case EntrySelected:
+        return entry.entrySelected;
+    case Deleted:
+        return entry.deleted;
+    case OutputType:
+        return entry.outputType;
     default:
         return QVariant();
     }
@@ -131,177 +132,136 @@ void PasteDataModel::setAppState(int state)
 
 bool PasteDataModel::anyEntrySelected() const
 {
-    return m_anyEntrySelected;
+    return m_selectedEntries > 0;
 }
 
 bool PasteDataModel::allEntriesSelected() const
 {
-    return m_allEntriesSelected;
+    return m_selectedEntries == rowCount();
 }
 
-void PasteDataModel::setAllEntriesSelected(bool selected)
+void PasteDataModel::selectAll(bool selected)
 {
     for (int i = 0; i < m_entries.size(); ++i) {
-        setEntrySelectedByIndex(i, selected);
+        selectByIndex(i, selected);
     }
 }
 
-void PasteDataModel::setEntrySelectedByIndex(int index, bool selected)
+void PasteDataModel::selectByIndex(int index, bool selected)
 {
     if (index < 0 || index >= m_entries.size()) {
         return;
     }
 
-    if (m_entries[index].itemSelected != selected) {
+    if (m_entries[index].entrySelected != selected) {
         QVector<int> roles;
-        roles << ItemSelected;
+        roles << EntrySelected;
 
-        m_entries[index].itemSelected = selected;
+        m_entries[index].entrySelected = selected;
 
         Q_EMIT dataChanged(this->index(index, 0), this->index(index, 0), roles);
 
         // Keep count of how many entries are selected
         if (selected) {
-            m_entriesSelected++;
+            if (m_selectedEntries == 0) {
+                m_selectedEntries++;
+                Q_EMIT anyEntrySelectedChanged();
+            } else {
+                m_selectedEntries++;
+            }
+
+            if (m_selectedEntries == rowCount()) {
+                Q_EMIT allEntriesSelectedChanged();
+            }
         } else {
-            m_entriesSelected--;
-        }
+            if (m_selectedEntries == rowCount()) {
+                m_selectedEntries--;
+                Q_EMIT allEntriesSelectedChanged();
+            } else {
+                m_selectedEntries--;
+            }
 
-        // Verify if any entry is selected and notify
-        if (m_entriesSelected > 0 && !m_anyEntrySelected) {
-            m_anyEntrySelected = true;
-            Q_EMIT anyEntrySelectedChanged();
-        } else if (m_entriesSelected <= 0 && m_anyEntrySelected) {
-            m_anyEntrySelected = false;
-            Q_EMIT anyEntrySelectedChanged();
-        }
-
-        // Verify if all entries are selected and notify
-        if (m_entriesSelected == rowCount() && !m_allEntriesSelected) {
-            m_allEntriesSelected = true;
-            Q_EMIT allEntriesSelectedChanged();
-        } else if (m_entriesSelected != rowCount() && m_allEntriesSelected) {
-            m_allEntriesSelected = false;
-            Q_EMIT allEntriesSelectedChanged();
+            if (m_selectedEntries == 0) {
+                Q_EMIT anyEntrySelectedChanged();
+            }
         }
     }
 }
 
-void PasteDataModel::saveEntriesDeleted()
-{
-    for (int i = m_entries.size() - 1; i >= 0; --i) {
-        if (m_entries[i].itemDeleted) {
-            removeEntryByIndex(i);
-        }
-    }
-}
-
-void PasteDataModel::cancelEntriesDeleted()
-{
-    for (int i = 0; i < m_entries.size(); ++i) {
-        setEntryDeletedByIndex(i, false);
-    }
-}
-
-void PasteDataModel::setSelectedEntriesDeleted()
+void PasteDataModel::markSelectedForDeletion()
 {
     QList<int> idxs;
     for (int i = 0; i < m_entries.size(); ++i) {
-        if (m_entries[i].itemSelected) {
+        if (m_entries[i].entrySelected) {
             idxs << i;
-            setEntrySelectedByIndex(i, false);
+            selectByIndex(i, false);
         }
     }
 
     for (int i = 0; i < idxs.size(); ++i) {
-        setEntryDeletedByIndex(idxs[i], true);
+        markForDeletionByIndex(idxs[i], true);
     }
 }
 
-void PasteDataModel::setEntryDeletedByIndex(int index, bool deleted)
+void PasteDataModel::markForDeletionByIndex(int index, bool deleted)
 {
     if (index < 0 || index >= m_entries.size()) {
         return;
     }
 
-    if (m_entries[index].itemDeleted != deleted) {
+    if (m_entries[index].deleted != deleted) {
         QVector<int> roles;
-        roles << ItemDeleted;
+        roles << Deleted;
 
-        m_entries[index].itemDeleted = deleted;
+        m_entries[index].deleted = deleted;
 
         Q_EMIT dataChanged(this->index(index, 0), this->index(index, 0), roles);
     }
 }
 
-void PasteDataModel::addEntryByPasteId(const QString& pasteId)
+void PasteDataModel::cancelDeletion()
 {
-    PasteDataEntry entry;
-
-    int id = pasteId.toInt();
-    entry.pasteId = QString::number(id);
-    entry.source = m_provider->pasteSourceById(m_surfaceId, id);
-
-    QMimeData *pasteMimeData = m_provider->pasteDataById(m_surfaceId, id);
-    if (pasteMimeData->hasImage()) {
-        if (pasteMimeData->imageData().toByteArray().isEmpty()) {
-            // Images copied from webborwser-app do not have imageData but in fact an url
-            entry.dataType = ImageUrlType;
-            entry.pasteData = pasteMimeData->html();
-
-            QRegularExpression srcRe("src=\"([^\"]*)\"");
-            QRegularExpressionMatch srcMatch = srcRe.match(entry.pasteData);
-            if (srcMatch.hasMatch()) {
-                entry.imageData = srcMatch.captured(1);
-            }
-
-            QRegularExpression altRe("alt=\"([^\"]*)\"");
-            QRegularExpressionMatch altMatch = altRe.match(entry.pasteData);
-            if (altMatch.hasMatch()) {
-                entry.textData = altMatch.captured(1);
-            }
-        } else {
-            entry.dataType = ImageType;
-        }
-
-    } else {
-        entry.dataType = TextType;
-        entry.textData = pasteMimeData->text();
-        if (pasteMimeData->hasHtml()) {
-            entry.pasteData = pasteMimeData->html();
+    for (int i = 0; i < m_entries.size(); ++i) {
+        if (m_entries[i].deleted) {
+            markForDeletionByIndex(i, false);
         }
     }
-
-    entry.itemSelected = false;
-    entry.itemDeleted = false;
-    addEntry(entry);
 }
 
-void PasteDataModel::addEntry(PasteDataEntry& entry)
+void PasteDataModel::deleteEntries()
 {
-    beginInsertRows(QModelIndex(), 0, 0);
-    m_entries.prepend(entry);
-    endInsertRows();
-    Q_EMIT rowCountChanged();
+    for (int i = m_entries.size() - 1; i >= 0; --i) {
+        if (m_entries[i].deleted) {
+            deleteByIndex(i);
+        }
+    }
 }
 
-void PasteDataModel::removeEntry(int index)
-{
-    beginRemoveRows(QModelIndex(), index, index);
-    m_entries.removeAt(index);
-    endRemoveRows();
-    Q_EMIT rowCountChanged();
-}
-
-void PasteDataModel::removeEntryByIndex(int index)
+void PasteDataModel::deleteByIndex(int index)
 {
     if (index < 0 || index >= m_entries.size())
         return;
 
-    if (!m_provider->removePaste(m_surfaceId, m_entries[index].pasteId.toInt())) 
+    if (!m_provider->removePaste(m_surfaceId, m_entries[index].id.toInt())) 
         return;
 
-    removeEntry(index);
+    removeFromModel(index);
+}
+
+void PasteDataModel::setOutputTypeByIndex(int index, PasteOutputType output)
+{
+    if (index < 0 || index >= m_entries.size()) {
+        return;
+    }
+
+    if (m_entries[index].outputType != output) {
+        QVector<int> roles;
+        roles << OutputType;
+
+        m_entries[index].outputType = output;
+
+        Q_EMIT dataChanged(this->index(index, 0), this->index(index, 0), roles);
+    }
 }
 
 void PasteDataModel::onPasteboardChanged()
@@ -309,19 +269,81 @@ void PasteDataModel::onPasteboardChanged()
     m_shouldUpdateModel = true;
 }
 
+void PasteDataModel::addToModelByPasteId(const QString& pasteId)
+{
+    PasteEntry entry;
+
+    int id = pasteId.toInt();
+
+    entry.id = QString::number(id);
+    entry.source = m_provider->pasteSourceById(m_surfaceId, id);
+
+    QMimeData *pasteMimeData = m_provider->pasteDataById(m_surfaceId, id);
+    if (pasteMimeData->hasImage()) {
+        if (pasteMimeData->imageData().toByteArray().isEmpty()) {
+            // Images copied from webborwser-app do not have imageData but in fact an url
+            entry.dataType = ImageUrl;
+            entry.htmlData = pasteMimeData->html();
+
+            QRegularExpression srcRe("src=\"([^\"]*)\"");
+            QRegularExpressionMatch srcMatch = srcRe.match(entry.htmlData);
+            if (srcMatch.hasMatch()) {
+                entry.imageData = srcMatch.captured(1);
+            }
+
+            QRegularExpression altRe("alt=\"([^\"]*)\"");
+            QRegularExpressionMatch altMatch = altRe.match(entry.htmlData);
+            if (altMatch.hasMatch()) {
+                entry.textData = altMatch.captured(1);
+            }
+        } else {
+            entry.dataType = Image;
+        }
+
+    } else {
+        entry.dataType = Text;
+        entry.textData = pasteMimeData->text();
+        if (pasteMimeData->hasHtml()) {
+            entry.htmlData = pasteMimeData->html();
+        }
+    }
+
+    entry.entrySelected = false;
+    entry.deleted = false;
+    entry.outputType = PlainText;
+
+    addToModel(entry);
+}
+
+void PasteDataModel::addToModel(PasteEntry& entry)
+{
+    beginInsertRows(QModelIndex(), 0, 0);
+    m_entries.prepend(entry);
+    endInsertRows();
+    Q_EMIT rowCountChanged();
+}
+
+void PasteDataModel::removeFromModel(int index)
+{
+    beginRemoveRows(QModelIndex(), index, index);
+    m_entries.removeAt(index);
+    endRemoveRows();
+    Q_EMIT rowCountChanged();
+}
+
 void PasteDataModel::updateModel()
 {
     QStringList dataList = m_provider->allPasteIds(m_surfaceId);
 
     for (int i = m_entries.size() - 1; i >= 0; i--) {
-        if (dataList.removeAll(m_entries[i].pasteId) == 0) {
+        if (dataList.removeAll(m_entries[i].id) == 0) {
             // Paste id was removed from current pasteboard
-            removeEntry(i);
+            removeFromModel(i);
         }
     }
 
     for (int i = 0; i < dataList.size(); ++i) {
-        addEntryByPasteId(dataList.at(i));
+        addToModelByPasteId(dataList.at(i));
     }
 
     m_shouldUpdateModel = false;

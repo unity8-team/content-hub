@@ -95,9 +95,9 @@ cuc::Hub::Hub(QObject* parent) : QObject(parent), d{new cuc::Hub::Private{this}}
     QObject::connect(d->service, SIGNAL(PeerSelectionCancelled(const QString&)),
             this,
             SLOT(onPeerSelectionCancelled(const QString&)));
-    QObject::connect(d->service, SIGNAL(PasteSelected(const QString&, QByteArray)),
+    QObject::connect(d->service, SIGNAL(PasteSelected(const QString&, QByteArray, bool)),
             this,
-            SLOT(onPasteSelected(const QString&, QByteArray)));
+            SLOT(onPasteSelected(const QString&, QByteArray, bool)));
     QObject::connect(d->service, SIGNAL(PasteSelectionCancelled(const QString&)),
             this,
             SLOT(onPasteSelectionCancelled(const QString&)));
@@ -125,10 +125,10 @@ void cuc::Hub::requestPaste()
     d->service->RequestPasteByAppId(app_id());
 }
 
-void cuc::Hub::selectPasteForAppId(QString app_id, QString surface_id, QString paste_id)
+void cuc::Hub::selectPasteForAppId(QString app_id, QString surface_id, QString paste_id, bool pasteAsRichText)
 {
-    TRACE() << Q_FUNC_INFO << app_id << surface_id << paste_id;
-    d->service->SelectPasteForAppId(app_id, surface_id, paste_id);
+    TRACE() << Q_FUNC_INFO << app_id << surface_id << paste_id << pasteAsRichText;
+    d->service->SelectPasteForAppId(app_id, surface_id, paste_id, pasteAsRichText);
 }
 
 void cuc::Hub::selectPasteForAppIdCancelled(QString app_id)
@@ -189,11 +189,11 @@ void cuc::Hub::onPeerSelectionCancelled(const QString &id)
         Q_EMIT(peerSelectionCancelled());
 }
 
-void cuc::Hub::onPasteSelected(const QString &id, QByteArray paste)
+void cuc::Hub::onPasteSelected(const QString &id, QByteArray paste, bool pasteAsRichText)
 {
-    TRACE() << Q_FUNC_INFO << id << paste;
+    TRACE() << Q_FUNC_INFO << id << paste << pasteAsRichText;
     if (id == app_id())
-        Q_EMIT(pasteSelected(paste));
+        Q_EMIT(pasteSelected(paste, pasteAsRichText));
 }
 
 void cuc::Hub::onPasteSelectionCancelled(const QString &id)

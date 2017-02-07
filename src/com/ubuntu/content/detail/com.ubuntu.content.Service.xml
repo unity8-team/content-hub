@@ -101,6 +101,7 @@
       <arg name="app_id" type="s" direction="in" />
       <arg name="surface_id" type="s" direction="in" />
       <arg name="paste_id" type="s" direction="in" />
+      <arg name="paste_as_rich_text" type="b" direction="in" />
     </method>
     <method name="SelectPasteForAppIdCancelled">
       <arg name="app_id" type="s" direction="in" />
@@ -108,6 +109,7 @@
     <signal name="PasteSelected">
       <arg name="app_id" type="s" />
       <arg name="mimedata" type="ay" />
+      <arg name="pasteAsRichText" type="b" />
     </signal>
     <signal name="PasteSelectionCancelled">
       <arg name="app_id" type="s" />

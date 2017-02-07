@@ -107,7 +107,6 @@ class Hub : public QObject
     void onPeerSelectionCancelled(const QString &);
 
     bool isPeerValid(Peer peer);
-    void onPasteSelected(const QString &, QByteArray);
     void onPasteSelected(const QString &, QByteArray, bool);
     void onPasteSelectionCancelled(const QString &);
   protected:

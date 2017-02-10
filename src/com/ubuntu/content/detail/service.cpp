@@ -90,6 +90,7 @@ struct cucd::Service::Private : public QObject
     QSet<cucd::Transfer*> active_transfers;
     QList<cucd::Paste*> active_pastes;
     QMap<QString, PromptSessionP> active_sessions;
+    QMap<QString, std::string> clipboard_instances;
     QMap<QString, std::string> peer_picker_instances;
     QStringList pasteFormats;
     QSet<RegHandler*> handlers;
@@ -421,6 +422,59 @@ bool cucd::Service::CreatePaste(const QString& app_id, const QString& surfaceId,
     return true;
 }
 
+bool cucd::Service::RemovePaste(const QString& surfaceId, const QString& pasteId)
+{
+    TRACE() << Q_FUNC_INFO << pasteId;
+
+    if (!verifiedSurfaceIsFocused(surfaceId))
+        return false;
+
+    int id = pasteId.toInt();
+    QByteArray pasteData = getPasteData(surfaceId, id);
+    if (pasteData.isNull())
+        return false;
+
+    QStringList types = deserializeMimeData(pasteData)->formats();
+
+    for (int i = d->active_pastes.size() - 1; i >= 0; i--) {
+        if (d->active_pastes.at(i)->Id() == id)
+            d->active_pastes.removeAt(i);
+        else {
+            QByteArray byteArray = d->active_pastes.at(i)->MimeData();
+            Q_FOREACH (QString f, deserializeMimeData(byteArray)->formats()) {
+                if (types.contains(f))
+                    types.removeAll(f);
+            }
+        }
+    }
+
+    Q_EMIT(PasteboardChanged());
+
+    bool pendingPasteFormatsChangedSignal = false;
+    Q_FOREACH (QString t, types) {
+        TRACE() << Q_FUNC_INFO << "Type: " << t;
+        if (d->pasteFormats.contains(t)) {
+            d->pasteFormats.removeAll(t);
+            pendingPasteFormatsChangedSignal = true;
+        }
+    }
+    if (pendingPasteFormatsChangedSignal) {
+        Q_EMIT(PasteFormatsChanged(d->pasteFormats));
+    }
+
+    return true;
+}
+
+QString cucd::Service::GetPasteSource(const QString& surfaceId, const QString& pasteId)
+{
+    TRACE() << Q_FUNC_INFO << pasteId;
+
+    if (d->active_pastes.isEmpty())
+        return QString();
+
+    return getPasteSource(surfaceId, pasteId.toInt());
+}
+
 QByteArray cucd::Service::GetLatestPasteData(const QString& surfaceId)
 {
     TRACE() << Q_FUNC_INFO;
@@ -441,6 +495,31 @@ QByteArray cucd::Service::GetPasteData(const QString& surfaceId, const QString& 
     return getPasteData(surfaceId, pasteId.toInt());
 }
 
+QStringList cucd::Service::GetAllPasteIds(const QString& surfaceId)
+{
+    TRACE() << Q_FUNC_INFO;
+
+    if (d->active_pastes.isEmpty())
+        return QStringList();
+
+    return getAllPasteIds(surfaceId);
+}
+
+QString cucd::Service::getPasteSource(const QString &surfaceId, int pasteId)
+{
+    if (!verifiedSurfaceIsFocused(surfaceId)) {
+        qWarning().nospace() << "Surface isn't focused. Denying paste.";
+        return QString();
+    }
+
+    Q_FOREACH (cucd::Paste *p, d->active_pastes)
+    {
+        if (p->Id() == pasteId)
+            return p->source();
+    }
+    return QString();
+}
+
 QByteArray cucd::Service::getPasteData(const QString &surfaceId, int pasteId)
 {
     if (!verifiedSurfaceIsFocused(surfaceId)) {
@@ -454,6 +533,21 @@ QByteArray cucd::Service::getPasteData(const QString &surfaceId, int pasteId)
             return p->MimeData();
     }
     return QByteArray();
+}
+
+QStringList cucd::Service::getAllPasteIds(const QString &surfaceId)
+{
+    if (!verifiedSurfaceIsFocused(surfaceId)) {
+        qWarning().nospace() << "Surface isn't focused. Denying paste.";
+        return QStringList();
+    }
+
+    QStringList ids;
+    Q_FOREACH (cucd::Paste *p, d->active_pastes)
+    {
+        ids.append(QString::number(p->Id()));
+    }
+    return ids;
 }
 
 QDBusObjectPath cucd::Service::CreateTransfer(const QString& dest_id, const QString& src_id, int dir, const QString& type_id)
@@ -911,6 +1005,61 @@ QStringList cucd::Service::PasteFormats()
 {
     TRACE() << Q_FUNC_INFO;
     return d->pasteFormats;
+}
+
+void cucd::Service::RequestPasteByAppId(const QString& app_id)
+{
+    TRACE() << Q_FUNC_INFO << app_id;
+    if (d->app_manager->is_application_started(CLIPBOARD_APP_ID.toStdString()))
+        d->app_manager->stop_application(CLIPBOARD_APP_ID.toStdString());
+
+    gchar * uris[] = {
+        g_strdup(app_id.toStdString().c_str()),
+        NULL
+    };
+
+    if (!d->active_sessions.keys().contains(app_id)) {
+        uint clientPid = d->connection.interface()->servicePid(this->message().service());
+        setupPromptSession(app_id, clientPid);
+    }
+
+    if (d->active_sessions.keys().contains(app_id)) {
+        TRACE() << Q_FUNC_INFO << "Invoking Clipboard with session";
+        PromptSessionP session = d->active_sessions.value(app_id);
+        std::string instance_id = d->app_manager->invoke_application_with_session(CLIPBOARD_APP_ID.toStdString(), session, uris);
+        d->clipboard_instances[app_id] = instance_id;
+    } else {
+        TRACE() << Q_FUNC_INFO << "Invoking Clipboard";
+        d->app_manager->invoke_application(CLIPBOARD_APP_ID.toStdString(), uris);
+    }
+}
+
+void cucd::Service::SelectPasteForAppId(const QString& app_id, const QString& surface_id, const QString& paste_id, bool pasteAsRichText)
+{
+    TRACE() << Q_FUNC_INFO << app_id << surface_id << paste_id;
+    // Lock this down to only allow the peer picker APP_ID to call this
+    if (aa_profile(this->message().service()) != CLIPBOARD_APP_ID)
+        return;
+
+    if (d->clipboard_instances.contains(app_id)) {
+        std::string instance_id = d->clipboard_instances.value(app_id);
+        d->app_manager->stop_application_with_helper(CLIPBOARD_APP_ID.toStdString(), instance_id);
+        d->clipboard_instances.remove(app_id);
+    }
+
+    Q_EMIT(PasteSelected(app_id, getPasteData(surface_id, paste_id.toInt()), pasteAsRichText));
+}
+
+void cucd::Service::SelectPasteForAppIdCancelled(const QString& app_id)
+{
+    TRACE() << Q_FUNC_INFO << app_id;
+    if (d->clipboard_instances.contains(app_id)) {
+        std::string instance_id = d->clipboard_instances.value(app_id);
+        d->app_manager->stop_application_with_helper(CLIPBOARD_APP_ID.toStdString(), instance_id);
+        d->clipboard_instances.remove(app_id);
+    }
+
+    Q_EMIT(PasteSelectionCancelled(app_id));
 }
 
 bool cucd::Service::verifiedSurfaceIsFocused(const QString &surfaceId)

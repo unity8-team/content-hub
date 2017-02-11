@@ -29,17 +29,13 @@ struct MockedAppManager : public cua::ApplicationManager
     {
         using namespace ::testing;
 
-        ON_CALL(*this, invoke_application(_,_)).WillByDefault(Return(true));
-        ON_CALL(*this, invoke_application_with_session(_,_,_)).WillByDefault(Return("123"));
-        ON_CALL(*this, stop_application_with_helper(_,_)).WillByDefault(Return(true));
-        ON_CALL(*this, stop_application(_)).WillByDefault(Return(true));
+        ON_CALL(*this, invoke_application(_,_)).WillByDefault(Return(nullptr));
+        ON_CALL(*this, invoke_application_with_session(_,_,_)).WillByDefault(Return(nullptr));
         ON_CALL(*this, is_application_started(_)).WillByDefault(Return(true));
     }
 
-    MOCK_METHOD2(invoke_application, bool(const std::string &, gchar ** uris));
-    MOCK_METHOD3(invoke_application_with_session, std::string(const std::string &, PromptSessionP, gchar ** uris));
-    MOCK_METHOD2(stop_application_with_helper, bool(const std::string &, const std::string &));
-    MOCK_METHOD1(stop_application, bool(const std::string &));
+    MOCK_METHOD2(invoke_application, std::shared_ptr<ual::Application::Instance>(const std::string &, gchar ** uris));
+    MOCK_METHOD3(invoke_application_with_session, std::shared_ptr<ual::Helper::Instance>(const std::string &, PromptSessionP, gchar ** uris));
     MOCK_METHOD1(is_application_started, bool(const std::string &));
 };
 }

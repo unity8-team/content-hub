@@ -14,5 +14,6 @@
 #
 # Authored by: Ken VanDine <ken.vandine@canonical.com>
 
+add_subdirectory(clipboard)
 add_subdirectory(send)
 add_subdirectory(peer-picker)

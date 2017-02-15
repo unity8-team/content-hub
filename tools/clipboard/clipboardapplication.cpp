@@ -109,7 +109,7 @@ void ClipboardApplication::onApplicationStateChanged(Qt::ApplicationState state)
 
 QString ClipboardApplication::requestSurfaceId()
 {
-    auto mirWindow = static_cast<MirWindow*>(platformNativeInterface()->nativeResourceForWindow("mirwindow", m_view));
+    auto mirWindow = static_cast<MirWindow*>(platformNativeInterface()->nativeResourceForWindow("mirsurface", m_view));
     if (!mirWindow)
         return QString();
 

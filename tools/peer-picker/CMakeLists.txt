@@ -39,8 +39,3 @@ install(
   TARGETS content-hub-peer-picker
   RUNTIME DESTINATION ${CMAKE_INSTALL_BINDIR}
 )
-
-install(
-  FILES content-hub-peer-picker.desktop
-  DESTINATION ${CMAKE_INSTALL_DATADIR}/applications
-)

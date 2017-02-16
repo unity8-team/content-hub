@@ -144,6 +144,15 @@ main (int argc, char * argv[])
         }
 
         if (exec == NULL) {
+                const gchar * snapdir = g_getenv("SNAP");
+                if (snapdir != NULL) {
+                        exec = g_build_filename(snapdir, "bin", appid,  NULL);
+                } else {
+                        exec = g_build_filename("/", "usr", "bin", appid, NULL);
+                }
+        }
+
+        if (exec == NULL) {
                 const gchar * props[3] = {
                         "AppID",
                         appid,

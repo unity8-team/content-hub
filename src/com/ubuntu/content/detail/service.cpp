@@ -90,7 +90,7 @@ struct cucd::Service::Private : public QObject
     QSet<cucd::Transfer*> active_transfers;
     QList<cucd::Paste*> active_pastes;
     QMap<QString, PromptSessionP> active_sessions;
-    QMap<QString, std::string> clipboard_instances;
+    QMap<QString, std::shared_ptr<ual::Helper::Instance>> clipboard_instances;
     QMap<QString, std::shared_ptr<ual::Helper::Instance>> peer_picker_instances;
     QStringList pasteFormats;
     QSet<RegHandler*> handlers;
@@ -1084,8 +1084,6 @@ QStringList cucd::Service::PasteFormats()
 void cucd::Service::RequestPasteByAppId(const QString& app_id)
 {
     TRACE() << Q_FUNC_INFO << app_id;
-    if (d->app_manager->is_application_started(CLIPBOARD_APP_ID.toStdString()))
-        d->app_manager->stop_application(CLIPBOARD_APP_ID.toStdString());
 
     gchar * uris[] = {
         g_strdup(app_id.toStdString().c_str()),
@@ -1093,15 +1091,17 @@ void cucd::Service::RequestPasteByAppId(const QString& app_id)
     };
 
     if (!d->active_sessions.keys().contains(app_id)) {
-        uint clientPid = d->connection.interface()->servicePid(this->message().service());
-        setupPromptSession(app_id, clientPid);
+        if (!QDBusConnection::sender().baseService().isEmpty()) {
+            uint clientPid = d->connection.interface()->servicePid(this->message().service());
+            setupPromptSession(app_id, clientPid);
+        }
     }
 
     if (d->active_sessions.keys().contains(app_id)) {
         TRACE() << Q_FUNC_INFO << "Invoking Clipboard with session";
         PromptSessionP session = d->active_sessions.value(app_id);
-        std::string instance_id = d->app_manager->invoke_application_with_session(CLIPBOARD_APP_ID.toStdString(), session, uris);
-        d->clipboard_instances[app_id] = instance_id;
+        auto instance = d->app_manager->invoke_application_with_session(CLIPBOARD_APP_ID.toStdString(), session, uris);
+        d->clipboard_instances[app_id] = instance;
     } else {
         TRACE() << Q_FUNC_INFO << "Invoking Clipboard";
         d->app_manager->invoke_application(CLIPBOARD_APP_ID.toStdString(), uris);
@@ -1116,8 +1116,15 @@ void cucd::Service::SelectPasteForAppId(const QString& app_id, const QString& su
         return;
 
     if (d->clipboard_instances.contains(app_id)) {
-        std::string instance_id = d->clipboard_instances.value(app_id);
-        d->app_manager->stop_application_with_helper(CLIPBOARD_APP_ID.toStdString(), instance_id);
+        auto instance = d->clipboard_instances.value(app_id);
+        if (instance) {
+            try {
+                TRACE() << Q_FUNC_INFO << "Stopping Clipboard";
+                instance->stop();
+            } catch (std::runtime_error &e) {
+                qWarning() << Q_FUNC_INFO << "Unable to stop app:" << e.what();
+            }
+        }
         d->clipboard_instances.remove(app_id);
     }
 
@@ -1128,8 +1135,15 @@ void cucd::Service::SelectPasteForAppIdCancelled(const QString& app_id)
 {
     TRACE() << Q_FUNC_INFO << app_id;
     if (d->clipboard_instances.contains(app_id)) {
-        std::string instance_id = d->clipboard_instances.value(app_id);
-        d->app_manager->stop_application_with_helper(CLIPBOARD_APP_ID.toStdString(), instance_id);
+        auto instance = d->clipboard_instances.value(app_id);
+        if (instance) {
+            try {
+                TRACE() << Q_FUNC_INFO << "Stopping Clipboard";
+                instance->stop();
+            } catch (std::runtime_error &e) {
+                qWarning() << Q_FUNC_INFO << "Unable to stop app:" << e.what();
+            }
+        }
         d->clipboard_instances.remove(app_id);
     }
 

@@ -43,9 +43,9 @@ int main(int argc, char *argv[])
 
     /* Won't work unless you disable the surface Id verification with CONTENT_HUB_TESTING=1 env var
        To get the surface Id of a MirSurface in a real GUI app you should to it like the following:
-          MirPersistentId* mirPermaId = mir_surface_request_persistent_id_sync(mirSurface);
-          QString surfaceId = mir_persistent_id_as_string(mirPermaId);
-          mir_persistent_id_release(mirPermaId);
+          MirWindowId* mirWindowId = mir_window_request_window_id_sync(mirWindow);
+          QString windowId = mir_window_id_as_string(mirWindowId);
+          mir_window_id_release(mirWindowId);
     */
     QString surfaceId("some-bogus-fake-surface-id");
 

@@ -35,7 +35,6 @@ public:
 
     MirPromptSession *m_mirSession;
     pid_t m_initiatorPid;
-    QList<int> m_fds;
     mutable PromptSession *q_ptr;
 };
 
@@ -88,16 +87,6 @@ PromptSession::~PromptSession()
     delete d_ptr;
 }
 
-static void client_fd_callback(MirPromptSession *, size_t count,
-                               int const *fds, void *context)
-{
-    TRACE() << Q_FUNC_INFO;
-    PromptSessionPrivate *priv = (PromptSessionPrivate *)context;
-    for (size_t i = 0; i < count; i++) {
-        priv->m_fds.append(fds[i]);
-    }
-}
-
 MirPromptSession* PromptSession::get()
 {
     TRACE() << Q_FUNC_INFO;
@@ -119,14 +108,12 @@ QString PromptSession::requestSocket()
     TRACE() << Q_FUNC_INFO;
     Q_D(PromptSession);
 
-    d->m_fds.clear();
-    mir_wait_for(mir_prompt_session_new_fds_for_prompt_providers(
-        d->m_mirSession, 1, client_fd_callback, d));
-    if (!d->m_fds.isEmpty()) {
-        return QString("%1").arg(d->m_fds[0]);
-    } else {
+    int fd = -1;
+    auto num_fds = mir_prompt_session_new_fds_for_prompt_providers_sync(d->m_mirSession, 1, &fd);
+    if (fd >= 0 && num_fds == 1)
+        return QString("%1").arg(fd);
+    else 
         return QString();
-    }
 }
 
 MirHelperPrivate::MirHelperPrivate(MirHelper *helper):

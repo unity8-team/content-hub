@@ -1091,10 +1091,11 @@ void cucd::Service::RequestPasteByAppId(const QString& app_id)
     };
 
     if (!d->active_sessions.keys().contains(app_id)) {
-        if (!QDBusConnection::sender().baseService().isEmpty()) {
+        //FIXME: baseService is empty on some test cases
+        //if (!QDBusConnection::sender().baseService().isEmpty()) {
             uint clientPid = d->connection.interface()->servicePid(this->message().service());
             setupPromptSession(app_id, clientPid);
-        }
+        //}
     }
 
     if (d->active_sessions.keys().contains(app_id)) {
@@ -1116,6 +1117,8 @@ void cucd::Service::SelectPasteForAppId(const QString& app_id, const QString& su
         return;
 
     if (d->clipboard_instances.contains(app_id)) {
+        Q_EMIT(PasteSelected(app_id, getPasteData(surface_id, paste_id.toInt()), pasteAsRichText));
+
         auto instance = d->clipboard_instances.value(app_id);
         if (instance) {
             try {
@@ -1127,8 +1130,6 @@ void cucd::Service::SelectPasteForAppId(const QString& app_id, const QString& su
         }
         d->clipboard_instances.remove(app_id);
     }
-
-    Q_EMIT(PasteSelected(app_id, getPasteData(surface_id, paste_id.toInt()), pasteAsRichText));
 }
 
 void cucd::Service::SelectPasteForAppIdCancelled(const QString& app_id)

@@ -222,6 +222,19 @@ bool app_id_matches(QString id, pid_t pid)
     return false;
 }
 
+std::shared_ptr<ual::Application> app_for_app_id(QString id)
+{
+   if (!qgetenv("CONTENT_HUB_TESTING").isNull())
+        return nullptr;
+
+    std::shared_ptr<ual::Registry> reg = ual::Registry::getDefault();
+    auto app_id = ual::AppID::find(id.toStdString());
+    if (app_id.empty())
+        return nullptr;
+    auto app = ual::Application::create(app_id, reg);
+    return app;
+}
+
 QMap<QString, QString> info_for_app_id(QString id)
 {
     QMap<QString, QString> map;

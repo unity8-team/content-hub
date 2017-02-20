@@ -90,8 +90,8 @@ struct cucd::Service::Private : public QObject
     QSet<cucd::Transfer*> active_transfers;
     QList<cucd::Paste*> active_pastes;
     QMap<QString, PromptSessionP> active_sessions;
-    QMap<QString, std::string> clipboard_instances;
-    QMap<QString, std::string> peer_picker_instances;
+    QMap<QString, std::shared_ptr<ual::Helper::Instance>> clipboard_instances;
+    QMap<QString, std::shared_ptr<ual::Helper::Instance>> peer_picker_instances;
     QStringList pasteFormats;
     QSet<RegHandler*> handlers;
     QSharedPointer<cua::ApplicationManager> app_manager;
@@ -191,8 +191,6 @@ QDBusVariant cucd::Service::PeerForId(const QString& app_id)
 void cucd::Service::RequestPeerForTypeByAppId(const QString& type_id, const QString& handler_id, const QString& app_id)
 {
     TRACE() << Q_FUNC_INFO << app_id;
-    if (d->app_manager->is_application_started(PEER_PICKER_APP_ID.toStdString()))
-        d->app_manager->stop_application(PEER_PICKER_APP_ID.toStdString());
 
     gchar * uris[] = {
         g_strdup(app_id.toStdString().c_str()),
@@ -211,8 +209,8 @@ void cucd::Service::RequestPeerForTypeByAppId(const QString& type_id, const QStr
     if (d->active_sessions.keys().contains(app_id)) {
         TRACE() << Q_FUNC_INFO << "Invoking application with session";
         PromptSessionP session = d->active_sessions.value(app_id);
-        std::string instance_id = d->app_manager->invoke_application_with_session(PEER_PICKER_APP_ID.toStdString(), session, uris);
-        d->peer_picker_instances[app_id] = instance_id;
+        auto instance = d->app_manager->invoke_application_with_session(PEER_PICKER_APP_ID.toStdString(), session, uris);
+        d->peer_picker_instances[app_id] = instance;
     } else {
         TRACE() << Q_FUNC_INFO << "Invoking peer picker";
         d->app_manager->invoke_application(PEER_PICKER_APP_ID.toStdString(), uris);
@@ -227,8 +225,15 @@ void cucd::Service::SelectPeerForAppId(const QString& app_id, const QString& pee
         return;
 
     if (d->peer_picker_instances.contains(app_id)) {
-        std::string instance_id = d->peer_picker_instances.value(app_id);
-        d->app_manager->stop_application_with_helper(PEER_PICKER_APP_ID.toStdString(), instance_id);
+        auto instance = d->peer_picker_instances.value(app_id);
+        if (instance) {
+            try {
+                TRACE() << Q_FUNC_INFO << "Stopping Peer Picker";
+                instance->stop();
+            } catch (std::runtime_error &e) {
+                qWarning() << Q_FUNC_INFO << "Unable to stop app:" << e.what();
+            }
+        }
         d->peer_picker_instances.remove(app_id);
     }
     Q_EMIT(PeerSelected(app_id, peer_id));
@@ -238,8 +243,15 @@ void cucd::Service::SelectPeerForAppIdCancelled(const QString& app_id)
 {
     TRACE() << Q_FUNC_INFO << app_id;
     if (d->peer_picker_instances.contains(app_id)) {
-        std::string instance_id = d->peer_picker_instances.value(app_id);
-        d->app_manager->stop_application_with_helper(PEER_PICKER_APP_ID.toStdString(), instance_id);
+        auto instance = d->peer_picker_instances.value(app_id);
+        if (instance) {
+            try {
+                TRACE() << Q_FUNC_INFO << "Stopping Peer Picker";
+                instance->stop();
+            } catch (std::runtime_error &e) {
+                qWarning() << Q_FUNC_INFO << "Unable to stop app:" << e.what();
+            }
+        }
         d->peer_picker_instances.remove(app_id);
     }
     Q_EMIT(PeerSelectionCancelled(app_id));
@@ -254,6 +266,7 @@ QDBusObjectPath cucd::Service::CreateImportFromPeer(const QString& peer_id, cons
         TRACE() << Q_FUNC_INFO << "APP_ID isnt' set, attempting to get it from AppArmor";
         dest_id = aa_profile(this->message().service());
     }
+
     return CreateTransfer(dest_id, peer_id, cuc::Transfer::Import, type_id);
 }
 
@@ -359,6 +372,7 @@ QDBusObjectPath cucd::Service::CreateExportToPeer(const QString& peer_id, const 
         TRACE() << Q_FUNC_INFO << "APP_ID isnt' set, attempting to get it from AppArmor";
         src_id = aa_profile(this->message().service());
     }
+
     return CreateTransfer(peer_id, src_id, cuc::Transfer::Export, type_id);
 }
 
@@ -371,6 +385,7 @@ QDBusObjectPath cucd::Service::CreateShareToPeer(const QString& peer_id, const Q
         TRACE() << Q_FUNC_INFO << "APP_ID isnt' set, attempting to get it from AppArmor";
         src_id = aa_profile(this->message().service());
     }
+
     return CreateTransfer(peer_id, src_id, cuc::Transfer::Share, type_id);
 }
 
@@ -569,9 +584,12 @@ QDBusObjectPath cucd::Service::CreateTransfer(const QString& dest_id, const QStr
         }
     }
 
+    uint clientPid = 0;
+    if (qgetenv("CONTENT_HUB_TESTING").isNull())
+        clientPid = d->connection.interface()->servicePid(this->message().service());
+
     auto transfer = new cucd::Transfer(import_counter, src_id, dest_id, dir, type_id, this);
-    if (dir == cuc::Transfer::Import && qgetenv("CONTENT_HUB_TESTING").isNull()) {
-        uint clientPid = d->connection.interface()->servicePid(this->message().service());
+    if (dir == cuc::Transfer::Import && qgetenv("CONTENT_HUB_TESTING").isNull() && clientPid > 0) {
         TRACE() << Q_FUNC_INFO << "Making setupPromptSession:" << dest_id << clientPid;
         setupPromptSession(dest_id, clientPid);
     } else if (dir == cuc::Transfer::Export && dest_id == PRINTING_APP_ID && qgetenv("CONTENT_HUB_TESTING").isNull()) {
@@ -579,11 +597,25 @@ QDBusObjectPath cucd::Service::CreateTransfer(const QString& dest_id, const QStr
         TRACE() << Q_FUNC_INFO << "Making setupPromptSession:" << src_id << clientPid;
         setupPromptSession(src_id, clientPid);
     }
+
     new TransferAdaptor(transfer);
     d->active_transfers.insert(transfer);
 
     auto destination = transfer->import_path();
     auto source = transfer->export_path();
+
+    if (dir == cuc::Transfer::Import && clientPid > 0) {
+        auto app = app_for_app_id(dest_id);
+        if (app) {
+            transfer->SetDestinationInstance(app->findInstance(clientPid));
+        }
+    } else if (clientPid > 0) {
+        auto app = app_for_app_id(src_id);
+        if (app) {
+            transfer->SetSourceInstance(app->findInstance(clientPid));
+        }
+    }
+
     if (not d->connection.registerObject(source, transfer))
         TRACE() << "Problem registering object for path: " << source;
     d->connection.registerObject(destination, transfer);
@@ -681,22 +713,39 @@ void cucd::Service::handle_imports(int state)
             TRACE() << Q_FUNC_INFO << "Invoking application with session";
             PromptSessionP session = d->active_sessions.value(transfer->destination());
             gchar ** uris = NULL;
-            std::string instance_id = d->app_manager->invoke_application_with_session(transfer->source().toStdString(), session, uris);
-            transfer->SetInstanceId(QString::fromStdString(instance_id));
+            auto instance = d->app_manager->invoke_application_with_session(transfer->source().toStdString(), session, uris);
+            if (instance) {
+                transfer->SetHelperInstance(instance);
+            }
         } else {
             TRACE() << Q_FUNC_INFO << "Invoking application";
             gchar ** uris = NULL;
-            d->app_manager->invoke_application(transfer->source().toStdString(), uris);
+            auto instance = d->app_manager->invoke_application(transfer->source().toStdString(), uris);
+            if (instance) {
+                transfer->SetSourceInstance(instance);
+            }
         }
     }
 
     if (state == cuc::Transfer::charged)
     {
         TRACE() << Q_FUNC_INFO << "Charged";
-        if (!transfer->InstanceId().isEmpty()) {
-            d->app_manager->stop_application_with_helper(transfer->source().toStdString(), transfer->InstanceId().toStdString());
-        } else if (transfer->WasSourceStartedByContentHub()) {
-            d->app_manager->stop_application(transfer->source().toStdString());
+        if (transfer->WasSourceStartedByContentHub()) {
+            if (transfer->HelperInstance()) {
+                try {
+                    TRACE() << Q_FUNC_INFO << "Stopping Helper";
+                    transfer->HelperInstance()->stop();
+                } catch (std::runtime_error &e) {
+                    TRACE() << Q_FUNC_INFO << "Unable to stop app:" << e.what();
+                }
+            } else if (transfer->SourceInstance()) {
+                try {
+                    TRACE() << Q_FUNC_INFO << "Stopping Source App";
+                    transfer->SourceInstance()->stop();
+                } catch (std::runtime_error &e) {
+                    qWarning() << Q_FUNC_INFO << "Unable to stop app:" << e.what();
+                }
+            }
         }
 
         gchar ** uris = NULL;
@@ -715,8 +764,12 @@ void cucd::Service::handle_imports(int state)
             uris = (gchar **)urls;
         }
 
-        if (transfer->ShouldBeStartedByContentHub())
-            d->app_manager->invoke_application(transfer->destination().toStdString(), uris);
+        if (transfer->ShouldBeStartedByContentHub()) {
+            auto instance = d->app_manager->invoke_application(transfer->destination().toStdString(), uris);
+            if (instance) {
+                transfer->SetDestinationInstance(instance);
+            }
+        }
 
         Q_FOREACH (RegHandler *r, d->handlers)
         {
@@ -753,10 +806,20 @@ void cucd::Service::handle_imports(int state)
                 }
             }
             if (shouldStop) {
-                if (!transfer->InstanceId().isEmpty()) {
-                    d->app_manager->stop_application_with_helper(transfer->source().toStdString(), transfer->InstanceId().toStdString());
-                } else {
-                    d->app_manager->stop_application(transfer->source().toStdString());
+                if (transfer->HelperInstance()) {
+                    try {
+                        TRACE() << Q_FUNC_INFO << "Stopping Helper";
+                        transfer->HelperInstance()->stop();
+                    } catch (std::runtime_error &e) {
+                        qWarning() << Q_FUNC_INFO << "Unable to stop app:" << e.what();
+                    }
+                } else if (transfer->SourceInstance()) {
+                    try {
+                        TRACE() << Q_FUNC_INFO << "Stopping Source App";
+                        transfer->SourceInstance()->stop();
+                    } catch (std::runtime_error &e) {
+                        qWarning() << Q_FUNC_INFO << "Unable to stop app:" << e.what();
+                    }
                 }
             }
         }
@@ -817,7 +880,8 @@ void cucd::Service::handle_exports(int state)
                 TRACE() << Q_FUNC_INFO << "Using ubuntu-printing-app special case";
 
                 if (qgetenv("CONTENT_HUB_TESTING").isNull()) {
-                    if (!d->active_sessions.keys().contains(transfer->source())) {
+                    if (!d->active_sessions.keys().contains(transfer->source())
+                            && transfer->WasSourceStartedByContentHub()) {
                         if (!QDBusConnection::sender().baseService().isEmpty()) {
                             uint clientPid = d->connection.interface()->servicePid(this->message().service());
                             setupPromptSession(transfer->source(), clientPid);
@@ -825,21 +889,30 @@ void cucd::Service::handle_exports(int state)
                     }
                 }
 
-                if (d->active_sessions.keys().contains(transfer->source())) {
+                if (d->active_sessions.keys().contains(transfer->source())
+                        && transfer->WasSourceStartedByContentHub()) {
                     TRACE() << Q_FUNC_INFO << "Invoking application with session";
                     PromptSessionP session = d->active_sessions.value(transfer->source());
                     gchar ** uris = NULL;
-                    std::string instance_id = d->app_manager->invoke_application_with_session(transfer->destination().toStdString(), session, uris);
-                    transfer->SetInstanceId(QString::fromStdString(instance_id));
+                    auto instance = d->app_manager->invoke_application_with_session(transfer->destination().toStdString(), session, uris);
+                    if (instance) {
+                        transfer->SetHelperInstance(instance);
+                    }
                 } else {
                     TRACE() << Q_FUNC_INFO << "Invoking application";
-                    gchar ** uris = NULL;
-                    d->app_manager->invoke_application(transfer->destination().toStdString(), uris);
+                    auto instance = d->app_manager->invoke_application(transfer->destination().toStdString(), uris);
+                    if (instance) {
+                        transfer->SetDestinationInstance(instance);
+                    }
                 }
             } else {
-                TRACE() << "Just invoking app";
-                d->app_manager->invoke_application(transfer->destination().toStdString(), uris);
+                TRACE() << Q_FUNC_INFO << "Invoking application";
+                auto instance = d->app_manager->invoke_application(transfer->destination().toStdString(), uris);
+                if (instance) {
+                    transfer->SetDestinationInstance(instance);
+                }
             }
+
         }
 
         Q_FOREACH (RegHandler *r, d->handlers)
@@ -880,10 +953,13 @@ void cucd::Service::handle_exports(int state)
                 }
             }
             if (shouldStop) {
-                if (!transfer->InstanceId().isEmpty()) {
-                    d->app_manager->stop_application_with_helper(transfer->destination().toStdString(), transfer->InstanceId().toStdString());
-                } else {
-                    d->app_manager->stop_application(transfer->destination().toStdString());
+                if (transfer->DestinationInstance()) {
+                    try {
+                        TRACE() << Q_FUNC_INFO << "Stopping Destination App";
+                        transfer->DestinationInstance()->stop();
+                    } catch (std::runtime_error &e) {
+                        qWarning() << Q_FUNC_INFO << "Unable to stop app:" << e.what();
+                    }
                 }
             }
         }
@@ -1037,8 +1113,6 @@ QStringList cucd::Service::PasteFormats()
 void cucd::Service::RequestPasteByAppId(const QString& app_id)
 {
     TRACE() << Q_FUNC_INFO << app_id;
-    if (d->app_manager->is_application_started(CLIPBOARD_APP_ID.toStdString()))
-        d->app_manager->stop_application(CLIPBOARD_APP_ID.toStdString());
 
     gchar * uris[] = {
         g_strdup(app_id.toStdString().c_str()),
@@ -1046,15 +1120,18 @@ void cucd::Service::RequestPasteByAppId(const QString& app_id)
     };
 
     if (!d->active_sessions.keys().contains(app_id)) {
-        uint clientPid = d->connection.interface()->servicePid(this->message().service());
-        setupPromptSession(app_id, clientPid);
+        //FIXME: baseService is empty on some test cases
+        //if (!QDBusConnection::sender().baseService().isEmpty()) {
+            uint clientPid = d->connection.interface()->servicePid(this->message().service());
+            setupPromptSession(app_id, clientPid);
+        //}
     }
 
     if (d->active_sessions.keys().contains(app_id)) {
         TRACE() << Q_FUNC_INFO << "Invoking Clipboard with session";
         PromptSessionP session = d->active_sessions.value(app_id);
-        std::string instance_id = d->app_manager->invoke_application_with_session(CLIPBOARD_APP_ID.toStdString(), session, uris);
-        d->clipboard_instances[app_id] = instance_id;
+        auto instance = d->app_manager->invoke_application_with_session(CLIPBOARD_APP_ID.toStdString(), session, uris);
+        d->clipboard_instances[app_id] = instance;
     } else {
         TRACE() << Q_FUNC_INFO << "Invoking Clipboard";
         d->app_manager->invoke_application(CLIPBOARD_APP_ID.toStdString(), uris);
@@ -1069,20 +1146,34 @@ void cucd::Service::SelectPasteForAppId(const QString& app_id, const QString& su
         return;
 
     if (d->clipboard_instances.contains(app_id)) {
-        std::string instance_id = d->clipboard_instances.value(app_id);
-        d->app_manager->stop_application_with_helper(CLIPBOARD_APP_ID.toStdString(), instance_id);
+        Q_EMIT(PasteSelected(app_id, getPasteData(surface_id, paste_id.toInt()), pasteAsRichText));
+
+        auto instance = d->clipboard_instances.value(app_id);
+        if (instance) {
+            try {
+                TRACE() << Q_FUNC_INFO << "Stopping Clipboard";
+                instance->stop();
+            } catch (std::runtime_error &e) {
+                qWarning() << Q_FUNC_INFO << "Unable to stop app:" << e.what();
+            }
+        }
         d->clipboard_instances.remove(app_id);
     }
-
-    Q_EMIT(PasteSelected(app_id, getPasteData(surface_id, paste_id.toInt()), pasteAsRichText));
 }
 
 void cucd::Service::SelectPasteForAppIdCancelled(const QString& app_id)
 {
     TRACE() << Q_FUNC_INFO << app_id;
     if (d->clipboard_instances.contains(app_id)) {
-        std::string instance_id = d->clipboard_instances.value(app_id);
-        d->app_manager->stop_application_with_helper(CLIPBOARD_APP_ID.toStdString(), instance_id);
+        auto instance = d->clipboard_instances.value(app_id);
+        if (instance) {
+            try {
+                TRACE() << Q_FUNC_INFO << "Stopping Clipboard";
+                instance->stop();
+            } catch (std::runtime_error &e) {
+                qWarning() << Q_FUNC_INFO << "Unable to stop app:" << e.what();
+            }
+        }
         d->clipboard_instances.remove(app_id);
     }
 

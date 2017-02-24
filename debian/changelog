@@ -1,3 +1,45 @@
+content-hub (0.3+17.04.20170211-0ubuntu1) zesty; urgency=medium
+
+  * Ported to UAL's C++ API
+
+ -- Ken VanDine <ken.vandine@canonical.com>  Sat, 11 Feb 2017 00:15:08 +0000
+
+content-hub (0.3+17.04.20161219-0ubuntu1) zesty; urgency=medium
+
+  * New upstream version to reflect addition of the out of process
+    peer picker
+
+ -- Ken VanDine <ken.vandine@canonical.com>  Mon, 19 Dec 2016 15:36:50 +0000
+
+content-hub (0.2+17.04.20161201.1-0ubuntu1) zesty; urgency=medium
+
+  [ William Hua ]
+  * Add GLib bindings (LP: #1624437) (LP: #1624437)
+
+ -- Ken VanDine <ken.vandine@canonical.com>  Thu, 01 Dec 2016 18:22:34 +0000
+
+content-hub (0.2+17.04.20161128-0ubuntu1) zesty; urgency=medium
+
+  * Fix build failure on zesty due to googletest 1.8. Also refactored
+    tests/acceptance-tests/CMakeLists.txt to make adding tests less
+    cumbersome. (LP: #1644062)
+
+ -- Ken VanDine <ken.vandine@canonical.com>  Mon, 28 Nov 2016 17:39:58 +0000
+
+content-hub (0.2+17.04.20161107-0ubuntu1) zesty; urgency=medium
+
+  * Skip the UAL lookup when run under autopkgtests to prevent an abort
+    from UAL
+
+ -- Ken VanDine <ken.vandine@canonical.com>  Mon, 07 Nov 2016 15:02:18 +0000
+
+content-hub (0.2+17.04.20161026-0ubuntu1) zesty; urgency=medium
+
+  * Use UAL to get iconPath instead of parsing the desktop file
+    ourselves
+
+ -- Ken VanDine <ken.vandine@canonical.com>  Wed, 26 Oct 2016 16:56:45 +0000
+
 content-hub (0.2+16.10.20160914-0ubuntu1) yakkety; urgency=medium
 
   * Build with hardening=+all (LP: #1597453)

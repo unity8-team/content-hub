@@ -16,7 +16,7 @@
 
 cmake_minimum_required(VERSION 2.8)
 
-project(content-hub)
+project (content-hub C CXX)
 
 set(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} ${CMAKE_CURRENT_SOURCE_DIR}/cmake)
 
@@ -52,6 +52,8 @@ IF(CMAKE_BUILD_TYPE MATCHES [cC][oO][vV][eE][rR][aA][gG][eE])
   SET(CMAKE_SHARED_LINKER_FLAGS "${CMAKE_SHARED_LINKER_FLAGS} -ftest-coverage -fprofile-arcs" )
 ENDIF(CMAKE_BUILD_TYPE MATCHES [cC][oO][vV][eE][rR][aA][gG][eE])
 
+find_package(Gtest REQUIRED)
+include_directories(${GMOCK_INCLUDE_DIR} ${GTEST_INCLUDE_DIR})
 enable_testing()
 
 set(CMAKE_INCLUDE_CURRENT_DIR ON)
@@ -61,7 +63,7 @@ find_package(Qt5DBus)
 find_package(PkgConfig REQUIRED)
 pkg_check_modules(GLIB REQUIRED glib-2.0)
 pkg_check_modules(GIO REQUIRED gio-unix-2.0)
-pkg_check_modules(UBUNTU_LAUNCH REQUIRED ubuntu-app-launch-2)
+pkg_check_modules(UBUNTU_LAUNCH REQUIRED ubuntu-app-launch-3)
 pkg_check_modules(LIBERTINE REQUIRED libertine)
 pkg_check_modules(GSETTINGS REQUIRED gsettings-qt)
 pkg_check_modules(NIH REQUIRED libnih)
@@ -69,6 +71,8 @@ pkg_check_modules(NIH_DBUS REQUIRED libnih-dbus)
 pkg_check_modules(DBUS REQUIRED dbus-1)
 pkg_check_modules(UBUNTU_DOWNLOAD_MANAGER REQUIRED ubuntu-download-manager-client)
 pkg_check_modules(NOTIFY REQUIRED libnotify)
+pkg_check_modules(MIRCLIENT REQUIRED mirclient)
+pkg_check_modules(CLICK REQUIRED click-0.4)
 pkg_check_modules(APPARMOR REQUIRED libapparmor)
 
 add_definitions(-DDEBUG_ENABLED)
@@ -114,8 +118,14 @@ set(prefix ${CMAKE_INSTALL_PREFIX})
 set(exec_prefix ${prefix}/bin)
 set(libdir ${prefix}/${CMAKE_INSTALL_LIBDIR})
 set(pkg-name "libcontent-hub")
+set(glib-pkg-name "libcontent-hub-glib")
 configure_file(libcontent-hub.pc.in libcontent-hub.pc @ONLY)
-install(FILES ${CMAKE_CURRENT_BINARY_DIR}/libcontent-hub.pc DESTINATION ${CMAKE_INSTALL_LIBDIR}/pkgconfig)
+configure_file(libcontent-hub-glib.pc.in libcontent-hub-glib.pc @ONLY)
+install(FILES
+  ${CMAKE_CURRENT_BINARY_DIR}/libcontent-hub.pc
+  ${CMAKE_CURRENT_BINARY_DIR}/libcontent-hub-glib.pc
+  DESTINATION ${CMAKE_INSTALL_LIBDIR}/pkgconfig
+)
 
 # There's no nice way to format this. Thanks CMake.
 add_test(LGPL-required

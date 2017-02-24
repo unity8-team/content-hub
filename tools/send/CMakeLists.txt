@@ -18,6 +18,7 @@ include_directories(
   ${CMAKE_CURRENT_BINARY_DIR}
   ${CMAKE_SOURCE_DIR}/src/com/ubuntu/content
   ${UBUNTU_LAUNCH_INCLUDE_DIRS}
+  ${MIRCLIENT_INCLUDE_DIRS}
 )
 
 add_executable(

@@ -2,6 +2,7 @@
 # -*- makefile -*-
 
 export DPKG_GENSYMBOLS_CHECK_LEVEL=4
+export CONTENT_HUB_TESTING=1
 export DEB_BUILD_MAINT_OPTIONS=hardening=+all
 
 CPPFLAGS:=$(shell dpkg-buildflags --get CPPFLAGS)
@@ -12,13 +13,22 @@ LDFLAGS:=$(shell dpkg-buildflags --get LDFLAGS)
 %:
 	dh $@ --with click,translations --fail-missing -- -B build
 
+override_dh_auto_test:
+	make -C build/tests/acceptance-tests test
+
 override_dh_auto_install:
 	dh_auto_install
+	dh_apparmor -pcontent-hub --profile-name=content-hub-peer-picker
 	dh_apparmor -pcontent-hub-testability --profile-name=content-hub-testability
 
+DEB_HOST_ARCH := $(shell dpkg-architecture -qDEB_HOST_ARCH)
+# Skip tests on the archs they are known to be flaky with current configuration
+testskip_architectures := powerpc ppc64el s390x
+
 override_dh_auto_test:
-ifeq ($(DEB_BUILD_GNU_TYPE),$(DEB_HOST_GNU_TYPE))
-	dbus-test-runner -t make -p "-C" -p "build/tests/acceptance-tests" -p test
+ifneq ($(DEB_HOST_ARCH),$(findstring $(DEB_HOST_ARCH), $(testskip_architectures)))
+	rm -rf build/tests/qml-tests
+	dh_auto_test
 endif
 	
 override_dh_translations:

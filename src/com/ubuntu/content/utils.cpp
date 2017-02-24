@@ -20,6 +20,7 @@
 #include <QDir>
 #include <QFile>
 #include <QFileInfo>
+#include <QMap>
 #include <QMimeData>
 #include <QProcess>
 #include <QtCore>
@@ -221,6 +222,43 @@ bool app_id_matches(QString id, pid_t pid)
     return false;
 }
 
+std::shared_ptr<ual::Application> app_for_app_id(QString id)
+{
+   if (!qgetenv("CONTENT_HUB_TESTING").isNull())
+        return nullptr;
+
+    std::shared_ptr<ual::Registry> reg = ual::Registry::getDefault();
+    auto app_id = ual::AppID::find(id.toStdString());
+    if (app_id.empty())
+        return nullptr;
+    auto app = ual::Application::create(app_id, reg);
+    return app;
+}
+
+QMap<QString, QString> info_for_app_id(QString id)
+{
+    QMap<QString, QString> map;
+    map["name"] = id;
+    map["iconPath"] = QString();
+
+    if (!qgetenv("CONTENT_HUB_TESTING").isNull())
+        return map;
+
+    std::shared_ptr<ual::Registry> reg = ual::Registry::getDefault();
+    auto app_id = ual::AppID::find(id.toStdString());
+    if (app_id.empty()) {
+        qWarning() << Q_FUNC_INFO << "Invalid APP_ID:" << id;
+    } else {
+        try {
+            auto app = ual::Application::create(app_id, reg);
+            map["name"] = QString::fromStdString(app.get()->info()->name());
+            map["iconPath"] = QString::fromStdString(app.get()->info()->iconPath());
+        } catch (...) {
+            qWarning() << Q_FUNC_INFO << "Failed to create Application for" << id;
+        }
+    }
+    return map;
+}
 
 QString aa_profile(QString uniqueConnectionId)
 {

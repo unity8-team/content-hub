@@ -97,15 +97,17 @@ TEST(Hub, transfer_creation_and_states_work)
         cucd::Service implementation(connection, registry, app_manager, &app);
         new ServiceAdaptor(std::addressof(implementation));
 
-        ASSERT_TRUE(connection.registerService(service_name));
-        ASSERT_TRUE(connection.registerObject("/", std::addressof(implementation)));
+        connection.registerService(service_name);
+        connection.registerObject("/", std::addressof(implementation));
+
+        QObject::connect(&app, &QCoreApplication::aboutToQuit, [&](){
+            connection.unregisterObject("/");
+            connection.unregisterService(service_name);
+        });
 
         sync.signal_ready();
 
         app.exec();
-
-        connection.unregisterObject("/");
-        connection.unregisterService(service_name);
     };
 
     auto child = [&sync]()

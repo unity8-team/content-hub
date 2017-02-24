@@ -17,7 +17,14 @@
 #define COM_UBUNTU_APPLICATION_MANAGER_H_
 
 #include <string>
+#include "../content/detail/mir-helper.h"
 #include <glib.h>
+#include <ubuntu-app-launch/appid.h>
+#include <ubuntu-app-launch/application.h>
+#include <ubuntu-app-launch/registry.h>
+
+
+namespace ual = ubuntu::app_launch;
 
 namespace com
 {
@@ -38,12 +45,15 @@ class ApplicationManager
      * \brief invoke_application starts an application, and brings it to foreground
      * \param app_id ID for the application (for example "gallery-app" - used for the desktop)
      */
-    virtual bool invoke_application(const std::string &app_id, gchar ** uris) = 0;
+    virtual std::shared_ptr<ual::Application::Instance> invoke_application(const std::string &app_id, gchar ** uris) = 0;
+
     /*!
-     * \brief stop_application stops an application started by ubuntu
+     * \brief invoke_application_with_session starts an application without a trusted session
      * \param app_id ID for the application (for example "gallery-app" - used for the desktop)
+     * \param session
      */
-    virtual bool stop_application(const std::string &app_id) = 0;
+    virtual std::shared_ptr<ual::Helper::Instance> invoke_application_with_session(const std::string &app_id, PromptSessionP session, gchar ** uris) = 0;
+
     /*!
      * \brief is_application_started returns true, if the application s already started by ubuntu
      * \param app_id ID for the application (for example "gallery-app" - used for the desktop)

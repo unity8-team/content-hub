@@ -231,8 +231,14 @@ std::shared_ptr<ual::Application> app_for_app_id(QString id)
     auto app_id = ual::AppID::find(id.toStdString());
     if (app_id.empty())
         return nullptr;
-    auto app = ual::Application::create(app_id, reg);
-    return app;
+
+    try {
+        auto app = ual::Application::create(app_id, reg);
+        return app;
+    } catch (std::runtime_error &e) {
+        qWarning() << Q_FUNC_INFO << "Unable to create application:" << id;
+        return nullptr;
+    }
 }
 
 QMap<QString, QString> info_for_app_id(QString id)

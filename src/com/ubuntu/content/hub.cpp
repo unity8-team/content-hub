@@ -352,7 +352,7 @@ cuc::Transfer* cuc::Hub::create_export_to_peer_for_type(cuc::Peer peer, cuc::Typ
 
     cuc::Transfer *transfer = cuc::Transfer::Private::make_transfer(reply.value(), this);
 
-    auto ualAppID = ual::AppID::parse(peer.id().toStdString());
+    auto ualAppID = ual::AppID::find(peer.id().toStdString());
     QString peerName = QString::fromStdString(ualAppID.package.value());
     if (peerName.isEmpty())
         return nullptr;
@@ -381,7 +381,7 @@ cuc::Transfer* cuc::Hub::create_share_to_peer_for_type(cuc::Peer peer, cuc::Type
         return nullptr;
 
     cuc::Transfer *transfer = cuc::Transfer::Private::make_transfer(reply.value(), this);
-    auto ualAppID = ual::AppID::parse(peer.id().toStdString());
+    auto ualAppID = ual::AppID::find(peer.id().toStdString());
     QString peerName = QString::fromStdString(ualAppID.package.value());
     if (peerName.isEmpty())
         return nullptr;

@@ -209,7 +209,7 @@ bool app_id_matches(QString id, pid_t pid)
         return true;
 
     std::shared_ptr<ual::Registry> reg = ual::Registry::getDefault();
-    auto app_id = ual::AppID::parse(id.toStdString());
+    auto app_id = ual::AppID::find(id.toStdString());
     if (app_id.empty())
         return false;
     auto app = ual::Application::create(app_id, reg);
@@ -228,7 +228,7 @@ std::shared_ptr<ual::Application> app_for_app_id(QString id)
         return nullptr;
 
     std::shared_ptr<ual::Registry> reg = ual::Registry::getDefault();
-    auto app_id = ual::AppID::parse(id.toStdString());
+    auto app_id = ual::AppID::find(id.toStdString());
     if (app_id.empty())
         return nullptr;
     auto app = ual::Application::create(app_id, reg);
@@ -245,7 +245,7 @@ QMap<QString, QString> info_for_app_id(QString id)
         return map;
 
     std::shared_ptr<ual::Registry> reg = ual::Registry::getDefault();
-    auto app_id = ual::AppID::parse(id.toStdString());
+    auto app_id = ual::AppID::find(id.toStdString());
     if (app_id.empty()) {
         qWarning() << Q_FUNC_INFO << "Invalid APP_ID:" << id;
     } else {
@@ -404,7 +404,7 @@ bool check_profile_read(QString profile, QString path)
 QString shared_dir_for_peer(QString peer)
 {
     TRACE() << Q_FUNC_INFO << "PEER:" << peer;
-    auto ualAppID = ual::AppID::parse(peer.toStdString());
+    auto ualAppID = ual::AppID::find(peer.toStdString());
     std::string container = ualAppID.package.value();
     if (container.empty())
         return QString();

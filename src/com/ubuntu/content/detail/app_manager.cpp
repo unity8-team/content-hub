@@ -36,7 +36,7 @@ std::shared_ptr<ual::Application::Instance> cucd::AppManager::invoke_application
 
     try {
         auto registry = ual::Registry::getDefault();
-        auto appId = ual::AppID::find(app_id);
+        auto appId = ual::AppID::parse(app_id);
         auto app = ual::Application::create(appId, registry);
 
         std::vector<ual::Application::URL> urivect;
@@ -67,7 +67,7 @@ std::shared_ptr<ual::Helper::Instance> cucd::AppManager::invoke_application_with
 
     try {
         auto registry = ual::Registry::getDefault();
-        auto appId = ual::AppID::find(app_id);
+        auto appId = ual::AppID::parse(app_id);
         auto app = ual::Helper::create(ual::Helper::Type::from_raw("content-hub"), appId, registry);
 
         std::vector<ual::Helper::URL> urivect; 

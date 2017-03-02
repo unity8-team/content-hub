@@ -352,7 +352,10 @@ cuc::Transfer* cuc::Hub::create_export_to_peer_for_type(cuc::Peer peer, cuc::Typ
 
     cuc::Transfer *transfer = cuc::Transfer::Private::make_transfer(reply.value(), this);
 
-    QString peerName = peer.id().split("_")[0];
+    auto ualAppID = ual::AppID::parse(peer.id().toStdString());
+    QString peerName = QString::fromStdString(ualAppID.package.value());
+    if (peerName.isEmpty())
+        return nullptr;
     TRACE() << Q_FUNC_INFO << "peerName: " << peerName;
     const cuc::Store *store = new cuc::Store{QStandardPaths::writableLocation(QStandardPaths::GenericCacheLocation) + "/" + peerName + "/HubIncoming/" + QString::number(transfer->id()), this};
     TRACE() << Q_FUNC_INFO << "STORE:" << store->uri();
@@ -378,7 +381,10 @@ cuc::Transfer* cuc::Hub::create_share_to_peer_for_type(cuc::Peer peer, cuc::Type
         return nullptr;
 
     cuc::Transfer *transfer = cuc::Transfer::Private::make_transfer(reply.value(), this);
-    QString peerName = peer.id().split("_")[0];
+    auto ualAppID = ual::AppID::parse(peer.id().toStdString());
+    QString peerName = QString::fromStdString(ualAppID.package.value());
+    if (peerName.isEmpty())
+        return nullptr;
     TRACE() << Q_FUNC_INFO << "peerName: " << peerName;
     const cuc::Store *store = new cuc::Store{QStandardPaths::writableLocation(QStandardPaths::GenericCacheLocation) + "/" + peerName + "/HubIncoming/" + QString::number(transfer->id()), this};
     TRACE() << Q_FUNC_INFO << "STORE:" << store->uri();

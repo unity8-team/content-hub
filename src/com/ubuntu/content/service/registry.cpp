@@ -25,6 +25,9 @@
 #include <gio/gdesktopappinfo.h>
 #include <libertine.h>
 #include <ubuntu-app-launch.h>
+#include <ubuntu-app-launch/appid.h>
+
+namespace ual = ubuntu::app_launch;
 
 // Begin anonymous namespace
 namespace {
@@ -180,11 +183,8 @@ Registry::Registry() :
                     std::string pkg = as[0].toStdString();
                     std::string app = as[1].toStdString();
                     std::string ver = as[2].toStdString();
-                    cuc::Peer peer;
-                    if (app.empty() || ver.empty())
-                        peer = QString::fromStdString(pkg);
-                    else
-                        peer = QString::fromLocal8Bit(ubuntu_app_launch_triplet_to_app_id(pkg.c_str(), app.c_str(), ver.c_str()));
+                    auto appID = ual::AppID::discover(pkg, app, ver);
+                    cuc::Peer peer = QString::fromStdString(appID);
                     install_source_for_type(type, cuc::Peer{peer.id(), true});
                 }
             }
@@ -211,9 +211,8 @@ cuc::Peer Registry::default_source_for_type(cuc::Type type)
             std::string pkg = as[0].toStdString();
             std::string app = as[1].toStdString();
             std::string ver = as[2].toStdString();
-            if (app.empty() || ver.empty())
-                return cuc::Peer(QString::fromStdString(pkg));
-            return cuc::Peer(QString::fromLocal8Bit(ubuntu_app_launch_triplet_to_app_id(pkg.c_str(), app.c_str(), ver.c_str())), true);
+            auto appID = ual::AppID::discover(pkg, app, ver);
+            return cuc::Peer(QString::fromStdString(appID), true);
         }
     }
 
@@ -277,10 +276,8 @@ void Registry::enumerate_known_sources_for_type(cuc::Type type, const std::funct
                 std::string pkg = as[0].toStdString();
                 std::string app = as[1].toStdString();
                 std::string ver = as[2].toStdString();
-                if (app.empty() || ver.empty())
-                    defaultPeer = QString::fromStdString(pkg) == k;
-                else
-                    defaultPeer = QString::fromLocal8Bit(ubuntu_app_launch_triplet_to_app_id(pkg.c_str(), app.c_str(), ver.c_str())) == k;
+                auto appID = ual::AppID::discover(pkg, app, ver);
+                defaultPeer = QString::fromStdString(appID) == k;
             }
         }
         for_each(cuc::Peer{k, defaultPeer});

@@ -1,3 +1,9 @@
+content-hub (0.3+17.04.20170211-0ubuntu1) zesty; urgency=medium
+
+  * Ported to UAL's C++ API
+
+ -- Ken VanDine <ken.vandine@canonical.com>  Sat, 11 Feb 2017 00:15:08 +0000
+
 content-hub (0.3+17.04.20161219-0ubuntu1) zesty; urgency=medium
 
   * New upstream version to reflect addition of the out of process

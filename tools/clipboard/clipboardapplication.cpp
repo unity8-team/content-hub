@@ -25,7 +25,7 @@
 
 #include <qpa/qplatformnativeinterface.h>
 #include <mir_toolkit/mir_window.h>
-#include <mir_toolkit/mir_persistent_id.h>
+#include <mir_toolkit/mir_window_id.h>
 
 #include "debug.h"
 #include "paste-data-model.h"
@@ -113,9 +113,9 @@ QString ClipboardApplication::requestSurfaceId()
     if (!mirWindow)
         return QString();
 
-    MirPersistentId* mirPermaId = mir_window_request_persistent_id_sync(mirWindow);
-    QString surfaceId(mir_persistent_id_as_string(mirPermaId));
-    mir_persistent_id_release(mirPermaId);
+    MirWindowId* mirWindowId = mir_window_request_window_id_sync(mirWindow);
+    QString surfaceId(mir_window_id_as_string(mirWindowId));
+    mir_window_id_release(mirWindowId);
 
     return surfaceId;
 }

@@ -237,6 +237,7 @@ std::shared_ptr<ual::Application> app_for_app_id(QString id)
 
 QMap<QString, QString> info_for_app_id(QString id)
 {
+    TRACE() << Q_FUNC_INFO << id;
     QMap<QString, QString> map;
     map["name"] = id;
     map["iconPath"] = QString();
@@ -385,6 +386,10 @@ int query_file(const char *label, const char *path, int *allowed)
 bool check_profile_read(QString profile, QString path)
 {
     TRACE() << Q_FUNC_INFO << "PROFILE:" << profile;
+
+    /* Don't verify app_id while testing */
+    if (!qgetenv("CONTENT_HUB_TESTING").isNull())
+        return true;
 
     int allowed;
     if (query_file(profile.toStdString().c_str(), path.toStdString().c_str(), &allowed) == -1) {

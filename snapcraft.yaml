@@ -9,13 +9,18 @@ description: |
 confinement: strict
 
 apps:
-  service:
-    command: usr/bin/content-hub-service
-    slots: [content-hub]
-    plugs: [gsettings]
+  content-hub:
+    command: desktop-launch content-hub-service
+    slots: [content-transfer]
+    plugs: [gsettings, dbus]
+
+plugs:
+  dbus:
+    name: com.ubuntu.content.dbus.Service
+    bus: session
 
 parts:
-  service:
+  content-hub:
     plugin: cmake
     source: .
 
@@ -32,10 +37,11 @@ parts:
       - libglib2.0-dev
       - libgsettings-qt-dev
       - liblibertine-dev
+      - libmirclient-dev
       - libnih-dbus-dev
       - libnotify-dev
       - libubuntu-download-manager-client-dev
-      - libubuntu-app-launch2-dev
+      - libubuntu-app-launch3-dev
       - qt5-default
       - qtbase5-dev
       - qtdeclarative5-dev
@@ -44,6 +50,11 @@ parts:
       - qtdeclarative5-test-plugin
       - qtdeclarative5-ubuntu-ui-toolkit-plugin
       - qttools5-dev-tools
+
+    stage-packages:
+      - libmirclient9
+      - libgsettings-qt1
+      - libglib2.0-bin
 
     configflags:
       - -DCMAKE_INSTALL_PREFIX:PATH=/usr
@@ -76,5 +87,8 @@ parts:
         - -usr/lib/*/*.la
         - -usr/lib/*/*.o
 
-    snap:
+    prime:
       - $unwanted
+
+    after:
+      - desktop-ubuntu-app-platform

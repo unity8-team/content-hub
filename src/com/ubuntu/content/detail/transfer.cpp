@@ -27,9 +27,11 @@
 #include <com/ubuntu/content/transfer.h>
 #include <ubuntu/download_manager/download.h>
 #include <ubuntu/download_manager/manager.h>
+#include <ubuntu-app-launch/application.h>
 
 namespace cuc = com::ubuntu::content;
 namespace cucd = com::ubuntu::content::detail;
+namespace ual = ubuntu::app_launch;
 
 struct cucd::Transfer::Private
 {
@@ -62,7 +64,9 @@ struct cucd::Transfer::Private
     bool should_be_started_by_content_hub;
     QString download_id;
     const QString content_type;
-    QString instance_id = "";
+    std::shared_ptr<ual::Helper::Instance> helper_instance = nullptr;
+    std::shared_ptr<ual::Application::Instance> source_instance = nullptr;
+    std::shared_ptr<ual::Application::Instance> destination_instance = nullptr;
 };
 
 cucd::Transfer::Transfer(const int id,
@@ -419,18 +423,47 @@ QString cucd::Transfer::ContentType()
     return d->content_type;
 }
 
-QString cucd::Transfer::InstanceId()
+std::shared_ptr<ual::Helper::Instance> cucd::Transfer::HelperInstance()
 {
-    TRACE() << Q_FUNC_INFO << d->instance_id;
-    return d->instance_id;
+    TRACE() << Q_FUNC_INFO;
+    return d->helper_instance;
 }
 
-void cucd::Transfer::SetInstanceId(QString instance_id)
+void cucd::Transfer::SetHelperInstance(std::shared_ptr<ual::Helper::Instance> instance)
 {
-    TRACE() << Q_FUNC_INFO << instance_id;
-
-    if (d->instance_id == instance_id)
+    TRACE() << Q_FUNC_INFO;
+    if (d->helper_instance == instance)
         return;
 
-    d->instance_id = instance_id;
+    d->helper_instance = instance;
+}
+
+std::shared_ptr<ual::Application::Instance> cucd::Transfer::SourceInstance()
+{
+    TRACE() << Q_FUNC_INFO;
+    return d->source_instance;
+}
+
+void cucd::Transfer::SetSourceInstance(std::shared_ptr<ual::Application::Instance> instance)
+{
+    TRACE() << Q_FUNC_INFO;
+    if (d->source_instance == instance)
+        return;
+
+    d->source_instance = instance;
+}
+
+std::shared_ptr<ual::Application::Instance> cucd::Transfer::DestinationInstance()
+{
+    TRACE() << Q_FUNC_INFO;
+    return d->destination_instance;
+}
+
+void cucd::Transfer::SetDestinationInstance(std::shared_ptr<ual::Application::Instance> instance)
+{
+    TRACE() << Q_FUNC_INFO;
+    if (d->destination_instance == instance)
+        return;
+
+    d->destination_instance = instance;
 }

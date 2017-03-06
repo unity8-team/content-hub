@@ -103,7 +103,7 @@ TEST(Hub, transfer_creation_and_states_work)
         WillRepeatedly(Return(true));
         EXPECT_CALL(*mock_app_manager, invoke_application(_,_)).
         Times(AtLeast(1)).
-        WillRepeatedly(Return(true));
+        WillRepeatedly(Return(nullptr));
         
         QSharedPointer<cucd::PeerRegistry> registry{mock};
         auto app_manager = QSharedPointer<cua::ApplicationManager>(mock_app_manager);

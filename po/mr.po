@@ -1,16 +1,16 @@
-# Slovak translation for content-hub
-# Copyright (c) 2014 Rosetta Contributors and Canonical Ltd 2014
+# Marathi translation for content-hub
+# Copyright (c) 2017 Rosetta Contributors and Canonical Ltd 2017
 # This file is distributed under the same license as the content-hub package.
-# FIRST AUTHOR <EMAIL@ADDRESS>, 2014.
+# FIRST AUTHOR <EMAIL@ADDRESS>, 2017.
 #
 msgid ""
 msgstr ""
 "Project-Id-Version: content-hub\n"
 "Report-Msgid-Bugs-To: FULL NAME <EMAIL@ADDRESS>\n"
 "POT-Creation-Date: 2014-08-14 12:39+0100\n"
-"PO-Revision-Date: 2016-02-29 10:23+0000\n"
-"Last-Translator: P_E_T_O <Unknown>\n"
-"Language-Team: Slovak <sk@li.org>\n"
+"PO-Revision-Date: 2017-02-22 07:05+0000\n"
+"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
+"Language-Team: Marathi <mr@li.org>\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
@@ -20,22 +20,22 @@ msgstr ""
 #: import/Ubuntu/Content/ContentPeerPicker10.qml:48
 #: import/Ubuntu/Content/ContentPeerPicker11.qml:49
 msgid "Choose from"
-msgstr "Vybrať z"
+msgstr "यातून निवडा"
 
 #: import/Ubuntu/Content/ContentPeerPicker10.qml:48
 #: import/Ubuntu/Content/ContentPeerPicker11.qml:49
 msgid "Open with"
-msgstr "Otvoriť s"
+msgstr "याने उघडा"
 
 #: import/Ubuntu/Content/ContentPeerPicker10.qml:48
 #: import/Ubuntu/Content/ContentPeerPicker11.qml:49
 msgid "Share to"
-msgstr "Zdieľať"
+msgstr "ला शेअर करा"
 
 #: import/Ubuntu/Content/ContentPeerPicker10.qml:158
 #: import/Ubuntu/Content/ContentPeerPicker11.qml:175
 msgid "Apps"
-msgstr "Aplikácie"
+msgstr "अनुप्रयोग"
 
 #: import/Ubuntu/Content/ContentPeerPicker10.qml:194
 #: import/Ubuntu/Content/ContentPeerPicker11.qml:211
@@ -43,8 +43,8 @@ msgid ""
 "Sorry, there aren't currently any apps installed that can provide this type "
 "of content."
 msgstr ""
-"Prepáčte, aktuálne nie sú nainštalované žiadne aplikácie, ktoré dokážu "
-"poskytovať tento typ obsahu."
+"क्षमस्व, तेथे य प्रकारची सामग्री प्रदान करू शकणारे कोणतेही अनुप्रयोग सध्या "
+"स्थापित केलेले नाहीत."
 
 #: import/Ubuntu/Content/ContentPeerPicker10.qml:194
 #: import/Ubuntu/Content/ContentPeerPicker11.qml:211
@@ -52,36 +52,36 @@ msgid ""
 "Sorry, there aren't currently any apps installed that can handle this type "
 "of content."
 msgstr ""
-"Prepáčte, aktuálne nie sú nainštalované žiadne aplikácie, ktoré dokážu "
-"spracovať tento typ obsahu."
+"क्षमस्व, तेथे हा प्रकार सामग्री हाताळू शकणारे कोणतेही अनुप्रयोग सध्या "
+"स्थापित केलेले नाहीत."
 
 #: import/Ubuntu/Content/ContentPeerPicker10.qml:210
 #: import/Ubuntu/Content/ContentPeerPicker11.qml:227
 msgid "Devices"
-msgstr "Zariadenia"
+msgstr "साधने"
 
 #: import/Ubuntu/Content/ContentPeerPicker10.qml:247
 #: import/Ubuntu/Content/ContentPeerPicker11.qml:56
 #: import/Ubuntu/Content/ContentTransferHint.qml:65
 msgid "Cancel"
-msgstr "Zrušiť"
+msgstr "रद्द करा"
 
 #: import/Ubuntu/Content/ContentTransferHint.qml:52
 msgid "Transfer in progress"
-msgstr "Prenos prebieha"
+msgstr "स्थानांतर चालू आहे"
 
 #: src/com/ubuntu/content/detail/service.cpp:216
 msgid "Download Complete"
-msgstr "Sťahovanie dokončené"
+msgstr "डाऊनलोड पूर्ण झाले"
 
 #: src/com/ubuntu/content/detail/service.cpp:234
 msgid "Open"
-msgstr "Otvoriť"
+msgstr "उघडा"
 
 #: src/com/ubuntu/content/detail/service.cpp:241
 msgid "Dismiss"
-msgstr "Zrušiť"
+msgstr "वगळा"
 
 #: src/com/ubuntu/content/detail/service.cpp:259
 msgid "Download Failed"
-msgstr "Sťahovanie neúspešné"
+msgstr "डाउनलोड अयशस्वी"

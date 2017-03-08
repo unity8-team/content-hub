@@ -11,7 +11,7 @@ CXXFLAGS:=$(shell dpkg-buildflags --get CXXFLAGS) $(CPPFLAGS)
 LDFLAGS:=$(shell dpkg-buildflags --get LDFLAGS)
 
 %:
-	dh $@ --with click,translations --fail-missing -- -B build
+	dh $@ --with translations --fail-missing -- -B build
 
 override_dh_auto_test:
 	make -C build/tests/acceptance-tests test

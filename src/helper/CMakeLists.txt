@@ -21,7 +21,6 @@ include_directories(
   ${UBUNTU_LAUNCH_INCLUDE_DIRS}
   ${GIO_INCLUDE_DIRS}
   ${GLIB_INCLUDE_DIRS}
-  ${CLICK_INCLUDE_DIRS}
   ${MIRCLIENT_INCLUDE_DIRS}
 )
 
@@ -37,7 +36,6 @@ target_link_libraries(
   exec-tool
  
   ${UBUNTU_LAUNCH_LDFLAGS}
-  ${CLICK_LDFLAGS}
   ${GLIB_LDFLAGS}
   ${GIO_LDFLAGS}
   ${MIRCLIENT_LDFLAGS}

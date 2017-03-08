@@ -1,7 +1,6 @@
 usr/bin/content-hub-peer-picker
 usr/bin/content-hub-send
 usr/bin/content-hub-service
-usr/lib/*/content-hub
 usr/lib/*/ubuntu-app-launch
 usr/lib/systemd/user
 usr/share/dbus-1

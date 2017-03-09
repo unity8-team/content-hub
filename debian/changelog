@@ -1,3 +1,15 @@
+content-hub (0.3+17.04.20170309-0ubuntu1) zesty; urgency=medium
+
+  [ Ken VanDine ]
+  * Removed redundant section in debian/control and updated the
+    standards version to 3.9.7
+
+  [ William Hua ]
+  * Prevent crash when creating a paste with a bogus app id (LP:
+    #1655105)
+
+ -- Ken VanDine <ken.vandine@canonical.com>  Thu, 09 Mar 2017 02:40:01 +0000
+
 content-hub (0.3+17.04.20170306.3-0ubuntu1) zesty; urgency=medium
 
   [ Arthur Mello ]

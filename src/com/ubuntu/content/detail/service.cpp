@@ -365,7 +365,7 @@ void cucd::Service::DownloadManagerError(QString errorMessage)
 
 QDBusObjectPath cucd::Service::CreateExportToPeer(const QString& peer_id, const QString& app_id, const QString& type_id)
 {
-    TRACE() << Q_FUNC_INFO;
+    TRACE() << Q_FUNC_INFO << "APP_ID:" << app_id << "SERVICE:" << this->message().service();
     QString src_id = app_id;
     if (src_id.isEmpty())
     {
@@ -590,7 +590,12 @@ QDBusObjectPath cucd::Service::CreateTransfer(const QString& dest_id, const QStr
 
     auto transfer = new cucd::Transfer(import_counter, src_id, dest_id, dir, type_id, this);
     if (dir == cuc::Transfer::Import && qgetenv("CONTENT_HUB_TESTING").isNull() && clientPid > 0) {
+        TRACE() << Q_FUNC_INFO << "Making setupPromptSession:" << dest_id << clientPid;
         setupPromptSession(dest_id, clientPid);
+    } else if (dir == cuc::Transfer::Export && dest_id == PRINTING_APP_ID && qgetenv("CONTENT_HUB_TESTING").isNull()) {
+        uint clientPid = d->connection.interface()->servicePid(this->message().service());
+        TRACE() << Q_FUNC_INFO << "Making setupPromptSession:" << src_id << clientPid;
+        setupPromptSession(src_id, clientPid);
     }
 
     new TransferAdaptor(transfer);
@@ -637,34 +642,10 @@ void cucd::Service::setupPromptSession(QString app_id, uint clientPid)
     if (!qgetenv("CONTENT_HUB_TESTING").isNull())
         return;
 
-    if (d->active_sessions.keys().contains(app_id))
+    if (d->active_sessions.keys().contains(app_id)) {
+        TRACE() << Q_FUNC_INFO << "Skipping as dest_id is already an active session";
         return;
-
-    /* FIXME: Until bug #1647409 is fixed, we need to release any existing 
-     * prompt sessions before starting a new one
-     */
-    Q_FOREACH(QString key, d->active_sessions.keys()) {
-        PromptSessionP pSession = d->active_sessions.value(key);
-        if (pSession.data()) {
-            TRACE() << "Removing session for" << key;
-            d->active_sessions.remove(key);
-            pSession->deleteLater();
-
-            /* When releasing the prompt session, we need to abort
-             * transfers in process
-             */
-            Q_FOREACH (cucd::Transfer *t, d->active_transfers) {
-                if (t->destination() == key) {
-                    TRACE() << Q_FUNC_INFO << "Found active transfer for session:" << key;
-                    if (should_cancel(t->State())) {
-                        TRACE() << Q_FUNC_INFO << "Aborting active transfer:" << t->Id();
-                        t->Abort();
-                    }
-                }
-            }
-        }
     }
-    /* End hack to work around bug #1647409 */
 
     PromptSessionP session = MirHelper::instance()->createPromptSession(clientPid);
     if (!session) return;
@@ -870,7 +851,8 @@ void cucd::Service::handle_exports(int state)
     if (state == cuc::Transfer::charged)
     {
         TRACE() << Q_FUNC_INFO << "Charged";
-        if (d->app_manager->is_application_started(transfer->destination().toStdString()))
+        // For printing we always generate a new app
+        if (d->app_manager->is_application_started(transfer->destination().toStdString()) && transfer->destination() != PRINTING_APP_ID)
             transfer->SetSourceStartedByContentHub(false);
         else
             transfer->SetSourceStartedByContentHub(true);
@@ -893,10 +875,44 @@ void cucd::Service::handle_exports(int state)
         }
 
         if (transfer->ShouldBeStartedByContentHub()) {
-            auto instance = d->app_manager->invoke_application(transfer->destination().toStdString(), uris);
-            if (instance) {
-                transfer->SetDestinationInstance(instance);
+            // Special case for printing
+            if (transfer->destination() == PRINTING_APP_ID) {
+                TRACE() << Q_FUNC_INFO << "Using ubuntu-printing-app special case";
+
+                if (qgetenv("CONTENT_HUB_TESTING").isNull()) {
+                    if (!d->active_sessions.keys().contains(transfer->source())
+                            && transfer->WasSourceStartedByContentHub()) {
+                        if (!QDBusConnection::sender().baseService().isEmpty()) {
+                            uint clientPid = d->connection.interface()->servicePid(this->message().service());
+                            setupPromptSession(transfer->source(), clientPid);
+                        }
+                    }
+                }
+
+                if (d->active_sessions.keys().contains(transfer->source())
+                        && transfer->WasSourceStartedByContentHub()) {
+                    TRACE() << Q_FUNC_INFO << "Invoking application with session";
+                    PromptSessionP session = d->active_sessions.value(transfer->source());
+                    gchar ** uris = NULL;
+                    auto instance = d->app_manager->invoke_application_with_session(transfer->destination().toStdString(), session, uris);
+                    if (instance) {
+                        transfer->SetHelperInstance(instance);
+                    }
+                } else {
+                    TRACE() << Q_FUNC_INFO << "Invoking application";
+                    auto instance = d->app_manager->invoke_application(transfer->destination().toStdString(), uris);
+                    if (instance) {
+                        transfer->SetDestinationInstance(instance);
+                    }
+                }
+            } else {
+                TRACE() << Q_FUNC_INFO << "Invoking application";
+                auto instance = d->app_manager->invoke_application(transfer->destination().toStdString(), uris);
+                if (instance) {
+                    transfer->SetDestinationInstance(instance);
+                }
             }
+
         }
 
         Q_FOREACH (RegHandler *r, d->handlers)
@@ -990,6 +1006,8 @@ void cucd::Service::RegisterImportExportHandler(const QString& peer_id, const QD
 
     if (!exists)
     {
+        TRACE() << Q_FUNC_INFO << "ImportExport Handler does not exist, creating one";
+
         r = new RegHandler{peer_id,
             this->message().service(),
             new cuc::dbus::Handler(
@@ -997,8 +1015,14 @@ void cucd::Service::RegisterImportExportHandler(const QString& peer_id, const QD
                     handler.path(),
                     QDBusConnection::sessionBus(),
                     0)};
-        d->handlers.insert(r);
-        m_watcher->addWatchedService(r->service);
+
+        // Skip adding to handlers for ubuntu-printing-app so we can have multiple instances
+        if (peer_id != PRINTING_APP_ID) {
+            d->handlers.insert(r);
+            m_watcher->addWatchedService(r->service);
+        }
+    } else {
+        TRACE() << Q_FUNC_INFO << "ImportExport Handler exists, skipping";
     }
 
     TRACE() << Q_FUNC_INFO << r->id;
@@ -1040,6 +1064,11 @@ void cucd::Service::RegisterImportExportHandler(const QString& peer_id, const QD
                     t->Charge(QVariantList());
             }
         }
+    }
+
+    // Deconstruct r as we haven't added to store when printing
+    if (peer_id == PRINTING_APP_ID) {
+        delete r;
     }
 }
 

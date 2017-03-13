@@ -1,3 +1,11 @@
+content-hub (0.3+17.04.20170313-0ubuntu1) zesty; urgency=medium
+
+  * Add special case for ubuntu-printing-app where it is a trusted
+    export
+  * If the peer isn't valid then abort the transfer
+
+ -- Andrew Hayzen <ahayzen@gmail.com>  Mon, 13 Mar 2017 14:20:53 +0000
+
 content-hub (0.3+17.04.20170309-0ubuntu1) zesty; urgency=medium
 
   [ Ken VanDine ]

@@ -1,3 +1,10 @@
+content-hub (0.3+17.04.20170315-0ubuntu1) zesty; urgency=medium
+
+  * Removed the click hook and check for registered peers on service
+    startup
+
+ -- Ken VanDine <ken.vandine@canonical.com>  Wed, 15 Mar 2017 13:36:13 +0000
+
 content-hub (0.3+17.04.20170309-0ubuntu1) zesty; urgency=medium
 
   [ Ken VanDine ]

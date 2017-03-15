@@ -11,7 +11,7 @@ CXXFLAGS:=$(shell dpkg-buildflags --get CXXFLAGS) $(CPPFLAGS)
 LDFLAGS:=$(shell dpkg-buildflags --get LDFLAGS)
 
 %:
-	dh $@ --with click,translations --fail-missing -- -B build
+	dh $@ --with translations --fail-missing -- -B build
 
 override_dh_auto_test:
 	make -C build/tests/acceptance-tests test
@@ -21,6 +21,7 @@ override_dh_auto_install:
 	dh_apparmor -pcontent-hub --profile-name=content-hub-clipboard
 	dh_apparmor -pcontent-hub --profile-name=content-hub-peer-picker
 	dh_apparmor -pcontent-hub-testability --profile-name=content-hub-testability
+	mkdir -p debian/tmp/var/cache/content-hub/peers
 
 DEB_HOST_ARCH := $(shell dpkg-architecture -qDEB_HOST_ARCH)
 # Skip tests on the archs they are known to be flaky with current configuration

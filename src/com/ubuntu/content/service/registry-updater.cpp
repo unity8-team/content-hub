@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2013 Canonical, Ltd.
+ * Copyright (C) 2013-2017 Canonical, Ltd.
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -20,6 +20,7 @@
 #include <QJsonDocument>
 #include <QJsonObject>
 #include <QFile>
+#include <QFileSystemWatcher>
 #include <QDir>
 #include <QStandardPaths>
 #include <QTimer>
@@ -27,34 +28,18 @@
 #include <com/ubuntu/content/peer.h>
 
 #include "debug.h"
-#include "hook.h"
+#include "registry-updater.h"
 
+namespace cuc = com::ubuntu::content;
 namespace cucd = com::ubuntu::content::detail;
 
-cucd::Hook::Hook(QObject *parent) :
+cucd::RegistryUpdater::RegistryUpdater(const QSharedPointer<cucd::PeerRegistry>& registry, QObject *parent) :
     QObject(parent),
-    registry(new Registry())
+    registry(registry),
+    watcher(new QFileSystemWatcher)
 {
-    QTimer::singleShot(200, this, SLOT(run()));
-}
-
-cucd::Hook::Hook(com::ubuntu::content::detail::PeerRegistry *registry, QObject *parent) :
-    QObject(parent),
-    registry(registry)
-{
-}
-
-cucd::Hook::~Hook()
-{
-    TRACE() << Q_FUNC_INFO;
-    delete registry;
-}
-
-void cucd::Hook::run()
-{
-    TRACE() << Q_FUNC_INFO;
-    /* Looks for files in ${HOME}/.local/share/content-hub/${id} installed
-     * by click packages.  These files are JSON, for example:
+    /* Looks for files installed packages that define peer registration.
+     * These files are JSON, for example:
      *
      * {
      *     "source": [
@@ -63,22 +48,56 @@ void cucd::Hook::run()
      *     ]
      * }
      *
-     * The hook also iterates known peers and removes them if there is
+     * The updater also iterates known peers and removes them if there is
      * no JSON file installed in this path.
      */
-
-    QVector<QDir> contentDirs;
-
     contentDirs.append(QDir(
         QStandardPaths::writableLocation(QStandardPaths::GenericDataLocation)
         + QString("/")
         + QString("content-hub")));
-    
+
     contentDirs.append(QDir("/usr/share/content-hub/peers/"));
     contentDirs.append(QDir("/usr/share/local/content-hub/peers/"));
+    contentDirs.append(QDir("/var/cache/content-hub/peers/"));
+
+    QStringList dirs;
+    Q_FOREACH(QDir d, contentDirs)
+    {
+        if (d.exists())
+            dirs << d.path();
+    }
+
+    watcher->addPaths(dirs);
+    connect(watcher.data(), SIGNAL(directoryChanged(const QString&)), SLOT(refresh(const QString&)));
+
+    QTimer::singleShot(200, this, SLOT(run()));
+}
+
+cucd::RegistryUpdater::~RegistryUpdater()
+{
+    TRACE() << Q_FUNC_INFO;
+}
+
+void cucd::RegistryUpdater::refresh(const QString& dir)
+{
+    TRACE() << Q_FUNC_INFO << dir;
+    bool shouldRefresh = true;
+    /* Don't update the registry for temp files */
+    Q_FOREACH(QFileInfo f, QDir(dir).entryInfoList(QDir::Files))
+    {
+    	if (f.completeSuffix().contains("dpkg-"))
+            shouldRefresh = false;
+    }
+    if (shouldRefresh)
+        run();
+}
+
+void cucd::RegistryUpdater::run()
+{
+    TRACE() << Q_FUNC_INFO;
 
     QStringList all_peers;
-    registry->enumerate_known_peers([&all_peers](const com::ubuntu::content::Peer& peer)
+    registry->enumerate_known_peers([&all_peers](const cuc::Peer& peer)
                                     {
                                         all_peers.append(peer.id());
                                     });
@@ -95,7 +114,7 @@ void cucd::Hook::run()
             }
         }
         if(!foundPeer) {
-            registry->remove_peer(com::ubuntu::content::Peer{p});
+            registry->remove_peer(cuc::Peer{p});
         }
     }
 
@@ -107,9 +126,10 @@ void cucd::Hook::run()
         if (contentDir.exists()) 
         {
             peerDirsExist = true;
-
             Q_FOREACH(QFileInfo f, contentDir.entryInfoList(QDir::Files))
+            {
                 add_peer(f);
+            }
         }
 
     }
@@ -117,13 +137,11 @@ void cucd::Hook::run()
     if(!peerDirsExist)
         return_error("No peer setting directories exist.");
 
-    deleteLater();
-    QCoreApplication::instance()->quit();
 }
 
-bool cucd::Hook::add_peer(QFileInfo result)
+bool cucd::RegistryUpdater::add_peer(QFileInfo result)
 {
-    TRACE() << Q_FUNC_INFO << "Hook:" << result.filePath();
+    TRACE() << Q_FUNC_INFO << "RegistryUpdater:" << result.filePath();
 
     QStringList knownTypes;
     knownTypes << "all" << "pictures" << "music" << "contacts" << "documents" << "videos" << "links" << "ebooks" << "text" << "events";
@@ -182,7 +200,7 @@ bool cucd::Hook::add_peer(QFileInfo result)
     return true;
 }
 
-bool cucd::Hook::return_error(QString err)
+bool cucd::RegistryUpdater::return_error(QString err)
 {
     qWarning() << "Failed to install peer" << err;
     return false;

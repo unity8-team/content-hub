@@ -5,5 +5,5 @@ Exec=content-hub-send %U
 Icon=
 Terminal=false
 Type=Application
-OnlyShowIn=Old
+NoDisplay=true
 X-Ubuntu-Touch=true

@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2013 Canonical, Ltd.
+ * Copyright (C) 2013-2017 Canonical, Ltd.
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -25,6 +25,7 @@
 #include "debug.h"
 #include "common.h"
 #include "registry.h"
+#include "registry-updater.h"
 #include "detail/i18n.h"
 #include "detail/service.h"
 #include "detail/peer_registry.h"
@@ -62,6 +63,8 @@ int main(int argc, char** argv)
     auto connection = QDBusConnection::sessionBus();
 
     auto registry = QSharedPointer<cucd::PeerRegistry>(new Registry());
+
+    auto updater = new cuc::detail::RegistryUpdater(registry);
 
     auto app_manager = QSharedPointer<cuca::ApplicationManager>(new cucd::AppManager());
 

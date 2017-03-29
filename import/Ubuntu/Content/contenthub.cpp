@@ -147,6 +147,11 @@ ContentHub::ContentHub(QObject *parent)
         SLOT(onPasteSelectionCancelled()));
 }
 
+bool ContentHub::isValid() const
+{
+    return m_hub->isValid();
+}
+
 void ContentHub::selectPeerForAppId(QString app_id, QString peer_id)
 {
     TRACE() << Q_FUNC_INFO << app_id << peer_id;

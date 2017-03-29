@@ -128,6 +128,8 @@ TEST(Hub, querying_default_peer_returns_correct_value)
         
         auto hub = cuc::Hub::Client::instance();
         
+        EXPECT_TRUE(hub->isValid());
+
         test::TestHarness harness;
         harness.add_test_case([hub, default_peer_id]()
         {            

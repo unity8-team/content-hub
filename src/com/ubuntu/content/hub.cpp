@@ -115,6 +115,11 @@ cuc::Hub* cuc::Hub::Client::instance()
     return hub;
 }
 
+bool cuc::Hub::isValid() const
+{
+    return d->service->isValid();
+}
+
 void cuc::Hub::requestPeerForType(cuc::Type type, QString handler_id)
 {
     TRACE() << Q_FUNC_INFO << type.id();

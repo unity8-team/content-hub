@@ -45,11 +45,14 @@ class ContentHub : public QObject
     Q_OBJECT
     Q_PROPERTY(QQmlListProperty<ContentTransfer> finishedImports READ finishedImports NOTIFY finishedImportsChanged)
     Q_PROPERTY(bool hasPending READ hasPending)
+    Q_PROPERTY(bool valid READ isValid CONSTANT)
 
 public:
     ContentHub(const ContentHub&) = delete;
 
     static ContentHub *instance();
+
+    bool isValid() const;
 
     Q_INVOKABLE void restoreImports();
 

@@ -21,6 +21,10 @@ import Ubuntu.Content 1.3
 TestCase {
     name: "ContentHub"
 
+    function test_valid() {
+        verify(ContentHub.valid, "ContentHub invalid")
+    }
+
     function test_default_import() {
         var transfer = sourcePeer.request();
         verify(transfer !== null, "No transer Object returned")

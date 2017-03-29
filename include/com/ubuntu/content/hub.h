@@ -42,6 +42,7 @@ class Hub : public QObject
 {
     Q_OBJECT
     Q_PROPERTY(QStringList pasteFormats READ pasteFormats NOTIFY pasteFormatsChanged)
+    Q_PROPERTY(bool valid READ isValid CONSTANT)
 
   public:
     struct Client
@@ -52,6 +53,8 @@ class Hub : public QObject
     Hub(const Hub&) = delete;
     virtual ~Hub();
     Hub& operator=(const Hub&) = delete;
+
+    bool isValid() const;
 
     Q_INVOKABLE virtual void register_import_export_handler(ImportExportHandler* handler);
     Q_INVOKABLE virtual const Store* store_for_scope_and_type(Scope scope, Type type);

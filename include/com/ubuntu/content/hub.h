@@ -79,9 +79,7 @@ class Hub : public QObject
  
     ///
     // Copy & Paste
-
     QDBusPendingCall createPaste(const QString &surfaceId, const QMimeData& data);
-
     QDBusPendingCall requestLatestPaste(const QString &surfaceId);
     QDBusPendingCall requestPasteById(const QString &surfaceId, int pasteId);
     QMimeData* paste(QDBusPendingCall requestPeply);
@@ -90,6 +88,10 @@ class Hub : public QObject
     bool createPasteSync(const QString &surfaceId, const QMimeData& data);
     QMimeData* latestPaste(const QString &surfaceId);
     QMimeData* pasteById(const QString &surfaceId, int id);
+
+    // Drag & Drop
+    QDBusPendingCall createDrop(const QString &surfaceId, const QMimeData& mimeData);
+    QDBusPendingCall requestDrop(const QString &surfaceId);
 
     QStringList pasteFormats();
 

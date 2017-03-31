@@ -478,6 +478,28 @@ bool cuc::Hub::isPeerValid(Peer peer)
     return d->testing || info_for_app_id(peer.id()).value("valid", "false") == "true";
 }
 
+QDBusPendingCall cuc::Hub::createDrop(const QString &surfaceId, const QMimeData& mimeData)
+{
+    /* This needs to be replaced with a better way to get the APP_ID */
+    QString appId = app_id(); 
+    TRACE() << Q_FUNC_INFO << appId;
+
+    auto serializedMimeData = serializeMimeData(mimeData);
+    if (serializedMimeData.isEmpty()) {
+        return QDBusPendingCall::fromCompletedCall(
+                QDBusMessage::createError("Data serialization failed","Could not serialize mimeData"));
+    }
+
+    return d->service->CreateDrag(appId, surfaceId, serializedMimeData, mimeData.formats());
+}
+
+QDBusPendingCall cuc::Hub::requestDrop(const QString &surfaceId)
+{
+    TRACE() << Q_FUNC_INFO;
+    return d->service->GetDropData(surfaceId);
+}
+
+
 QDBusPendingCall cuc::Hub::createPaste(const QString &surfaceId, const QMimeData& mimeData)
 {
     /* This needs to be replaced with a better way to get the APP_ID */

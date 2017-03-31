@@ -97,6 +97,7 @@ struct cucd::Service::Private : public QObject
     QSharedPointer<cua::ApplicationManager> app_manager;
     QDBusInterface *unityFocus;
     const int maxActivePastes = 5;
+    cucd::Paste* active_drag;
 };
 
 cucd::Service::Service(QDBusConnection connection, const QSharedPointer<cucd::PeerRegistry>& peer_registry,
@@ -388,6 +389,47 @@ QDBusObjectPath cucd::Service::CreateShareToPeer(const QString& peer_id, const Q
 
     return CreateTransfer(peer_id, src_id, cuc::Transfer::Share, type_id);
 }
+
+bool cucd::Service::CreateDrag(const QString& app_id, const QString& surfaceId, const QByteArray& mimeData,
+                                const QStringList& types)
+{
+    TRACE() << Q_FUNC_INFO << app_id << types;
+
+    if (!verifiedSurfaceIsFocused(surfaceId)) {
+        return false;
+    }
+
+    pid_t pid = d->connection.interface()->servicePid(this->message().service());
+    QString effective_app_id;
+    if (app_id_matches(app_id, pid)) {
+        effective_app_id = app_id;
+    } else {
+        qWarning() << "APP_ID" << app_id << "doesn't match requesting APP";
+        effective_app_id = "?";
+    }
+
+    auto paste = new cucd::Paste(0, effective_app_id, this);
+    new PasteAdaptor(paste);
+    d->active_drag = paste;
+
+    paste->Charge(mimeData);
+
+    return true;
+}
+
+QByteArray cucd::Service::GetDropData(const QString &surfaceId)
+{
+    if (!verifiedSurfaceIsFocused(surfaceId)) {
+        qWarning().nospace() << "Surface isn't focused. Denying drop.";
+        return QByteArray();
+    }
+
+    if (d->active_drag)
+        return d->active_drag->MimeData();
+
+    return QByteArray();
+}
+
 
 bool cucd::Service::CreatePaste(const QString& app_id, const QString& surfaceId, const QByteArray& mimeData,
                                 const QStringList& types)

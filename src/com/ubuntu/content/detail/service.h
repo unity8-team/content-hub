@@ -84,6 +84,8 @@ class Service : public QObject, protected QDBusContext
     void SelectPeerForAppId(const QString&, const QString&);
     void SelectPeerForAppIdCancelled(const QString&);
     void onPromptFinished();
+    bool CreateDrag(const QString&, const QString&, const QByteArray&, const QStringList&);
+    QByteArray GetDropData(const QString& surfaceId);
 
   private:
     QString getPasteSource(const QString &surfaceId, int pasteId);

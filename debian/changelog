@@ -1,3 +1,10 @@
+content-hub (0.3+17.04.20170403-0ubuntu1) zesty; urgency=medium
+
+  * mir-helper: transition deprecated functions from mir 0.26 to the non-
+    deprecated alternatives.
+
+ -- Kevin DuBois <kevin.dubois@canonical.com>  Mon, 03 Apr 2017 16:57:07 +0000
+
 content-hub (0.3+17.04.20170317.1-0ubuntu1) zesty; urgency=medium
 
   * Removed the click hook and check for registered peers on service

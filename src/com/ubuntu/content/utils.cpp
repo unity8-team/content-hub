@@ -212,12 +212,16 @@ bool app_id_matches(QString id, pid_t pid)
     auto app_id = ual::AppID::find(id.toStdString());
     if (app_id.empty())
         return false;
-    auto app = ual::Application::create(app_id, reg);
-    if (!app.get()->hasInstances())
-        return false;
-    Q_FOREACH (std::shared_ptr<ual::Application::Instance> instance, app.get()->instances()) {
-        if (instance.get()->hasPid(pid))
-            return true;
+    try {
+        auto app = ual::Application::create(app_id, reg);
+        if (!app.get()->hasInstances())
+            return false;
+        Q_FOREACH (std::shared_ptr<ual::Application::Instance> instance, app.get()->instances()) {
+            if (instance.get()->hasPid(pid))
+                return true;
+        }
+    } catch (...) {
+        qWarning() << Q_FUNC_INFO << "Failed to create Application for" << id;
     }
     return false;
 }
@@ -228,11 +232,17 @@ std::shared_ptr<ual::Application> app_for_app_id(QString id)
         return nullptr;
 
     std::shared_ptr<ual::Registry> reg = ual::Registry::getDefault();
-    auto app_id = ual::AppID::find(id.toStdString());
-    if (app_id.empty())
+
+    try {
+        auto app_id = ual::AppID::find(id.toStdString());
+        if (app_id.empty())
+            return nullptr;
+        auto app = ual::Application::create(app_id, reg);
+        return app;
+    } catch (std::runtime_error &e) {
+        qWarning() << Q_FUNC_INFO << "Unable to create application:" << id;
         return nullptr;
-    auto app = ual::Application::create(app_id, reg);
-    return app;
+    }
 }
 
 QMap<QString, QString> info_for_app_id(QString id)
@@ -244,6 +254,8 @@ QMap<QString, QString> info_for_app_id(QString id)
     if (!qgetenv("CONTENT_HUB_TESTING").isNull())
         return map;
 
+    map["valid"] = "false";
+
     std::shared_ptr<ual::Registry> reg = ual::Registry::getDefault();
     auto app_id = ual::AppID::find(id.toStdString());
     if (app_id.empty()) {
@@ -253,6 +265,7 @@ QMap<QString, QString> info_for_app_id(QString id)
             auto app = ual::Application::create(app_id, reg);
             map["name"] = QString::fromStdString(app.get()->info()->name());
             map["iconPath"] = QString::fromStdString(app.get()->info()->iconPath());
+            map["valid"] = "true";
         } catch (...) {
             qWarning() << Q_FUNC_INFO << "Failed to create Application for" << id;
         }

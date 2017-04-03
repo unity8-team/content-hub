@@ -2,7 +2,6 @@ Source: content-hub
 Priority: optional
 Maintainer: Ubuntu Developers <ubuntu-devel-discuss@lists.ubuntu.com>
 Build-Depends: cmake,
-               click-dev,
                dbus-test-runner,
                debhelper (>= 9),
                dh-apparmor,
@@ -11,7 +10,6 @@ Build-Depends: cmake,
                google-mock,
                lcov,
                libapparmor-dev,
-               libclick-0.4-dev,
                libglib2.0-dev,
                libgsettings-qt-dev,
                libmirclient-dev [!powerpc !ppc64 !ppc64el],
@@ -22,6 +20,7 @@ Build-Depends: cmake,
                libubuntu-app-launch3-dev (>= 0.10),
                qt5-default,
                qtbase5-dev,
+               qtbase5-private-dev,
                qtdeclarative5-dev,
                qtdeclarative5-dev-tools,
                qtdeclarative5-qtquick2-plugin,
@@ -31,7 +30,7 @@ Build-Depends: cmake,
 # to locate the place to put systemd files
                systemd,
                xvfb,
-Standards-Version: 3.9.4
+Standards-Version: 3.9.7
 Section: libs
 Homepage: https://launchpad.net/content-hub
 # If you aren't a member of ~phablet-team but need to upload packaging changes,
@@ -50,7 +49,6 @@ Description: content sharing/picking service
  This package includes the content sharing service.
 
 Package: libcontent-hub0
-Section: libs
 Architecture: any
 Multi-Arch: same
 Pre-Depends: ${misc:Pre-Depends},
@@ -64,7 +62,6 @@ Description: content sharing/picking library
  This package includes the content sharing libraries.
 
 Package: libcontent-hub-glib0
-Section: libs
 Architecture: any
 Multi-Arch: same
 Pre-Depends: ${misc:Pre-Depends},
@@ -96,7 +93,6 @@ Description: content sharing development files - GLib bindings
  GLib bindings of the development headers and libraries for the content hub
 
 Package: qtdeclarative5-ubuntu-content1
-Section: libs
 Architecture: any
 Pre-Depends: ${misc:Pre-Depends},
 Depends: libcontent-hub0,

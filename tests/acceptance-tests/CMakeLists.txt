@@ -64,7 +64,7 @@ foreach(test ${TESTS})
     ${TEST_LIBS}
   )
 
-  add_test(NAME ${test} COMMAND dbus-test-runner --task ${CMAKE_CURRENT_BINARY_DIR}/${test})
+  add_test(NAME ${test} COMMAND dbus-test-runner --keep-env --task ${CMAKE_CURRENT_BINARY_DIR}/${test})
 
   SET_TESTS_PROPERTIES(${test}
     PROPERTIES ENVIRONMENT "CONTENT_HUB_TESTING=1")

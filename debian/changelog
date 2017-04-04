@@ -1,3 +1,9 @@
+content-hub (0.3+17.04.20170404.4-0ubuntu1) zesty; urgency=medium
+
+  * Set $HOME when running tests
+
+ -- Ken VanDine <ken.vandine@canonical.com>  Tue, 04 Apr 2017 19:48:58 +0000
+
 content-hub (0.3+17.04.20170317.1-0ubuntu1) zesty; urgency=medium
 
   * Removed the click hook and check for registered peers on service

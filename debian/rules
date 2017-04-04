@@ -14,7 +14,8 @@ LDFLAGS:=$(shell dpkg-buildflags --get LDFLAGS)
 	dh $@ --with translations --fail-missing -- -B build
 
 override_dh_auto_test:
-	make -C build/tests/acceptance-tests test
+	TEST_HOME=`mktemp -d`
+	HOME=$(TEST_HOME) make -C build/tests/acceptance-tests test
 
 override_dh_auto_install:
 	dh_auto_install

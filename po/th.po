@@ -14,28 +14,28 @@ msgstr ""
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"X-Launchpad-Export-Date: 2017-03-24 06:12+0000\n"
-"X-Generator: Launchpad (build 18334)\n"
+"X-Launchpad-Export-Date: 2017-04-14 05:49+0000\n"
+"X-Generator: Launchpad (build 18352)\n"
 
 #: import/Ubuntu/Content/ContentPeerPicker10.qml:48
 #: import/Ubuntu/Content/ContentPeerPicker11.qml:49
 msgid "Choose from"
-msgstr ""
+msgstr "เลือกจาก"
 
 #: import/Ubuntu/Content/ContentPeerPicker10.qml:48
 #: import/Ubuntu/Content/ContentPeerPicker11.qml:49
 msgid "Open with"
-msgstr ""
+msgstr "เปิดด้วย"
 
 #: import/Ubuntu/Content/ContentPeerPicker10.qml:48
 #: import/Ubuntu/Content/ContentPeerPicker11.qml:49
 msgid "Share to"
-msgstr ""
+msgstr "แชร์ไปยัง"
 
 #: import/Ubuntu/Content/ContentPeerPicker10.qml:158
 #: import/Ubuntu/Content/ContentPeerPicker11.qml:175
 msgid "Apps"
-msgstr ""
+msgstr "แอป"
 
 #: import/Ubuntu/Content/ContentPeerPicker10.qml:194
 #: import/Ubuntu/Content/ContentPeerPicker11.qml:211
@@ -43,41 +43,42 @@ msgid ""
 "Sorry, there aren't currently any apps installed that can provide this type "
 "of content."
 msgstr ""
+"ขออภัย ไม่มีแอปที่ติดตั้งไว้ที่สามารถให้รายละเอียดเกี่ยวกับเนื้อหาประเภทนี้"
 
 #: import/Ubuntu/Content/ContentPeerPicker10.qml:194
 #: import/Ubuntu/Content/ContentPeerPicker11.qml:211
 msgid ""
 "Sorry, there aren't currently any apps installed that can handle this type "
 "of content."
-msgstr ""
+msgstr "ขออภัย ไม่มีแอปที่ติดตั้งไว้ที่สามารถจัดการเนื้อหาประเภทนี้"
 
 #: import/Ubuntu/Content/ContentPeerPicker10.qml:210
 #: import/Ubuntu/Content/ContentPeerPicker11.qml:227
 msgid "Devices"
-msgstr ""
+msgstr "อุปกรณ์"
 
 #: import/Ubuntu/Content/ContentPeerPicker10.qml:247
 #: import/Ubuntu/Content/ContentPeerPicker11.qml:56
 #: import/Ubuntu/Content/ContentTransferHint.qml:65
 msgid "Cancel"
-msgstr ""
+msgstr "ยกเลิก"
 
 #: import/Ubuntu/Content/ContentTransferHint.qml:52
 msgid "Transfer in progress"
-msgstr ""
+msgstr "กำลังถ่ายโอน"
 
 #: src/com/ubuntu/content/detail/service.cpp:216
 msgid "Download Complete"
-msgstr ""
+msgstr "ดาวน์โหลดเสร็จสมบูรณ์"
 
 #: src/com/ubuntu/content/detail/service.cpp:234
 msgid "Open"
-msgstr ""
+msgstr "เปิด"
 
 #: src/com/ubuntu/content/detail/service.cpp:241
 msgid "Dismiss"
-msgstr ""
+msgstr "ไม่สนใจ"
 
 #: src/com/ubuntu/content/detail/service.cpp:259
 msgid "Download Failed"
-msgstr ""
+msgstr "ดาวน์โหลดล้มเหลว"
